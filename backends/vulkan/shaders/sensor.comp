@@ -1,0 +1,83 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(std430, set = 0, binding = 0) readonly buffer InputBuffer { float input_pixels[]; };
+layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float output_pixels[]; };
+layout(std430, set = 0, binding = 2) buffer AuxBuffer { float aux_pixels[]; };
+layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float parameters[]; };
+
+uint hash32(uint value) {
+    value ^= value >> 16;
+    value *= 0x7feb352du;
+    value ^= value >> 15;
+    value *= 0x846ca68bu;
+    return value ^ (value >> 16);
+}
+
+float uniform01(uint seed, uint counter) {
+    return (float(hash32(seed ^ (counter * 0x9e3779b9u))) + 1.0) / 4294967297.0;
+}
+
+float normal_sample(uint seed, uint counter) {
+    float u1 = uniform01(seed, counter * 2u);
+    float u2 = uniform01(seed, counter * 2u + 1u);
+    return sqrt(-2.0 * log(u1)) * cos(6.28318530718 * u2);
+}
+
+float poisson_sample(float lambda, uint seed, uint counter) {
+    if (lambda <= 0.0) return 0.0;
+    if (lambda < 32.0) {
+        float limit = exp(-lambda);
+        float product = 1.0;
+        uint count = 0u;
+        do {
+            ++count;
+            product *= uniform01(seed ^ counter, count);
+        } while (product > limit && count < 128u);
+        return float(count - 1u);
+    }
+    return max(floor(lambda + sqrt(lambda) * normal_sample(seed, counter) + 0.5), 0.0);
+}
+
+int cfa_channel(int pattern, int x, int y) {
+    int parity = (y & 1) * 2 + (x & 1);
+    if (pattern == 0) { int colors[4] = int[4](0, 1, 1, 2); return colors[parity]; }
+    if (pattern == 1) { int colors[4] = int[4](2, 1, 1, 0); return colors[parity]; }
+    if (pattern == 2) { int colors[4] = int[4](1, 0, 2, 1); return colors[parity]; }
+    int colors[4] = int[4](1, 2, 0, 1); return colors[parity];
+}
+
+void main() {
+    int x = int(gl_GlobalInvocationID.x);
+    int y = int(gl_GlobalInvocationID.y);
+    int width = int(parameters[0] + 0.5);
+    int height = int(parameters[1] + 0.5);
+    if (x >= width || y >= height) return;
+    int pattern = int(parameters[23] + 0.5);
+    int channel = cfa_channel(pattern, x, y);
+    int pixel = y * width + x;
+    int rgb_offset = pixel * 3;
+    int matrix_offset = 2 + channel * 3;
+    float response = max(
+        parameters[matrix_offset] * input_pixels[rgb_offset] +
+        parameters[matrix_offset + 1] * input_pixels[rgb_offset + 1] +
+        parameters[matrix_offset + 2] * input_pixels[rgb_offset + 2], 0.0);
+    float expected = response * parameters[11];
+    uint profile_seed = floatBitsToUint(parameters[21]);
+    uint photo_seed = floatBitsToUint(parameters[22]);
+    uint counter = uint(rgb_offset + channel + 1);
+    bool noise_enabled = parameters[24] > 0.5;
+    if (noise_enabled && parameters[19] > 0.0) {
+        expected *= max(1.0 + parameters[19] * normal_sample(profile_seed, counter + 11u), 0.0);
+    }
+    float electrons = noise_enabled ? poisson_sample(expected, photo_seed, counter + 101u) : expected;
+    if (noise_enabled) {
+        electrons += parameters[17] * normal_sample(photo_seed ^ 0x524f57u, uint(y + 1));
+        electrons += parameters[18] * normal_sample(profile_seed ^ 0x434f4cu, uint(x + 1));
+        electrons += parameters[16] * normal_sample(photo_seed ^ 0x52454144u, counter);
+        electrons += parameters[20] * normal_sample(profile_seed ^ 0x44534e55u, counter);
+    }
+    electrons = clamp(electrons, 0.0, parameters[12]);
+    output_pixels[pixel] = clamp(round(electrons / parameters[13] + parameters[14]),
+                                 0.0, parameters[15]);
+}

@@ -1,0 +1,115 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(std430, set = 0, binding = 0) readonly buffer InputBuffer { float input_pixels[]; };
+layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float output_pixels[]; };
+layout(std430, set = 0, binding = 2) buffer AuxBuffer { float aux_pixels[]; };
+layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float parameters[]; };
+
+int reflect_index(int coordinate, int size) {
+    if (size <= 1) return 0;
+    while (coordinate < 0 || coordinate >= size) {
+        if (coordinate < 0) coordinate = -coordinate - 1;
+        if (coordinate >= size) coordinate = 2 * size - 1 - coordinate;
+    }
+    return coordinate;
+}
+
+float source_at(int x, int y, int channel, int width, int height) {
+    x = reflect_index(x, width);
+    y = reflect_index(y, height);
+    return input_pixels[(y * width + x) * 3 + channel];
+}
+
+float bilinear_source(float x, float y, int channel, int width, int height) {
+    int x0 = int(floor(x));
+    int y0 = int(floor(y));
+    float tx = x - float(x0);
+    float ty = y - float(y0);
+    float top = mix(source_at(x0, y0, channel, width, height),
+                    source_at(x0 + 1, y0, channel, width, height), tx);
+    float bottom = mix(source_at(x0, y0 + 1, channel, width, height),
+                       source_at(x0 + 1, y0 + 1, channel, width, height), tx);
+    return mix(top, bottom, ty);
+}
+
+float warped_at(int output_x, int output_y, int channel, int width, int height) {
+    output_x = reflect_index(output_x, width);
+    output_y = reflect_index(output_y, height);
+    float xn = ((float(output_x) + 0.5) / float(width)) * 2.0 - 1.0;
+    float yn = ((float(output_y) + 0.5) / float(height)) * 2.0 - 1.0;
+    float radius2 = xn * xn + yn * yn;
+    float radial = 1.0 + parameters[2] * radius2 + parameters[3] * radius2 * radius2;
+    float xb = xn * radial + 2.0 * parameters[4] * xn * yn +
+               parameters[5] * (radius2 + 2.0 * xn * xn);
+    float yb = yn * radial + parameters[4] * (radius2 + 2.0 * yn * yn) +
+               2.0 * parameters[5] * xn * yn;
+    float scale = parameters[6 + channel];
+    float sx = ((xb * scale + 1.0) * 0.5 * float(width)) - 0.5;
+    float sy = ((yb * scale + 1.0) * 0.5 * float(height)) - 0.5;
+    return bilinear_source(sx, sy, channel, width, height);
+}
+
+float coefficient_at(int basis, int channel, int x, int y, int width, int height,
+                     int basis_count, int kernel_width, int kernel_height,
+                     int grid_width, int grid_height) {
+    float gx = width <= 1 ? 0.0 : float(x) * float(grid_width - 1) / float(width - 1);
+    float gy = height <= 1 ? 0.0 : float(y) * float(grid_height - 1) / float(height - 1);
+    int x0 = int(floor(gx));
+    int y0 = int(floor(gy));
+    int x1 = min(x0 + 1, grid_width - 1);
+    int y1 = min(y0 + 1, grid_height - 1);
+    float tx = gx - float(x0);
+    float ty = gy - float(y0);
+    int bases_offset = 20;
+    int coefficients_offset = bases_offset + basis_count * kernel_width * kernel_height;
+    int map_offset = coefficients_offset + (basis * 3 + channel) * grid_width * grid_height;
+    float top = mix(parameters[map_offset + y0 * grid_width + x0],
+                    parameters[map_offset + y0 * grid_width + x1], tx);
+    float bottom = mix(parameters[map_offset + y1 * grid_width + x0],
+                       parameters[map_offset + y1 * grid_width + x1], tx);
+    return mix(top, bottom, ty);
+}
+
+void main() {
+    int x = int(gl_GlobalInvocationID.x);
+    int y = int(gl_GlobalInvocationID.y);
+    int width = int(parameters[0] + 0.5);
+    int height = int(parameters[1] + 0.5);
+    if (x >= width || y >= height) return;
+
+    int basis_count = int(parameters[15] + 0.5);
+    int kernel_width = int(parameters[16] + 0.5);
+    int kernel_height = int(parameters[17] + 0.5);
+    int grid_width = int(parameters[18] + 0.5);
+    int grid_height = int(parameters[19] + 0.5);
+    int radius_x = kernel_width / 2;
+    int radius_y = kernel_height / 2;
+    float xn = ((float(x) + 0.5) / float(width)) * 2.0 - 1.0;
+    float yn = ((float(y) + 0.5) / float(height)) * 2.0 - 1.0;
+    float radius2 = xn * xn + yn * yn;
+
+    for (int channel = 0; channel < 3; ++channel) {
+        float weighted = 0.0;
+        float weight_sum = 0.0;
+        for (int basis = 0; basis < basis_count; ++basis) {
+            float blurred = 0.0;
+            for (int ky = 0; ky < kernel_height; ++ky) {
+                for (int kx = 0; kx < kernel_width; ++kx) {
+                    int kernel_index = 20 + basis * kernel_width * kernel_height + ky * kernel_width + kx;
+                    blurred += warped_at(x + kx - radius_x, y + ky - radius_y,
+                                         channel, width, height) * parameters[kernel_index];
+                }
+            }
+            float weight = coefficient_at(basis, channel, x, y, width, height,
+                                          basis_count, kernel_width, kernel_height,
+                                          grid_width, grid_height);
+            weighted += blurred * weight;
+            weight_sum += weight;
+        }
+        float gain = max(1.0 - parameters[9 + channel * 2] * radius2 -
+                         parameters[10 + channel * 2] * radius2 * radius2, 0.0);
+        output_pixels[(y * width + x) * 3 + channel] = weighted / max(weight_sum, 1e-12) * gain;
+    }
+}
+

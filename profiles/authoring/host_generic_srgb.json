@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "host",
+  "id": "phytoy.host.generic_srgb",
+  "version": "0.1.0",
+  "input": {
+    "mode": "srgb",
+    "color_space": "srgb"
+  },
+  "normalization": {
+    "rgb_residual_matrix": [
+      [1.0, 0.0, 0.0],
+      [0.0, 1.0, 0.0],
+      [0.0, 0.0, 1.0]
+    ]
+  }
+}
+

@@ -1,0 +1,27 @@
+# Native and Android build trees
+/build*/
+/out/
+
+# Python caches and local environments
+/.pytest_cache/
+**/__pycache__/
+*.py[cod]
+/.venv/
+/venv/
+
+# Generated profiles, stages and rendered output
+*.ptp
+/stages/
+/renders/
+*.pfm
+
+# Documentation working directory
+/docs/
+
+# IDE / operating system
+.DS_Store
+.idea/
+.vscode/
+
+# Private product-analysis and research working documents
+/phytoy_engine_core_detailed_research_and_implementation_spec_2026.md

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "host",
+  "id": "phytoy.host.reference_raw_placeholder",
+  "version": "0.1.0",
+  "input": {
+    "mode": "raw",
+    "color_space": "camera_rgb"
+  },
+  "normalization": {
+    "rgb_residual_matrix": [
+      [1.0, 0.0, 0.0],
+      [0.0, 1.0, 0.0],
+      [0.0, 0.0, 1.0]
+    ]
+  },
+  "raw": {
+    "cfa": "RGGB",
+    "black_level": [64.0, 64.0, 64.0, 64.0],
+    "white_level": 1023.0,
+    "white_balance": [1.0, 1.0, 1.0],
+    "camera_to_xyz_d65": [
+      [0.636958, 0.144617, 0.168881],
+      [0.262700, 0.677998, 0.059302],
+      [0.000000, 0.028073, 1.060985]
+    ],
+    "radiometric_scale": 1.0
+  }
+}
+

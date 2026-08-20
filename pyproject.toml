@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phytoy-engine-reference"
+version = "0.1.0"
+description = "High-precision reference pipeline and profile tools for PhyToyEngine"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.12",
+    "Pillow>=10",
+]
+
+[project.scripts]
+phytoy-ref = "phytoy_ref.cli:main"
+phytoy-profile = "phytoy_ref.profile_package:main"
+
+[tool.setuptools]
+package-dir = {"" = "reference"}
+
+[tool.setuptools.packages.find]
+where = ["reference"]
+
+[tool.pytest.ini_options]
+testpaths = ["reference/tests"]
+addopts = "-q"
+

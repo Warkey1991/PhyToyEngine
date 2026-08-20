@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "host",
+  "id": "phytoy.host.generic_yuv420_bt709",
+  "version": "0.1.0",
+  "input": {
+    "mode": "yuv420",
+    "color_space": "bt709"
+  },
+  "normalization": {
+    "rgb_residual_matrix": [
+      [1.0, 0.0, 0.0],
+      [0.0, 1.0, 0.0],
+      [0.0, 0.0, 1.0]
+    ]
+  }
+}

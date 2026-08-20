@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phytoy.example/schemas/toy-camera-profile-v1.json",
+  "title": "PhyToyEngine ToyCameraProfile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "kind", "id", "version", "capture_medium_family",
+    "optics", "sensor", "isp"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "toy"},
+    "id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "capture_medium_family": {"const": "digital_sensor_v1"},
+    "optics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["distortion", "ca_scale", "vignette", "psf"],
+      "properties": {
+        "distortion": {"$ref": "#/$defs/vector4"},
+        "ca_scale": {"$ref": "#/$defs/vector3Positive"},
+        "vignette": {
+          "oneOf": [
+            {"$ref": "#/$defs/vector2Nonnegative"},
+            {
+              "type": "array", "minItems": 3, "maxItems": 3,
+              "items": {"$ref": "#/$defs/vector2Nonnegative"}
+            }
+          ]
+        },
+        "psf": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["bases", "coefficients"],
+          "properties": {
+            "bases": {
+              "type": "array", "minItems": 1,
+              "items": {"$ref": "#/$defs/nonnegativeMatrix"}
+            },
+            "coefficients": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "array", "minItems": 3, "maxItems": 3,
+                "items": {"$ref": "#/$defs/nonnegativeMatrix"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cfa", "scene_to_sensor", "exposure_scale_e", "full_well_e",
+        "conversion_gain_e_per_dn", "black_level_dn", "white_level_dn", "adc_bits",
+        "read_noise_e", "row_noise_e", "column_noise_e", "prnu_sigma", "dsnu_e",
+        "profile_seed"
+      ],
+      "properties": {
+        "cfa": {"enum": ["RGGB", "BGGR", "GRBG", "GBRG"]},
+        "scene_to_sensor": {"$ref": "#/$defs/matrix3"},
+        "exposure_scale_e": {"type": "number", "exclusiveMinimum": 0},
+        "full_well_e": {"type": "number", "exclusiveMinimum": 0},
+        "conversion_gain_e_per_dn": {"type": "number", "exclusiveMinimum": 0},
+        "black_level_dn": {"type": "number", "minimum": 0},
+        "white_level_dn": {"type": "number", "exclusiveMinimum": 0},
+        "adc_bits": {"type": "integer", "minimum": 1, "maximum": 32},
+        "read_noise_e": {"type": "number", "minimum": 0},
+        "row_noise_e": {"type": "number", "minimum": 0},
+        "column_noise_e": {"type": "number", "minimum": 0},
+        "prnu_sigma": {"type": "number", "minimum": 0},
+        "dsnu_e": {"type": "number", "minimum": 0},
+        "profile_seed": {"type": "integer", "minimum": 0},
+        "noise_enabled": {"type": "boolean", "default": true}
+      }
+    },
+    "isp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "white_balance", "sensor_to_rec2020", "tone_curve",
+        "denoise_sigma", "sharpen_amount", "sharpen_radius"
+      ],
+      "properties": {
+        "white_balance": {"$ref": "#/$defs/vector3Positive"},
+        "sensor_to_rec2020": {"$ref": "#/$defs/matrix3"},
+        "tone_curve": {
+          "type": "array", "minItems": 2,
+          "items": {"$ref": "#/$defs/vector2"}
+        },
+        "denoise_sigma": {"type": "number", "minimum": 0},
+        "sharpen_amount": {"type": "number"},
+        "sharpen_radius": {"type": "number", "exclusiveMinimum": 0}
+      }
+    }
+  },
+  "$defs": {
+    "number": {"type": "number"},
+    "nonnegative": {"type": "number", "minimum": 0},
+    "positive": {"type": "number", "exclusiveMinimum": 0},
+    "vector2": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {"$ref": "#/$defs/number"}
+    },
+    "vector2Nonnegative": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {"$ref": "#/$defs/nonnegative"}
+    },
+    "vector3": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"$ref": "#/$defs/number"}
+    },
+    "vector3Positive": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"$ref": "#/$defs/positive"}
+    },
+    "vector4": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"$ref": "#/$defs/number"}
+    },
+    "matrix3": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"$ref": "#/$defs/vector3"}
+    },
+    "nonnegativeMatrix": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "array", "minItems": 1,
+        "items": {"$ref": "#/$defs/nonnegative"}
+      }
+    }
+  }
+}

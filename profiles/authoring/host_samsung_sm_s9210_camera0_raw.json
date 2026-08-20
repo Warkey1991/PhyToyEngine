@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "kind": "host",
+  "id": "phytoy.host.samsung_sm_s9210.camera0.raw.d65",
+  "version": "0.1.0",
+  "input": {
+    "mode": "raw",
+    "color_space": "camera_rgb"
+  },
+  "normalization": {
+    "rgb_residual_matrix": [
+      [1.0, 0.0, 0.0],
+      [0.0, 1.0, 0.0],
+      [0.0, 0.0, 1.0]
+    ]
+  },
+  "raw": {
+    "cfa": "GBRG",
+    "black_level": [256.0, 256.0, 256.0, 256.0],
+    "white_level": 4095.0,
+    "white_balance": [2.19937139, 1.0, 1.53600025],
+    "camera_to_xyz_d65": [
+      [0.62760346, 0.18940281, 0.14644602],
+      [0.21204773, 0.89274903, -0.09291670],
+      [0.01689420, -0.50372646, 1.49986820]
+    ],
+    "radiometric_scale": 1.0
+  },
+  "provenance": {
+    "device_model": "Samsung SM-S9210",
+    "camera_id": "0",
+    "source": "Camera2 static metadata from dumpsys media.camera",
+    "capture_date": "2026-08-20",
+    "calibration_status": "metadata-derived; not chart-validated",
+    "reference_illuminant": "D65",
+    "notes": [
+      "Camera 0 advertises RAW and reports GBRG, black level 256x4, and white level 4095.",
+      "D65 gains are derived from ColorTransform1 and the D65 white point.",
+      "camera_to_xyz_d65 composes inverse CalibrationTransform1, ForwardMatrix1, and Bradford D50-to-D65 adaptation.",
+      "Use per-frame dynamic black/white levels and AWB gains in a future frame-metadata API when available."
+    ]
+  }
+}
