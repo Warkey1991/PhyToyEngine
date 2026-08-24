@@ -84,17 +84,19 @@ fi
 "$ADB_BIN" exec-out content read --uri "$photo_uri" > "$REPORT_DIR/captured.jpg"
 
 python3 - "$photo_uri" "$REPORT_DIR/media.txt" "$REPORT_DIR/captured.jpg" \
-    "$REPORT_DIR/capture_log.txt" \
+    "$REPORT_DIR/capture_log.txt" "$REPORT_DIR/ui.xml" \
     > "$REPORT_DIR/evaluation.json" <<'PY'
 import json
 import re
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
-uri, metadata_path, image_path, log_path = sys.argv[1:]
+uri, metadata_path, image_path, log_path, ui_path = sys.argv[1:]
 metadata = Path(metadata_path).read_text(encoding="utf-8", errors="replace")
 image = Path(image_path).read_bytes()
 capture_log = Path(log_path).read_text(encoding="utf-8", errors="replace")
+ui = Path(ui_path).read_text(encoding="utf-8", errors="replace")
 
 def field(name: str) -> str:
     match = re.search(rf"(?:^|, )\b{name}=([^,]+)", metadata)
@@ -102,6 +104,23 @@ def field(name: str) -> str:
 
 width = int(field("width") or 0)
 height = int(field("height") or 0)
+three_a_gate = re.search(
+    r"Camera2 3A gate status=(READY|TIMED_OUT|FAILED).*elapsed_ms=(\d+)",
+    capture_log,
+)
+gate_position = capture_log.find("Camera2 3A gate status=")
+still_position = capture_log.find("Camera2 high-resolution PRIVATE capture submitted:")
+ready_position = capture_log.find("Digital 01 still capture ready:")
+restore_position = capture_log.find("Camera2 3A restored continuous preview")
+preview_aspect = None
+for node in ET.fromstring(ui).iter("node"):
+    if node.attrib.get("class") != "android.view.TextureView":
+        continue
+    left, top, right, bottom = [
+        int(value) for value in re.findall(r"\d+", node.attrib["bounds"])
+    ]
+    preview_aspect = (right - left) / max(1, bottom - top)
+    break
 checks = {
     "media_row_exists": metadata.startswith("Row:"),
     "jpeg_mime": field("mime_type") == "image/jpeg",
@@ -111,6 +130,11 @@ checks = {
     "jpeg_signature": image.startswith(b"\xff\xd8") and image.endswith(b"\xff\xd9"),
     "nonempty_file": len(image) >= 50_000,
     "gpu_still_surface": "one_submission host_readback source=still" in capture_log,
+    "bounded_3a_gate": three_a_gate is not None and int(three_a_gate.group(2)) <= 3_250,
+    "3a_before_still": 0 <= gate_position < still_position < ready_position,
+    "continuous_preview_restored": ready_position < restore_position,
+    "capture_matched_3_by_4_viewport": preview_aspect is not None and
+        abs(preview_aspect - 0.75) <= 0.01,
 }
 result = {
     "passed": all(checks.values()),
@@ -119,6 +143,9 @@ result = {
     "width": width,
     "height": height,
     "bytes": len(image),
+    "three_a_status": three_a_gate.group(1) if three_a_gate else "missing",
+    "three_a_elapsed_ms": int(three_a_gate.group(2)) if three_a_gate else None,
+    "preview_aspect": preview_aspect,
     "checks": checks,
 }
 print(json.dumps(result, indent=2, ensure_ascii=False))

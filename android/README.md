@@ -10,8 +10,9 @@ Android GPU Surface.
 ## Current milestone
 
 - `sdk`: packages the C++ engine, JNI bridge, Kotlin API, and immutable `.ptp` profiles.
-- `sample`: provides a full-screen Digital 01 camera UI, 12 MP still capture, touch AF/AE,
-  front/back switching, MediaStore JPEG saving and last-photo review. Its `TextureView`
+- `sample`: provides a capture-matched 3:4 Digital 01 viewport, a bounded Camera2 3A
+  still-capture gate, 12 MP capture, touch AF/AE, front/back switching, MediaStore JPEG saving and
+  last-photo review. Its `TextureView`
   remains only the Vulkan swapchain output. Camera2 targets the engine-owned PRIVATE
   preview and high-resolution still surfaces.
 - JNI: acquires the latest image and its sync fence, immediately queues it to a dedicated
@@ -119,6 +120,13 @@ photoExecutor.execute {
 }
 ```
 
+Before arming the reader, sample 0.7.0 runs a bounded Camera2 3A gate: it reuses a recent
+successful touch-focus lock or triggers AF, runs AE precapture when exposure is not
+converged, waits for AWB, and locks supported AE/AWB controls before submitting the
+high-resolution request. A 3-second timeout or failed vendor request falls back to capture
+instead of hanging the shutter; camera replacement cancels it. After the still frame
+arrives, the sample unlocks 3A and restores continuous-picture AF on the preview stream.
+
 The sample rotates the result, encodes JPEG at quality 95, publishes it to
 `Pictures/PhyToy` through `MediaStore`, updates the lower-left thumbnail and opens the
 system photo viewer when that thumbnail is tapped. It selects the largest PRIVATE still
@@ -127,14 +135,15 @@ size up to 12.5 MP; Samsung SM-S9210 resolves to 4080×3060 rear and 4000×3000 
 The sample maps taps through the processed preview's center crop, output rotation and
 front-camera mirror into `SENSOR_INFO_ACTIVE_ARRAY_SIZE`, then submits supported
 `CONTROL_AF_REGIONS` and `CONTROL_AE_REGIONS`. The focus marker reports Camera2 AF lock
-state and returns to continuous-picture AF after 3.5 seconds. Lens switching closes the
+state and returns to continuous-picture AF after 5 seconds. Lens switching closes the
 Camera2 session and engine in order, mirrors only the front preview, and rebuilds both
 PRIVATE streams for the selected lens.
 
 Profile assets are copied into app-private storage because the native engine validates and
 opens packaged profile files. The default profiles are `host_generic_srgb.ptp` and the
-product-balanced `toy_phytoy_digital_01_v1_1.ptp`; the immutable v1.0.0 package remains
-available for regression comparisons.
+outdoor-reviewed `toy_phytoy_digital_01_v1_2.ptp`; the immutable v1.0.0 and v1.1.0
+packages remain available for regression comparisons. Version 1.2 reduces CA separation
+by about 26% and gently raises the lower tone curve while retaining the v1.1 color response.
 
 ## Real-device smoke acceptance
 
@@ -177,10 +186,15 @@ fence 零拷贝进入 Vulkan，依次执行归一化、PhyToy Digital 01 光学�
 Vulkan submission 完成 Digital 01 处理，同时仅对最终 sRGB 读回；普通预览仍无 CPU
 readback。示例 App 将结果旋转后以质量 95 写入 `Pictures/PhyToy`，并更新缩略图。
 
+0.7.0 使用与成片一致的 3:4 PRIVATE 预览流和显示窗口。注册静态读回前会复用近期成功的
+触摸锁焦，或重新触发 AF；AE 未收敛时执行预曝光，同时等待 AWB，并在设备支持时锁定
+AE/AWB 后再提交高分辨率请求。厂商 3A 请求失败或 3 秒未返回终态时继续兜底拍摄，不会
+卡住快门；相机被关闭或切换则取消本次拍摄。静态帧到达后会解锁 3A 并恢复连续对焦。
+
 示例 App 已支持触摸 AF/AE 和前后镜头切换。触摸点会逆向经过前摄镜像、取景中心裁切和
 输出旋转后映射到传感器有效区域；Camera2 对焦结束后焦点框给出成功/未锁定反馈，并在
-3.5 秒后恢复连续对焦。切换镜头时会按 capture session → CameraDevice → engine 的顺序
-关闭旧链路，并为新镜头重建 720p 预览与最高 12.5MP 静态 PRIVATE 流。
+5 秒后恢复连续对焦。切换镜头时会按 capture session → CameraDevice → engine 的顺序
+关闭旧链路，并为新镜头重建 4:3 预览与最高 12.5MP 静态 PRIVATE 流。
 
 Vulkan 引擎默认最多处理 15 FPS，并通过 Android Thermal API 自动调整为 Normal
 15 FPS、Light 10 FPS、Moderate 5 FPS、Severe 3 FPS、Critical 0 FPS。温控主动跳过的帧单独记录为

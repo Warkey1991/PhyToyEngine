@@ -85,10 +85,18 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         shutterControl.setCapturing(true)
         lensSwitchControl.isEnabled = false
         lensSwitchControl.alpha = 0.35f
-        message.text = context.getString(R.string.processing_photo)
+        message.text = context.getString(R.string.preparing_capture)
         message.visibility = VISIBLE
         message.animate().alpha(1f).setDuration(120L).start()
         shutterControl.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+    }
+
+    fun updateCaptureMessage(text: CharSequence) {
+        removeCallbacks(clearMessage)
+        message.text = text
+        message.visibility = VISIBLE
+        message.animate().cancel()
+        message.alpha = 1f
     }
 
     fun finishCapture() {

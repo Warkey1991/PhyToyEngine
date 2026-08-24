@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.digital_01",
+  "version": "1.2.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "synthetic_tuned",
+    "target_name": "PhyToy Digital 01",
+    "source": "PhyToyEngine engineering design; refined from the immutable v1.1.0 product-balanced profile",
+    "created_utc": "2026-08-24T00:00:00Z",
+    "license": "MIT",
+    "notes": [
+      "Version 1.2.0 reduces red/cyan edge separation and gently opens deep shadows after outdoor device review.",
+      "The warm highlight and cool sky response, vignette and sensor character remain unchanged from v1.1.0.",
+      "Do not describe this profile as a replica or digital twin of a physical camera."
+    ]
+  },
+  "optics": {
+    "distortion": [0.024, -0.008, 0.001, -0.0007],
+    "ca_scale": [1.0026, 1.0, 0.9974],
+    "vignette": [[0.17, 0.04], [0.19, 0.05], [0.22, 0.06]],
+    "psf": {
+      "bases": [
+        [
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 1.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0]
+        ],
+        [
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.0219, 0.0983, 0.1621, 0.0983, 0.0219],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003]
+        ]
+      ],
+      "coefficients": [
+        [
+          [[0.35, 0.58, 0.35], [0.55, 0.94, 0.55], [0.35, 0.58, 0.35]],
+          [[0.38, 0.61, 0.38], [0.58, 0.95, 0.58], [0.38, 0.61, 0.38]],
+          [[0.3, 0.52, 0.3], [0.48, 0.9, 0.48], [0.3, 0.52, 0.3]]
+        ],
+        [
+          [[0.65, 0.42, 0.65], [0.45, 0.06, 0.45], [0.65, 0.42, 0.65]],
+          [[0.62, 0.39, 0.62], [0.42, 0.05, 0.42], [0.62, 0.39, 0.62]],
+          [[0.7, 0.48, 0.7], [0.52, 0.1, 0.52], [0.7, 0.48, 0.7]]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [[1.03, -0.015, -0.015], [-0.02, 1.04, -0.02], [-0.01, -0.035, 1.045]],
+    "exposure_scale_e": 680.0,
+    "full_well_e": 768.0,
+    "conversion_gain_e_per_dn": 0.8,
+    "black_level_dn": 64.0,
+    "white_level_dn": 1023.0,
+    "adc_bits": 10,
+    "read_noise_e": 2.4,
+    "row_noise_e": 0.65,
+    "column_noise_e": 0.45,
+    "prnu_sigma": 0.01,
+    "dsnu_e": 0.55,
+    "profile_seed": 240101
+  },
+  "isp": {
+    "white_balance": [1.08, 1.0, 0.94],
+    "sensor_to_rec2020": [[1.055, -0.035, -0.02], [-0.025, 1.04, -0.015], [0.005, -0.055, 1.05]],
+    "tone_curve": [[0.0, 0.0], [0.015, 0.026], [0.08, 0.135], [0.18, 0.28], [0.5, 0.67], [0.82, 0.91], [1.0, 0.98], [1.3, 1.0]],
+    "denoise_sigma": 0.18,
+    "sharpen_amount": 0.1,
+    "sharpen_radius": 0.9
+  }
+}

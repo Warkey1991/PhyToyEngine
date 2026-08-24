@@ -27,6 +27,13 @@ def test_tuned_digital_01_profile_validates(tuned_toy_path):
     assert toy["provenance"]["calibration_status"] == "synthetic_tuned"
 
 
+def test_outdoor_tuned_digital_01_profile_validates(outdoor_tuned_toy_path):
+    toy = load_toy_profile(outdoor_tuned_toy_path)
+    assert toy["id"] == "phytoy.toy.digital_01"
+    assert toy["version"] == "1.2.0"
+    assert toy["provenance"]["calibration_status"] == "synthetic_tuned"
+
+
 def test_profile_package_round_trip(tmp_path, toy_path):
     destination = tmp_path / "toy.ptp"
     compile_profile(toy_path, destination)

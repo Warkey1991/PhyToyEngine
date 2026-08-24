@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">PhyToy 相机</string>
     <string name="product_wordmark">PHYTOY</string>
-    <string name="style_title">DIGITAL 01  /  1.1</string>
+    <string name="style_title">DIGITAL 01  /  1.2</string>
     <string name="photo_mode">拍照</string>
     <string name="capture_format">D01\n%1$.1f MP</string>
     <string name="live_badge">● 实时</string>
@@ -14,6 +14,9 @@
     <string name="front_camera">前置</string>
     <string name="back_camera">后置</string>
     <string name="debug_toggle_description">Digital 01；长按查看引擎诊断信息</string>
+    <string name="preparing_capture">正在锁定对焦与曝光…</string>
+    <string name="metering_exposure">正在测光…</string>
+    <string name="capturing_high_resolution">正在拍摄高分辨率照片…</string>
     <string name="processing_photo">正在显影 Digital 01…</string>
     <string name="photo_saved">%1$s · %2$d×%3$d 已保存到系统相册</string>
     <string name="photo_failed">照片保存失败：%1$s</string>

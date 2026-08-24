@@ -291,7 +291,7 @@ class PhyToyCameraSession private constructor(
             processingFrameRateLimit: Int = DEFAULT_PROCESSING_FRAME_RATE,
             thermalAdaptive: Boolean = true,
             hostProfileAsset: String = "host_generic_srgb.ptp",
-            toyProfileAsset: String = "toy_phytoy_digital_01_v1_1.ptp",
+            toyProfileAsset: String = "toy_phytoy_digital_01_v1_2.ptp",
         ): PhyToyCameraSession {
             require(width > 0 && height > 0) { "Camera dimensions must be positive" }
             require(stillWidth > 0 && stillHeight > 0) {

@@ -26,6 +26,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
 import android.util.Range
 import android.util.Size
@@ -35,6 +36,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.MotionEvent
+import android.view.Gravity
 import android.widget.FrameLayout
 import com.phytoy.engine.PhyToyCameraSession
 import java.util.Locale
@@ -43,6 +45,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var preview: TextureView
+    private lateinit var previewViewport: CaptureViewport
     private lateinit var chrome: CameraChrome
     private lateinit var photoStore: PhotoStore
     private lateinit var shutterSound: MediaActionSound
@@ -64,22 +67,26 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var sensorActiveArray: Rect? = null
     private var maximumAfRegions = 0
     private var maximumAeRegions = 0
+    private var autoexposureLockAvailable = false
+    private var autoWhiteBalanceLockAvailable = false
     private var currentLensFacing = CameraCharacteristics.LENS_FACING_BACK
     private var availableLensFacings: Set<Int> = emptySet()
     private var currentCameraId: String? = null
     private var currentOutputRotation = 0
     @Volatile private var meteringRegion: MeteringRectangle? = null
     @Volatile private var touchFocusActive = false
-    private var focusGeneration = 0L
-    private var focusResolvedGeneration = -1L
+    @Volatile private var focusGeneration = 0L
+    @Volatile private var focusResolvedGeneration = -1L
+    @Volatile private var touchFocusSucceeded = false
+    @Volatile private var touchFocusLockedAtMillis = 0L
     @Volatile private var activeCameraFpsRange: Range<Int>? = null
     @Volatile private var pendingCameraFpsRange: Range<Int>? = null
     private var cameraOpening = false
     @Volatile private var cameraReady = false
-    private var captureInProgress = false
+    @Volatile private var captureInProgress = false
     private var pendingCaptureAfterStoragePermission = false
     private var lastPhotoUri: Uri? = null
-    private var cameraGeneration = 0L
+    @Volatile private var cameraGeneration = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,17 +134,26 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     private fun createContentView() {
         val root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
+        previewViewport = CaptureViewport(this)
         preview = TextureView(this).apply { isOpaque = true }
         preview.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_UP) focusAt(event.x, event.y)
             true
         }
-        root.addView(
+        previewViewport.addView(
             preview,
             FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
             ),
+        )
+        root.addView(
+            previewViewport,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER,
+            )
         )
 
         chrome = CameraChrome(this).apply {
@@ -254,11 +270,17 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             maximumAeRegions = characteristics.get(
                 CameraCharacteristics.CONTROL_MAX_REGIONS_AE
             ) ?: 0
+            autoexposureLockAvailable = characteristics.get(
+                CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE
+            ) == true
+            autoWhiteBalanceLockAvailable = characteristics.get(
+                CameraCharacteristics.CONTROL_AWB_LOCK_AVAILABLE
+            ) == true
             val map = checkNotNull(
                 characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             ) { "Camera has no stream configuration map" }
-            val size = chooseEngineSize(map)
             val captureSize = chooseStillSize(map)
+            val size = chooseEngineSize(map, captureSize)
             engineSize = size
             stillSize = captureSize
             chrome.setCaptureSize(captureSize.width, captureSize.height)
@@ -311,13 +333,34 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
-    private fun chooseEngineSize(map: StreamConfigurationMap): Size {
+    private fun chooseEngineSize(map: StreamConfigurationMap, captureSize: Size): Size {
         val sizes = checkNotNull(map.getOutputSizes(android.graphics.ImageFormat.PRIVATE)) {
             "Camera has no PRIVATE output sizes"
         }
-        return sizes.firstOrNull { it.width == 1280 && it.height == 720 }
-            ?: sizes.filter { it.width <= 1920 && it.height <= 1080 }
-                .maxByOrNull { it.width.toLong() * it.height }
+        val captureAspect = captureSize.width.toDouble() / captureSize.height
+        val bounded = sizes.filter {
+            it.width <= MAXIMUM_PREVIEW_WIDTH &&
+                it.height <= MAXIMUM_PREVIEW_HEIGHT &&
+                it.width.toLong() * it.height <= MAXIMUM_PREVIEW_PIXELS
+        }
+        val aspectMatched = bounded.filter {
+            kotlin.math.abs(it.width.toDouble() / it.height - captureAspect) <=
+                MAXIMUM_PREVIEW_ASPECT_ERROR
+        }
+        return aspectMatched.firstOrNull {
+            it.width == TARGET_PREVIEW_WIDTH && it.height == TARGET_PREVIEW_HEIGHT
+        }
+            ?: aspectMatched.minByOrNull {
+                kotlin.math.abs(
+                    it.width.toLong() * it.height -
+                        TARGET_PREVIEW_WIDTH.toLong() * TARGET_PREVIEW_HEIGHT
+                )
+            }
+            ?: bounded.minWithOrNull(
+                compareBy<Size> {
+                    kotlin.math.abs(it.width.toDouble() / it.height - captureAspect)
+                }.thenByDescending { it.width.toLong() * it.height }
+            )
             ?: sizes.minBy { it.width.toLong() * it.height }
     }
 
@@ -495,6 +538,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             set(CaptureRequest.CONTROL_AF_MODE, selectedAfMode())
             set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
             set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+            set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO)
+            if (autoexposureLockAvailable) {
+                set(CaptureRequest.CONTROL_AE_LOCK, false)
+            }
+            if (autoWhiteBalanceLockAvailable) {
+                set(CaptureRequest.CONTROL_AWB_LOCK, false)
+            }
             fpsRange?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
             applyMeteringRegion(this)
         }
@@ -549,13 +599,22 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             Rect(left, top, left + side, top + side),
             MeteringRectangle.METERING_WEIGHT_MAX,
         )
-        chrome.showFocusIndicator(viewX, viewY)
+        val previewLocation = IntArray(2)
+        val chromeLocation = IntArray(2)
+        preview.getLocationOnScreen(previewLocation)
+        chrome.getLocationOnScreen(chromeLocation)
+        chrome.showFocusIndicator(
+            previewLocation[0] - chromeLocation[0] + viewX,
+            previewLocation[1] - chromeLocation[1] + viewY,
+        )
         val handler = cameraHandler ?: return
         handler.post {
             val camera = cameraDevice ?: return@post
             val session = captureSession ?: return@post
             val token = ++focusGeneration
             focusResolvedGeneration = -1L
+            touchFocusSucceeded = false
+            touchFocusLockedAtMillis = 0L
             meteringRegion = region
             touchFocusActive = true
             try {
@@ -629,11 +688,15 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 when (result.get(CaptureResult.CONTROL_AF_STATE)) {
                     CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED -> {
                         focusResolvedGeneration = token
+                        touchFocusSucceeded = true
+                        touchFocusLockedAtMillis = SystemClock.elapsedRealtime()
                         runOnUiThread { chrome.completeFocus(true) }
                         Log.i(LOG_TAG, "Touch AF locked")
                     }
                     CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED -> {
                         focusResolvedGeneration = token
+                        touchFocusSucceeded = false
+                        touchFocusLockedAtMillis = 0L
                         runOnUiThread { chrome.completeFocus(false) }
                         Log.i(LOG_TAG, "Touch AF completed without lock")
                     }
@@ -642,9 +705,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
 
     private fun resetTouchFocus(token: Long) {
-        if (token != focusGeneration) return
+        if (token != focusGeneration || captureInProgress) return
         touchFocusActive = false
         meteringRegion = null
+        touchFocusSucceeded = false
+        touchFocusLockedAtMillis = 0L
         val camera = cameraDevice ?: return
         val session = captureSession ?: return
         try {
@@ -679,8 +744,33 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         shutterSound.play(MediaActionSound.SHUTTER_CLICK)
         photoExecutor.execute {
             try {
-                val frame = engine.captureStillFrame(CAPTURE_TIMEOUT_MILLIS) {
-                    submitStillCapture(camera, cameraSession, generation)
+                val frame = try {
+                    val threeA = awaitCapture3A(camera, cameraSession, generation)
+                    check(threeA.canCapture) {
+                        threeA.failureReason.ifBlank { "Camera changed before still capture" }
+                    }
+                    mainHandler.post {
+                        if (captureInProgress && generation == cameraGeneration) {
+                            chrome.updateCaptureMessage(
+                                getString(R.string.capturing_high_resolution)
+                            )
+                        }
+                    }
+                    engine.captureStillFrame(CAPTURE_TIMEOUT_MILLIS) {
+                        submitStillCapture(
+                            camera,
+                            cameraSession,
+                            generation,
+                            lock3A = threeA.status == Camera3AController.Status.READY,
+                        )
+                    }
+                } finally {
+                    restorePreviewAfterCapture(camera, cameraSession, generation)
+                }
+                mainHandler.post {
+                    if (captureInProgress && generation == cameraGeneration) {
+                        chrome.updateCaptureMessage(getString(R.string.processing_photo))
+                    }
                 }
                 val saved = photoStore.save(frame)
                 val thumbnail = photoStore.loadThumbnail(saved.uri)
@@ -722,10 +812,114 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
+    private fun awaitCapture3A(
+        camera: CameraDevice,
+        session: CameraCaptureSession,
+        generation: Long,
+    ): Camera3AController.Outcome {
+        val handler = checkNotNull(cameraHandler) { "Camera thread is unavailable" }
+        val touchFocusAgeMillis = SystemClock.elapsedRealtime() - touchFocusLockedAtMillis
+        val reuseTouchFocus = touchFocusActive &&
+            focusResolvedGeneration == focusGeneration &&
+            touchFocusSucceeded &&
+            touchFocusAgeMillis in 0L..RECENT_TOUCH_FOCUS_MILLIS
+        if (reuseTouchFocus) {
+            Log.i(LOG_TAG, "Camera2 3A reusing touch AF lock age_ms=$touchFocusAgeMillis")
+        }
+        val controller = Camera3AController(
+            camera = camera,
+            session = session,
+            cameraHandler = handler,
+            previewRequest = { buildPreviewRequest(camera, selectCameraFpsRange()) },
+            triggerAutofocus =
+                selectedAfMode() != CaptureRequest.CONTROL_AF_MODE_OFF && !reuseTouchFocus,
+            autoexposureLockAvailable = autoexposureLockAvailable,
+            autoWhiteBalanceLockAvailable = autoWhiteBalanceLockAvailable,
+            isCameraCurrent = {
+                generation == cameraGeneration &&
+                    cameraDevice === camera &&
+                    captureSession === session
+            },
+            stageListener = {
+                    stage,
+                    autofocusState,
+                    autoexposureState,
+                    autoWhiteBalanceState,
+                ->
+                Log.i(
+                    LOG_TAG,
+                    "Camera2 3A stage=$stage af=${autofocusState ?: "unknown"} " +
+                        "ae=${autoexposureState ?: "unknown"} " +
+                        "awb=${autoWhiteBalanceState ?: "unknown"}",
+                )
+                if (stage == Camera3AController.Stage.WAITING_AE_PRECAPTURE ||
+                    stage == Camera3AController.Stage.WAITING_AE_CONVERGED
+                ) {
+                    mainHandler.post {
+                        if (captureInProgress && generation == cameraGeneration) {
+                            chrome.updateCaptureMessage(getString(R.string.metering_exposure))
+                        }
+                    }
+                }
+            },
+        )
+        val outcome = controller.await(THREE_A_TIMEOUT_MILLIS)
+        Log.i(
+            LOG_TAG,
+            "Camera2 3A gate status=${outcome.status} " +
+                "af=${outcome.autofocusState ?: "unknown"} " +
+                "ae=${outcome.autoexposureState ?: "unknown"} " +
+                "awb=${outcome.autoWhiteBalanceState ?: "unknown"} " +
+                "elapsed_ms=${outcome.elapsedMillis}" +
+                outcome.failureReason.takeIf { it.isNotBlank() }
+                    .orEmpty().let { if (it.isEmpty()) "" else " reason=$it" },
+        )
+        return outcome
+    }
+
+    private fun restorePreviewAfterCapture(
+        camera: CameraDevice,
+        session: CameraCaptureSession,
+        generation: Long,
+    ) {
+        val handler = cameraHandler ?: return
+        handler.post {
+            if (generation != cameraGeneration ||
+                cameraDevice !== camera ||
+                captureSession !== session
+            ) return@post
+            try {
+                focusGeneration += 1L
+                focusResolvedGeneration = -1L
+                touchFocusActive = false
+                meteringRegion = null
+                touchFocusSucceeded = false
+                touchFocusLockedAtMillis = 0L
+                val cancelRequest = buildPreviewRequest(camera, selectCameraFpsRange()).apply {
+                    set(
+                        CaptureRequest.CONTROL_AF_TRIGGER,
+                        CaptureRequest.CONTROL_AF_TRIGGER_CANCEL,
+                    )
+                    set(
+                        CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                        CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_CANCEL,
+                    )
+                }
+                session.capture(cancelRequest.build(), null, handler)
+                submitRepeatingRequest(camera, session, selectCameraFpsRange())
+                runOnUiThread { chrome.clearFocusIndicator() }
+                Log.i(LOG_TAG, "Camera2 3A restored continuous preview")
+            } catch (exception: Throwable) {
+                Log.e(LOG_TAG, "Camera2 3A preview restore failed", exception)
+            }
+        }
+    }
+
     private fun submitStillCapture(
         camera: CameraDevice,
         session: CameraCaptureSession,
         generation: Long,
+        lock3A: Boolean,
     ) {
         check(generation == cameraGeneration && cameraDevice === camera) {
             "Camera changed before still capture"
@@ -739,6 +933,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
             set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
             set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE)
+            set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO)
+            if (autoexposureLockAvailable) {
+                set(CaptureRequest.CONTROL_AE_LOCK, lock3A)
+            }
+            if (autoWhiteBalanceLockAvailable) {
+                set(CaptureRequest.CONTROL_AWB_LOCK, lock3A)
+            }
             applyMeteringRegion(this)
         }.build()
         session.capture(request, null, cameraHandler)
@@ -862,6 +1063,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         focusResolvedGeneration = -1L
         touchFocusActive = false
         meteringRegion = null
+        touchFocusSucceeded = false
+        touchFocusLockedAtMillis = 0L
         chrome.setReady(false)
         chrome.clearFocusIndicator()
         try {
@@ -883,6 +1086,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         sensorActiveArray = null
         maximumAfRegions = 0
         maximumAeRegions = 0
+        autoexposureLockAvailable = false
+        autoWhiteBalanceLockAvailable = false
         currentCameraId = null
         activeCameraFpsRange = null
         pendingCameraFpsRange = null
@@ -923,10 +1128,18 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         private const val MAXIMUM_BUFFER_IMPORTS = 16L
         private const val PRODUCT_ALPHA_P95_US = 65_000L
         private const val PREVIEW_OUTPUT_WIDTH = 720
+        private const val TARGET_PREVIEW_WIDTH = 1_280
+        private const val TARGET_PREVIEW_HEIGHT = 960
+        private const val MAXIMUM_PREVIEW_WIDTH = 1_600
+        private const val MAXIMUM_PREVIEW_HEIGHT = 1_200
+        private const val MAXIMUM_PREVIEW_PIXELS = 1_600_000L
+        private const val MAXIMUM_PREVIEW_ASPECT_ERROR = 0.015
         private const val CAMERA_PREVIEW_FPS = 15
         private const val CAPTURE_TIMEOUT_MILLIS = 10_000
+        private const val THREE_A_TIMEOUT_MILLIS = 3_000L
         private const val MAXIMUM_STILL_PIXELS = 12_500_000L
         private const val METERING_REGION_FRACTION = 0.12f
-        private const val TOUCH_FOCUS_HOLD_MILLIS = 3_500L
+        private const val TOUCH_FOCUS_HOLD_MILLIS = 5_000L
+        private const val RECENT_TOUCH_FOCUS_MILLIS = 5_000L
     }
 }

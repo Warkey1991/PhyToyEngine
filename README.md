@@ -8,7 +8,7 @@ camera's optics, digital sensor, ADC, and ISP in a fixed physical order.
 
 This repository currently delivers the **Synthetic Alpha device-accepted engine candidate**.
 Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**; Android now defaults
-to the product-balanced **v1.1.0** tuning. The engine includes a Python reference,
+to the outdoor-reviewed **v1.2.0** tuning. The engine includes a Python reference,
 a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
 compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
   preview Surface, a 12 MP Digital 01 Android capture/touch-focus/lens-switch flow, and
@@ -57,10 +57,13 @@ Changing a camera look means replacing a validated profile, not editing engine c
   Android swapchain with no CPU readback.
 - Android still capture: a dedicated Camera2 PRIVATE surface up to 12.5 MP, on-demand
   readback of one fully processed sRGB frame, rotation and MediaStore save while ordinary
-  preview frames remain GPU-only. The sample also maps touch AF/AE through crop/rotation/
-  front mirroring and rebuilds the pipeline when switching front/back lenses.
-- Product profile: immutable `PhyToy Digital 01 v1.0.0` baseline plus product-balanced
-  `v1.1.0` tuning, explicitly marked as a designed synthetic camera rather than a measured replica.
+  preview frames remain GPU-only. Sample 0.7.0 uses a capture-matched 3:4 viewport, gates
+  the still request on bounded Camera2 AF/AE/AWB convergence, locks exposure and white
+  balance for the still, reuses a recent touch-focus lock, restores continuous AF afterward,
+  and rebuilds the pipeline when switching front/back lenses.
+- Product profile: immutable `PhyToy Digital 01 v1.0.0` and v1.1.0 baselines plus the
+  restrained-CA, open-shadow `v1.2.0` tuning, explicitly marked as a designed synthetic
+  camera rather than a measured replica.
 - Validation: strict semantic profile checks, SHA-256 checked `.ptp` packages, frozen
   golden manifest, sensor statistics, and Python/C++ stage conformance tests.
 
@@ -96,7 +99,7 @@ Render a PNG/JPEG input and optionally save all five stages as NumPy arrays:
 PYTHONPATH=reference python3 -m phytoy_ref.cli \
   --input input.png \
   --host-profile profiles/authoring/host_generic_srgb.json \
-  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1_1.json \
+  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1_2.json \
   --output renders/output.png \
   --dump-stages stages/reference \
   --seed 7
@@ -106,8 +109,8 @@ Compile a validated authoring profile into the runtime package format:
 
 ```bash
 PYTHONPATH=reference python3 -m phytoy_ref.profile_package \
-  profiles/authoring/toy_phytoy_digital_01_v1_1.json \
-  build/profiles/toy_phytoy_digital_01_v1_1.ptp
+  profiles/authoring/toy_phytoy_digital_01_v1_2.json \
+  build/profiles/toy_phytoy_digital_01_v1_2.ptp
 ```
 
 ## Quick start: C++20 runtime and CLI
@@ -126,7 +129,7 @@ be PPM; RAW digital-number input must be PGM.
   --input input.ppm \
   --input-format srgb \
   --host build/profiles/host_generic_srgb.ptp \
-  --toy build/profiles/toy_phytoy_digital_01_v1_1.ptp \
+  --toy build/profiles/toy_phytoy_digital_01_v1_2.ptp \
   --output renders/native.ppm \
   --backend cpu \
   --dump-stages stages/native \
@@ -331,11 +334,12 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 再按照固定顺序模拟目标玩具相机的镜头、数字传感器、ADC 和 ISP。
 
 当前仓库交付的是 **Synthetic Alpha 已通过设备协议的引擎候选版**，第一款锁定的原创虚拟相机是
-**PhyToy Digital 01 v1.0.0**，Android 现默认使用产品化收敛后的 **v1.1.0** 调校。
+**PhyToy Digital 01 v1.0.0**，Android 现默认使用经户外成片复核后的 **v1.2.0** 调校。
 它不是完整商业相机 App，但已包含 Python 高精度
 参考实现、C++20 CPU Runtime、稳定 C ABI、Android Vulkan compute 后端、Camera2
 AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试。Android 示例已具备
-最高 12.5MP 的 Digital 01 静态成片、触摸 AF/AE、前后镜头切换、MediaStore 保存与回看。
+最高 12.5MP 的 Digital 01 静态成片、与成片一致的 3:4 取景、有界 AF/AE/AWB 收敛与
+锁定、触摸 AF/AE、前后镜头切换、MediaStore 保存与回看。
 
 ## 当前能力
 
@@ -347,8 +351,9 @@ AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试�
   CPU 回退。
 - Vulkan 生产路径：每帧一次提交、持久资源复用、中间 Buffer 原地复用、Camera2
   Buffer 槽位缓存、外部格式 YCbCr conversion 和 acquire fence。
-- Android 相机：720p 处理后实时取景、最高 12.5MP PRIVATE 静态流、触摸对焦/测光、
-  前后镜头切换，以及系统相册 JPEG 保存。
+- Android 相机：3:4 处理后实时取景、最高 12.5MP PRIVATE 静态流、拍照前有界
+  AF/AE/AWB 收敛与锁定、近期触摸锁焦复用、拍照后连续对焦恢复、前后镜头切换，以及
+  系统相册 JPEG 保存。
 - 原创 Profile：PhyToy Digital 01 明确标记为 designed/synthetic，不冒充真实相机复刻。
 - 可验证性：固定 seed、Profile SHA-256、Golden manifest、Python/C++ 逐阶段误差
   对比和统计测试。
@@ -368,7 +373,7 @@ python3 -m pytest -q
 PYTHONPATH=reference python3 -m phytoy_ref.cli \
   --input input.png \
   --host-profile profiles/authoring/host_generic_srgb.json \
-  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1_1.json \
+  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1_2.json \
   --output renders/output.png \
   --dump-stages stages/reference \
   --seed 7

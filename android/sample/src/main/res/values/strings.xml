@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">PhyToy Camera</string>
     <string name="product_wordmark">PHYTOY</string>
-    <string name="style_title">DIGITAL 01  /  1.1</string>
+    <string name="style_title">DIGITAL 01  /  1.2</string>
     <string name="photo_mode">PHOTO</string>
     <string name="capture_format">D01\n%1$.1f MP</string>
     <string name="live_badge">● LIVE</string>
@@ -14,6 +14,9 @@
     <string name="front_camera">Front</string>
     <string name="back_camera">Back</string>
     <string name="debug_toggle_description">Digital 01; long press for engine diagnostics</string>
+    <string name="preparing_capture">Locking focus and exposure…</string>
+    <string name="metering_exposure">Metering exposure…</string>
+    <string name="capturing_high_resolution">Capturing full resolution…</string>
     <string name="processing_photo">Developing Digital 01…</string>
     <string name="photo_saved">%1$s · %2$d×%3$d saved to Photos</string>
     <string name="photo_failed">Couldn’t save photo: %1$s</string>
