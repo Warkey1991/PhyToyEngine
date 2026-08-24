@@ -6,6 +6,11 @@ layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float outpu
 layout(std430, set = 0, binding = 2) buffer AuxBuffer { float aux_pixels[]; };
 layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float parameters[]; };
 
+const int LOCAL_WIDTH = 16;
+const int MAX_PSF_RADIUS = 4;
+const int WARP_TILE_WIDTH = LOCAL_WIDTH + MAX_PSF_RADIUS * 2;
+shared vec4 warped_tile[WARP_TILE_WIDTH * WARP_TILE_WIDTH];
+
 int reflect_index(int coordinate, int size) {
     if (size <= 1) return 0;
     while (coordinate < 0 || coordinate >= size) {
@@ -71,11 +76,36 @@ float coefficient_at(int basis, int channel, int x, int y, int width, int height
     return mix(top, bottom, ty);
 }
 
+void populate_warped_tile(int width, int height) {
+    int local_index = int(gl_LocalInvocationIndex);
+    int base_x = int(gl_WorkGroupID.x) * LOCAL_WIDTH;
+    int base_y = int(gl_WorkGroupID.y) * LOCAL_WIDTH;
+    for (int index = local_index;
+         index < WARP_TILE_WIDTH * WARP_TILE_WIDTH;
+         index += LOCAL_WIDTH * LOCAL_WIDTH) {
+        int tile_x = index % WARP_TILE_WIDTH;
+        int tile_y = index / WARP_TILE_WIDTH;
+        int output_x = base_x + tile_x - MAX_PSF_RADIUS;
+        int output_y = base_y + tile_y - MAX_PSF_RADIUS;
+        warped_tile[index] = vec4(
+            warped_at(output_x, output_y, 0, width, height),
+            warped_at(output_x, output_y, 1, width, height),
+            warped_at(output_x, output_y, 2, width, height),
+            0.0);
+    }
+    barrier();
+}
+
+float shared_warped(int local_x, int local_y, int channel) {
+    return warped_tile[local_y * WARP_TILE_WIDTH + local_x][channel];
+}
+
 void main() {
     int x = int(gl_GlobalInvocationID.x);
     int y = int(gl_GlobalInvocationID.y);
     int width = int(parameters[0] + 0.5);
     int height = int(parameters[1] + 0.5);
+    populate_warped_tile(width, height);
     if (x >= width || y >= height) return;
 
     int basis_count = int(parameters[15] + 0.5);
@@ -88,28 +118,35 @@ void main() {
     float xn = ((float(x) + 0.5) / float(width)) * 2.0 - 1.0;
     float yn = ((float(y) + 0.5) / float(height)) * 2.0 - 1.0;
     float radius2 = xn * xn + yn * yn;
+    int tile_x = int(gl_LocalInvocationID.x) + MAX_PSF_RADIUS;
+    int tile_y = int(gl_LocalInvocationID.y) + MAX_PSF_RADIUS;
 
     for (int channel = 0; channel < 3; ++channel) {
-        float weighted = 0.0;
+        float weights[8];
         float weight_sum = 0.0;
         for (int basis = 0; basis < basis_count; ++basis) {
-            float blurred = 0.0;
-            for (int ky = 0; ky < kernel_height; ++ky) {
-                for (int kx = 0; kx < kernel_width; ++kx) {
-                    int kernel_index = 20 + basis * kernel_width * kernel_height + ky * kernel_width + kx;
-                    blurred += warped_at(x + kx - radius_x, y + ky - radius_y,
-                                         channel, width, height) * parameters[kernel_index];
+            weights[basis] = coefficient_at(
+                basis, channel, x, y, width, height, basis_count,
+                kernel_width, kernel_height, grid_width, grid_height);
+            weight_sum += weights[basis];
+        }
+        float weighted = 0.0;
+        for (int ky = 0; ky < kernel_height; ++ky) {
+            for (int kx = 0; kx < kernel_width; ++kx) {
+                float effective_kernel = 0.0;
+                for (int basis = 0; basis < basis_count; ++basis) {
+                    int kernel_index = 20 + basis * kernel_width * kernel_height +
+                                       ky * kernel_width + kx;
+                    effective_kernel += weights[basis] * parameters[kernel_index];
                 }
+                weighted += shared_warped(
+                    tile_x + kx - radius_x,
+                    tile_y + ky - radius_y,
+                    channel) * effective_kernel;
             }
-            float weight = coefficient_at(basis, channel, x, y, width, height,
-                                          basis_count, kernel_width, kernel_height,
-                                          grid_width, grid_height);
-            weighted += blurred * weight;
-            weight_sum += weight;
         }
         float gain = max(1.0 - parameters[9 + channel * 2] * radius2 -
                          parameters[10 + channel * 2] * radius2 * radius2, 0.0);
         output_pixels[(y * width + x) * 3 + channel] = weighted / max(weight_sum, 1e-12) * gain;
     }
 }
-

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PhyToy Camera2 Lab</string>
+    <string name="status_waiting_permission">Waiting for Camera2 permission</string>
+    <string name="metrics_waiting">No engine frames yet</string>
+    <string name="status_permission_required">Camera permission is required</string>
+    <string name="status_opening">Opening Camera2 PRIVATE %1$d×%2$d</string>
+    <string name="status_disconnected">Camera disconnected</string>
+    <string name="status_camera_error">Camera error %1$d</string>
+    <string name="status_active">Camera2 PRIVATE → Vulkan active</string>
+    <string name="status_stream_rejected">Camera stream combination rejected</string>
+    <string name="status_engine_error">Engine error: %1$s</string>
+    <string name="status_failure">%1$s: %2$s</string>
+    <string name="verification_yes">YES</string>
+    <string name="verification_waiting">waiting</string>
+    <string name="metrics_format">frames received/rendered: %1$d / %2$d\ndropped/errors: %3$d / %4$d\nlast/max latency: %5$.2f / %6$.2f ms\nrolling P50/P95: %7$.2f / %8$.2f ms\nsubmits/imports/zero-copy: %9$d / %10$d / %11$d\nAImage/AHB format/usage: %12$d / %13$d / 0x%14$x\nVulkan allocation count: %15$d, memory: %16$.1f MiB\nProduct Alpha accepted: %17$s\nPreview currently shows the unprocessed camera stream.</string>
+</resources>

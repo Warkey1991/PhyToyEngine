@@ -63,7 +63,7 @@ std::vector<float> render(
 }
 
 void test_srgb_determinism_and_stages() {
-    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_fixed_focus_alpha.ptp"));
+    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_phytoy_digital_01_v1.ptp"));
     constexpr uint32_t width = 20U;
     constexpr uint32_t height = 14U;
     std::vector<float> input(static_cast<size_t>(width) * height * 3U);
@@ -93,12 +93,20 @@ void test_srgb_determinism_and_stages() {
     assert(std::all_of(first.begin(), first.end(), [](float value) {
         return std::isfinite(value) && value >= 0.0F && value <= 1.0F;
     }));
+    pte_runtime_stats_t stats{};
+    stats.abi_version = PTE_ABI_VERSION;
+    assert(pte_engine_get_runtime_stats(engine.value, &stats) == PTE_STATUS_OK);
+    assert(stats.rendered_frames == 3U);
+    assert(stats.cpu_frames == 3U);
+    assert(stats.vulkan_frames == 0U);
+    assert(stats.vulkan_queue_submissions == 0U);
+    assert(stats.ahardware_buffer_imports == 0U);
 }
 
 void test_yuv_and_raw_execute() {
     constexpr uint32_t width = 12U;
     constexpr uint32_t height = 10U;
-    const auto toy = profile("toy_fixed_focus_alpha.ptp");
+    const auto toy = profile("toy_phytoy_digital_01_v1.ptp");
     {
         Engine engine(profile("host_generic_yuv420.ptp"), toy);
         std::vector<float> y(static_cast<size_t>(width) * height, 0.45F);
@@ -131,7 +139,19 @@ void test_yuv_and_raw_execute() {
 }
 
 void test_argument_validation() {
-    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_fixed_focus_alpha.ptp"));
+    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_phytoy_digital_01_v1.ptp"));
+    pte_engine_profile_info_t info{};
+    info.abi_version = PTE_ABI_VERSION;
+    assert(pte_engine_get_profile_info(engine.value, &info) == PTE_STATUS_OK);
+    assert(std::string(info.host_profile_id) == "phytoy.host.generic_srgb");
+    assert(std::string(info.toy_profile_id) == "phytoy.toy.digital_01");
+    assert(std::string(info.toy_profile_version) == "1.0.0");
+    assert(std::string(info.toy_profile_type) == "designed");
+    assert(std::string(info.toy_calibration_status) == "synthetic_locked");
+    assert(std::string(info.toy_target_name) == "PhyToy Digital 01");
+    assert(std::string(info.toy_dataset_id).empty());
+    info.abi_version = PTE_ABI_VERSION + 1U;
+    assert(pte_engine_get_profile_info(engine.value, &info) == PTE_STATUS_INVALID_ARGUMENT);
     std::vector<float> input(4U * 4U * 3U, 0.5F);
     std::vector<float> output(2U, 0.0F);
     pte_frame_f32_t frame{};
@@ -147,6 +167,10 @@ void test_argument_validation() {
     assert(pte_backend_is_available(PTE_BACKEND_AUTO) == 1U);
     assert(pte_engine_set_backend(engine.value, PTE_BACKEND_AUTO) == PTE_STATUS_OK);
 #if !defined(__ANDROID__)
+    assert(pte_engine_supports_ahardware_buffer_input(engine.value) == 0U);
+    assert(pte_engine_forget_ahardware_buffer(engine.value, nullptr) == PTE_STATUS_OK);
+    assert(pte_engine_process_ahardware_buffer(engine.value, nullptr, nullptr) ==
+           PTE_STATUS_INVALID_ARGUMENT);
     assert(pte_backend_is_available(PTE_BACKEND_VULKAN) == 0U);
     assert(pte_engine_set_backend(engine.value, PTE_BACKEND_VULKAN) != PTE_STATUS_OK);
 #endif

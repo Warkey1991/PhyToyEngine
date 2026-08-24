@@ -1,0 +1,31 @@
+{
+  "backend": "cpu",
+  "checks": {
+    "mean_relative_error": {
+      "actual": 0.00642052493676829,
+      "expected_max": 0.02,
+      "passed": true
+    },
+    "sample_count": {
+      "actual": 512,
+      "expected": 512,
+      "passed": true
+    },
+    "variance_relative_error": {
+      "actual": 0.04950736018944162,
+      "expected_max": 0.05,
+      "passed": true
+    }
+  },
+  "constant_input_u8": 82,
+  "first_seed": 1,
+  "frames": 128,
+  "height": 8,
+  "input": "f32",
+  "native_mean": 128.131,
+  "native_variance": 101.782,
+  "passed": true,
+  "python_mean": 128.958984375,
+  "python_variance": 96.98073959350586,
+  "width": 8
+}

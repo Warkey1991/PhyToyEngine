@@ -11,6 +11,8 @@
 #include <limits>
 #include <span>
 #include <stdexcept>
+#include <string_view>
+#include <utility>
 
 namespace phytoy {
 namespace {
@@ -63,6 +65,11 @@ float number(const json::Value& value, const char* field) {
 float optional_number(const json::Value& object, const char* field, float fallback) {
     const json::Value* value = object.find(field);
     return value == nullptr ? fallback : number(*value, field);
+}
+
+std::string optional_string(const json::Value& object, const char* field, std::string fallback = {}) {
+    const json::Value* value = object.find(field);
+    return value == nullptr ? std::move(fallback) : value->as_string();
 }
 
 bool optional_bool(const json::Value& object, const char* field, bool fallback) {
@@ -165,6 +172,29 @@ void validate_cfa(const std::string& cfa) {
     }
 }
 
+bool is_semver_triplet(std::string_view version) {
+    size_t component_start = 0U;
+    for (uint32_t component = 0U; component < 3U; ++component) {
+        const size_t separator = version.find('.', component_start);
+        const size_t component_end = component == 2U ? version.size() : separator;
+        if ((component < 2U && separator == std::string_view::npos) ||
+            component_end == component_start) return false;
+        for (size_t index = component_start; index < component_end; ++index) {
+            if (version[index] < '0' || version[index] > '9') return false;
+        }
+        component_start = component_end + 1U;
+    }
+    return component_start == version.size() + 1U;
+}
+
+bool is_sha256_hex(std::string_view digest) {
+    if (digest.size() != 64U) return false;
+    return std::all_of(digest.begin(), digest.end(), [](char character) {
+        return (character >= '0' && character <= '9') ||
+               (character >= 'a' && character <= 'f');
+    });
+}
+
 }  // namespace
 
 HostProfile load_host_profile_package(const std::filesystem::path& path) {
@@ -203,6 +233,32 @@ ToyProfile load_toy_profile_package(const std::filesystem::path& path) {
     require_profile_header(root, "toy");
     ToyProfile result;
     result.id = root.at("id").as_string();
+    result.version = root.at("version").as_string();
+    if (!is_semver_triplet(result.version)) {
+        throw std::runtime_error("toy profile version must use MAJOR.MINOR.PATCH");
+    }
+    if (const json::Value* provenance = root.find("provenance")) {
+        result.provenance.profile_type = optional_string(*provenance, "profile_type", "unspecified");
+        result.provenance.calibration_status = optional_string(*provenance, "calibration_status", "unspecified");
+        result.provenance.target_name = optional_string(*provenance, "target_name");
+        result.provenance.source = optional_string(*provenance, "source");
+        result.provenance.dataset_id = optional_string(*provenance, "dataset_id");
+        result.provenance.dataset_sha256 = optional_string(*provenance, "dataset_sha256");
+        result.provenance.license = optional_string(*provenance, "license");
+        if (result.provenance.profile_type != "designed" &&
+            result.provenance.profile_type != "measured") {
+            throw std::runtime_error("toy profile_type must be designed or measured");
+        }
+        if (result.provenance.calibration_status.empty() ||
+            result.provenance.target_name.empty() || result.provenance.source.empty()) {
+            throw std::runtime_error("toy profile provenance is incomplete");
+        }
+        if (result.provenance.profile_type == "measured" &&
+            (result.provenance.dataset_id.empty() ||
+             !is_sha256_hex(result.provenance.dataset_sha256))) {
+            throw std::runtime_error("measured toy profile requires dataset id and SHA-256");
+        }
+    }
 
     const json::Value& optics = root.at("optics");
     result.optics.distortion = fixed_array<4>(optics.at("distortion"), "distortion");
@@ -221,6 +277,9 @@ ToyProfile load_toy_profile_package(const std::filesystem::path& path) {
 
     const json::Value& psf = optics.at("psf");
     for (const auto& basis : psf.at("bases").as_array()) result.optics.psf_bases.push_back(parse_kernel(basis));
+    if (result.optics.psf_bases.size() > 8U) {
+        throw std::runtime_error("PSF supports at most 8 bases");
+    }
     const auto& coefficient_bases = psf.at("coefficients").as_array();
     if (coefficient_bases.size() != result.optics.psf_bases.size()) {
         throw std::runtime_error("PSF basis and coefficient counts differ");
@@ -277,4 +336,3 @@ ToyProfile load_toy_profile_package(const std::filesystem::path& path) {
 }
 
 }  // namespace phytoy
-

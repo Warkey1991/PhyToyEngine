@@ -33,13 +33,20 @@ The goal is to make a physical toy-camera rendering model that is understandable
 - Python reference implementation for high-precision experimentation and regression tests.
 - C++20 runtime with a stable C ABI for application integration.
 - Portable CPU backend and an Android Vulkan compute backend.
+- One-submit Vulkan render graph with persistent resource reuse and Camera2
+  `AHardwareBuffer` zero-copy input.
 - sRGB, BT.709 YUV420, and Bayer RAW host-input normalization.
 - Target optics, digital sensor, ADC, and ISP stages with intermediate outputs.
 - Validated camera profiles with schema checks and SHA-256 package integrity.
 - Native command-line renderer and Python/C++/Vulkan conformance tests.
 - Deterministic rendering for the same input, profile, and random seed.
 
-The Alpha currently demonstrates one fixed-focus digital toy-camera model and one RAW-capable Android host profile. It is an engine core and research-quality implementation, not a finished camera application or a laboratory-calibrated commercial camera emulation.
+The Synthetic Alpha candidate ships the original, versioned **PhyToy Digital 01** designed
+profile and one RAW-capable Android host profile. Its versioned synthetic-AHardwareBuffer
+contract passes on Samsung SM-S9210 / Adreno 750, including 720p, 12 MP, thermal, 10,000-frame,
+and cross-backend checks. It remains an engine core, not a finished camera application or a
+laboratory-calibrated physical-camera replica; a real Camera2 PRIVATE capture session is the
+next Android integration gate.
 
 ## Who is it for?
 
@@ -53,7 +60,10 @@ PhyToyEngine is intended for:
 
 ## Roadmap toward a product engine
 
-The next engineering milestones are real-camera calibration, chart and dark-frame validation, dynamic Camera2 metadata handling, zero-copy Android image buffers, performance and thermal validation at production resolutions, a Metal backend for iOS, and integration into complete Android/iOS applications.
+The next engineering milestones are real Camera2 PRIVATE capture-session acceptance, dynamic
+Camera2 metadata handling, lower-memory 12MP output, a Metal backend for iOS, complete
+Android/iOS application integration, and optional real-camera calibration profiles with
+immutable datasets.
 
 ## Contributing
 
@@ -108,13 +118,18 @@ PhyToyEngine 是一个开源、由 Profile 驱动的物理玩具相机成像引�
 - Python 高精度参考实现，用于算法研究、实验和回归测试。
 - 支持稳定 C ABI 的 C++20 Runtime，方便移动端集成。
 - 可移植 CPU 后端和 Android Vulkan Compute 后端。
+- 每帧一次提交、持久资源复用，以及 Camera2 `AHardwareBuffer` 零拷贝输入。
 - 支持 sRGB、BT.709 YUV420 和 Bayer RAW 宿主输入归一化。
 - 支持目标镜头、数字传感器、ADC、ISP，以及逐阶段中间结果输出。
 - 支持带 Schema 校验和 SHA-256 完整性检查的相机 Profile。
 - 提供原生命令行渲染器，以及 Python/C++/Vulkan 一致性测试。
 - 对相同输入、Profile 和随机种子提供确定性渲染。
 
-当前 Alpha 主要验证了一台固定焦点数字玩具相机模型和一台支持 RAW 的 Android 宿主 Profile。它目前是引擎内核和研究级实现，不是已经完成的相机 App，也不是已经通过实验室完整标定的商业相机复刻产品。
+当前 Synthetic Alpha 候选版提供原创且版本锁定的 **PhyToy Digital 01** 设计 Profile，
+以及一台支持 RAW 的 Android 宿主 Profile。其合成 AHardwareBuffer 协议已在 Samsung
+SM-S9210 / Adreno 750 上通过 720p、12MP、温控、10,000 帧和跨后端检查。它仍是引擎
+内核，不是完整相机 App，也不是实验室标定的真实相机复刻；下一道 Android 门槛是
+真实 Camera2 PRIVATE 拍摄会话验收。
 
 ## 适合哪些人？
 
@@ -128,7 +143,9 @@ PhyToyEngine 适合：
 
 ## 面向产品引擎的下一步
 
-下一阶段重点包括真实相机标定、色卡与暗场验证、动态 Camera2 元数据处理、Android 零拷贝图像缓冲区、生产分辨率下的性能和温控验证、iOS Metal 后端，以及完整 Android/iOS 相机应用集成。
+下一阶段重点包括真实 Camera2 PRIVATE 拍摄会话验收、动态 Camera2 元数据、进一步
+降低 12MP 内存、iOS Metal 后端、完整 Android/iOS App，以及未来带不可变数据集的
+真实标定 Profile。
 
 ## 如何参与贡献？
 

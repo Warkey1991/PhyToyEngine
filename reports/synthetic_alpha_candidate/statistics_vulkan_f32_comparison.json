@@ -1,0 +1,31 @@
+{
+  "backend": "vulkan",
+  "checks": {
+    "mean_relative_error": {
+      "actual": 0.007630211883017598,
+      "expected_max": 0.02,
+      "passed": true
+    },
+    "sample_count": {
+      "actual": 512,
+      "expected": 512,
+      "passed": true
+    },
+    "variance_relative_error": {
+      "actual": 0.006052339969300951,
+      "expected_max": 0.05,
+      "passed": true
+    }
+  },
+  "constant_input_u8": 82,
+  "first_seed": 1,
+  "frames": 128,
+  "height": 8,
+  "input": "f32",
+  "native_mean": 127.975,
+  "native_variance": 97.5677,
+  "passed": true,
+  "python_mean": 128.958984375,
+  "python_variance": 96.98073959350586,
+  "width": 8
+}

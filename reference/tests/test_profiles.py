@@ -12,14 +12,31 @@ def test_sample_profiles_validate(host_srgb_path, host_raw_path, host_device_raw
     device = load_host_profile(host_device_raw_path)
     assert device["raw"]["cfa"] == "GBRG"
     assert device["provenance"]["device_model"] == "Samsung SM-S9210"
-    assert load_toy_profile(toy_path)["capture_medium_family"] == "digital_sensor_v1"
+    toy = load_toy_profile(toy_path)
+    assert toy["capture_medium_family"] == "digital_sensor_v1"
+    assert toy["id"] == "phytoy.toy.digital_01"
+    assert toy["version"] == "1.0.0"
+    assert toy["provenance"]["profile_type"] == "designed"
+    assert toy["provenance"]["calibration_status"] == "synthetic_locked"
 
 
 def test_profile_package_round_trip(tmp_path, toy_path):
     destination = tmp_path / "toy.ptp"
     compile_profile(toy_path, destination)
     loaded = load_compiled_profile(destination)
-    assert loaded["id"] == "phytoy.toy.fixed_focus_alpha"
+    assert loaded["id"] == "phytoy.toy.digital_01"
+
+
+def test_measured_profile_requires_immutable_dataset(toy_path):
+    profile = json.loads(toy_path.read_text())
+    profile["provenance"]["profile_type"] = "measured"
+    profile["provenance"]["calibration_status"] = "chart_validated"
+    with pytest.raises(ProfileError, match="dataset_id"):
+        load_toy_profile(profile)
+    profile["provenance"]["dataset_id"] = "dataset.example.v1"
+    profile["provenance"]["dataset_sha256"] = "not-a-digest"
+    with pytest.raises(ProfileError, match="SHA-256"):
+        load_toy_profile(profile)
 
 
 def test_profile_package_detects_corruption(tmp_path, toy_path):

@@ -1,0 +1,34 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(set = 0, binding = 0) uniform sampler2D input_image;
+layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float output_pixels[]; };
+layout(std430, set = 0, binding = 2) readonly buffer ParameterBuffer { float parameters[]; };
+
+float srgb_decode(float encoded) {
+    encoded = clamp(encoded, 0.0, 1.0);
+    return encoded <= 0.04045
+        ? encoded / 12.92
+        : pow((encoded + 0.055) / 1.055, 2.4);
+}
+
+void main() {
+    int x = int(gl_GlobalInvocationID.x);
+    int y = int(gl_GlobalInvocationID.y);
+    int width = int(parameters[0] + 0.5);
+    int height = int(parameters[1] + 0.5);
+    if (x >= width || y >= height) return;
+
+    vec2 coordinate = (vec2(x, y) + vec2(0.5)) / vec2(width, height);
+    vec3 encoded = texture(input_image, coordinate).rgb;
+    vec3 linear_srgb = vec3(
+        srgb_decode(encoded.r), srgb_decode(encoded.g), srgb_decode(encoded.b));
+    vec3 scene = vec3(
+        dot(vec3(parameters[2], parameters[3], parameters[4]), linear_srgb),
+        dot(vec3(parameters[5], parameters[6], parameters[7]), linear_srgb),
+        dot(vec3(parameters[8], parameters[9], parameters[10]), linear_srgb));
+    int offset = (y * width + x) * 3;
+    output_pixels[offset] = scene.r;
+    output_pixels[offset + 1] = scene.g;
+    output_pixels[offset + 2] = scene.b;
+}

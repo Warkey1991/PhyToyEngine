@@ -1,0 +1,646 @@
+{
+  "contract": "phytoy.synthetic_alpha.v1",
+  "passed": true,
+  "checks": [
+    {
+      "check": "preview_720p.width",
+      "passed": true,
+      "actual": 1280,
+      "expected": 1280
+    },
+    {
+      "check": "preview_720p.height",
+      "passed": true,
+      "actual": 720,
+      "expected": 720
+    },
+    {
+      "check": "preview_720p.input",
+      "passed": true,
+      "actual": "ahb",
+      "expected": "ahb"
+    },
+    {
+      "check": "preview_720p.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "preview_720p.minimum_measured_frames",
+      "passed": true,
+      "actual": 300,
+      "expected": 300
+    },
+    {
+      "check": "preview_720p.latency_ms_p50_max",
+      "passed": true,
+      "actual": 32.146,
+      "expected": 33.333
+    },
+    {
+      "check": "preview_720p.latency_ms_p95_max",
+      "passed": true,
+      "actual": 38.3359,
+      "expected": 40.0
+    },
+    {
+      "check": "preview_720p.vulkan_allocated_bytes_max",
+      "passed": true,
+      "actual": 25805588,
+      "expected": 33554432
+    },
+    {
+      "check": "preview_720p.rss_growth_kib_max",
+      "passed": true,
+      "actual": 0,
+      "expected": 32768
+    },
+    {
+      "check": "preview_720p.thermal_status_max",
+      "passed": true,
+      "actual": 0,
+      "expected": 2
+    },
+    {
+      "check": "preview_720p.single_submit",
+      "passed": true,
+      "actual": 300,
+      "expected": 300
+    },
+    {
+      "check": "preview_720p.resource_reuse",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "check": "preview_720p.zero_copy",
+      "passed": true,
+      "actual": {
+        "zero_copy_frames": 300,
+        "imports": 0
+      },
+      "expected": {
+        "zero_copy_frames": 300,
+        "imports_after_warmup": 0
+      }
+    },
+    {
+      "check": "final_12mp.width",
+      "passed": true,
+      "actual": 4000,
+      "expected": 4000
+    },
+    {
+      "check": "final_12mp.height",
+      "passed": true,
+      "actual": 3000,
+      "expected": 3000
+    },
+    {
+      "check": "final_12mp.input",
+      "passed": true,
+      "actual": "ahb",
+      "expected": "ahb"
+    },
+    {
+      "check": "final_12mp.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "final_12mp.minimum_measured_frames",
+      "passed": true,
+      "actual": 5,
+      "expected": 5
+    },
+    {
+      "check": "final_12mp.latency_ms_p50_max",
+      "passed": true,
+      "actual": 292.107,
+      "expected": 1500.0
+    },
+    {
+      "check": "final_12mp.latency_ms_p95_max",
+      "passed": true,
+      "actual": 295.212,
+      "expected": 2000.0
+    },
+    {
+      "check": "final_12mp.vulkan_allocated_bytes_max",
+      "passed": true,
+      "actual": 336000788,
+      "expected": 402653184
+    },
+    {
+      "check": "final_12mp.peak_rss_kib_max",
+      "passed": true,
+      "actual": 495264,
+      "expected": 716800
+    },
+    {
+      "check": "final_12mp.thermal_status_max",
+      "passed": true,
+      "actual": 0,
+      "expected": 2
+    },
+    {
+      "check": "final_12mp.single_submit",
+      "passed": true,
+      "actual": 5,
+      "expected": 5
+    },
+    {
+      "check": "final_12mp.resource_reuse",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "check": "final_12mp.zero_copy",
+      "passed": true,
+      "actual": {
+        "zero_copy_frames": 5,
+        "imports": 0
+      },
+      "expected": {
+        "zero_copy_frames": 5,
+        "imports_after_warmup": 0
+      }
+    },
+    {
+      "check": "long_run_720p.width",
+      "passed": true,
+      "actual": 1280,
+      "expected": 1280
+    },
+    {
+      "check": "long_run_720p.height",
+      "passed": true,
+      "actual": 720,
+      "expected": 720
+    },
+    {
+      "check": "long_run_720p.input",
+      "passed": true,
+      "actual": "ahb",
+      "expected": "ahb"
+    },
+    {
+      "check": "long_run_720p.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "long_run_720p.minimum_measured_frames",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000
+    },
+    {
+      "check": "long_run_720p.rss_growth_kib_max",
+      "passed": true,
+      "actual": 0,
+      "expected": 32768
+    },
+    {
+      "check": "long_run_720p.thermal_status_max",
+      "passed": true,
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "check": "long_run_720p.single_submit",
+      "passed": true,
+      "actual": 10000,
+      "expected": 10000
+    },
+    {
+      "check": "long_run_720p.resource_reuse",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "check": "long_run_720p.zero_copy",
+      "passed": true,
+      "actual": {
+        "zero_copy_frames": 10000,
+        "imports": 0
+      },
+      "expected": {
+        "zero_copy_frames": 10000,
+        "imports_after_warmup": 0
+      }
+    },
+    {
+      "check": "device_conformance.required_paths",
+      "passed": true,
+      "actual": [
+        "cpu_f32",
+        "vulkan_ahb",
+        "vulkan_f32"
+      ],
+      "expected": [
+        "cpu_f32",
+        "vulkan_ahb",
+        "vulkan_f32"
+      ]
+    },
+    {
+      "check": "device_conformance.cpu_f32.width",
+      "passed": true,
+      "actual": 22,
+      "expected": 22
+    },
+    {
+      "check": "device_conformance.cpu_f32.height",
+      "passed": true,
+      "actual": 18,
+      "expected": 18
+    },
+    {
+      "check": "device_conformance.cpu_f32.seed",
+      "passed": true,
+      "actual": 1234,
+      "expected": 1234
+    },
+    {
+      "check": "device_conformance.cpu_f32.01_scene_linear",
+      "passed": true,
+      "actual": 2.6416564352649274e-09,
+      "expected": 2e-05
+    },
+    {
+      "check": "device_conformance.cpu_f32.02_target_optics",
+      "passed": true,
+      "actual": 2.448112483566245e-09,
+      "expected": 8e-05
+    },
+    {
+      "check": "device_conformance.cpu_f32.03_target_sensor_dn",
+      "passed": true,
+      "actual": 0.0,
+      "expected": 0.51
+    },
+    {
+      "check": "device_conformance.cpu_f32.04_target_isp_linear",
+      "passed": true,
+      "actual": 1.3098027454305772e-09,
+      "expected": 0.002
+    },
+    {
+      "check": "device_conformance.cpu_f32.05_output_srgb",
+      "passed": true,
+      "actual": 4.278891939449303e-07,
+      "expected": 0.003
+    },
+    {
+      "check": "device_conformance.vulkan_f32.width",
+      "passed": true,
+      "actual": 22,
+      "expected": 22
+    },
+    {
+      "check": "device_conformance.vulkan_f32.height",
+      "passed": true,
+      "actual": 18,
+      "expected": 18
+    },
+    {
+      "check": "device_conformance.vulkan_f32.seed",
+      "passed": true,
+      "actual": 1234,
+      "expected": 1234
+    },
+    {
+      "check": "device_conformance.vulkan_f32.01_scene_linear",
+      "passed": true,
+      "actual": 2.6416564352649274e-09,
+      "expected": 2e-05
+    },
+    {
+      "check": "device_conformance.vulkan_f32.02_target_optics",
+      "passed": true,
+      "actual": 3.3794350581817234e-09,
+      "expected": 8e-05
+    },
+    {
+      "check": "device_conformance.vulkan_f32.03_target_sensor_dn",
+      "passed": true,
+      "actual": 0.0,
+      "expected": 0.51
+    },
+    {
+      "check": "device_conformance.vulkan_f32.04_target_isp_linear",
+      "passed": true,
+      "actual": 1.3098027454305772e-09,
+      "expected": 0.002
+    },
+    {
+      "check": "device_conformance.vulkan_f32.05_output_srgb",
+      "passed": true,
+      "actual": 4.278891939449303e-07,
+      "expected": 0.003
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.width",
+      "passed": true,
+      "actual": 22,
+      "expected": 22
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.height",
+      "passed": true,
+      "actual": 18,
+      "expected": 18
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.seed",
+      "passed": true,
+      "actual": 1234,
+      "expected": 1234
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.01_scene_linear",
+      "passed": true,
+      "actual": 5.3430839440371525e-09,
+      "expected": 2e-05
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.02_target_optics",
+      "passed": true,
+      "actual": 2.9659538262893914e-09,
+      "expected": 8e-05
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.03_target_sensor_dn",
+      "passed": true,
+      "actual": 0.0,
+      "expected": 0.51
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.04_target_isp_linear",
+      "passed": true,
+      "actual": 1.3098027454305772e-09,
+      "expected": 0.002
+    },
+    {
+      "check": "device_conformance.vulkan_ahb.05_output_srgb",
+      "passed": true,
+      "actual": 4.278891939449303e-07,
+      "expected": 0.003
+    },
+    {
+      "check": "stochastic_consistency.required_paths",
+      "passed": true,
+      "actual": [
+        "cpu_f32",
+        "vulkan_ahb",
+        "vulkan_f32"
+      ],
+      "expected": [
+        "cpu_f32",
+        "vulkan_ahb",
+        "vulkan_f32"
+      ]
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.backend",
+      "passed": true,
+      "actual": "cpu",
+      "expected": "cpu"
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.input",
+      "passed": true,
+      "actual": "f32",
+      "expected": "f32"
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.width",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.height",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.constant_input_u8",
+      "passed": true,
+      "actual": 82,
+      "expected": 82
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.minimum_seeds",
+      "passed": true,
+      "actual": 128,
+      "expected": 128
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.mean_relative_error_max",
+      "passed": true,
+      "actual": 0.00642052493676829,
+      "expected": 0.02
+    },
+    {
+      "check": "stochastic_consistency.cpu_f32.variance_relative_error_max",
+      "passed": true,
+      "actual": 0.04950736018944162,
+      "expected": 0.05
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.input",
+      "passed": true,
+      "actual": "f32",
+      "expected": "f32"
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.width",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.height",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.constant_input_u8",
+      "passed": true,
+      "actual": 82,
+      "expected": 82
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.minimum_seeds",
+      "passed": true,
+      "actual": 128,
+      "expected": 128
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.mean_relative_error_max",
+      "passed": true,
+      "actual": 0.007630211883017598,
+      "expected": 0.02
+    },
+    {
+      "check": "stochastic_consistency.vulkan_f32.variance_relative_error_max",
+      "passed": true,
+      "actual": 0.006052339969300951,
+      "expected": 0.05
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.input",
+      "passed": true,
+      "actual": "ahb",
+      "expected": "ahb"
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.width",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.height",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.constant_input_u8",
+      "passed": true,
+      "actual": 82,
+      "expected": 82
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.minimum_seeds",
+      "passed": true,
+      "actual": 128,
+      "expected": 128
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.mean_relative_error_max",
+      "passed": true,
+      "actual": 0.007630211883017598,
+      "expected": 0.02
+    },
+    {
+      "check": "stochastic_consistency.vulkan_ahb.variance_relative_error_max",
+      "passed": true,
+      "actual": 0.006052339969300951,
+      "expected": 0.05
+    },
+    {
+      "check": "fixed_seed_repeatability.cpu_f32.backend",
+      "passed": true,
+      "actual": "cpu",
+      "expected": "cpu"
+    },
+    {
+      "check": "fixed_seed_repeatability.cpu_f32.input",
+      "passed": true,
+      "actual": "f32",
+      "expected": "f32"
+    },
+    {
+      "check": "fixed_seed_repeatability.cpu_f32.minimum_frames",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "fixed_seed_repeatability.cpu_f32.fixed_seed",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "check": "fixed_seed_repeatability.cpu_f32.sensor_samples",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_f32.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_f32.input",
+      "passed": true,
+      "actual": "f32",
+      "expected": "f32"
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_f32.minimum_frames",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_f32.fixed_seed",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_f32.sensor_samples",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_ahb.backend",
+      "passed": true,
+      "actual": "vulkan",
+      "expected": "vulkan"
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_ahb.input",
+      "passed": true,
+      "actual": "ahb",
+      "expected": "ahb"
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_ahb.minimum_frames",
+      "passed": true,
+      "actual": 4,
+      "expected": 4
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_ahb.fixed_seed",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "check": "fixed_seed_repeatability.vulkan_ahb.sensor_samples",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    }
+  ]
+}

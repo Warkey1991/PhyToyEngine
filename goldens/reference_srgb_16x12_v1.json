@@ -2,6 +2,7 @@
   "fixture": "procedural_rgb_16x12_v1",
   "round_decimals": 6,
   "seed": 20260820,
+  "toy_profile": "profiles/authoring/toy_fixed_focus_alpha.json",
   "stages": {
     "01_scene_linear": {
       "mean": 0.299371078,

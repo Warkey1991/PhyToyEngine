@@ -62,7 +62,12 @@ class Options(ctypes.Structure):
     ]
 
 
-def _native_render(source: np.ndarray) -> tuple[np.ndarray, dict[int, np.ndarray]]:
+def _native_render(
+    source: np.ndarray,
+    *,
+    toy_package: str = "toy_fixed_focus_conformance.ptp",
+    seed: int = 1234,
+) -> tuple[np.ndarray, dict[int, np.ndarray]]:
     library = ctypes.CDLL(str(LIBRARY_PATH))
     library.pte_engine_create.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.POINTER(ctypes.c_void_p)]
     library.pte_engine_create.restype = ctypes.c_int
@@ -81,7 +86,7 @@ def _native_render(source: np.ndarray) -> tuple[np.ndarray, dict[int, np.ndarray
     engine = ctypes.c_void_p()
     status = library.pte_engine_create(
         os.fsencode(profile_dir / "host_generic_srgb.ptp"),
-        os.fsencode(profile_dir / "toy_fixed_focus_conformance.ptp"),
+        os.fsencode(profile_dir / toy_package),
         ctypes.byref(engine),
     )
     assert status == 0
@@ -103,7 +108,7 @@ def _native_render(source: np.ndarray) -> tuple[np.ndarray, dict[int, np.ndarray
         values = np.ctypeslib.as_array(data, shape=(width * height * channels,))
         stages[stage] = values.copy().reshape(height, width, channels)
 
-    options = Options(1, 1234, callback, None)
+    options = Options(1, seed, callback, None)
     try:
         status = library.pte_engine_render(engine, ctypes.byref(frame), ctypes.byref(options), ctypes.byref(output))
         assert status == 0, library.pte_engine_last_error(engine).decode("utf-8")
@@ -139,3 +144,26 @@ def test_python_cpp_noiseless_stage_conformance(project_root: Path) -> None:
         difference = np.max(np.abs(native - expected))
         assert difference <= limits[stage], f"{name} max difference {difference}"
     assert np.max(np.abs(native_output - reference.output_srgb)) <= limits[5]
+
+
+def test_python_cpp_digital01_sensor_statistics(project_root: Path) -> None:
+    source = np.full((8, 8, 3), 0.32, dtype=np.float64)
+    host = load_host_profile(project_root / "profiles/authoring/host_generic_srgb.json")
+    toy = load_toy_profile(project_root / "profiles/authoring/toy_phytoy_digital_01_v1.json")
+    reference_pipeline = ReferencePipeline(host, toy)
+    native_samples = []
+    reference_samples = []
+    for seed in range(128):
+        _, native_stages = _native_render(
+            source, toy_package="toy_phytoy_digital_01_v1.ptp", seed=seed
+        )
+        reference = reference_pipeline.render_srgb(source, seed=seed)
+        native_samples.extend(native_stages[3][3:5, 3:5, 0].ravel())
+        reference_samples.extend(reference.stages["03_target_sensor_dn"][3:5, 3:5].ravel())
+
+    native_values = np.asarray(native_samples)
+    reference_values = np.asarray(reference_samples)
+    mean_relative_error = abs(np.mean(native_values) - np.mean(reference_values)) / np.mean(reference_values)
+    variance_relative_error = abs(np.var(native_values) - np.var(reference_values)) / np.var(reference_values)
+    assert mean_relative_error <= 0.02
+    assert variance_relative_error <= 0.05

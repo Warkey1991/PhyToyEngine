@@ -1,0 +1,16 @@
+{
+  "captured_at_utc": "2026-08-21T02:16:20.991225+00:00",
+  "manufacturer": "samsung",
+  "model": "SM-S9210",
+  "android_api": 36,
+  "build_fingerprint": "samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZG1:user/release-keys",
+  "gpu": "Adreno (TM) 750",
+  "vulkan_api_version": 4210688.0,
+  "vulkan_driver_version": 2150604841.0,
+  "vulkan_driver": "Qualcomm Technologies Inc. Adreno Vulkan Driver",
+  "vulkan_driver_info": "Driver Build: f6b5df5188, I29aebc4401, 1758283784\nDate: 09/19/25\nCompiler Version: E031.45.02.26\nDriver Branch: \n",
+  "contract": "phytoy.synthetic_alpha.v1",
+  "contract_status": "accepted_on_sm_s9210_synthetic_ahb",
+  "ahardware_buffer_source": "AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM synthetic fixture",
+  "camera2_private_capture_tested": false
+}

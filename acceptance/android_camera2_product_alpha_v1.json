@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "phytoy.android.camera2_product_alpha.v1",
+  "status": "smoke_device_accepted",
+  "latest_device_acceptance": {
+    "date": "2026-08-24",
+    "device": "Samsung SM-S9210",
+    "engine_version": "0.2.1",
+    "report": "reports/android_camera2_sm_s9210_0_2_1/evaluation.json",
+    "checks_passed": 11,
+    "checks_total": 11
+  },
+  "input": {
+    "reader_format": "AIMAGE_FORMAT_PRIVATE",
+    "expected_aimage_format": 34,
+    "ahardwarebuffer_format": "vendor_defined_and_vulkan_query_validated",
+    "required_ahardwarebuffer_usage_mask": 256
+  },
+  "smoke": {
+    "minimum_rendered_frames": 30,
+    "maximum_error_frames": 0,
+    "maximum_imported_buffer_slots": 8,
+    "latency_ms_p95_max": 45.0,
+    "queue_submissions_per_frame": 1,
+    "zero_copy_frames_per_frame": 1
+  },
+  "remaining_product_gates": [
+    "processed GPU preview output surface",
+    "30-minute sustained preview latency and thermal run",
+    "foreground/background, rotation and camera restart lifecycle",
+    "multi-vendor device matrix"
+  ]
+}

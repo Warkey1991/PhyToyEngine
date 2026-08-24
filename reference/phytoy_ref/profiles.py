@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -72,7 +73,7 @@ def _validate_common(profile: dict, expected_kind: str) -> None:
         if expected_kind == "host"
         else {
             "schema_version", "kind", "id", "version", "capture_medium_family",
-            "optics", "sensor", "isp",
+            "optics", "sensor", "isp", "provenance",
         },
         "root",
     )
@@ -84,30 +85,51 @@ def _validate_common(profile: dict, expected_kind: str) -> None:
         raise ProfileError("profile id must be a non-empty string")
     if not isinstance(profile.get("version"), str) or not profile["version"]:
         raise ProfileError("profile version must be a non-empty string")
+    if re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", profile["version"]) is None:
+        raise ProfileError("profile version must use MAJOR.MINOR.PATCH")
+
+
+def _validate_provenance(profile: dict, expected_kind: str) -> None:
+    if "provenance" not in profile:
+        return
+    provenance = profile["provenance"]
+    common = {"source", "calibration_status", "notes"}
+    allowed = common | ({"device_model", "camera_id", "capture_date", "reference_illuminant"}
+                        if expected_kind == "host" else {
+                            "profile_type", "target_name", "created_utc", "dataset_id",
+                            "dataset_sha256", "license",
+                        })
+    _reject_unknown(provenance, allowed, "provenance")
+    if not all(
+        isinstance(value, str)
+        for key, value in provenance.items()
+        if key != "notes"
+    ):
+        raise ProfileError("provenance scalar fields must be strings")
+    if "notes" in provenance and (
+        not isinstance(provenance["notes"], list)
+        or not all(isinstance(note, str) for note in provenance["notes"])
+    ):
+        raise ProfileError("provenance.notes must be an array of strings")
+    if expected_kind != "toy":
+        return
+    profile_type = provenance.get("profile_type")
+    if profile_type not in {"designed", "measured"}:
+        raise ProfileError("toy provenance.profile_type must be designed or measured")
+    for field in ("target_name", "source", "calibration_status"):
+        if not provenance.get(field):
+            raise ProfileError(f"toy provenance.{field} must be a non-empty string")
+    if profile_type == "measured":
+        if not provenance.get("dataset_id"):
+            raise ProfileError("measured toy profiles require provenance.dataset_id")
+        digest = provenance.get("dataset_sha256", "")
+        if re.fullmatch(r"[0-9a-fA-F]{64}", digest) is None:
+            raise ProfileError("measured toy profiles require a SHA-256 dataset digest")
 
 
 def validate_host_profile(profile: dict) -> dict:
     _validate_common(profile, "host")
-    if "provenance" in profile:
-        _reject_unknown(
-            profile["provenance"],
-            {
-                "device_model", "camera_id", "source", "capture_date",
-                "calibration_status", "reference_illuminant", "notes",
-            },
-            "provenance",
-        )
-        if not all(
-            isinstance(value, str)
-            for key, value in profile["provenance"].items()
-            if key != "notes"
-        ):
-            raise ProfileError("provenance scalar fields must be strings")
-        if "notes" in profile["provenance"] and (
-            not isinstance(profile["provenance"]["notes"], list)
-            or not all(isinstance(note, str) for note in profile["provenance"]["notes"])
-        ):
-            raise ProfileError("provenance.notes must be an array of strings")
+    _validate_provenance(profile, "host")
     _reject_unknown(_require(profile, "input"), {"mode", "color_space"}, "input")
     _reject_unknown(
         _require(profile, "normalization"), {"rgb_residual_matrix"}, "normalization"
@@ -150,6 +172,7 @@ def validate_host_profile(profile: dict) -> dict:
 
 def validate_toy_profile(profile: dict) -> dict:
     _validate_common(profile, "toy")
+    _validate_provenance(profile, "toy")
     if profile.get("capture_medium_family") != "digital_sensor_v1":
         raise ProfileError("Alpha supports only digital_sensor_v1")
 
@@ -189,6 +212,8 @@ def validate_toy_profile(profile: dict) -> dict:
     coefficients = _finite_array(profile, "optics.psf.coefficients")
     if bases.ndim != 3 or bases.shape[1] % 2 != 1 or bases.shape[2] % 2 != 1:
         raise ProfileError("PSF bases must be Kxoddxodd")
+    if bases.shape[0] > 8:
+        raise ProfileError("PSF supports at most 8 bases")
     if np.any(bases < 0.0) or np.any(np.sum(bases, axis=(1, 2)) <= 0.0):
         raise ProfileError("PSF bases must be nonnegative with positive energy")
     if coefficients.ndim != 4 or coefficients.shape[:2] != (bases.shape[0], 3):

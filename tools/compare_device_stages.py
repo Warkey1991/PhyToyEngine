@@ -1,4 +1,4 @@
-"""Compare PFM stage dumps from the native CLI with the Python reference graph."""
+"""Compare native PFM stage dumps with the Python reference graph."""
 
 from __future__ import annotations
 
@@ -32,29 +32,78 @@ def read_pfm(path: Path) -> np.ndarray:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True, type=Path)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input", type=Path)
+    source.add_argument(
+        "--synthetic",
+        action="store_true",
+        help="recreate the deterministic RGB pattern used by phytoy_benchmark",
+    )
+    parser.add_argument("--width", type=int)
+    parser.add_argument("--height", type=int)
     parser.add_argument("--stages", required=True, type=Path)
     parser.add_argument("--host-profile", required=True, type=Path)
     parser.add_argument("--toy-profile", required=True, type=Path)
     parser.add_argument("--seed", required=True, type=int)
+    parser.add_argument("--contract", type=Path)
     arguments = parser.parse_args()
 
-    source = np.asarray(Image.open(arguments.input).convert("RGB"), dtype=np.float64) / 255.0
+    if arguments.synthetic:
+        if not arguments.width or not arguments.height:
+            parser.error("--synthetic requires nonzero --width and --height")
+        yy, xx = np.mgrid[0 : arguments.height, 0 : arguments.width]
+        source_image = np.stack(
+            [xx % 256, yy % 256, (xx + yy) % 256], axis=-1
+        ).astype(np.float64) / 255.0
+    else:
+        source_image = (
+            np.asarray(Image.open(arguments.input).convert("RGB"), dtype=np.float64) / 255.0
+        )
+
     reference = ReferencePipeline(
         load_host_profile(arguments.host_profile), load_toy_profile(arguments.toy_profile)
-    ).render_srgb(source, seed=arguments.seed)
-    report = {}
+    ).render_srgb(source_image, seed=arguments.seed)
+    limits = None
+    if arguments.contract:
+        contract = json.loads(arguments.contract.read_text(encoding="utf-8"))
+        limits = contract["noiseless_stage_max_absolute_error"]
+
+    limit_names = {
+        "01_scene_linear": "scene_linear",
+        "02_target_optics": "target_optics",
+        "03_target_sensor_dn": "target_sensor_dn",
+        "04_target_isp_linear": "target_isp_linear",
+        "05_output_srgb": "output_srgb",
+    }
+    stages = {}
     for name, expected in reference.stages.items():
         actual = read_pfm(arguments.stages / f"{name}.pfm")
         difference = actual - expected
-        report[name] = {
+        maximum = float(np.max(np.abs(difference)))
+        limit = limits[limit_names[name]] if limits is not None else None
+        stages[name] = {
             "max_absolute": float(np.max(np.abs(difference))),
             "mean_absolute": float(np.mean(np.abs(difference))),
             "rmse": float(np.sqrt(np.mean(difference * difference))),
+            "limit": limit,
+            "passed": limit is None or maximum <= limit,
         }
-    print(json.dumps(report, indent=2, sort_keys=True))
+    passed = all(bool(stage["passed"]) for stage in stages.values())
+    print(
+        json.dumps(
+            {
+                "passed": passed,
+                "width": int(source_image.shape[1]),
+                "height": int(source_image.shape[0]),
+                "seed": arguments.seed,
+                "stages": stages,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    raise SystemExit(0 if passed else 1)
 
 
 if __name__ == "__main__":
     main()
-

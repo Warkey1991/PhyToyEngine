@@ -23,6 +23,7 @@ extern "C" {
 #define PTE_ABI_VERSION 1u
 
 typedef struct pte_engine pte_engine_t;
+typedef struct AHardwareBuffer AHardwareBuffer;
 
 typedef enum pte_status {
     PTE_STATUS_OK = 0,
@@ -30,7 +31,8 @@ typedef enum pte_status {
     PTE_STATUS_IO_ERROR = 2,
     PTE_STATUS_PROFILE_ERROR = 3,
     PTE_STATUS_BUFFER_TOO_SMALL = 4,
-    PTE_STATUS_INTERNAL_ERROR = 5
+    PTE_STATUS_INTERNAL_ERROR = 5,
+    PTE_STATUS_UNSUPPORTED = 6
 } pte_status_t;
 
 typedef enum pte_pixel_format {
@@ -90,6 +92,41 @@ typedef struct pte_render_options {
     void* stage_user_data;
 } pte_render_options_t;
 
+/* String pointers are owned by the engine and remain valid until it is destroyed. */
+typedef struct pte_engine_profile_info {
+    uint32_t abi_version;
+    const char* host_profile_id;
+    const char* toy_profile_id;
+    const char* toy_profile_version;
+    const char* toy_profile_type;
+    const char* toy_calibration_status;
+    const char* toy_target_name;
+    const char* toy_dataset_id;
+    const char* toy_dataset_sha256;
+} pte_engine_profile_info_t;
+
+typedef struct pte_runtime_stats {
+    uint32_t abi_version;
+    uint64_t rendered_frames;
+    uint64_t cpu_frames;
+    uint64_t vulkan_frames;
+    uint64_t vulkan_queue_submissions;
+    uint64_t vulkan_resource_allocations;
+    uint64_t vulkan_allocated_bytes;
+    uint64_t ahardware_buffer_imports;
+    uint64_t zero_copy_input_frames;
+} pte_runtime_stats_t;
+
+typedef struct pte_ahardware_buffer_frame {
+    uint32_t abi_version;
+    AHardwareBuffer* buffer;
+    uint32_t width;
+    uint32_t height;
+    /* Optional sync fence from AImageReader_acquire*ImageAsync. The caller retains
+       ownership; the engine duplicates it before importing it into Vulkan. */
+    int32_t acquire_fence_fd;
+} pte_ahardware_buffer_frame_t;
+
 PTE_API const char* pte_version_string(void);
 
 /* Thread-local error for calls that fail before an engine exists, including create. */
@@ -106,6 +143,41 @@ PTE_API uint32_t pte_backend_is_available(pte_backend_t backend);
 
 /* Backend selection is sticky for subsequent renders. CPU is the default. */
 PTE_API pte_status_t pte_engine_set_backend(pte_engine_t* engine, pte_backend_t backend);
+
+PTE_API pte_status_t pte_engine_get_profile_info(
+    pte_engine_t* engine,
+    pte_engine_profile_info_t* out_info);
+
+PTE_API pte_status_t pte_engine_get_runtime_stats(
+    pte_engine_t* engine,
+    pte_runtime_stats_t* out_stats);
+
+/* Returns nonzero only when Android AHardwareBuffer Vulkan import and YCbCr
+   conversion are available on the selected device. */
+PTE_API uint32_t pte_engine_supports_ahardware_buffer_input(pte_engine_t* engine);
+
+/* Releases a cached Vulkan import. Call this from AImageReader's buffer-removed
+   handling when the reader retires a buffer, or pass NULL to clear the cache. */
+PTE_API pte_status_t pte_engine_forget_ahardware_buffer(
+    pte_engine_t* engine,
+    AHardwareBuffer* buffer);
+
+/* Android-only synchronous zero-copy input path. The host profile must describe
+   encoded sRGB input; Camera2 YUV/private buffers are converted by Vulkan's
+   sampler YCbCr conversion before host-profile normalization. */
+PTE_API pte_status_t pte_engine_render_ahardware_buffer(
+    pte_engine_t* engine,
+    const pte_ahardware_buffer_frame_t* input,
+    const pte_render_options_t* options,
+    pte_output_f32_t* output);
+
+/* Android preview path that executes the complete Vulkan graph without copying
+   the final float32 image back to CPU memory. GPU completion is synchronous;
+   use a dedicated worker thread rather than a Camera2 callback thread. */
+PTE_API pte_status_t pte_engine_process_ahardware_buffer(
+    pte_engine_t* engine,
+    const pte_ahardware_buffer_frame_t* input,
+    const pte_render_options_t* options);
 
 PTE_API pte_status_t pte_engine_render(
     pte_engine_t* engine,

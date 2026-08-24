@@ -6,10 +6,11 @@ PhyToyEngine is a profile-driven physical toy-camera imaging engine. It reconstr
 canonical scene-linear image from a host camera and then simulates a fixed-focus toy
 camera's optics, digital sensor, ADC, and ISP in a fixed physical order.
 
-This repository currently delivers an engineering Alpha: a Python reference engine, a
-C++20 CPU runtime with a stable C ABI, integrity-checked camera profiles, a native CLI,
-an Android Vulkan compute backend, stage outputs, and numerical/statistical regression
-tests. It is an engine core, not yet a commercial camera application.
+This repository currently delivers the **Synthetic Alpha device-accepted engine candidate**.
+Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**. The engine includes a Python reference,
+a C++20 CPU runtime with a stable C ABI, integrity-checked profiles, an Android Vulkan
+compute backend, Camera2 `AHardwareBuffer` zero-copy input, and numerical/statistical
+regression tooling. It is an engine core, not yet a commercial camera application.
 
 ## Pipeline and architecture
 
@@ -45,6 +46,11 @@ Changing a camera look means replacing a validated profile, not editing engine c
   denoise, unsharp masking, and sRGB output encoding.
 - Runtime: C++20 shared library, stable C ABI v1, CPU backend, Android Vulkan backend,
   automatic CPU fallback, native CLI, and five stage callbacks.
+- Android production path: one queue submission per frame, persistent descriptor/buffer
+  reuse, aliased production intermediates, cached `AHardwareBuffer` imports, sampler YCbCr
+  conversion, and sync-fd acquisition.
+- Product profile: versioned `PhyToy Digital 01 v1.0.0`, explicitly marked as a designed
+  synthetic camera rather than a measured replica.
 - Validation: strict semantic profile checks, SHA-256 checked `.ptp` packages, frozen
   golden manifest, sensor statistics, and Python/C++ stage conformance tests.
 
@@ -59,7 +65,9 @@ reference/phytoy_ref/      Python truth implementation
 profiles/authoring/        Editable Host/Toy camera profiles
 schemas/                   JSON schema descriptions
 goldens/                   Frozen regression manifests
+acceptance/                Versioned product acceptance contracts
 cli/                       Native PPM/PGM renderer
+tools/                     Benchmarks, device runners and comparison tools
 docs/                      Build, integration and acceptance notes
 ```
 
@@ -78,7 +86,7 @@ Render a PNG/JPEG input and optionally save all five stages as NumPy arrays:
 PYTHONPATH=reference python3 -m phytoy_ref.cli \
   --input input.png \
   --host-profile profiles/authoring/host_generic_srgb.json \
-  --toy-profile profiles/authoring/toy_fixed_focus_alpha.json \
+  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1.json \
   --output renders/output.png \
   --dump-stages stages/reference \
   --seed 7
@@ -88,8 +96,8 @@ Compile a validated authoring profile into the runtime package format:
 
 ```bash
 PYTHONPATH=reference python3 -m phytoy_ref.profile_package \
-  profiles/authoring/toy_fixed_focus_alpha.json \
-  build/profiles/toy_fixed_focus_alpha.ptp
+  profiles/authoring/toy_phytoy_digital_01_v1.json \
+  build/profiles/toy_phytoy_digital_01_v1.ptp
 ```
 
 ## Quick start: C++20 runtime and CLI
@@ -108,7 +116,7 @@ be PPM; RAW digital-number input must be PGM.
   --input input.ppm \
   --input-format srgb \
   --host build/profiles/host_generic_srgb.ptp \
-  --toy build/profiles/toy_fixed_focus_alpha.ptp \
+  --toy build/profiles/toy_phytoy_digital_01_v1.ptp \
   --output renders/native.ppm \
   --backend cpu \
   --dump-stages stages/native \
@@ -121,6 +129,10 @@ The public API is [phytoy.h](core/include/phytoy/phytoy.h). Call
 stage callback pointers remain valid only during the callback.
 
 ## Android Vulkan build
+
+For application integration, the repository now also includes an Android AAR, Kotlin API,
+Camera2 sample, and real PRIVATE-buffer smoke contract. See the
+[Android SDK guide](android/README.md).
 
 Use Android API 26+ and an NDK containing `glslc`:
 
@@ -136,10 +148,42 @@ cmake -S . -B build-android-arm64 -G Ninja \
 cmake --build build-android-arm64 --parallel
 ```
 
-The resulting `libphytoy_core.so` embeds validated SPIR-V. The Alpha Vulkan path uses
-host-visible coherent storage buffers, runs optics/sensor/ISP compute passes, and falls
-back to CPU in `PTE_BACKEND_AUTO` when Vulkan initialization is unavailable. See
-[Android Vulkan integration](docs/ANDROID_VULKAN.md) for constraints and acceptance work.
+The resulting `libphytoy_core.so` embeds validated SPIR-V. Optics, sensor, and ISP execute
+in one command buffer and one queue submission. Buffers, descriptors, parameters, and up
+to eight Camera2 buffer-slot imports are reused. `PTE_BACKEND_AUTO` falls back to CPU when
+Vulkan initialization is unavailable. See [Android Vulkan integration](docs/ANDROID_VULKAN.md).
+
+### Camera2 zero-copy input
+
+Create an `AImageReader` with `AIMAGE_FORMAT_PRIVATE` and
+`AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE`, acquire an `AImage`, obtain its
+`AHardwareBuffer`, then call `pte_engine_render_ahardware_buffer`. For the async ImageReader
+API, pass the acquire fence fd; the engine duplicates it, so the application still closes
+its original fd after the synchronous render returns.
+
+```c
+AHardwareBuffer* hardware_buffer = NULL;
+AImage_getHardwareBuffer(image, &hardware_buffer);
+
+pte_ahardware_buffer_frame_t frame = {
+    PTE_ABI_VERSION, hardware_buffer, width, height, acquire_fence_fd
+};
+pte_engine_set_backend(engine, PTE_BACKEND_VULKAN);
+pte_status_t status = pte_engine_render_ahardware_buffer(
+    engine, &frame, &options, &output);
+
+/* On AImageReader buffer removal, or when closing the camera session: */
+pte_engine_forget_ahardware_buffer(engine, hardware_buffer);
+```
+
+For a live preview worker that does not need CPU pixels, call
+`pte_engine_process_ahardware_buffer` instead. It executes the same complete Vulkan graph
+but skips the final float32 CPU copy; Camera2 callbacks should enqueue the latest image to
+a dedicated worker rather than waiting synchronously.
+
+The zero-copy claim applies to camera input: the `AHardwareBuffer` is sampled directly by
+Vulkan. The render API writes the final float32 image to caller-owned memory; the preview
+process API deliberately skips that readback.
 
 ## Reproducibility and tests
 
@@ -153,24 +197,54 @@ Run all host tests through CTest after building. A plain Python test run intenti
 skips the C++ conformance case unless `PHYTOY_CPP_LIBRARY` and
 `PHYTOY_CPP_PROFILE_DIR` are set.
 
+## Synthetic Alpha acceptance
+
+The versioned acceptance contract is
+[synthetic_alpha_v1.json](acceptance/synthetic_alpha_v1.json). It defines 720p latency,
+12MP latency/memory, thermal, 10,000-frame, one-submit, resource-reuse, zero-copy, and
+cross-backend consistency limits. Run the host benchmark directly or the complete Android
+suite:
+
+```bash
+./build/phytoy_benchmark \
+  --host build/profiles/host_generic_srgb.ptp \
+  --toy build/profiles/toy_phytoy_digital_01_v1.ptp \
+  --backend cpu --input f32 --width 1280 --height 720 --warmup 3 --frames 30
+
+tools/run_android_acceptance.sh
+```
+
+The Android suite also dumps all five deterministic stages from CPU, Vulkan float32, and
+Vulkan `AHardwareBuffer` execution and compares each path with the Python reference using
+the contract's versioned tolerances. It additionally checks PhyToy Digital 01 sensor
+mean/variance over 128 seeds and fixed-seed repeatability on all three paths.
+
+The full contract passed 101/101 checks on Samsung SM-S9210 / Adreno 750. See the
+[machine-readable reports](reports/synthetic_alpha_candidate/) for exact device provenance,
+latency, memory, thermal, endurance, numerical, and statistical results.
+
 ## Alpha limitations
 
 - `host_reference_raw.json` is a synthetic RAW calibration placeholder, not a measured
   phone profile. A named SM-S9210 camera-0 profile is included from Camera2 static metadata,
   but remains chart-unvalidated; see the [profile derivation](docs/SM_S9210_RAW_PROFILE.md).
-- Android arm64, SPIR-V, and a five-stage Vulkan conformance render were verified on a
-  Samsung SM-S9210 / Adreno 750. 720p/12 MP performance and thermal endurance are not yet
-  accepted; see the [device report](reports/samsung_sm_s9210_vulkan_conformance_20260820.json).
-- The Vulkan Alpha uses a staging/host-visible buffer path. AHardwareBuffer zero-copy,
-  tiled 12 MP final rendering, thermal testing, and driver-matrix validation remain
-  productization work.
+- The new single-submit, shared-memory ISP, aliased-buffer, and synthetic RGBA
+  AHardwareBuffer path passes the versioned SM-S9210 device contract. The Android AAR,
+  Camera2 sample, PRIVATE `AImageReader`, and smoke evaluator are implemented. The real
+  Camera2 PRIVATE path passed all 11/11 smoke checks on an SM-S9210 with engine 0.2.1
+  (P50 18.367 ms, P95 20.322 ms, 0 errors, 30/30 zero-copy frames); see the
+  [Camera2 device report](reports/android_camera2_sm_s9210_0_2_1/evaluation.json). A
+  30-minute sustained run and the multi-vendor matrix remain product gates.
+- The 12MP production path uses approximately 336 MiB of persistent Vulkan float32 working
+  buffers plus the caller's output. Tiled/float16 internals and direct encoded output remain
+  future memory reductions, not prerequisites of the current explicit acceptance contract.
 - The sensor model is digital-only; film chemistry, flash, rolling shutter, motion blur,
   autofocus, and multi-camera fusion are outside this Alpha.
-- The bundled toy profile proves the engine path but is not yet a measured commercial
-  camera emulation.
+- PhyToy Digital 01 is an original designed profile. It is commercially usable as a
+  synthetic look after device acceptance, but it must not be marketed as a measured replica.
 
 For the complete product and technical rationale, read the
-[engine implementation specification](phytoy_engine_core_detailed_research_and_implementation_spec_2026.md)
+[engine implementation specification](docs/physical_toy_camera_engine_product_technical_development_plan_2026.md)
 and the [Alpha acceptance report](docs/ALPHA_ACCEPTANCE.md).
 
 ## Research references and open-source projects
@@ -237,9 +311,10 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 宿主相机的 sRGB、YUV420 或 Bayer RAW 输入归一化为统一的场景线性 Rec.2020，
 再按照固定顺序模拟目标玩具相机的镜头、数字传感器、ADC 和 ISP。
 
-当前仓库交付的是“工程 Alpha”，不是完整商业相机 App。已经包含 Python 高精度
-参考实现、C++20 CPU Runtime、稳定 C ABI、Android Vulkan compute 后端、Profile
-编译与校验、CLI、五阶段输出、Golden 测试和传感器统计测试。
+当前仓库交付的是 **Synthetic Alpha 已通过设备协议的引擎候选版**，第一款锁定的原创虚拟相机是
+**PhyToy Digital 01 v1.0.0**。它不是完整商业相机 App，但已包含 Python 高精度
+参考实现、C++20 CPU Runtime、稳定 C ABI、Android Vulkan compute 后端、Camera2
+AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试。
 
 ## 当前能力
 
@@ -249,6 +324,9 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 - 目标 ISP：去马赛克、白平衡、颜色矩阵、曲线、基础降噪与锐化。
 - 执行后端：Python Reference、C++ CPU、Android Vulkan，以及 Vulkan 不可用时的
   CPU 回退。
+- Vulkan 生产路径：每帧一次提交、持久资源复用、中间 Buffer 原地复用、Camera2
+  Buffer 槽位缓存、外部格式 YCbCr conversion 和 acquire fence。
+- 原创 Profile：PhyToy Digital 01 明确标记为 designed/synthetic，不冒充真实相机复刻。
 - 可验证性：固定 seed、Profile SHA-256、Golden manifest、Python/C++ 逐阶段误差
   对比和统计测试。
 
@@ -267,7 +345,7 @@ python3 -m pytest -q
 PYTHONPATH=reference python3 -m phytoy_ref.cli \
   --input input.png \
   --host-profile profiles/authoring/host_generic_srgb.json \
-  --toy-profile profiles/authoring/toy_fixed_focus_alpha.json \
+  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1.json \
   --output renders/output.png \
   --dump-stages stages/reference \
   --seed 7
@@ -286,14 +364,37 @@ Android 的详细 NDK 构建参数见上方英文说明和
 [phytoy.h](core/include/phytoy/phytoy.h) 创建 Engine、选择后端并提交帧；更换
 HostCameraProfile 或 ToyCameraProfile 不需要修改引擎代码。
 
+Camera2 实时预览建议使用 `AIMAGE_FORMAT_PRIVATE` 与
+`AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE`，通过 `AImage_getHardwareBuffer` 取得
+输入，并调用 `pte_engine_render_ahardware_buffer`。相机会话关闭或 ImageReader 移除
+Buffer 时，调用 `pte_engine_forget_ahardware_buffer` 释放缓存导入。
+
+仓库也已包含可直接构建的 Android AAR、Kotlin API、Camera2 示例和真实 PRIVATE
+Buffer 验收脚本，接入步骤见 [Android SDK 使用指南](android/README.md)。
+
+明确的 720p、12MP、内存、温控、10,000 帧和后端一致性指标位于
+[Synthetic Alpha 验收协议](acceptance/synthetic_alpha_v1.json)，完整真机命令为：
+
+```bash
+tools/run_android_acceptance.sh
+```
+
+该脚本还会自动导出 CPU、Vulkan float32 和 Vulkan AHardwareBuffer 三条路径的五个
+确定性阶段，并按照协议中的版本化误差阈值分别与 Python Reference 比较；同时检查
+PhyToy Digital 01 在 128 个 seed 下的传感器均值/方差和三条路径的固定 seed 重复性。
+
 ## 重要限制
 
 仓库包含合成 RAW 档案和一份由 SM-S9210 Camera2 静态元数据推导的具名档案，但后者
 仍未经过色卡、暗场和平场验证；Toy Profile 也是工程参数，不能宣传为真实相机复刻。
-Android arm64
-原生库、SPIR-V 和五阶段 Vulkan 误差已在 Samsung SM-S9210 / Adreno 750 真机验证；
-720p 帧率、12MP 时延、温升和更多驱动兼容性仍需后续验收。完整状态见
-[Alpha 验收报告](docs/ALPHA_ACCEPTANCE.md)。
+新版单次提交、shared-memory ISP、Buffer 原地复用和合成 RGBA AHardwareBuffer 路径
+已在 Samsung SM-S9210 / Adreno 750 上通过 101/101 项协议检查，包括 720p、12MP、
+温升、10,000 帧、五阶段误差和随机统计。完整结果位于
+[真机验收报告](reports/synthetic_alpha_candidate/)。Android App 内真实 Camera2
+`AIMAGE_FORMAT_PRIVATE` 路径也已用引擎 0.2.1 在 SM-S9210 上通过 11/11 项冒烟验收：
+P50 18.367 ms、P95 20.322 ms、错误 0、30/30 帧零拷贝；详见
+[Camera2 真机报告](reports/android_camera2_sm_s9210_0_2_1/evaluation.json)。30 分钟长稳
+测试和多厂商设备矩阵仍属于后续产品门槛。
 
 ## 参考论文与开源项目
 

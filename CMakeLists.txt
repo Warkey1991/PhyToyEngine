@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(PhyToyEngine VERSION 0.1.0 LANGUAGES CXX)
+project(PhyToyEngine VERSION 0.2.1 LANGUAGES CXX)
 
 option(PHYTOY_BUILD_CLI "Build the native command-line renderer" ON)
+option(PHYTOY_BUILD_BENCHMARK "Build the runtime acceptance benchmark" ON)
 option(PHYTOY_BUILD_TESTS "Build native tests" ON)
 option(PHYTOY_BUILD_VULKAN_SHADERS "Compile and embed Android Vulkan compute shaders" ON)
 set(PHYTOY_GLSLC "" CACHE FILEPATH "Path to the Vulkan glslc compiler")
@@ -43,7 +44,7 @@ if(PHYTOY_BUILD_VULKAN_SHADERS)
         set(PHYTOY_SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/backends/vulkan/shaders")
         set(PHYTOY_SPIRV_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/spirv")
         set(PHYTOY_SPIRV_FILES)
-        foreach(SHADER_NAME optics sensor isp)
+        foreach(SHADER_NAME normalize_ahb optics sensor isp)
             set(SPIRV_FILE "${PHYTOY_SPIRV_DIR}/${SHADER_NAME}.spv")
             add_custom_command(
                 OUTPUT "${SPIRV_FILE}"
@@ -76,13 +77,22 @@ if(PHYTOY_BUILD_VULKAN_SHADERS)
 endif()
 
 if(ANDROID)
-    target_link_libraries(phytoy_core PRIVATE vulkan android log)
+    target_link_libraries(phytoy_core PRIVATE vulkan android log dl)
 endif()
 
 if(PHYTOY_BUILD_CLI)
     add_executable(phytoy_cli cli/phytoy_cli.cpp)
     target_compile_features(phytoy_cli PRIVATE cxx_std_20)
     target_link_libraries(phytoy_cli PRIVATE PhyToy::Core)
+endif()
+
+if(PHYTOY_BUILD_BENCHMARK)
+    add_executable(phytoy_benchmark tools/runtime_benchmark.cpp)
+    target_compile_features(phytoy_benchmark PRIVATE cxx_std_20)
+    target_link_libraries(phytoy_benchmark PRIVATE PhyToy::Core)
+    if(ANDROID)
+        target_link_libraries(phytoy_benchmark PRIVATE android dl)
+    endif()
 endif()
 
 include(CTest)
@@ -99,6 +109,7 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             "${PHYTOY_GENERATED_PROFILE_DIR}/host_samsung_sm_s9210_camera0_raw.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_alpha.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
         COMMAND "${CMAKE_COMMAND}" -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
@@ -129,6 +140,11 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
             "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_fixed_focus_conformance.json"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_digital_01_v1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
         DEPENDS
             profiles/authoring/host_generic_srgb.json
             profiles/authoring/host_generic_yuv420.json
@@ -136,6 +152,7 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             profiles/authoring/host_samsung_sm_s9210_camera0_raw.json
             profiles/authoring/toy_fixed_focus_alpha.json
             profiles/authoring/toy_fixed_focus_conformance.json
+            profiles/authoring/toy_phytoy_digital_01_v1.json
             reference/phytoy_ref/profile_package.py
             reference/phytoy_ref/profiles.py
         VERBATIM
@@ -147,6 +164,7 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
         "${PHYTOY_GENERATED_PROFILE_DIR}/host_samsung_sm_s9210_camera0_raw.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_alpha.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
     )
 
     add_executable(phytoy_core_tests core/tests/test_core.cpp)

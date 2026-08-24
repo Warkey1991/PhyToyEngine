@@ -1,6 +1,11 @@
 # Native and Android build trees
 /build*/
 /out/
+**/build/
+/android/.gradle/
+/android/.kotlin/
+**/.cxx/
+/android/local.properties
 
 # Python caches and local environments
 /.pytest_cache/
@@ -11,6 +16,7 @@
 
 # Generated profiles, stages and rendered output
 *.ptp
+!/android/sdk/src/main/assets/phytoy/*.ptp
 /stages/
 /renders/
 *.pfm

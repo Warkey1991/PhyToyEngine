@@ -78,8 +78,20 @@ struct IspProfile {
     float sharpen_radius{};
 };
 
+struct ProfileProvenance {
+    std::string profile_type{"unspecified"};
+    std::string calibration_status{"unspecified"};
+    std::string target_name;
+    std::string source;
+    std::string dataset_id;
+    std::string dataset_sha256;
+    std::string license;
+};
+
 struct ToyProfile {
     std::string id;
+    std::string version;
+    ProfileProvenance provenance;
     OpticsProfile optics;
     SensorProfile sensor;
     IspProfile isp;
@@ -89,4 +101,3 @@ HostProfile load_host_profile_package(const std::filesystem::path& path);
 ToyProfile load_toy_profile_package(const std::filesystem::path& path);
 
 }  // namespace phytoy
-

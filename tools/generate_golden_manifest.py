@@ -21,8 +21,17 @@ def digest(array: np.ndarray) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument(
+        "--toy-profile",
+        type=Path,
+        default=Path("profiles/authoring/toy_phytoy_digital_01_v1.json"),
+        help="Toy profile path, relative to --root unless absolute",
+    )
     arguments = parser.parse_args()
     root = arguments.root
+    toy_profile = arguments.toy_profile
+    if not toy_profile.is_absolute():
+        toy_profile = root / toy_profile
     height, width = 12, 16
     yy, xx = np.mgrid[0:height, 0:width]
     source = np.stack(
@@ -35,11 +44,12 @@ def main() -> None:
     )
     pipeline = ReferencePipeline(
         load_host_profile(root / "profiles/authoring/host_generic_srgb.json"),
-        load_toy_profile(root / "profiles/authoring/toy_fixed_focus_alpha.json"),
+        load_toy_profile(toy_profile),
     )
     result = pipeline.render_srgb(source, seed=20260820)
     manifest = {
         "fixture": "procedural_rgb_16x12_v1",
+        "toy_profile": str(toy_profile.relative_to(root)),
         "seed": 20260820,
         "round_decimals": 6,
         "stages": {
@@ -57,4 +67,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

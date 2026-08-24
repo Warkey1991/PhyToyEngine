@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "phytoy.synthetic_alpha.v1",
+  "status": "accepted_on_sm_s9210_synthetic_ahb",
+  "camera2_private_status": "engine_implemented_app_capture_pending",
+  "reference_profile": {
+    "id": "phytoy.toy.digital_01",
+    "version": "1.0.0",
+    "profile_type": "designed"
+  },
+  "preview_720p": {
+    "width": 1280,
+    "height": 720,
+    "input": "ahb",
+    "backend": "vulkan",
+    "minimum_measured_frames": 300,
+    "latency_ms_p50_max": 33.333,
+    "latency_ms_p95_max": 40.0,
+    "vulkan_allocated_bytes_max": 33554432,
+    "rss_growth_kib_max": 32768,
+    "thermal_status_max": 2
+  },
+  "final_12mp": {
+    "width": 4000,
+    "height": 3000,
+    "input": "ahb",
+    "backend": "vulkan",
+    "minimum_measured_frames": 5,
+    "latency_ms_p50_max": 1500.0,
+    "latency_ms_p95_max": 2000.0,
+    "vulkan_allocated_bytes_max": 402653184,
+    "peak_rss_kib_max": 716800,
+    "thermal_status_max": 2
+  },
+  "long_run_720p": {
+    "width": 1280,
+    "height": 720,
+    "input": "ahb",
+    "backend": "vulkan",
+    "minimum_measured_frames": 10000,
+    "rss_growth_kib_max": 32768,
+    "thermal_status_max": 2
+  },
+  "invariants": {
+    "queue_submissions_per_vulkan_frame": 1,
+    "resource_allocation_delta_after_warmup": 0,
+    "ahardware_buffer_import_delta_after_warmup": 0
+  },
+  "noiseless_stage_max_absolute_error": {
+    "scene_linear": 0.00002,
+    "target_optics": 0.00008,
+    "target_sensor_dn": 0.51,
+    "target_isp_linear": 0.002,
+    "output_srgb": 0.003
+  },
+  "stochastic_consistency": {
+    "fixed_seed_repeatability_required": true,
+    "mean_relative_error_max": 0.02,
+    "variance_relative_error_max": 0.05,
+    "width": 8,
+    "height": 8,
+    "constant_input_u8": 82,
+    "minimum_seeds": 128,
+    "repeatability_minimum_frames": 4,
+    "required_paths": {
+      "cpu_f32": {"backend": "cpu", "input": "f32"},
+      "vulkan_f32": {"backend": "vulkan", "input": "f32"},
+      "vulkan_ahb": {"backend": "vulkan", "input": "ahb"}
+    }
+  },
+  "device_conformance": {
+    "width": 22,
+    "height": 18,
+    "seed": 1234,
+    "required_paths": [
+      "cpu_f32",
+      "vulkan_f32",
+      "vulkan_ahb"
+    ]
+  }
+}
