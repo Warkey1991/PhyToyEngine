@@ -118,6 +118,7 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_alpha.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_1.ptp"
         COMMAND "${CMAKE_COMMAND}" -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
@@ -153,6 +154,11 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
             "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_digital_01_v1.json"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_digital_01_v1_1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_1.ptp"
         DEPENDS
             profiles/authoring/host_generic_srgb.json
             profiles/authoring/host_generic_yuv420.json
@@ -161,6 +167,7 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             profiles/authoring/toy_fixed_focus_alpha.json
             profiles/authoring/toy_fixed_focus_conformance.json
             profiles/authoring/toy_phytoy_digital_01_v1.json
+            profiles/authoring/toy_phytoy_digital_01_v1_1.json
             reference/phytoy_ref/profile_package.py
             reference/phytoy_ref/profiles.py
         VERBATIM
@@ -173,6 +180,7 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_alpha.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_1.ptp"
     )
 
     add_executable(phytoy_core_tests core/tests/test_core.cpp)

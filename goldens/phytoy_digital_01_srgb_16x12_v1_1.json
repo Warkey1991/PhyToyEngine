@@ -1,0 +1,38 @@
+{
+  "fixture": "procedural_rgb_16x12_v1",
+  "round_decimals": 6,
+  "seed": 20260820,
+  "stages": {
+    "01_scene_linear": {
+      "mean": 0.299371078,
+      "sha256_f32le": "38d62e0d367c561a91167cecd49ebd9719dc486e8d94163d6e7ab9651a77c989",
+      "shape": [12, 16, 3],
+      "standard_deviation": 0.241323817
+    },
+    "02_target_optics": {
+      "mean": 0.248817651,
+      "sha256_f32le": "fc4bcee6b05cd9843205bbc28088d032729bc836246127ff9daf11538ba5c808",
+      "shape": [12, 16, 3],
+      "standard_deviation": 0.176742599
+    },
+    "03_target_sensor_dn": {
+      "mean": 277.348958333,
+      "sha256_f32le": "9a8c93c5b5e0318ef49a4f538f14a984b255202b6f228f46b100c1bdb77b6d1a",
+      "shape": [12, 16],
+      "standard_deviation": 166.709009514
+    },
+    "04_target_isp_linear": {
+      "mean": 0.311861041,
+      "sha256_f32le": "6930bcfdb2393f3fe6be851479469bc45e8f95f163472c704c8a65689ed0a2a4",
+      "shape": [12, 16, 3],
+      "standard_deviation": 0.212489422
+    },
+    "05_output_srgb": {
+      "mean": 0.527177857,
+      "sha256_f32le": "0b40aaea2524212b653e56d7cd30cc64e36e2ea94b8c07fc6d162142cbcf32e8",
+      "shape": [12, 16, 3],
+      "standard_deviation": 0.260675712
+    }
+  },
+  "toy_profile": "profiles/authoring/toy_phytoy_digital_01_v1_1.json"
+}

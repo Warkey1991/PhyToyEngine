@@ -20,6 +20,13 @@ def test_sample_profiles_validate(host_srgb_path, host_raw_path, host_device_raw
     assert toy["provenance"]["calibration_status"] == "synthetic_locked"
 
 
+def test_tuned_digital_01_profile_validates(tuned_toy_path):
+    toy = load_toy_profile(tuned_toy_path)
+    assert toy["id"] == "phytoy.toy.digital_01"
+    assert toy["version"] == "1.1.0"
+    assert toy["provenance"]["calibration_status"] == "synthetic_tuned"
+
+
 def test_profile_package_round_trip(tmp_path, toy_path):
     destination = tmp_path / "toy.ptp"
     compile_profile(toy_path, destination)

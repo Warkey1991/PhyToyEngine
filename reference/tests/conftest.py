@@ -26,3 +26,8 @@ def host_device_raw_path(project_root: Path) -> Path:
 @pytest.fixture(scope="session")
 def toy_path(project_root: Path) -> Path:
     return project_root / "profiles/authoring/toy_phytoy_digital_01_v1.json"
+
+
+@pytest.fixture(scope="session")
+def tuned_toy_path(project_root: Path) -> Path:
+    return project_root / "profiles/authoring/toy_phytoy_digital_01_v1_1.json"

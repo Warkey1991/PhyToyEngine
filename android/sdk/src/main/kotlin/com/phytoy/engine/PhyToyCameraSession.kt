@@ -174,7 +174,7 @@ class PhyToyCameraSession private constructor(
     companion object {
         private const val SNAPSHOT_FIELD_COUNT = 22
         private const val PROFILE_ASSET_DIRECTORY = "phytoy"
-        private const val PROFILE_CACHE_VERSION = "0.3.0"
+        private const val PROFILE_CACHE_VERSION = "0.3.1"
         private const val THERMAL_STATUS_UNAVAILABLE = -1
         private const val DEFAULT_PROCESSING_FRAME_RATE = 15
 
@@ -194,7 +194,7 @@ class PhyToyCameraSession private constructor(
             processingFrameRateLimit: Int = DEFAULT_PROCESSING_FRAME_RATE,
             thermalAdaptive: Boolean = true,
             hostProfileAsset: String = "host_generic_srgb.ptp",
-            toyProfileAsset: String = "toy_phytoy_digital_01_v1.ptp",
+            toyProfileAsset: String = "toy_phytoy_digital_01_v1_1.ptp",
         ): PhyToyCameraSession {
             require(width > 0 && height > 0) { "Camera dimensions must be positive" }
             require(maxImages >= 3) { "maxImages must be at least 3 for asynchronous latest-frame processing" }

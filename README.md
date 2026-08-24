@@ -7,7 +7,8 @@ canonical scene-linear image from a host camera and then simulates a fixed-focus
 camera's optics, digital sensor, ADC, and ISP in a fixed physical order.
 
 This repository currently delivers the **Synthetic Alpha device-accepted engine candidate**.
-Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**. The engine includes a Python reference,
+Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**; Android now defaults
+to the product-balanced **v1.1.0** tuning. The engine includes a Python reference,
 a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
 compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
 preview Surface, and numerical/statistical regression tooling. It is an engine core and
@@ -53,8 +54,8 @@ Changing a camera look means replacing a validated profile, not editing engine c
   reuse, aliased production intermediates, cached `AHardwareBuffer` imports, sampler YCbCr
   conversion, sync-fd acquisition, and direct final-sRGB presentation through a Vulkan
   Android swapchain with no CPU readback.
-- Product profile: versioned `PhyToy Digital 01 v1.0.0`, explicitly marked as a designed
-  synthetic camera rather than a measured replica.
+- Product profile: immutable `PhyToy Digital 01 v1.0.0` baseline plus product-balanced
+  `v1.1.0` tuning, explicitly marked as a designed synthetic camera rather than a measured replica.
 - Validation: strict semantic profile checks, SHA-256 checked `.ptp` packages, frozen
   golden manifest, sensor statistics, and Python/C++ stage conformance tests.
 
@@ -90,7 +91,7 @@ Render a PNG/JPEG input and optionally save all five stages as NumPy arrays:
 PYTHONPATH=reference python3 -m phytoy_ref.cli \
   --input input.png \
   --host-profile profiles/authoring/host_generic_srgb.json \
-  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1.json \
+  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1_1.json \
   --output renders/output.png \
   --dump-stages stages/reference \
   --seed 7
@@ -100,8 +101,8 @@ Compile a validated authoring profile into the runtime package format:
 
 ```bash
 PYTHONPATH=reference python3 -m phytoy_ref.profile_package \
-  profiles/authoring/toy_phytoy_digital_01_v1.json \
-  build/profiles/toy_phytoy_digital_01_v1.ptp
+  profiles/authoring/toy_phytoy_digital_01_v1_1.json \
+  build/profiles/toy_phytoy_digital_01_v1_1.ptp
 ```
 
 ## Quick start: C++20 runtime and CLI
@@ -120,7 +121,7 @@ be PPM; RAW digital-number input must be PGM.
   --input input.ppm \
   --input-format srgb \
   --host build/profiles/host_generic_srgb.ptp \
-  --toy build/profiles/toy_phytoy_digital_01_v1.ptp \
+  --toy build/profiles/toy_phytoy_digital_01_v1_1.ptp \
   --output renders/native.ppm \
   --backend cpu \
   --dump-stages stages/native \
@@ -323,7 +324,8 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 再按照固定顺序模拟目标玩具相机的镜头、数字传感器、ADC 和 ISP。
 
 当前仓库交付的是 **Synthetic Alpha 已通过设备协议的引擎候选版**，第一款锁定的原创虚拟相机是
-**PhyToy Digital 01 v1.0.0**。它不是完整商业相机 App，但已包含 Python 高精度
+**PhyToy Digital 01 v1.0.0**，Android 现默认使用产品化收敛后的 **v1.1.0** 调校。
+它不是完整商业相机 App，但已包含 Python 高精度
 参考实现、C++20 CPU Runtime、稳定 C ABI、Android Vulkan compute 后端、Camera2
 AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试。
 
@@ -356,7 +358,7 @@ python3 -m pytest -q
 PYTHONPATH=reference python3 -m phytoy_ref.cli \
   --input input.png \
   --host-profile profiles/authoring/host_generic_srgb.json \
-  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1.json \
+  --toy-profile profiles/authoring/toy_phytoy_digital_01_v1_1.json \
   --output renders/output.png \
   --dump-stages stages/reference \
   --seed 7

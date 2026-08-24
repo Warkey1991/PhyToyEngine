@@ -92,8 +92,9 @@ previewSurface.release()
 ```
 
 Profile assets are copied into app-private storage because the native engine validates and
-opens packaged profile files. The default profiles are `host_generic_srgb.ptp` and
-`toy_phytoy_digital_01_v1.ptp`.
+opens packaged profile files. The default profiles are `host_generic_srgb.ptp` and the
+product-balanced `toy_phytoy_digital_01_v1_1.ptp`; the immutable v1.0.0 package remains
+available for regression comparisons.
 
 ## Real-device smoke acceptance
 

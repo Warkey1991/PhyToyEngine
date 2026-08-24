@@ -17,7 +17,11 @@ def _digest(array: np.ndarray, decimals: int) -> str:
 
 @pytest.mark.parametrize(
     "manifest_name",
-    ["reference_srgb_16x12_v1.json", "phytoy_digital_01_srgb_16x12_v1.json"],
+    [
+        "reference_srgb_16x12_v1.json",
+        "phytoy_digital_01_srgb_16x12_v1.json",
+        "phytoy_digital_01_srgb_16x12_v1_1.json",
+    ],
 )
 def test_small_reference_golden_manifest(project_root, manifest_name):
     manifest = json.loads(
