@@ -2,7 +2,9 @@ package com.phytoy.sample
 
 import android.Manifest
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.SurfaceTexture
@@ -12,6 +14,9 @@ import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.StreamConfigurationMap
+import android.media.MediaActionSound
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -20,20 +25,26 @@ import android.os.PowerManager
 import android.util.Log
 import android.util.Range
 import android.util.Size
-import android.view.Gravity
 import android.view.Surface
 import android.view.TextureView
+import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.FrameLayout
-import android.widget.TextView
 import com.phytoy.engine.PhyToyCameraSession
 import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var preview: TextureView
-    private lateinit var status: TextView
-    private lateinit var metrics: TextView
+    private lateinit var chrome: CameraChrome
+    private lateinit var photoStore: PhotoStore
+    private lateinit var shutterSound: MediaActionSound
     private val mainHandler = Handler(Looper.getMainLooper())
+    private val photoExecutor: ExecutorService = Executors.newSingleThreadExecutor { runnable ->
+        Thread(runnable, "PhyToyPhoto").apply { priority = Thread.NORM_PRIORITY - 1 }
+    }
 
     private var cameraThread: HandlerThread? = null
     private var cameraHandler: Handler? = null
@@ -46,17 +57,36 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     @Volatile private var activeCameraFpsRange: Range<Int>? = null
     @Volatile private var pendingCameraFpsRange: Range<Int>? = null
     private var cameraOpening = false
+    @Volatile private var cameraReady = false
+    private var captureInProgress = false
+    private var pendingCaptureAfterStoragePermission = false
+    private var lastPhotoUri: Uri? = null
+    private var cameraGeneration = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.BLACK
+
+        photoStore = PhotoStore(applicationContext)
+        shutterSound = MediaActionSound().also { it.load(MediaActionSound.SHUTTER_CLICK) }
         createContentView()
         preview.surfaceTextureListener = this
+        restoreLastThumbnail()
     }
 
     override fun onResume() {
         super.onResume()
-        cameraThread = HandlerThread("PhyToyCamera2").also { it.start() }
-        cameraHandler = Handler(cameraThread!!.looper)
+        if (cameraThread == null) {
+            cameraThread = HandlerThread("PhyToyCamera2").also { it.start() }
+            cameraHandler = Handler(cameraThread!!.looper)
+        }
         if (preview.isAvailable) ensurePermissionAndOpen()
         mainHandler.post(metricsUpdater)
     }
@@ -71,53 +101,55 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         super.onPause()
     }
 
+    override fun onDestroy() {
+        shutterSound.release()
+        photoExecutor.shutdown()
+        super.onDestroy()
+    }
+
     private fun createContentView() {
         val root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
-        preview = TextureView(this)
-        root.addView(preview, FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-        ))
+        preview = TextureView(this).apply { isOpaque = true }
+        root.addView(
+            preview,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            ),
+        )
 
-        val overlay = FrameLayout(this).apply { setBackgroundColor(0x66000000) }
-        root.addView(overlay, FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            densityPixels(280),
-            Gravity.BOTTOM,
-        ))
-
-        status = TextView(this).apply {
-            setTextColor(0xFFF4B942.toInt())
-            textSize = 17f
-            text = getString(R.string.status_waiting_permission)
-            setPadding(densityPixels(16), densityPixels(12), densityPixels(16), 0)
+        chrome = CameraChrome(this).apply {
+            setReady(false)
+            shutter.setOnClickListener { capturePhoto() }
+            thumbnail.setOnClickListener { openLastPhoto() }
+            showMessage(getString(R.string.status_waiting_permission))
         }
-        overlay.addView(status, FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            densityPixels(52),
-        ))
-
-        metrics = TextView(this).apply {
-            setTextColor(Color.WHITE)
-            textSize = 13f
-            typeface = android.graphics.Typeface.MONOSPACE
-            setPadding(densityPixels(16), 0, densityPixels(16), densityPixels(12))
-            text = getString(R.string.metrics_waiting)
-        }
-        overlay.addView(metrics, FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-        ).apply { topMargin = densityPixels(52) })
-
+        root.addView(
+            chrome,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            ),
+        )
         setContentView(root)
     }
 
-    private fun densityPixels(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
+    private fun restoreLastThumbnail() {
+        val uri = photoStore.lastPhotoUri() ?: return
+        lastPhotoUri = uri
+        photoExecutor.execute {
+            val thumbnail = photoStore.loadThumbnail(uri) ?: return@execute
+            mainHandler.post {
+                if (isDestroyed) thumbnail.recycle() else chrome.showThumbnail(thumbnail)
+            }
+        }
+    }
 
     private fun ensurePermissionAndOpen() {
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             openCamera()
         } else {
+            chrome.showMessage(getString(R.string.status_waiting_permission))
             requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST)
         }
     }
@@ -128,11 +160,24 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST &&
-            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-            openCamera()
-        } else {
-            status.text = getString(R.string.status_permission_required)
+        when (requestCode) {
+            CAMERA_PERMISSION_REQUEST -> {
+                if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                    openCamera()
+                } else {
+                    chrome.showMessage(getString(R.string.status_permission_required))
+                }
+            }
+
+            STORAGE_PERMISSION_REQUEST -> {
+                val shouldCapture = pendingCaptureAfterStoragePermission
+                pendingCaptureAfterStoragePermission = false
+                if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                    if (shouldCapture) capturePhoto()
+                } else {
+                    chrome.showMessage(getString(R.string.storage_permission_required), true)
+                }
+            }
         }
     }
 
@@ -141,12 +186,15 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         if (cameraOpening || cameraDevice != null || !preview.isAvailable) return
         val handler = cameraHandler ?: return
         cameraOpening = true
+        cameraReady = false
+        chrome.setReady(false)
         try {
             val manager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-            val cameraId = manager.cameraIdList.first { id ->
+            val cameraId = manager.cameraIdList.firstOrNull { id ->
                 manager.getCameraCharacteristics(id)
-                    .get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
-            }
+                    .get(CameraCharacteristics.LENS_FACING) ==
+                    CameraCharacteristics.LENS_FACING_BACK
+            } ?: checkNotNull(manager.cameraIdList.firstOrNull()) { "No camera is available" }
             val characteristics = manager.getCameraCharacteristics(cameraId)
             cameraFpsRanges = characteristics.get(
                 CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES
@@ -156,6 +204,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             ) { "Camera has no stream configuration map" }
             val size = chooseEngineSize(map)
             engineSize = size
+
             val texture = checkNotNull(preview.surfaceTexture)
             val outputWidth = preview.width.coerceIn(1, PREVIEW_OUTPUT_WIDTH)
             val outputHeight = (
@@ -173,7 +222,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 outputSurface = processedPreviewSurface,
                 outputRotationDegrees = outputRotation,
             )
-            status.text = getString(R.string.status_opening, size.width, size.height)
+            cameraGeneration += 1L
+            chrome.showMessage(getString(R.string.status_opening, size.width, size.height))
             manager.openCamera(cameraId, cameraStateCallback, handler)
         } catch (exception: Throwable) {
             cameraOpening = false
@@ -203,9 +253,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             Surface.ROTATION_270 -> 270
             else -> 0
         }
-        val sensorDegrees = characteristics.get(
-            CameraCharacteristics.SENSOR_ORIENTATION
-        ) ?: 0
+        val sensorDegrees = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
         return (sensorDegrees - displayDegrees + 360) % 360
     }
 
@@ -218,16 +266,24 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
         override fun onDisconnected(camera: CameraDevice) {
             cameraOpening = false
+            cameraReady = false
             camera.close()
             if (cameraDevice === camera) cameraDevice = null
-            runOnUiThread { status.text = getString(R.string.status_disconnected) }
+            runOnUiThread {
+                chrome.setReady(false)
+                chrome.showMessage(getString(R.string.status_disconnected))
+            }
         }
 
         override fun onError(camera: CameraDevice, error: Int) {
             cameraOpening = false
+            cameraReady = false
             camera.close()
             if (cameraDevice === camera) cameraDevice = null
-            runOnUiThread { status.text = getString(R.string.status_camera_error, error) }
+            runOnUiThread {
+                chrome.setReady(false)
+                chrome.showMessage(getString(R.string.status_camera_error, error))
+            }
         }
     }
 
@@ -244,15 +300,18 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         submitRepeatingRequest(
                             camera,
                             session,
-                            selectCameraFpsRange(engineSession?.snapshot()?.thermalStatus ?: -1),
+                            selectCameraFpsRange(),
                         )
-                        runOnUiThread {
-                            status.text = getString(R.string.status_active)
-                        }
+                        cameraReady = true
+                        runOnUiThread { chrome.setReady(true) }
                     }
 
                     override fun onConfigureFailed(session: CameraCaptureSession) {
-                        runOnUiThread { status.text = getString(R.string.status_stream_rejected) }
+                        cameraReady = false
+                        runOnUiThread {
+                            chrome.setReady(false)
+                            chrome.showMessage(getString(R.string.status_stream_rejected))
+                        }
                     }
                 },
                 cameraHandler,
@@ -262,9 +321,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
-    private fun selectCameraFpsRange(thermalStatus: Int): Range<Int>? {
-        // The processed GPU Surface is now the only preview. Producing camera frames faster
-        // than the engine can display wastes Camera HAL/ISP power without improving motion.
+    private fun selectCameraFpsRange(): Range<Int>? {
         val target = CAMERA_PREVIEW_FPS
         return cameraFpsRanges.firstOrNull { it.lower == target && it.upper == target }
             ?: cameraFpsRanges.filter { it.contains(target) }
@@ -272,8 +329,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             ?: cameraFpsRanges.minByOrNull { kotlin.math.abs(it.upper - target) }
     }
 
-    private fun updateCameraFrameRate(thermalStatus: Int) {
-        val desired = selectCameraFpsRange(thermalStatus) ?: return
+    private fun updateCameraFrameRate() {
+        val desired = selectCameraFpsRange() ?: return
         if (desired == activeCameraFpsRange || desired == pendingCameraFpsRange) return
         val handler = cameraHandler ?: return
         pendingCameraFpsRange = desired
@@ -302,6 +359,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         val engineSurface = checkNotNull(engineSession?.inputSurface)
         val request = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
             addTarget(engineSurface)
+            set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO)
             set(
                 CaptureRequest.CONTROL_AF_MODE,
                 CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE,
@@ -310,7 +368,80 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }.build()
         session.setRepeatingRequest(request, null, cameraHandler)
         activeCameraFpsRange = fpsRange
-        Log.i(LOG_TAG, "Camera2 thermal FPS range changed to ${fpsRange ?: "device default"}")
+        Log.i(LOG_TAG, "Camera2 FPS range changed to ${fpsRange ?: "device default"}")
+    }
+
+    @Suppress("DEPRECATION")
+    private fun capturePhoto() {
+        if (!cameraReady || captureInProgress) return
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P &&
+            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            pendingCaptureAfterStoragePermission = true
+            requestPermissions(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                STORAGE_PERMISSION_REQUEST,
+            )
+            return
+        }
+
+        val session = engineSession ?: return
+        val generation = cameraGeneration
+        captureInProgress = true
+        chrome.setCapturing()
+        shutterSound.play(MediaActionSound.SHUTTER_CLICK)
+        photoExecutor.execute {
+            try {
+                val frame = session.captureNextFrame(CAPTURE_TIMEOUT_MILLIS)
+                val saved = photoStore.save(frame)
+                val thumbnail = photoStore.loadThumbnail(saved.uri)
+                mainHandler.post {
+                    if (isDestroyed) {
+                        thumbnail?.recycle()
+                        return@post
+                    }
+                    lastPhotoUri = saved.uri
+                    thumbnail?.let(chrome::showThumbnail)
+                    chrome.flashCapture()
+                    chrome.finishCapture()
+                    captureInProgress = false
+                    if (cameraReady && generation == cameraGeneration) chrome.setReady(true)
+                    chrome.showMessage(getString(R.string.photo_saved, saved.displayName), true)
+                    Log.i(LOG_TAG, "Digital 01 photo saved: ${saved.uri}")
+                }
+            } catch (exception: Throwable) {
+                Log.e(LOG_TAG, "Still capture failed", exception)
+                mainHandler.post {
+                    chrome.finishCapture()
+                    captureInProgress = false
+                    if (generation != cameraGeneration || isDestroyed) return@post
+                    if (cameraReady && generation == cameraGeneration) chrome.setReady(true)
+                    chrome.showMessage(
+                        getString(R.string.photo_failed, exception.message.orEmpty()),
+                        true,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun openLastPhoto() {
+        val uri = lastPhotoUri
+        if (uri == null) {
+            chrome.showMessage(getString(R.string.no_photo_yet), true)
+            return
+        }
+        try {
+            startActivity(
+                Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "image/jpeg")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+        } catch (_: ActivityNotFoundException) {
+            chrome.showMessage(getString(R.string.no_gallery_app), true)
+        }
     }
 
     private val metricsUpdater = object : Runnable {
@@ -319,7 +450,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             if (engine != null) {
                 try {
                     val value = engine.snapshot()
-                    updateCameraFrameRate(value.thermalStatus)
+                    updateCameraFrameRate()
                     val latencyMs = value.lastLatencyUs / 1000.0
                     val verified = value.renderedFrames > 0 &&
                         value.errorFrames == 0L &&
@@ -332,7 +463,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         value.latencyP95Us <= PRODUCT_ALPHA_P95_US &&
                         (value.thermalStatus < 0 ||
                             value.thermalStatus <= PowerManager.THERMAL_STATUS_MODERATE)
-                    metrics.text = String.format(
+                    chrome.metrics.text = String.format(
                         Locale.US,
                         getString(R.string.metrics_format),
                         value.receivedFrames,
@@ -360,14 +491,17 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         value.resourceAllocations,
                         value.allocatedBytes / (1024.0 * 1024.0),
                         getString(
-                            if (verified) R.string.verification_yes else R.string.verification_waiting
+                            if (verified) R.string.verification_yes
+                            else R.string.verification_waiting
                         ),
                     )
-                    if (value.errorFrames > 0) {
-                        status.text = getString(R.string.status_engine_error, engine.lastError())
+                    if (value.errorFrames > 0 && !captureInProgress) {
+                        chrome.showMessage(
+                            getString(R.string.status_engine_error, engine.lastError())
+                        )
                     }
                     if (value.renderedFrames > 0 && value.renderedFrames % 30L == 0L) {
-                        Log.i(LOG_TAG, metrics.text.toString())
+                        Log.i(LOG_TAG, chrome.metrics.text.toString())
                     }
                 } catch (exception: Throwable) {
                     showFailure("Metrics failed", exception)
@@ -379,6 +513,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     private fun closeCamera() {
         cameraOpening = false
+        cameraReady = false
+        cameraGeneration += 1L
+        chrome.setReady(false)
         try {
             captureSession?.stopRepeating()
         } catch (_: Throwable) {
@@ -400,7 +537,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun showFailure(prefix: String, exception: Throwable) {
         Log.e(LOG_TAG, prefix, exception)
         runOnUiThread {
-            status.text = getString(R.string.status_failure, prefix, exception.message.orEmpty())
+            chrome.setReady(false)
+            chrome.showMessage(
+                getString(R.string.status_failure, prefix, exception.message.orEmpty())
+            )
         }
     }
 
@@ -408,7 +548,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         ensurePermissionAndOpen()
     }
 
-    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) = Unit
+    override fun onSurfaceTextureSizeChanged(
+        surface: SurfaceTexture,
+        width: Int,
+        height: Int,
+    ) = Unit
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
         closeCamera()
@@ -419,11 +563,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     companion object {
         private const val CAMERA_PERMISSION_REQUEST = 901
+        private const val STORAGE_PERMISSION_REQUEST = 902
         private const val LOG_TAG = "PhyToySample"
         private const val GPU_SAMPLED_IMAGE_USAGE = 0x100L
         private const val MAXIMUM_BUFFER_IMPORTS = 8L
         private const val PRODUCT_ALPHA_P95_US = 65_000L
         private const val PREVIEW_OUTPUT_WIDTH = 720
         private const val CAMERA_PREVIEW_FPS = 15
+        private const val CAPTURE_TIMEOUT_MILLIS = 4_000
     }
 }

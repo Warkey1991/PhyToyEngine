@@ -14,6 +14,7 @@
 #include <cmath>
 #include <condition_variable>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <mutex>
 #include <stdexcept>
@@ -149,7 +150,8 @@ public:
                       "AImageReader_setBufferRemovedListener");
 
         log_info("Camera2 PRIVATE input session ready: " + std::to_string(width_) + "x" +
-                 std::to_string(height_) + " async_latest no_cpu_readback " +
+                 std::to_string(height_) + " async_latest preview_no_cpu_readback " +
+                 "capture_readback_on_demand " +
                  "processed_gpu_surface rotation=" +
                  std::to_string(output_rotation_degrees) + " thermal_cadence=" +
                  std::to_string(target_processing_fps_.load()) + "fps " +
@@ -212,10 +214,67 @@ public:
         return last_error_;
     }
 
+    std::vector<uint32_t> capture_next_frame(int32_t timeout_millis) {
+        if (timeout_millis < 250 || timeout_millis > 10'000) {
+            throw std::invalid_argument("capture timeout must be in 250..10000 ms");
+        }
+        if (target_processing_fps_.load() == 0U) {
+            throw std::runtime_error("capture is unavailable while thermal processing is paused");
+        }
+
+        std::unique_lock lock(capture_mutex_);
+        if (capture_pending_) {
+            throw std::runtime_error("another still capture is already pending");
+        }
+        const uint64_t request_id = ++capture_request_sequence_;
+        capture_active_id_ = request_id;
+        capture_pending_ = true;
+        capture_claimed_ = false;
+        captured_pixels_.clear();
+        capture_failure_.clear();
+
+        const bool completed = capture_finished_.wait_for(
+            lock, std::chrono::milliseconds(timeout_millis), [this, request_id] {
+                return closing_.load() ||
+                    (!capture_pending_ && capture_active_id_ == request_id);
+            });
+        if (!completed) {
+            if (capture_active_id_ == request_id) capture_pending_ = false;
+            throw std::runtime_error("timed out waiting for a processed camera frame");
+        }
+        if (closing_.load()) {
+            throw std::runtime_error("camera session closed during capture");
+        }
+        if (!capture_failure_.empty()) {
+            throw std::runtime_error(capture_failure_);
+        }
+        if (captured_pixels_.size() !=
+            static_cast<size_t>(width_) * height_) {
+            throw std::runtime_error("processed capture returned an unexpected pixel count");
+        }
+        return std::move(captured_pixels_);
+    }
+
+    void cancel_capture() noexcept {
+        {
+            std::lock_guard lock(capture_mutex_);
+            if (!capture_pending_) return;
+            capture_pending_ = false;
+            capture_failure_ = "still capture was cancelled";
+        }
+        capture_finished_.notify_all();
+    }
+
     void close() noexcept {
         bool expected = false;
         if (!closed_.compare_exchange_strong(expected, true)) return;
         closing_.store(true);
+        {
+            std::lock_guard lock(capture_mutex_);
+            capture_pending_ = false;
+            capture_failure_ = "camera session closed during capture";
+        }
+        capture_finished_.notify_all();
 
         if (reader_ != nullptr) {
             AImageReader_setImageListener(reader_, nullptr);
@@ -348,7 +407,37 @@ private:
         }
     }
 
+    uint64_t claim_capture_request() {
+        std::lock_guard lock(capture_mutex_);
+        if (!capture_pending_ || capture_claimed_) return 0U;
+        capture_claimed_ = true;
+        return capture_active_id_;
+    }
+
+    void complete_capture(uint64_t request_id, std::vector<uint32_t> pixels) {
+        {
+            std::lock_guard lock(capture_mutex_);
+            if (!capture_pending_ || capture_active_id_ != request_id) return;
+            captured_pixels_ = std::move(pixels);
+            capture_failure_.clear();
+            capture_pending_ = false;
+        }
+        capture_finished_.notify_all();
+    }
+
+    void fail_capture(uint64_t request_id, const std::string& message) {
+        {
+            std::lock_guard lock(capture_mutex_);
+            if (!capture_pending_ || capture_active_id_ != request_id) return;
+            captured_pixels_.clear();
+            capture_failure_ = message;
+            capture_pending_ = false;
+        }
+        capture_finished_.notify_all();
+    }
+
     void process_image(PendingImage& pending) noexcept {
+        const uint64_t capture_request_id = claim_capture_request();
         try {
             AImage* image = pending.image();
             int32_t image_width = 0;
@@ -389,9 +478,39 @@ private:
             const auto started = std::chrono::steady_clock::now();
             {
                 std::lock_guard render_lock(render_mutex_);
-                require_engine(
-                    pte_engine_process_ahardware_buffer(engine_, &frame, &options),
-                    engine_, "pte_engine_process_ahardware_buffer(Camera2 PRIVATE)");
+                if (capture_request_id == 0U) {
+                    require_engine(
+                        pte_engine_process_ahardware_buffer(engine_, &frame, &options),
+                        engine_, "pte_engine_process_ahardware_buffer(Camera2 PRIVATE)");
+                } else {
+                    std::vector<float> captured(
+                        static_cast<size_t>(width_) * height_ * 3U);
+                    pte_output_f32_t output{};
+                    output.data = captured.data();
+                    output.capacity_floats = captured.size();
+                    output.row_stride_floats = width_ * 3U;
+                    require_engine(
+                        pte_engine_render_ahardware_buffer(
+                            engine_, &frame, &options, &output),
+                        engine_, "pte_engine_render_ahardware_buffer(still capture)");
+                    std::vector<uint32_t> pixels(
+                        static_cast<size_t>(width_) * height_);
+                    for (size_t pixel = 0U; pixel < pixels.size(); ++pixel) {
+                        const auto encoded = [&captured, pixel](size_t channel) {
+                            return static_cast<uint32_t>(std::lround(
+                                std::clamp(captured[pixel * 3U + channel], 0.0F, 1.0F) *
+                                255.0F));
+                        };
+                        pixels[pixel] = 0xFF000000U |
+                            (encoded(0U) << 16U) |
+                            (encoded(1U) << 8U) |
+                            encoded(2U);
+                    }
+                    complete_capture(capture_request_id, std::move(pixels));
+                    log_info(
+                        "Digital 01 still capture ready: " + std::to_string(width_) +
+                        "x" + std::to_string(height_) + " one_submission host_readback");
+                }
                 refresh_engine_stats();
             }
             const auto ended = std::chrono::steady_clock::now();
@@ -406,9 +525,15 @@ private:
 
             if (rendered == 1U || rendered % 30U == 0U) log_progress(rendered);
         } catch (const std::exception& exception) {
+            if (capture_request_id != 0U) {
+                fail_capture(capture_request_id, exception.what());
+            }
             ++error_frames_;
             record_error(exception.what());
         } catch (...) {
+            if (capture_request_id != 0U) {
+                fail_capture(capture_request_id, "unknown still-capture failure");
+            }
             ++error_frames_;
             record_error("unknown Camera2 render failure");
         }
@@ -506,6 +631,15 @@ private:
     bool worker_stopping_{};
     uint64_t last_admitted_time_ns_{};
     mutable std::mutex render_mutex_;
+
+    mutable std::mutex capture_mutex_;
+    std::condition_variable capture_finished_;
+    uint64_t capture_request_sequence_{};
+    uint64_t capture_active_id_{};
+    bool capture_pending_{};
+    bool capture_claimed_{};
+    std::vector<uint32_t> captured_pixels_;
+    std::string capture_failure_;
 
     std::atomic<uint64_t> received_frames_{};
     std::atomic<uint64_t> rendered_frames_{};
@@ -606,6 +740,39 @@ Java_com_phytoy_engine_PhyToyCameraSession_nativeSnapshot(
     } catch (const std::exception& exception) {
         throw_java(environment, exception);
         return nullptr;
+    }
+}
+
+extern "C" JNIEXPORT jintArray JNICALL
+Java_com_phytoy_engine_PhyToyCameraSession_nativeCaptureNextFrame(
+    JNIEnv* environment, jclass, jlong handle, jint timeout_millis) {
+    try {
+        const std::vector<uint32_t> pixels =
+            session_from(handle)->capture_next_frame(timeout_millis);
+        if (pixels.size() > static_cast<size_t>(std::numeric_limits<jsize>::max())) {
+            throw std::runtime_error("processed capture is too large for a Java array");
+        }
+        jintArray result = environment->NewIntArray(static_cast<jsize>(pixels.size()));
+        if (result == nullptr) {
+            throw std::runtime_error("unable to allocate processed capture array");
+        }
+        environment->SetIntArrayRegion(
+            result, 0, static_cast<jsize>(pixels.size()),
+            reinterpret_cast<const jint*>(pixels.data()));
+        return result;
+    } catch (const std::exception& exception) {
+        throw_java(environment, exception);
+        return nullptr;
+    }
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_phytoy_engine_PhyToyCameraSession_nativeCancelCapture(
+    JNIEnv* environment, jclass, jlong handle) {
+    try {
+        session_from(handle)->cancel_capture();
+    } catch (const std::exception& exception) {
+        throw_java(environment, exception);
     }
 }
 

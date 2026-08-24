@@ -11,8 +11,9 @@ Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**; Android no
 to the product-balanced **v1.1.0** tuning. The engine includes a Python reference,
 a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
 compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
-preview Surface, and numerical/statistical regression tooling. It is an engine core and
-an Android Synthetic Alpha experience, not yet a complete commercial camera application.
+preview Surface, a Digital 01 Android shutter/JPEG/gallery flow, and numerical/statistical
+regression tooling. It is an engine core and a focused Android camera experience, not yet
+a complete commercial camera application.
 
 ## Pipeline and architecture
 
@@ -54,6 +55,8 @@ Changing a camera look means replacing a validated profile, not editing engine c
   reuse, aliased production intermediates, cached `AHardwareBuffer` imports, sampler YCbCr
   conversion, sync-fd acquisition, and direct final-sRGB presentation through a Vulkan
   Android swapchain with no CPU readback.
+- Android still capture: on-demand readback of one fully processed sRGB frame, rotated and
+  saved through MediaStore while ordinary preview frames remain GPU-only.
 - Product profile: immutable `PhyToy Digital 01 v1.0.0` baseline plus product-balanced
   `v1.1.0` tuning, explicitly marked as a designed synthetic camera rather than a measured replica.
 - Validation: strict semantic profile checks, SHA-256 checked `.ptp` packages, frozen

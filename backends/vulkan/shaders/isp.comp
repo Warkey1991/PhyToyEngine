@@ -95,18 +95,20 @@ vec3 shared_scene(int x, int y) {
     return scene_tile[y * SCENE_TILE_WIDTH + x].rgb;
 }
 
+int filter_radius(float sigma) {
+    return sigma <= 0.0
+        ? 0
+        : min(max(int(ceil(4.0 * sigma)), 1), MAX_FILTER_RADIUS);
+}
+
 void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
     int local_index = int(gl_LocalInvocationIndex);
     for (int index = local_index; index < FILTER_SAMPLES; index += 256) {
         int kx = index % FILTER_WIDTH - MAX_FILTER_RADIUS;
         int ky = index / FILTER_WIDTH - MAX_FILTER_RADIUS;
         float distance2 = float(kx * kx + ky * ky);
-        int denoise_radius = denoise_sigma <= 0.0
-            ? 0
-            : min(max(int(ceil(4.0 * denoise_sigma)), 1), MAX_FILTER_RADIUS);
-        int sharpen_radius = sharpen_sigma <= 0.0
-            ? 0
-            : min(max(int(ceil(4.0 * sharpen_sigma)), 1), MAX_FILTER_RADIUS);
+        int denoise_radius = filter_radius(denoise_sigma);
+        int sharpen_radius = filter_radius(sharpen_sigma);
         denoise_weights[index] = denoise_sigma <= 0.0
             ? ((kx == 0 && ky == 0) ? 1.0 : 0.0)
             : ((abs(kx) <= denoise_radius && abs(ky) <= denoise_radius)
@@ -130,10 +132,10 @@ void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
     barrier();
 }
 
-vec3 gaussian_scene_shared(int x, int y, bool sharpen_kernel) {
+vec3 gaussian_scene_shared(int x, int y, bool sharpen_kernel, int radius) {
     vec3 sum = vec3(0.0);
-    for (int ky = -MAX_FILTER_RADIUS; ky <= MAX_FILTER_RADIUS; ++ky) {
-        for (int kx = -MAX_FILTER_RADIUS; kx <= MAX_FILTER_RADIUS; ++kx) {
+    for (int ky = -radius; ky <= radius; ++ky) {
+        for (int kx = -radius; kx <= radius; ++kx) {
             int index = (ky + MAX_FILTER_RADIUS) * FILTER_WIDTH +
                         kx + MAX_FILTER_RADIUS;
             float weight = sharpen_kernel
@@ -184,9 +186,11 @@ void main() {
     int shared_y = int(gl_LocalInvocationID.y) + MAX_FILTER_RADIUS;
     vec3 scene = denoise_sigma <= 0.0
         ? shared_scene(shared_x, shared_y)
-        : gaussian_scene_shared(shared_x, shared_y, false);
+        : gaussian_scene_shared(
+            shared_x, shared_y, false, filter_radius(denoise_sigma));
     if (sharpen_amount != 0.0) {
-        vec3 low_pass = gaussian_scene_shared(shared_x, shared_y, true);
+        vec3 low_pass = gaussian_scene_shared(
+            shared_x, shared_y, true, filter_radius(sharpen_radius));
         scene += sharpen_amount * (scene - low_pass);
     }
     vec3 toned = vec3(

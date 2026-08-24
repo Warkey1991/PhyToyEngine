@@ -10,8 +10,9 @@ Android GPU Surface.
 ## Current milestone
 
 - `sdk`: packages the C++ engine, JNI bridge, Kotlin API, and immutable `.ptp` profiles.
-- `sample`: uses a `TextureView` only as the engine's Vulkan swapchain output and targets
-  Camera2 exclusively at the engine-owned PRIVATE `AImageReader` surface.
+- `sample`: provides a full-screen Digital 01 camera UI, shutter state, MediaStore JPEG
+  saving and last-photo review. Its `TextureView` remains only the Vulkan swapchain output,
+  while Camera2 targets the engine-owned PRIVATE `AImageReader` surface exclusively.
 - JNI: acquires the latest image and its sync fence, immediately queues it to a dedicated
   latest-frame worker, imports the camera buffer into Vulkan, reuses stable buffer IDs, skips
   CPU readback, records normalization/optics/sensor/ISP and the graphics pass into one
@@ -91,6 +92,25 @@ engine.close()
 previewSurface.release()
 ```
 
+### Still capture
+
+Call `captureNextFrame()` from a background thread. The next admitted Camera2 frame runs
+through the same Digital 01 Vulkan graph and preview presentation, with one additional
+readback of its final sRGB pixels. Normal preview frames remain GPU-only and every frame,
+including the captured one, still uses one Vulkan queue submission:
+
+```kotlin
+photoExecutor.execute {
+    val photo = engine.captureNextFrame()
+    // photo.argb8888 is photo.width × photo.height.
+    // Apply photo.rotationDegrees before JPEG encoding.
+}
+```
+
+The sample rotates the result, encodes JPEG at quality 95, publishes it to
+`Pictures/PhyToy` through `MediaStore`, updates the lower-left thumbnail and opens the
+system photo viewer when that thumbnail is tapped.
+
 Profile assets are copied into app-private storage because the native engine validates and
 opens packaged profile files. The default profiles are `host_generic_srgb.ptp` and the
 product-balanced `toy_phytoy_digital_01_v1_1.ptp`; the immutable v1.0.0 package remains
@@ -120,7 +140,8 @@ An unplugged 30-minute run and the multi-vendor matrix remain later product gate
 ## 中文说明
 
 此目录是 PhyToyEngine 的 Android Synthetic Alpha，包含 Android AAR、Kotlin API 和
-Camera2 示例 App。真实 `AIMAGE_FORMAT_PRIVATE` 帧通过 `AHardwareBuffer` 与 acquire
+具备正式取景界面、快门、JPEG 保存与相册回看的 Camera2 示例 App。真实
+`AIMAGE_FORMAT_PRIVATE` 帧通过 `AHardwareBuffer` 与 acquire
 fence 零拷贝进入 Vulkan，依次执行归一化、PhyToy Digital 01 光学、传感器、ISP，最后
 由 Vulkan 图形 Pass 写入 Android swapchain GPU Surface。
 
@@ -128,6 +149,10 @@ fence 零拷贝进入 Vulkan，依次执行归一化、PhyToy Digital 01 光学�
 `inputSurface`；`TextureView` 对应的 Surface 只交给 Vulkan 展示处理后结果。完整计算和
 展示仍保持每帧一次 queue submission，并记录 `renderedFrames`、`presentedFrames`、交换链
 重建、输出尺寸、延迟、错误、内存与零拷贝指标。
+
+`captureNextFrame()` 必须在后台线程调用。它让下一张 PRIVATE 帧继续以一次 Vulkan
+submission 完成 Digital 01 处理和预览显示，同时仅对这张拍照帧读回最终 sRGB；普通预览
+仍无 CPU readback。示例 App 将结果旋转后以质量 95 写入 `Pictures/PhyToy`，并更新缩略图。
 
 Vulkan 引擎默认最多处理 15 FPS，并通过 Android Thermal API 自动调整为 Normal
 15 FPS、Light 10 FPS、Moderate 5 FPS、Severe 3 FPS、Critical 0 FPS。温控主动跳过的帧单独记录为

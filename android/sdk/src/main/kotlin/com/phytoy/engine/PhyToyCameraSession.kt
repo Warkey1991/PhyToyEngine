@@ -3,6 +3,7 @@ package com.phytoy.engine
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
+import android.os.Looper
 import android.os.PowerManager
 import android.view.Surface
 import java.io.Closeable
@@ -17,9 +18,13 @@ class PhyToyCameraSession private constructor(
     private var nativeHandle: Long,
     val inputSurface: Surface,
     private val normalProcessingFrameRate: Int,
+    private val captureWidth: Int,
+    private val captureHeight: Int,
+    private val outputRotationDegrees: Int,
 ) : Closeable {
 
     private val lifecycleLock = Any()
+    private val captureCallLock = Any()
     @Volatile private var observedThermalStatus = THERMAL_STATUS_UNAVAILABLE
     @Volatile private var appliedProcessingFrameRate = -1
     private var thermalPowerManager: PowerManager? = null
@@ -49,6 +54,14 @@ class PhyToyCameraSession private constructor(
         val outputWidth: Int,
         val outputHeight: Int,
         val thermalStatus: Int,
+    )
+
+    /** One fully processed sRGB frame before preview crop/scale, with output rotation metadata. */
+    data class CapturedFrame(
+        val width: Int,
+        val height: Int,
+        val rotationDegrees: Int,
+        val argb8888: IntArray,
     )
 
     fun snapshot(): Snapshot {
@@ -88,12 +101,46 @@ class PhyToyCameraSession private constructor(
         nativeHandle.takeIf { it != 0L }?.let(::nativeLastError).orEmpty()
     }
 
+    /**
+     * Waits for the next admitted Camera2 frame and returns its final Digital 01 pixels.
+     * The selected frame still uses one Vulkan submission and is presented to the preview;
+     * only this explicitly requested frame performs a CPU readback.
+     */
+    fun captureNextFrame(timeoutMillis: Int = DEFAULT_CAPTURE_TIMEOUT_MILLIS): CapturedFrame {
+        require(timeoutMillis in 250..MAXIMUM_CAPTURE_TIMEOUT_MILLIS) {
+            "timeoutMillis must be in 250..$MAXIMUM_CAPTURE_TIMEOUT_MILLIS"
+        }
+        check(Looper.myLooper() != Looper.getMainLooper()) {
+            "captureNextFrame must run off the main thread"
+        }
+        val pixels = synchronized(captureCallLock) {
+            val handle = synchronized(lifecycleLock) {
+                check(nativeHandle != 0L) { "Camera session is closed" }
+                nativeHandle
+            }
+            nativeCaptureNextFrame(handle, timeoutMillis)
+        }
+        check(pixels.size == captureWidth * captureHeight) {
+            "Unexpected native capture size"
+        }
+        return CapturedFrame(
+            width = captureWidth,
+            height = captureHeight,
+            rotationDegrees = outputRotationDegrees,
+            argb8888 = pixels,
+        )
+    }
+
     override fun close() {
         detachThermalControl()
         val handle = synchronized(lifecycleLock) {
             nativeHandle.also { nativeHandle = 0L }
         }
         if (handle == 0L) return
+        nativeCancelCapture(handle)
+        synchronized(captureCallLock) {
+            // Wait for a cancelled or just-completed JNI capture call before deletion.
+        }
         inputSurface.release()
         nativeClose(handle)
     }
@@ -177,6 +224,8 @@ class PhyToyCameraSession private constructor(
         private const val PROFILE_CACHE_VERSION = "0.3.1"
         private const val THERMAL_STATUS_UNAVAILABLE = -1
         private const val DEFAULT_PROCESSING_FRAME_RATE = 15
+        private const val DEFAULT_CAPTURE_TIMEOUT_MILLIS = 3_000
+        private const val MAXIMUM_CAPTURE_TIMEOUT_MILLIS = 10_000
 
         init {
             System.loadLibrary("phytoy_core")
@@ -221,7 +270,14 @@ class PhyToyCameraSession private constructor(
                 val surface = checkNotNull(nativeInputSurface(handle)) {
                     "Native Camera2 input surface is unavailable"
                 }
-                PhyToyCameraSession(handle, surface, processingFrameRateLimit).also {
+                PhyToyCameraSession(
+                    handle,
+                    surface,
+                    processingFrameRateLimit,
+                    width,
+                    height,
+                    outputRotationDegrees,
+                ).also {
                     session = it
                     it.attachThermalControl(context.applicationContext, thermalAdaptive)
                 }
@@ -253,6 +309,11 @@ class PhyToyCameraSession private constructor(
         ): Long
         @JvmStatic private external fun nativeInputSurface(handle: Long): Surface?
         @JvmStatic private external fun nativeSnapshot(handle: Long): LongArray
+        @JvmStatic private external fun nativeCaptureNextFrame(
+            handle: Long,
+            timeoutMillis: Int,
+        ): IntArray
+        @JvmStatic private external fun nativeCancelCapture(handle: Long)
         @JvmStatic private external fun nativeSetProcessingFrameRate(handle: Long, framesPerSecond: Int)
         @JvmStatic private external fun nativeLastError(handle: Long): String
         @JvmStatic private external fun nativeClose(handle: Long)
