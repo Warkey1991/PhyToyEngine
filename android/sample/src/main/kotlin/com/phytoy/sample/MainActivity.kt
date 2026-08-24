@@ -16,7 +16,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.os.PowerManager
 import android.util.Log
+import android.util.Range
 import android.util.Size
 import android.view.Gravity
 import android.view.Surface
@@ -40,6 +42,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var previewSurface: Surface? = null
     private var engineSession: PhyToyCameraSession? = null
     private var engineSize: Size? = null
+    private var cameraFpsRanges: List<Range<Int>> = emptyList()
+    @Volatile private var activeCameraFpsRange: Range<Int>? = null
+    @Volatile private var pendingCameraFpsRange: Range<Int>? = null
     private var cameraOpening = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +82,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         val overlay = FrameLayout(this).apply { setBackgroundColor(0x66000000) }
         root.addView(overlay, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            densityPixels(236),
+            densityPixels(280),
             Gravity.BOTTOM,
         ))
 
@@ -143,12 +148,31 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                     .get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
             }
             val characteristics = manager.getCameraCharacteristics(cameraId)
+            cameraFpsRanges = characteristics.get(
+                CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES
+            ).orEmpty().toList()
             val map = checkNotNull(
                 characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             ) { "Camera has no stream configuration map" }
             val size = chooseEngineSize(map)
             engineSize = size
-            engineSession = PhyToyCameraSession.open(this, size.width, size.height)
+            val texture = checkNotNull(preview.surfaceTexture)
+            val outputWidth = preview.width.coerceIn(1, PREVIEW_OUTPUT_WIDTH)
+            val outputHeight = (
+                preview.height.coerceAtLeast(1).toLong() * outputWidth /
+                    preview.width.coerceAtLeast(1)
+                ).toInt().coerceAtLeast(1)
+            texture.setDefaultBufferSize(outputWidth, outputHeight)
+            val processedPreviewSurface = Surface(texture)
+            previewSurface = processedPreviewSurface
+            val outputRotation = relativeCameraRotation(characteristics)
+            engineSession = PhyToyCameraSession.open(
+                context = this,
+                width = size.width,
+                height = size.height,
+                outputSurface = processedPreviewSurface,
+                outputRotationDegrees = outputRotation,
+            )
             status.text = getString(R.string.status_opening, size.width, size.height)
             manager.openCamera(cameraId, cameraStateCallback, handler)
         } catch (exception: Throwable) {
@@ -156,6 +180,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             showFailure("Open failed", exception)
             engineSession?.close()
             engineSession = null
+            previewSurface?.release()
+            previewSurface = null
         }
     }
 
@@ -167,6 +193,20 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             ?: sizes.filter { it.width <= 1920 && it.height <= 1080 }
                 .maxByOrNull { it.width.toLong() * it.height }
             ?: sizes.minBy { it.width.toLong() * it.height }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun relativeCameraRotation(characteristics: CameraCharacteristics): Int {
+        val displayDegrees = when (windowManager.defaultDisplay.rotation) {
+            Surface.ROTATION_90 -> 90
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_270 -> 270
+            else -> 0
+        }
+        val sensorDegrees = characteristics.get(
+            CameraCharacteristics.SENSOR_ORIENTATION
+        ) ?: 0
+        return (sensorDegrees - displayDegrees + 360) % 360
     }
 
     private val cameraStateCallback = object : CameraDevice.StateCallback() {
@@ -194,25 +234,18 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     @Suppress("DEPRECATION")
     private fun createCaptureSession(camera: CameraDevice) {
         try {
-            val texture = checkNotNull(preview.surfaceTexture)
             val engineSurface = checkNotNull(engineSession?.inputSurface)
-            val size = checkNotNull(engineSize)
-            texture.setDefaultBufferSize(size.width, size.height)
-            val cameraPreview = Surface(texture)
-            previewSurface = cameraPreview
             camera.createCaptureSession(
-                listOf(cameraPreview, engineSurface),
+                listOf(engineSurface),
                 object : CameraCaptureSession.StateCallback() {
                     override fun onConfigured(session: CameraCaptureSession) {
                         if (cameraDevice !== camera) return
                         captureSession = session
-                        val request = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
-                            addTarget(cameraPreview)
-                            addTarget(engineSurface)
-                            set(CaptureRequest.CONTROL_AF_MODE,
-                                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
-                        }.build()
-                        session.setRepeatingRequest(request, null, cameraHandler)
+                        submitRepeatingRequest(
+                            camera,
+                            session,
+                            selectCameraFpsRange(engineSession?.snapshot()?.thermalStatus ?: -1),
+                        )
                         runOnUiThread {
                             status.text = getString(R.string.status_active)
                         }
@@ -229,21 +262,76 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
+    private fun selectCameraFpsRange(thermalStatus: Int): Range<Int>? {
+        // The processed GPU Surface is now the only preview. Producing camera frames faster
+        // than the engine can display wastes Camera HAL/ISP power without improving motion.
+        val target = CAMERA_PREVIEW_FPS
+        return cameraFpsRanges.firstOrNull { it.lower == target && it.upper == target }
+            ?: cameraFpsRanges.filter { it.contains(target) }
+                .minByOrNull { it.upper - it.lower }
+            ?: cameraFpsRanges.minByOrNull { kotlin.math.abs(it.upper - target) }
+    }
+
+    private fun updateCameraFrameRate(thermalStatus: Int) {
+        val desired = selectCameraFpsRange(thermalStatus) ?: return
+        if (desired == activeCameraFpsRange || desired == pendingCameraFpsRange) return
+        val handler = cameraHandler ?: return
+        pendingCameraFpsRange = desired
+        handler.post {
+            val camera = cameraDevice
+            val session = captureSession
+            if (camera == null || session == null) {
+                pendingCameraFpsRange = null
+                return@post
+            }
+            try {
+                submitRepeatingRequest(camera, session, desired)
+            } catch (exception: Throwable) {
+                showFailure("Camera FPS update failed", exception)
+            } finally {
+                pendingCameraFpsRange = null
+            }
+        }
+    }
+
+    private fun submitRepeatingRequest(
+        camera: CameraDevice,
+        session: CameraCaptureSession,
+        fpsRange: Range<Int>?,
+    ) {
+        val engineSurface = checkNotNull(engineSession?.inputSurface)
+        val request = camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
+            addTarget(engineSurface)
+            set(
+                CaptureRequest.CONTROL_AF_MODE,
+                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE,
+            )
+            fpsRange?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
+        }.build()
+        session.setRepeatingRequest(request, null, cameraHandler)
+        activeCameraFpsRange = fpsRange
+        Log.i(LOG_TAG, "Camera2 thermal FPS range changed to ${fpsRange ?: "device default"}")
+    }
+
     private val metricsUpdater = object : Runnable {
         override fun run() {
             val engine = engineSession
             if (engine != null) {
                 try {
                     val value = engine.snapshot()
+                    updateCameraFrameRate(value.thermalStatus)
                     val latencyMs = value.lastLatencyUs / 1000.0
                     val verified = value.renderedFrames > 0 &&
                         value.errorFrames == 0L &&
                         value.zeroCopyFrames == value.renderedFrames &&
                         value.queueSubmissions == value.renderedFrames &&
+                        value.presentedFrames == value.renderedFrames &&
                         value.inputImageFormat == android.graphics.ImageFormat.PRIVATE.toLong() &&
                         value.inputBufferUsage and GPU_SAMPLED_IMAGE_USAGE != 0L &&
                         value.hardwareBufferImports in 1L..MAXIMUM_BUFFER_IMPORTS &&
-                        value.latencyP95Us <= PRODUCT_ALPHA_P95_US
+                        value.latencyP95Us <= PRODUCT_ALPHA_P95_US &&
+                        (value.thermalStatus < 0 ||
+                            value.thermalStatus <= PowerManager.THERMAL_STATUS_MODERATE)
                     metrics.text = String.format(
                         Locale.US,
                         getString(R.string.metrics_format),
@@ -251,6 +339,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         value.renderedFrames,
                         value.droppedFrames,
                         value.errorFrames,
+                        value.throttledFrames,
+                        value.targetProcessingFps,
+                        value.thermalStatus,
+                        activeCameraFpsRange?.let { "${it.lower}-${it.upper}" } ?: "-",
                         latencyMs,
                         value.maximumLatencyUs / 1000.0,
                         value.latencyP50Us / 1000.0,
@@ -258,6 +350,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         value.queueSubmissions,
                         value.hardwareBufferImports,
                         value.zeroCopyFrames,
+                        value.presentedFrames,
+                        value.swapchainRecreates,
+                        value.outputWidth,
+                        value.outputHeight,
                         value.inputImageFormat,
                         value.inputBufferFormat,
                         value.inputBufferUsage,
@@ -291,11 +387,14 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         captureSession = null
         cameraDevice?.close()
         cameraDevice = null
-        previewSurface?.release()
-        previewSurface = null
         engineSession?.close()
         engineSession = null
+        previewSurface?.release()
+        previewSurface = null
         engineSize = null
+        cameraFpsRanges = emptyList()
+        activeCameraFpsRange = null
+        pendingCameraFpsRange = null
     }
 
     private fun showFailure(prefix: String, exception: Throwable) {
@@ -323,6 +422,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         private const val LOG_TAG = "PhyToySample"
         private const val GPU_SAMPLED_IMAGE_USAGE = 0x100L
         private const val MAXIMUM_BUFFER_IMPORTS = 8L
-        private const val PRODUCT_ALPHA_P95_US = 45_000L
+        private const val PRODUCT_ALPHA_P95_US = 65_000L
+        private const val PREVIEW_OUTPUT_WIDTH = 720
+        private const val CAMERA_PREVIEW_FPS = 15
     }
 }

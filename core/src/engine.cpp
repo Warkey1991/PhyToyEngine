@@ -145,7 +145,7 @@ pte_status_t process_ahardware_buffer_locked(
 extern "C" {
 
 const char* pte_version_string(void) {
-    return "PhyToyEngine/0.2.1 ABI/1";
+    return "PhyToyEngine/0.3.0 ABI/2";
 }
 
 const char* pte_last_error(void) {
@@ -260,6 +260,10 @@ pte_status_t pte_engine_get_runtime_stats(
     out_stats->vulkan_allocated_bytes = vulkan_stats.allocated_bytes;
     out_stats->ahardware_buffer_imports = vulkan_stats.ahardware_buffer_imports;
     out_stats->zero_copy_input_frames = engine->zero_copy_input_frames;
+    out_stats->vulkan_presented_frames = vulkan_stats.presented_frames;
+    out_stats->vulkan_swapchain_recreates = vulkan_stats.swapchain_recreates;
+    out_stats->vulkan_output_width = vulkan_stats.output_width;
+    out_stats->vulkan_output_height = vulkan_stats.output_height;
     return PTE_STATUS_OK;
 }
 
@@ -281,6 +285,29 @@ pte_status_t pte_engine_forget_ahardware_buffer(
     engine->last_error.clear();
     if (engine->vulkan) engine->vulkan->forget_ahardware_buffer(buffer);
     return PTE_STATUS_OK;
+}
+
+pte_status_t pte_engine_set_output_surface(
+    pte_engine_t* engine,
+    ANativeWindow* window,
+    uint32_t rotation_degrees) {
+    if (engine == nullptr || window == nullptr) {
+        global_last_error = "engine and Android output window are required";
+        return PTE_STATUS_INVALID_ARGUMENT;
+    }
+    std::lock_guard lock(engine->mutex);
+    engine->last_error.clear();
+    try {
+        if (!engine->vulkan) engine->vulkan = std::make_unique<phytoy::VulkanBackend>();
+        engine->vulkan->set_output_window(window, rotation_degrees);
+        return PTE_STATUS_OK;
+    } catch (const std::exception& exception) {
+        engine->last_error = exception.what();
+        return classify_exception(exception);
+    } catch (...) {
+        engine->last_error = "unknown Vulkan output-surface error";
+        return PTE_STATUS_INTERNAL_ERROR;
+    }
 }
 
 pte_status_t pte_engine_render_ahardware_buffer(

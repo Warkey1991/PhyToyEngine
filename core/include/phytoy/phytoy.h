@@ -20,10 +20,11 @@
 extern "C" {
 #endif
 
-#define PTE_ABI_VERSION 1u
+#define PTE_ABI_VERSION 2u
 
 typedef struct pte_engine pte_engine_t;
 typedef struct AHardwareBuffer AHardwareBuffer;
+typedef struct ANativeWindow ANativeWindow;
 
 typedef enum pte_status {
     PTE_STATUS_OK = 0,
@@ -115,6 +116,10 @@ typedef struct pte_runtime_stats {
     uint64_t vulkan_allocated_bytes;
     uint64_t ahardware_buffer_imports;
     uint64_t zero_copy_input_frames;
+    uint64_t vulkan_presented_frames;
+    uint64_t vulkan_swapchain_recreates;
+    uint32_t vulkan_output_width;
+    uint32_t vulkan_output_height;
 } pte_runtime_stats_t;
 
 typedef struct pte_ahardware_buffer_frame {
@@ -162,6 +167,14 @@ PTE_API pte_status_t pte_engine_forget_ahardware_buffer(
     pte_engine_t* engine,
     AHardwareBuffer* buffer);
 
+/* Android-only GPU preview output. The caller owns window and must keep it valid
+   until the engine is destroyed or another output window is installed. Rotation
+   is clockwise and must be one of 0, 90, 180 or 270 degrees. */
+PTE_API pte_status_t pte_engine_set_output_surface(
+    pte_engine_t* engine,
+    ANativeWindow* window,
+    uint32_t rotation_degrees);
+
 /* Android-only synchronous zero-copy input path. The host profile must describe
    encoded sRGB input; Camera2 YUV/private buffers are converted by Vulkan's
    sampler YCbCr conversion before host-profile normalization. */
@@ -171,9 +184,9 @@ PTE_API pte_status_t pte_engine_render_ahardware_buffer(
     const pte_render_options_t* options,
     pte_output_f32_t* output);
 
-/* Android preview path that executes the complete Vulkan graph without copying
-   the final float32 image back to CPU memory. GPU completion is synchronous;
-   use a dedicated worker thread rather than a Camera2 callback thread. */
+/* Android preview path that executes the complete Vulkan graph and presents the
+   final sRGB result to the configured GPU surface without CPU readback. GPU
+   completion is synchronous; use a dedicated worker thread. */
 PTE_API pte_status_t pte_engine_process_ahardware_buffer(
     pte_engine_t* engine,
     const pte_ahardware_buffer_frame_t* input,

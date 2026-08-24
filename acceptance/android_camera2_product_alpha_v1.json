@@ -5,10 +5,10 @@
   "latest_device_acceptance": {
     "date": "2026-08-24",
     "device": "Samsung SM-S9210",
-    "engine_version": "0.2.1",
-    "report": "reports/android_camera2_sm_s9210_0_2_1/evaluation.json",
-    "checks_passed": 11,
-    "checks_total": 11
+    "engine_version": "0.3.0",
+    "report": "reports/android_camera2_sm_s9210_0_3_0_processed_preview/evaluation.json",
+    "checks_passed": 17,
+    "checks_total": 17
   },
   "input": {
     "reader_format": "AIMAGE_FORMAT_PRIVATE",
@@ -20,12 +20,31 @@
     "minimum_rendered_frames": 30,
     "maximum_error_frames": 0,
     "maximum_imported_buffer_slots": 8,
-    "latency_ms_p95_max": 45.0,
+    "latency_ms_p95_max": 65.0,
     "queue_submissions_per_frame": 1,
     "zero_copy_frames_per_frame": 1
   },
+  "presentation": {
+    "path": "Vulkan final sRGB buffer to Android swapchain GPU Surface",
+    "output_width": 720,
+    "minimum_output_height": 720,
+    "presented_frames_per_rendered_frame": 1,
+    "maximum_swapchain_recreates": 1,
+    "cpu_readback": false
+  },
+  "thermal_adaptation": {
+    "normal_processing_fps": 15,
+    "light_processing_fps": 10,
+    "moderate_processing_fps": 5,
+    "severe_processing_fps": 3,
+    "critical_processing_fps": 0,
+    "normal_camera_fps_range": [15, 15],
+    "light_camera_fps": 15,
+    "moderate_camera_fps": 15,
+    "severe_camera_fps": 15,
+    "camera_preview_remains_decoupled": false
+  },
   "remaining_product_gates": [
-    "processed GPU preview output surface",
     "30-minute sustained preview latency and thermal run",
     "foreground/background, rotation and camera restart lifecycle",
     "multi-vendor device matrix"

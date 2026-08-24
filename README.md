@@ -8,9 +8,10 @@ camera's optics, digital sensor, ADC, and ISP in a fixed physical order.
 
 This repository currently delivers the **Synthetic Alpha device-accepted engine candidate**.
 Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**. The engine includes a Python reference,
-a C++20 CPU runtime with a stable C ABI, integrity-checked profiles, an Android Vulkan
-compute backend, Camera2 `AHardwareBuffer` zero-copy input, and numerical/statistical
-regression tooling. It is an engine core, not yet a commercial camera application.
+a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
+compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
+preview Surface, and numerical/statistical regression tooling. It is an engine core and
+an Android Synthetic Alpha experience, not yet a complete commercial camera application.
 
 ## Pipeline and architecture
 
@@ -22,6 +23,8 @@ flowchart LR
     O --> S["Target sensor<br/>CFA · shot/read/FPN · ADC"]
     S --> I["Target ISP<br/>demosaic · WB · CCM · tone · denoise · sharpen"]
     I --> OUT["sRGB output"]
+    OUT --> WSI["Vulkan graphics pass<br/>rotation · crop · scale"]
+    WSI --> SURFACE["Android GPU Surface"]
 
     TP["ToyCameraProfile"] --> O
     TP --> S
@@ -44,11 +47,12 @@ Changing a camera look means replacing a validated profile, not editing engine c
   clipping, conversion gain, black level, and ADC quantization.
 - ISP: normalized bilinear demosaic, white balance, color matrix, tone curve, Gaussian
   denoise, unsharp masking, and sRGB output encoding.
-- Runtime: C++20 shared library, stable C ABI v1, CPU backend, Android Vulkan backend,
+- Runtime: C++20 shared library, versioned C ABI v2, CPU backend, Android Vulkan backend,
   automatic CPU fallback, native CLI, and five stage callbacks.
 - Android production path: one queue submission per frame, persistent descriptor/buffer
   reuse, aliased production intermediates, cached `AHardwareBuffer` imports, sampler YCbCr
-  conversion, and sync-fd acquisition.
+  conversion, sync-fd acquisition, and direct final-sRGB presentation through a Vulkan
+  Android swapchain with no CPU readback.
 - Product profile: versioned `PhyToy Digital 01 v1.0.0`, explicitly marked as a designed
   synthetic camera rather than a measured replica.
 - Validation: strict semantic profile checks, SHA-256 checked `.ptp` packages, frozen
@@ -148,10 +152,10 @@ cmake -S . -B build-android-arm64 -G Ninja \
 cmake --build build-android-arm64 --parallel
 ```
 
-The resulting `libphytoy_core.so` embeds validated SPIR-V. Optics, sensor, and ISP execute
-in one command buffer and one queue submission. Buffers, descriptors, parameters, and up
-to eight Camera2 buffer-slot imports are reused. `PTE_BACKEND_AUTO` falls back to CPU when
-Vulkan initialization is unavailable. See [Android Vulkan integration](docs/ANDROID_VULKAN.md).
+The resulting `libphytoy_core.so` embeds validated SPIR-V. Normalization, optics, sensor,
+ISP, and the final GPU Surface graphics pass execute in one command buffer and one queue
+submission. Buffers, descriptors, parameters, and up to eight Camera2 buffer-slot imports
+are reused. `PTE_BACKEND_AUTO` falls back to CPU when Vulkan initialization is unavailable.
 
 ### Camera2 zero-copy input
 
@@ -176,14 +180,16 @@ pte_status_t status = pte_engine_render_ahardware_buffer(
 pte_engine_forget_ahardware_buffer(engine, hardware_buffer);
 ```
 
-For a live preview worker that does not need CPU pixels, call
-`pte_engine_process_ahardware_buffer` instead. It executes the same complete Vulkan graph
-but skips the final float32 CPU copy; Camera2 callbacks should enqueue the latest image to
-a dedicated worker rather than waiting synchronously.
+For live preview, first call `pte_engine_set_output_surface` with an `ANativeWindow` and
+clockwise output rotation, then call `pte_engine_process_ahardware_buffer` from a dedicated
+latest-frame worker. It executes normalization, PhyToy Digital 01 optics/sensor/ISP, and
+the swapchain graphics pass in the same submission. Camera2 must target only the engine
+input Surface; adding a second raw preview target would bypass the processed result and
+increase Camera HAL power.
 
 The zero-copy claim applies to camera input: the `AHardwareBuffer` is sampled directly by
 Vulkan. The render API writes the final float32 image to caller-owned memory; the preview
-process API deliberately skips that readback.
+process API keeps the final image on GPU and presents it without CPU readback.
 
 ## Reproducibility and tests
 
@@ -228,13 +234,18 @@ latency, memory, thermal, endurance, numerical, and statistical results.
 - `host_reference_raw.json` is a synthetic RAW calibration placeholder, not a measured
   phone profile. A named SM-S9210 camera-0 profile is included from Camera2 static metadata,
   but remains chart-unvalidated; see the [profile derivation](docs/SM_S9210_RAW_PROFILE.md).
-- The new single-submit, shared-memory ISP, aliased-buffer, and synthetic RGBA
-  AHardwareBuffer path passes the versioned SM-S9210 device contract. The Android AAR,
-  Camera2 sample, PRIVATE `AImageReader`, and smoke evaluator are implemented. The real
-  Camera2 PRIVATE path passed all 11/11 smoke checks on an SM-S9210 with engine 0.2.1
-  (P50 18.367 ms, P95 20.322 ms, 0 errors, 30/30 zero-copy frames); see the
-  [Camera2 device report](reports/android_camera2_sm_s9210_0_2_1/evaluation.json). A
-  30-minute sustained run and the multi-vendor matrix remain product gates.
+- Engine 0.3.0 completes the real Camera2 PRIVATE → full Vulkan profile graph → Android
+  GPU Surface path. On SM-S9210 it passed all 17/17 processed-preview checks: 30 rendered,
+  submitted, zero-copy, and presented frames; 0 queue drops/errors; P50 52.622 ms and P95
+  59.161 ms while the already-warm device was in Android thermal Light mode; and a stable
+  720×1560 swapchain with no recreation. See the
+  [processed-preview report](reports/android_camera2_sm_s9210_0_3_0_processed_preview/evaluation.json).
+  A 30-minute unplugged run and the multi-vendor matrix remain product gates.
+- Android 0.3.0 uses a 15 FPS normal processed preview and automatically steps down to
+  10/5/3/0 FPS at light, moderate, severe, and critical thermal states. Camera2 is fixed at
+  15 FPS because the raw preview bypass has been removed; generating unseen 24–30 FPS
+  frames would only increase Camera HAL/ISP power. Thermal skips remain separate from true
+  queue drops.
 - The 12MP production path uses approximately 336 MiB of persistent Vulkan float32 working
   buffers plus the caller's output. Tiled/float16 internals and direct encoded output remain
   future memory reductions, not prerequisites of the current explicit acceptance contract.
@@ -390,11 +401,18 @@ PhyToy Digital 01 在 128 个 seed 下的传感器均值/方差和三条路径�
 新版单次提交、shared-memory ISP、Buffer 原地复用和合成 RGBA AHardwareBuffer 路径
 已在 Samsung SM-S9210 / Adreno 750 上通过 101/101 项协议检查，包括 720p、12MP、
 温升、10,000 帧、五阶段误差和随机统计。完整结果位于
-[真机验收报告](reports/synthetic_alpha_candidate/)。Android App 内真实 Camera2
-`AIMAGE_FORMAT_PRIVATE` 路径也已用引擎 0.2.1 在 SM-S9210 上通过 11/11 项冒烟验收：
-P50 18.367 ms、P95 20.322 ms、错误 0、30/30 帧零拷贝；详见
-[Camera2 真机报告](reports/android_camera2_sm_s9210_0_2_1/evaluation.json)。30 分钟长稳
-测试和多厂商设备矩阵仍属于后续产品门槛。
+[真机验收报告](reports/synthetic_alpha_candidate/)。引擎 0.3.0 又完成了真实 Camera2
+`AIMAGE_FORMAT_PRIVATE` → 完整 Vulkan Profile → Android GPU Surface 链路，并在
+SM-S9210 上通过 17/17 项效果预览验收：30 帧渲染/提交/零拷贝/显示完全一致，队列丢帧
+和错误均为 0，已处于 Light 温控状态的设备上 P50 52.622 ms、P95 59.161 ms，交换链
+稳定为 720×1560 且没有重建；详见
+[处理后预览报告](reports/android_camera2_sm_s9210_0_3_0_processed_preview/evaluation.json)。
+30 分钟不插电长稳测试和多厂商设备矩阵仍属于后续产品门槛。
+
+Android 0.3.0 的效果预览正常档为 15 FPS，并在 Light、Moderate、Severe、Critical
+温控状态下自动降至 10、5、3、0 FPS。Camera2 固定为 15 FPS，因为原始预览旁路已经
+删除；继续生成用户看不到的 24–30 FPS 只会增加 Camera HAL/ISP 功耗。温控主动跳帧与
+真正的队列丢帧仍分开统计。
 
 ## 参考论文与开源项目
 

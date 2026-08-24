@@ -16,6 +16,7 @@
 #if defined(__ANDROID__) && defined(PHYTOY_HAS_EMBEDDED_SPIRV)
 #include "phytoy_spirv.hpp"
 #include <android/hardware_buffer.h>
+#include <android/native_window.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #define VK_USE_PLATFORM_ANDROID_KHR 1
@@ -281,6 +282,7 @@ struct VulkanBackend::Impl {
     VkDevice device{VK_NULL_HANDLE};
     VkQueue queue{VK_NULL_HANDLE};
     uint32_t queue_family{};
+    VkQueueFlags queue_flags{};
     PFN_vkGetAndroidHardwareBufferPropertiesANDROID get_ahb_properties{};
     PFN_vkImportSemaphoreFdKHR import_semaphore_fd{};
     PFN_vkCreateSamplerYcbcrConversion create_ycbcr_conversion{};
@@ -315,6 +317,25 @@ struct VulkanBackend::Impl {
     Buffer isp_parameter_buffer;
     Buffer ahb_parameter_buffer;
     Buffer stage_buffer;
+    ANativeWindow* output_window{};
+    uint32_t output_rotation_degrees{};
+    VkSurfaceKHR output_surface{VK_NULL_HANDLE};
+    VkSwapchainKHR swapchain{VK_NULL_HANDLE};
+    VkFormat swapchain_format{VK_FORMAT_UNDEFINED};
+    VkExtent2D swapchain_extent{};
+    std::vector<VkImage> swapchain_images;
+    std::vector<VkImageView> swapchain_views;
+    std::vector<VkFramebuffer> swapchain_framebuffers;
+    VkRenderPass presentation_render_pass{VK_NULL_HANDLE};
+    VkDescriptorSetLayout presentation_descriptor_layout{VK_NULL_HANDLE};
+    VkPipelineLayout presentation_pipeline_layout{VK_NULL_HANDLE};
+    VkPipeline presentation_pipeline{VK_NULL_HANDLE};
+    VkDescriptorPool presentation_descriptor_pool{VK_NULL_HANDLE};
+    VkDescriptorSet presentation_descriptor_set{VK_NULL_HANDLE};
+    VkSemaphore presentation_image_available{VK_NULL_HANDLE};
+    VkSemaphore presentation_render_finished{VK_NULL_HANDLE};
+    bool presentation_attachment_is_srgb{};
+    bool swapchain_supported{};
     RenderResourceMode descriptor_resource_mode{RenderResourceMode::Production};
     bool ahb_import_supported{};
     bool external_semaphore_fd_supported{};
@@ -322,6 +343,8 @@ struct VulkanBackend::Impl {
     uint64_t resource_allocations{};
     uint64_t queue_submissions{};
     uint64_t ahb_imports{};
+    uint64_t presented_frames{};
+    uint64_t swapchain_recreates{};
     uint64_t ahb_use_clock{};
     std::vector<CachedAhbImage> ahb_cache;
     bool ready{};
@@ -348,13 +371,19 @@ struct VulkanBackend::Impl {
         VkApplicationInfo application{};
         application.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         application.pApplicationName = "PhyToyEngine";
-        application.applicationVersion = VK_MAKE_VERSION(0, 2, 1);
+        application.applicationVersion = VK_MAKE_VERSION(0, 3, 0);
         application.pEngineName = "PhyToyEngine";
-        application.engineVersion = VK_MAKE_VERSION(0, 2, 1);
+        application.engineVersion = VK_MAKE_VERSION(0, 3, 0);
         application.apiVersion = VK_API_VERSION_1_1;
         VkInstanceCreateInfo instance_info{};
         instance_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instance_info.pApplicationInfo = &application;
+        const std::array<const char*, 2> instance_extensions{
+            VK_KHR_SURFACE_EXTENSION_NAME,
+            VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
+        };
+        instance_info.enabledExtensionCount = static_cast<uint32_t>(instance_extensions.size());
+        instance_info.ppEnabledExtensionNames = instance_extensions.data();
         require_vk(vkCreateInstance(&instance_info, nullptr, &instance), "vkCreateInstance");
 
         uint32_t device_count = 0U;
@@ -368,9 +397,12 @@ struct VulkanBackend::Impl {
             std::vector<VkQueueFamilyProperties> families(family_count);
             vkGetPhysicalDeviceQueueFamilyProperties(candidate, &family_count, families.data());
             for (uint32_t family = 0U; family < family_count; ++family) {
-                if ((families[family].queueFlags & VK_QUEUE_COMPUTE_BIT) != 0U) {
+                if ((families[family].queueFlags &
+                     (VK_QUEUE_COMPUTE_BIT | VK_QUEUE_GRAPHICS_BIT)) ==
+                    (VK_QUEUE_COMPUTE_BIT | VK_QUEUE_GRAPHICS_BIT)) {
                     physical_device = candidate;
                     queue_family = family;
+                    queue_flags = families[family].queueFlags;
                     break;
                 }
             }
@@ -413,6 +445,7 @@ struct VulkanBackend::Impl {
             ycbcr_features.samplerYcbcrConversion == VK_TRUE;
         external_semaphore_fd_supported =
             supports_extension(VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME);
+        swapchain_supported = supports_extension(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         const bool foreign_queue_supported =
             supports_extension(VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME);
         external_queue_family = foreign_queue_supported
@@ -429,6 +462,9 @@ struct VulkanBackend::Impl {
         }
         if (foreign_queue_supported) {
             enabled_extensions.push_back(VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME);
+        }
+        if (swapchain_supported) {
+            enabled_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         }
 
         const float priority = 1.0F;
@@ -545,6 +581,407 @@ struct VulkanBackend::Impl {
         vkDestroyShaderModule(device, module, nullptr);
         require_vk(result, "vkCreateComputePipelines");
         return pipeline;
+    }
+
+    static bool is_srgb_format(VkFormat format) noexcept {
+        return format == VK_FORMAT_R8G8B8A8_SRGB ||
+            format == VK_FORMAT_B8G8R8A8_SRGB ||
+            format == VK_FORMAT_A8B8G8R8_SRGB_PACK32;
+    }
+
+    VkShaderModule create_shader_module(const uint32_t* words, size_t byte_count) const {
+        VkShaderModuleCreateInfo module_info{};
+        module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        module_info.codeSize = byte_count;
+        module_info.pCode = words;
+        VkShaderModule module = VK_NULL_HANDLE;
+        require_vk(vkCreateShaderModule(device, &module_info, nullptr, &module),
+                   "vkCreateShaderModule(presentation)");
+        return module;
+    }
+
+    void destroy_swapchain() noexcept {
+        if (device != VK_NULL_HANDLE) {
+            for (VkFramebuffer framebuffer : swapchain_framebuffers) {
+                if (framebuffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, framebuffer, nullptr);
+            }
+            if (presentation_pipeline != VK_NULL_HANDLE) {
+                vkDestroyPipeline(device, presentation_pipeline, nullptr);
+            }
+            if (presentation_render_pass != VK_NULL_HANDLE) {
+                vkDestroyRenderPass(device, presentation_render_pass, nullptr);
+            }
+            for (VkImageView view : swapchain_views) {
+                if (view != VK_NULL_HANDLE) vkDestroyImageView(device, view, nullptr);
+            }
+            if (presentation_descriptor_pool != VK_NULL_HANDLE) {
+                vkDestroyDescriptorPool(device, presentation_descriptor_pool, nullptr);
+            }
+            if (presentation_pipeline_layout != VK_NULL_HANDLE) {
+                vkDestroyPipelineLayout(device, presentation_pipeline_layout, nullptr);
+            }
+            if (presentation_descriptor_layout != VK_NULL_HANDLE) {
+                vkDestroyDescriptorSetLayout(device, presentation_descriptor_layout, nullptr);
+            }
+            if (swapchain != VK_NULL_HANDLE) vkDestroySwapchainKHR(device, swapchain, nullptr);
+        }
+        swapchain_framebuffers.clear();
+        swapchain_views.clear();
+        swapchain_images.clear();
+        presentation_pipeline = VK_NULL_HANDLE;
+        presentation_render_pass = VK_NULL_HANDLE;
+        presentation_descriptor_pool = VK_NULL_HANDLE;
+        presentation_descriptor_set = VK_NULL_HANDLE;
+        presentation_pipeline_layout = VK_NULL_HANDLE;
+        presentation_descriptor_layout = VK_NULL_HANDLE;
+        swapchain = VK_NULL_HANDLE;
+        swapchain_format = VK_FORMAT_UNDEFINED;
+        swapchain_extent = {};
+    }
+
+    void destroy_presentation() noexcept {
+        destroy_swapchain();
+        if (device != VK_NULL_HANDLE && presentation_image_available != VK_NULL_HANDLE) {
+            vkDestroySemaphore(device, presentation_image_available, nullptr);
+        }
+        if (device != VK_NULL_HANDLE && presentation_render_finished != VK_NULL_HANDLE) {
+            vkDestroySemaphore(device, presentation_render_finished, nullptr);
+        }
+        if (instance != VK_NULL_HANDLE && output_surface != VK_NULL_HANDLE) {
+            vkDestroySurfaceKHR(instance, output_surface, nullptr);
+        }
+        presentation_image_available = VK_NULL_HANDLE;
+        presentation_render_finished = VK_NULL_HANDLE;
+        output_surface = VK_NULL_HANDLE;
+        output_window = nullptr;
+    }
+
+    VkSurfaceFormatKHR choose_surface_format(
+        const std::vector<VkSurfaceFormatKHR>& formats) const {
+        if (formats.size() == 1U && formats.front().format == VK_FORMAT_UNDEFINED) {
+            return VkSurfaceFormatKHR{
+                VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR};
+        }
+        constexpr std::array<VkFormat, 5> preferred{
+            VK_FORMAT_R8G8B8A8_UNORM,
+            VK_FORMAT_B8G8R8A8_UNORM,
+            VK_FORMAT_A8B8G8R8_UNORM_PACK32,
+            VK_FORMAT_R8G8B8A8_SRGB,
+            VK_FORMAT_B8G8R8A8_SRGB,
+        };
+        for (VkFormat candidate : preferred) {
+            const auto match = std::find_if(
+                formats.begin(), formats.end(), [candidate](const auto& format) {
+                    return format.format == candidate &&
+                        format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+                });
+            if (match != formats.end()) return *match;
+        }
+        if (formats.empty()) throw std::runtime_error("Android surface exposes no Vulkan formats");
+        return formats.front();
+    }
+
+    void create_presentation_pipeline() {
+        VkDescriptorSetLayoutBinding binding{};
+        binding.binding = 0U;
+        binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        binding.descriptorCount = 1U;
+        binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+        VkDescriptorSetLayoutCreateInfo descriptor_info{};
+        descriptor_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        descriptor_info.bindingCount = 1U;
+        descriptor_info.pBindings = &binding;
+        require_vk(vkCreateDescriptorSetLayout(
+                       device, &descriptor_info, nullptr, &presentation_descriptor_layout),
+                   "vkCreateDescriptorSetLayout(presentation)");
+
+        VkPushConstantRange push_range{};
+        push_range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+        push_range.offset = 0U;
+        push_range.size = sizeof(uint32_t) * 6U;
+        VkPipelineLayoutCreateInfo layout_info{};
+        layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        layout_info.setLayoutCount = 1U;
+        layout_info.pSetLayouts = &presentation_descriptor_layout;
+        layout_info.pushConstantRangeCount = 1U;
+        layout_info.pPushConstantRanges = &push_range;
+        require_vk(vkCreatePipelineLayout(
+                       device, &layout_info, nullptr, &presentation_pipeline_layout),
+                   "vkCreatePipelineLayout(presentation)");
+
+        VkDescriptorPoolSize pool_size{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1U};
+        VkDescriptorPoolCreateInfo pool_info{};
+        pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        pool_info.maxSets = 1U;
+        pool_info.poolSizeCount = 1U;
+        pool_info.pPoolSizes = &pool_size;
+        require_vk(vkCreateDescriptorPool(
+                       device, &pool_info, nullptr, &presentation_descriptor_pool),
+                   "vkCreateDescriptorPool(presentation)");
+        VkDescriptorSetAllocateInfo set_info{};
+        set_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        set_info.descriptorPool = presentation_descriptor_pool;
+        set_info.descriptorSetCount = 1U;
+        set_info.pSetLayouts = &presentation_descriptor_layout;
+        require_vk(vkAllocateDescriptorSets(
+                       device, &set_info, &presentation_descriptor_set),
+                   "vkAllocateDescriptorSets(presentation)");
+
+        VkAttachmentDescription attachment{};
+        attachment.format = swapchain_format;
+        attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        attachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        VkAttachmentReference color_reference{0U, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+        VkSubpassDescription subpass{};
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1U;
+        subpass.pColorAttachments = &color_reference;
+        VkSubpassDependency dependency{};
+        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dependency.dstSubpass = 0U;
+        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        VkRenderPassCreateInfo render_pass_info{};
+        render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        render_pass_info.attachmentCount = 1U;
+        render_pass_info.pAttachments = &attachment;
+        render_pass_info.subpassCount = 1U;
+        render_pass_info.pSubpasses = &subpass;
+        render_pass_info.dependencyCount = 1U;
+        render_pass_info.pDependencies = &dependency;
+        require_vk(vkCreateRenderPass(
+                       device, &render_pass_info, nullptr, &presentation_render_pass),
+                   "vkCreateRenderPass(presentation)");
+
+        VkShaderModule vertex = create_shader_module(
+            spirv::present_vert, spirv::present_vert_bytes);
+        VkShaderModule fragment = VK_NULL_HANDLE;
+        try {
+            fragment = create_shader_module(spirv::present_frag, spirv::present_frag_bytes);
+            const std::array<VkPipelineShaderStageCreateInfo, 2> stages{
+                VkPipelineShaderStageCreateInfo{
+                    VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0U,
+                    VK_SHADER_STAGE_VERTEX_BIT, vertex, "main", nullptr},
+                VkPipelineShaderStageCreateInfo{
+                    VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0U,
+                    VK_SHADER_STAGE_FRAGMENT_BIT, fragment, "main", nullptr},
+            };
+            VkPipelineVertexInputStateCreateInfo vertex_input{};
+            vertex_input.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+            VkPipelineInputAssemblyStateCreateInfo assembly{};
+            assembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+            assembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+            VkPipelineViewportStateCreateInfo viewport{};
+            viewport.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+            viewport.viewportCount = 1U;
+            viewport.scissorCount = 1U;
+            VkPipelineRasterizationStateCreateInfo rasterization{};
+            rasterization.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+            rasterization.polygonMode = VK_POLYGON_MODE_FILL;
+            rasterization.cullMode = VK_CULL_MODE_NONE;
+            rasterization.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+            rasterization.lineWidth = 1.0F;
+            VkPipelineMultisampleStateCreateInfo multisample{};
+            multisample.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+            multisample.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+            VkPipelineColorBlendAttachmentState blend_attachment{};
+            blend_attachment.colorWriteMask =
+                VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+                VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+            VkPipelineColorBlendStateCreateInfo blend{};
+            blend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+            blend.attachmentCount = 1U;
+            blend.pAttachments = &blend_attachment;
+            const std::array<VkDynamicState, 2> dynamic_states{
+                VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+            VkPipelineDynamicStateCreateInfo dynamic{};
+            dynamic.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+            dynamic.dynamicStateCount = static_cast<uint32_t>(dynamic_states.size());
+            dynamic.pDynamicStates = dynamic_states.data();
+            VkGraphicsPipelineCreateInfo pipeline_info{};
+            pipeline_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+            pipeline_info.stageCount = static_cast<uint32_t>(stages.size());
+            pipeline_info.pStages = stages.data();
+            pipeline_info.pVertexInputState = &vertex_input;
+            pipeline_info.pInputAssemblyState = &assembly;
+            pipeline_info.pViewportState = &viewport;
+            pipeline_info.pRasterizationState = &rasterization;
+            pipeline_info.pMultisampleState = &multisample;
+            pipeline_info.pColorBlendState = &blend;
+            pipeline_info.pDynamicState = &dynamic;
+            pipeline_info.layout = presentation_pipeline_layout;
+            pipeline_info.renderPass = presentation_render_pass;
+            pipeline_info.subpass = 0U;
+            require_vk(vkCreateGraphicsPipelines(
+                           device, VK_NULL_HANDLE, 1U, &pipeline_info, nullptr,
+                           &presentation_pipeline),
+                       "vkCreateGraphicsPipelines(presentation)");
+        } catch (...) {
+            if (fragment != VK_NULL_HANDLE) vkDestroyShaderModule(device, fragment, nullptr);
+            vkDestroyShaderModule(device, vertex, nullptr);
+            throw;
+        }
+        vkDestroyShaderModule(device, fragment, nullptr);
+        vkDestroyShaderModule(device, vertex, nullptr);
+    }
+
+    void create_swapchain(bool count_recreation) {
+        if (output_surface == VK_NULL_HANDLE || output_window == nullptr) {
+            throw std::runtime_error("Android output surface is not configured");
+        }
+        vkDeviceWaitIdle(device);
+        destroy_swapchain();
+
+        VkSurfaceCapabilitiesKHR capabilities{};
+        require_vk(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+                       physical_device, output_surface, &capabilities),
+                   "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
+        uint32_t format_count = 0U;
+        require_vk(vkGetPhysicalDeviceSurfaceFormatsKHR(
+                       physical_device, output_surface, &format_count, nullptr),
+                   "vkGetPhysicalDeviceSurfaceFormatsKHR(count)");
+        std::vector<VkSurfaceFormatKHR> formats(format_count);
+        require_vk(vkGetPhysicalDeviceSurfaceFormatsKHR(
+                       physical_device, output_surface, &format_count, formats.data()),
+                   "vkGetPhysicalDeviceSurfaceFormatsKHR");
+        const VkSurfaceFormatKHR selected_format = choose_surface_format(formats);
+        swapchain_format = selected_format.format;
+        presentation_attachment_is_srgb = is_srgb_format(swapchain_format);
+
+        if (capabilities.currentExtent.width != UINT32_MAX) {
+            swapchain_extent = capabilities.currentExtent;
+        } else {
+            const uint32_t window_width = static_cast<uint32_t>(
+                std::max(ANativeWindow_getWidth(output_window), 1));
+            const uint32_t window_height = static_cast<uint32_t>(
+                std::max(ANativeWindow_getHeight(output_window), 1));
+            swapchain_extent.width = std::clamp(
+                window_width, capabilities.minImageExtent.width,
+                capabilities.maxImageExtent.width);
+            swapchain_extent.height = std::clamp(
+                window_height, capabilities.minImageExtent.height,
+                capabilities.maxImageExtent.height);
+        }
+        uint32_t image_count = capabilities.minImageCount + 1U;
+        if (capabilities.maxImageCount > 0U) {
+            image_count = std::min(image_count, capabilities.maxImageCount);
+        }
+        constexpr std::array<VkCompositeAlphaFlagBitsKHR, 4> alpha_modes{
+            VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+            VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+            VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
+            VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
+        };
+        VkCompositeAlphaFlagBitsKHR composite_alpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        for (VkCompositeAlphaFlagBitsKHR candidate : alpha_modes) {
+            if ((capabilities.supportedCompositeAlpha & candidate) != 0U) {
+                composite_alpha = candidate;
+                break;
+            }
+        }
+        VkSwapchainCreateInfoKHR swapchain_info{};
+        swapchain_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        swapchain_info.surface = output_surface;
+        swapchain_info.minImageCount = image_count;
+        swapchain_info.imageFormat = selected_format.format;
+        swapchain_info.imageColorSpace = selected_format.colorSpace;
+        swapchain_info.imageExtent = swapchain_extent;
+        swapchain_info.imageArrayLayers = 1U;
+        swapchain_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        swapchain_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        swapchain_info.preTransform = capabilities.currentTransform;
+        swapchain_info.compositeAlpha = composite_alpha;
+        swapchain_info.presentMode = VK_PRESENT_MODE_FIFO_KHR;
+        swapchain_info.clipped = VK_TRUE;
+        require_vk(vkCreateSwapchainKHR(device, &swapchain_info, nullptr, &swapchain),
+                   "vkCreateSwapchainKHR");
+        require_vk(vkGetSwapchainImagesKHR(device, swapchain, &image_count, nullptr),
+                   "vkGetSwapchainImagesKHR(count)");
+        swapchain_images.resize(image_count);
+        require_vk(vkGetSwapchainImagesKHR(
+                       device, swapchain, &image_count, swapchain_images.data()),
+                   "vkGetSwapchainImagesKHR");
+        swapchain_views.reserve(swapchain_images.size());
+        for (VkImage image : swapchain_images) {
+            VkImageViewCreateInfo view_info{};
+            view_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            view_info.image = image;
+            view_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            view_info.format = swapchain_format;
+            view_info.subresourceRange = {
+                VK_IMAGE_ASPECT_COLOR_BIT, 0U, 1U, 0U, 1U};
+            VkImageView view = VK_NULL_HANDLE;
+            require_vk(vkCreateImageView(device, &view_info, nullptr, &view),
+                       "vkCreateImageView(presentation)");
+            swapchain_views.push_back(view);
+        }
+        create_presentation_pipeline();
+        swapchain_framebuffers.reserve(swapchain_views.size());
+        for (VkImageView view : swapchain_views) {
+            VkFramebufferCreateInfo framebuffer_info{};
+            framebuffer_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebuffer_info.renderPass = presentation_render_pass;
+            framebuffer_info.attachmentCount = 1U;
+            framebuffer_info.pAttachments = &view;
+            framebuffer_info.width = swapchain_extent.width;
+            framebuffer_info.height = swapchain_extent.height;
+            framebuffer_info.layers = 1U;
+            VkFramebuffer framebuffer = VK_NULL_HANDLE;
+            require_vk(vkCreateFramebuffer(
+                           device, &framebuffer_info, nullptr, &framebuffer),
+                       "vkCreateFramebuffer(presentation)");
+            swapchain_framebuffers.push_back(framebuffer);
+        }
+        if (count_recreation) ++swapchain_recreates;
+    }
+
+    void set_output_window(ANativeWindow* window, uint32_t rotation_degrees) {
+        if (!ready) throw std::runtime_error(error);
+        if (window == nullptr) throw std::invalid_argument("Android output window is null");
+        if (rotation_degrees != 0U && rotation_degrees != 90U &&
+            rotation_degrees != 180U && rotation_degrees != 270U) {
+            throw std::invalid_argument("output rotation must be 0, 90, 180 or 270 degrees");
+        }
+        if (!swapchain_supported || (queue_flags & VK_QUEUE_GRAPHICS_BIT) == 0U) {
+            throw std::runtime_error("Vulkan device cannot present the processed preview");
+        }
+        vkDeviceWaitIdle(device);
+        destroy_presentation();
+        output_window = window;
+        output_rotation_degrees = rotation_degrees;
+        try {
+            VkAndroidSurfaceCreateInfoKHR surface_info{};
+            surface_info.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+            surface_info.window = window;
+            require_vk(vkCreateAndroidSurfaceKHR(
+                           instance, &surface_info, nullptr, &output_surface),
+                       "vkCreateAndroidSurfaceKHR");
+            VkBool32 present_supported = VK_FALSE;
+            require_vk(vkGetPhysicalDeviceSurfaceSupportKHR(
+                           physical_device, queue_family, output_surface, &present_supported),
+                       "vkGetPhysicalDeviceSurfaceSupportKHR");
+            if (present_supported != VK_TRUE) {
+                throw std::runtime_error("selected Vulkan queue cannot present to Android surface");
+            }
+            VkSemaphoreCreateInfo semaphore_info{};
+            semaphore_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            require_vk(vkCreateSemaphore(
+                           device, &semaphore_info, nullptr, &presentation_image_available),
+                       "vkCreateSemaphore(presentation image available)");
+            require_vk(vkCreateSemaphore(
+                           device, &semaphore_info, nullptr, &presentation_render_finished),
+                       "vkCreateSemaphore(presentation render finished)");
+            create_swapchain(false);
+        } catch (...) {
+            destroy_presentation();
+            throw;
+        }
     }
 
     void destroy_ahb_pipeline() noexcept {
@@ -1019,12 +1456,91 @@ struct VulkanBackend::Impl {
         vkCmdDispatch(command_buffer, (width + 15U) / 16U, (height + 15U) / 16U, 1U);
     }
 
+    void update_presentation_descriptor(const Buffer& final_output) const {
+        const VkDescriptorBufferInfo buffer_info{
+            final_output.buffer, 0U, final_output.size};
+        VkWriteDescriptorSet write{};
+        write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        write.dstSet = presentation_descriptor_set;
+        write.dstBinding = 0U;
+        write.descriptorCount = 1U;
+        write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        write.pBufferInfo = &buffer_info;
+        vkUpdateDescriptorSets(device, 1U, &write, 0U, nullptr);
+    }
+
+    void record_presentation(uint32_t image_index, const Buffer& final_output,
+                             uint32_t source_width, uint32_t source_height) const {
+        const VkBufferMemoryBarrier output_barrier = buffer_barrier(
+            final_output, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT);
+        vkCmdPipelineBarrier(command_buffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                             VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0U,
+                             0U, nullptr, 1U, &output_barrier, 0U, nullptr);
+
+        VkRenderPassBeginInfo render_pass{};
+        render_pass.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        render_pass.renderPass = presentation_render_pass;
+        render_pass.framebuffer = swapchain_framebuffers.at(image_index);
+        render_pass.renderArea = {{0, 0}, swapchain_extent};
+        vkCmdBeginRenderPass(command_buffer, &render_pass, VK_SUBPASS_CONTENTS_INLINE);
+        const VkViewport viewport{
+            0.0F, 0.0F,
+            static_cast<float>(swapchain_extent.width),
+            static_cast<float>(swapchain_extent.height),
+            0.0F, 1.0F};
+        const VkRect2D scissor{{0, 0}, swapchain_extent};
+        vkCmdSetViewport(command_buffer, 0U, 1U, &viewport);
+        vkCmdSetScissor(command_buffer, 0U, 1U, &scissor);
+        vkCmdBindPipeline(
+            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentation_pipeline);
+        vkCmdBindDescriptorSets(
+            command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+            presentation_pipeline_layout, 0U, 1U,
+            &presentation_descriptor_set, 0U, nullptr);
+        const std::array<uint32_t, 6> presentation_parameters{
+            source_width,
+            source_height,
+            swapchain_extent.width,
+            swapchain_extent.height,
+            output_rotation_degrees,
+            presentation_attachment_is_srgb ? 1U : 0U,
+        };
+        vkCmdPushConstants(
+            command_buffer, presentation_pipeline_layout,
+            VK_SHADER_STAGE_FRAGMENT_BIT, 0U,
+            static_cast<uint32_t>(presentation_parameters.size() * sizeof(uint32_t)),
+            presentation_parameters.data());
+        vkCmdDraw(command_buffer, 3U, 1U, 0U, 0U);
+        vkCmdEndRenderPass(command_buffer);
+    }
+
     void submit_render_graph(uint32_t width, uint32_t height,
                              VkImage ahb_image = VK_NULL_HANDLE,
                              VkSemaphore wait_semaphore = VK_NULL_HANDLE,
                              RenderResourceMode resource_mode = RenderResourceMode::Production,
                              bool host_readback = true) {
         const bool has_ahb_input = ahb_image != VK_NULL_HANDLE;
+        const bool has_presentation = swapchain != VK_NULL_HANDLE;
+        const Buffer& final_output_buffer =
+            resource_mode == RenderResourceMode::PreserveSceneAndOptics
+            ? output_buffer
+            : scene_buffer;
+        uint32_t presentation_image_index = 0U;
+        if (has_presentation) {
+            VkResult acquire_result = vkAcquireNextImageKHR(
+                device, swapchain, UINT64_MAX, presentation_image_available,
+                VK_NULL_HANDLE, &presentation_image_index);
+            if (acquire_result == VK_ERROR_OUT_OF_DATE_KHR) {
+                create_swapchain(true);
+                acquire_result = vkAcquireNextImageKHR(
+                    device, swapchain, UINT64_MAX, presentation_image_available,
+                    VK_NULL_HANDLE, &presentation_image_index);
+            }
+            if (acquire_result != VK_SUCCESS && acquire_result != VK_SUBOPTIMAL_KHR) {
+                require_vk(acquire_result, "vkAcquireNextImageKHR");
+            }
+            update_presentation_descriptor(final_output_buffer);
+        }
         require_vk(vkResetCommandBuffer(command_buffer, 0U), "vkResetCommandBuffer");
         VkCommandBufferBeginInfo begin{};
         begin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1120,10 +1636,6 @@ struct VulkanBackend::Impl {
         const Buffer& isp_linear_buffer = resource_mode == RenderResourceMode::Production
             ? optics_buffer
             : stage_buffer;
-        const Buffer& final_output_buffer =
-            resource_mode == RenderResourceMode::PreserveSceneAndOptics
-            ? output_buffer
-            : scene_buffer;
         if (host_readback) {
             const std::array<VkBufferMemoryBarrier, 2> download_barriers{
                 buffer_barrier(isp_linear_buffer, VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_HOST_READ_BIT),
@@ -1134,20 +1646,58 @@ struct VulkanBackend::Impl {
                                  static_cast<uint32_t>(download_barriers.size()), download_barriers.data(),
                                  0U, nullptr);
         }
+        if (has_presentation) {
+            record_presentation(
+                presentation_image_index, final_output_buffer, width, height);
+        }
 
         require_vk(vkEndCommandBuffer(command_buffer), "vkEndCommandBuffer");
         require_vk(vkResetFences(device, 1U, &render_fence), "vkResetFences");
         VkSubmitInfo submit{};
         submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        const VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-        submit.waitSemaphoreCount = wait_semaphore == VK_NULL_HANDLE ? 0U : 1U;
-        submit.pWaitSemaphores = wait_semaphore == VK_NULL_HANDLE ? nullptr : &wait_semaphore;
-        submit.pWaitDstStageMask = wait_semaphore == VK_NULL_HANDLE ? nullptr : &wait_stage;
+        std::array<VkSemaphore, 2> wait_semaphores{};
+        std::array<VkPipelineStageFlags, 2> wait_stages{};
+        uint32_t wait_count = 0U;
+        if (wait_semaphore != VK_NULL_HANDLE) {
+            wait_semaphores[wait_count] = wait_semaphore;
+            wait_stages[wait_count] = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+            ++wait_count;
+        }
+        if (has_presentation) {
+            wait_semaphores[wait_count] = presentation_image_available;
+            wait_stages[wait_count] = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            ++wait_count;
+        }
+        submit.waitSemaphoreCount = wait_count;
+        submit.pWaitSemaphores = wait_count == 0U ? nullptr : wait_semaphores.data();
+        submit.pWaitDstStageMask = wait_count == 0U ? nullptr : wait_stages.data();
         submit.commandBufferCount = 1U;
         submit.pCommandBuffers = &command_buffer;
+        submit.signalSemaphoreCount = has_presentation ? 1U : 0U;
+        submit.pSignalSemaphores = has_presentation
+            ? &presentation_render_finished
+            : nullptr;
         require_vk(vkQueueSubmit(queue, 1U, &submit, render_fence), "vkQueueSubmit");
         ++queue_submissions;
         require_vk(vkWaitForFences(device, 1U, &render_fence, VK_TRUE, UINT64_MAX), "vkWaitForFences");
+        if (has_presentation) {
+            VkPresentInfoKHR present{};
+            present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+            present.waitSemaphoreCount = 1U;
+            present.pWaitSemaphores = &presentation_render_finished;
+            present.swapchainCount = 1U;
+            present.pSwapchains = &swapchain;
+            present.pImageIndices = &presentation_image_index;
+            const VkResult present_result = vkQueuePresentKHR(queue, &present);
+            if (present_result == VK_SUCCESS || present_result == VK_SUBOPTIMAL_KHR) {
+                ++presented_frames;
+                if (present_result == VK_SUBOPTIMAL_KHR) create_swapchain(true);
+            } else if (present_result == VK_ERROR_OUT_OF_DATE_KHR) {
+                create_swapchain(true);
+            } else {
+                require_vk(present_result, "vkQueuePresentKHR");
+            }
+        }
     }
 
     static void emit_buffer(const Buffer& buffer, pte_stage_t stage,
@@ -1180,6 +1730,10 @@ struct VulkanBackend::Impl {
                 optics_parameter_buffer.size + sensor_parameter_buffer.size + isp_parameter_buffer.size +
                 ahb_parameter_buffer.size + stage_buffer.size,
             ahb_imports,
+            presented_frames,
+            swapchain_recreates,
+            swapchain_extent.width,
+            swapchain_extent.height,
         };
     }
 
@@ -1320,6 +1874,7 @@ struct VulkanBackend::Impl {
 
     void destroy() noexcept {
         if (device != VK_NULL_HANDLE) vkDeviceWaitIdle(device);
+        destroy_presentation();
         ahb_cache.clear();
         scene_buffer.destroy();
         optics_buffer.destroy();
@@ -1376,6 +1931,18 @@ bool VulkanBackend::ahardware_buffer_input_available() const noexcept {
 
 VulkanRuntimeStats VulkanBackend::stats() const noexcept {
     return impl_ == nullptr ? VulkanRuntimeStats{} : impl_->stats();
+}
+
+void VulkanBackend::set_output_window(
+    ANativeWindow* window, uint32_t rotation_degrees) {
+#if defined(__ANDROID__) && defined(PHYTOY_HAS_EMBEDDED_SPIRV)
+    if (impl_ == nullptr) throw std::runtime_error("Vulkan backend is unavailable");
+    impl_->set_output_window(window, rotation_degrees);
+#else
+    (void)window;
+    (void)rotation_degrees;
+    throw std::runtime_error("Vulkan Android output surface is unavailable");
+#endif
 }
 
 void VulkanBackend::forget_ahardware_buffer(AHardwareBuffer* buffer) noexcept {

@@ -27,6 +27,9 @@
 namespace {
 
 constexpr const char* kLogTag = "PhyToyCamera2";
+constexpr uint32_t kDefaultProcessingFrameRate = 15U;
+constexpr uint32_t kMaximumProcessingFrameRate = 60U;
+constexpr uint64_t kNanosecondsPerSecond = 1'000'000'000ULL;
 
 void log_error(const std::string& message) {
     __android_log_print(ANDROID_LOG_ERROR, kLogTag, "%s", message.c_str());
@@ -96,13 +99,18 @@ public:
     CameraSession& operator=(const CameraSession&) = delete;
 
     void initialize(const std::string& host_profile, const std::string& toy_profile,
-                    int32_t width, int32_t height, int32_t max_images) {
+                    int32_t width, int32_t height, int32_t max_images,
+                    ANativeWindow* output_window, uint32_t output_rotation_degrees) {
+        output_window_ = output_window;
         if (width <= 0 || height <= 0 || max_images < 3) {
             throw std::invalid_argument(
                 "invalid Camera2 ImageReader dimensions or maxImages; async preview requires at least 3");
         }
         width_ = static_cast<uint32_t>(width);
         height_ = static_cast<uint32_t>(height);
+        if (output_window == nullptr) {
+            throw std::invalid_argument("processed preview output Surface is required");
+        }
 
         require_engine(
             pte_engine_create(host_profile.c_str(), toy_profile.c_str(), &engine_),
@@ -110,6 +118,10 @@ public:
         require_engine(
             pte_engine_set_backend(engine_, PTE_BACKEND_VULKAN),
             engine_, "pte_engine_set_backend(Vulkan)");
+        require_engine(
+            pte_engine_set_output_surface(
+                engine_, output_window_, output_rotation_degrees),
+            engine_, "pte_engine_set_output_surface(Vulkan swapchain)");
         if (pte_engine_supports_ahardware_buffer_input(engine_) == 0U) {
             throw std::runtime_error(
                 "selected Vulkan device cannot import Camera2 AHardwareBuffer input");
@@ -138,12 +150,33 @@ public:
 
         log_info("Camera2 PRIVATE input session ready: " + std::to_string(width_) + "x" +
                  std::to_string(height_) + " async_latest no_cpu_readback " +
+                 "processed_gpu_surface rotation=" +
+                 std::to_string(output_rotation_degrees) + " thermal_cadence=" +
+                 std::to_string(target_processing_fps_.load()) + "fps " +
                  pte_version_string());
     }
 
     jobject input_surface(JNIEnv* environment) const {
         if (window_ == nullptr) return nullptr;
         return ANativeWindow_toSurface(environment, window_);
+    }
+
+    void set_processing_frame_rate(int32_t frames_per_second) {
+        if (frames_per_second < 0 ||
+            frames_per_second > static_cast<int32_t>(kMaximumProcessingFrameRate)) {
+            throw std::invalid_argument("processing frame-rate limit must be in 0..60");
+        }
+        target_processing_fps_.store(static_cast<uint32_t>(frames_per_second));
+        {
+            std::lock_guard lock(queue_mutex_);
+            last_admitted_time_ns_ = 0U;
+            if (frames_per_second == 0 && pending_image_) {
+                ++throttled_frames_;
+                pending_image_.reset();
+            }
+        }
+        log_info("Camera2 Vulkan processing target changed to " +
+                 std::to_string(frames_per_second) + " fps");
     }
 
     std::vector<jlong> snapshot() const {
@@ -165,6 +198,12 @@ public:
             static_cast<jlong>(input_image_format_.load()),
             static_cast<jlong>(input_buffer_format_.load()),
             static_cast<jlong>(input_buffer_usage_.load()),
+            static_cast<jlong>(throttled_frames_.load()),
+            static_cast<jlong>(target_processing_fps_.load()),
+            static_cast<jlong>(presented_frames_.load()),
+            static_cast<jlong>(swapchain_recreates_.load()),
+            static_cast<jlong>(output_width_.load()),
+            static_cast<jlong>(output_height_.load()),
         };
     }
 
@@ -206,6 +245,10 @@ public:
             pte_engine_forget_ahardware_buffer(engine_, nullptr);
             pte_engine_destroy(engine_);
             engine_ = nullptr;
+        }
+        if (output_window_ != nullptr) {
+            ANativeWindow_release(output_window_);
+            output_window_ = nullptr;
         }
     }
 
@@ -267,6 +310,23 @@ private:
                 ++dropped_frames_;
                 return;
             }
+            const uint32_t target_fps = target_processing_fps_.load();
+            if (target_fps == 0U) {
+                ++throttled_frames_;
+                return;
+            }
+            const uint64_t now_ns = static_cast<uint64_t>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(
+                    std::chrono::steady_clock::now().time_since_epoch()).count());
+            const uint64_t interval_ns = kNanosecondsPerSecond / target_fps;
+            const uint64_t jitter_tolerance_ns = std::min<uint64_t>(
+                interval_ns / 20U, 4'000'000ULL);
+            if (last_admitted_time_ns_ != 0U &&
+                now_ns + jitter_tolerance_ns < last_admitted_time_ns_ + interval_ns) {
+                ++throttled_frames_;
+                return;
+            }
+            last_admitted_time_ns_ = now_ns;
             if (pending_image_) ++dropped_frames_;
             pending_image_ = std::move(incoming);
         }
@@ -364,6 +424,10 @@ private:
         zero_copy_frames_.store(stats.zero_copy_input_frames);
         resource_allocations_.store(stats.vulkan_resource_allocations);
         allocated_bytes_.store(stats.vulkan_allocated_bytes);
+        presented_frames_.store(stats.vulkan_presented_frames);
+        swapchain_recreates_.store(stats.vulkan_swapchain_recreates);
+        output_width_.store(stats.vulkan_output_width);
+        output_height_.store(stats.vulkan_output_height);
     }
 
     void log_progress(uint64_t rendered) const {
@@ -380,7 +444,13 @@ private:
             " zero_copy=" + std::to_string(values[8]) +
             " aimage_format=" + std::to_string(values[13]) +
             " buffer_format=" + std::to_string(values[14]) +
-            " usage=" + std::to_string(values[15]));
+            " usage=" + std::to_string(values[15]) +
+            " throttled=" + std::to_string(values[16]) +
+            " target_fps=" + std::to_string(values[17]) +
+            " presented=" + std::to_string(values[18]) +
+            " swapchain_recreates=" + std::to_string(values[19]) +
+            " output=" + std::to_string(values[20]) + "x" +
+            std::to_string(values[21]));
     }
 
     void record_error(std::string message) noexcept {
@@ -419,6 +489,7 @@ private:
     pte_engine_t* engine_{};
     AImageReader* reader_{};
     ANativeWindow* window_{};
+    ANativeWindow* output_window_{};
     uint32_t width_{};
     uint32_t height_{};
 
@@ -433,6 +504,7 @@ private:
     std::condition_variable queue_ready_;
     PendingImage pending_image_;
     bool worker_stopping_{};
+    uint64_t last_admitted_time_ns_{};
     mutable std::mutex render_mutex_;
 
     std::atomic<uint64_t> received_frames_{};
@@ -449,6 +521,12 @@ private:
     std::atomic<uint32_t> input_image_format_{};
     std::atomic<uint32_t> input_buffer_format_{};
     std::atomic<uint64_t> input_buffer_usage_{};
+    std::atomic<uint64_t> throttled_frames_{};
+    std::atomic<uint32_t> target_processing_fps_{kDefaultProcessingFrameRate};
+    std::atomic<uint64_t> presented_frames_{};
+    std::atomic<uint64_t> swapchain_recreates_{};
+    std::atomic<uint32_t> output_width_{};
+    std::atomic<uint32_t> output_height_{};
 
     mutable std::mutex latency_mutex_;
     std::array<uint64_t, 300U> latency_samples_{};
@@ -482,12 +560,19 @@ void throw_java(JNIEnv* environment, const std::exception& exception) {
 extern "C" JNIEXPORT jlong JNICALL
 Java_com_phytoy_engine_PhyToyCameraSession_nativeCreate(
     JNIEnv* environment, jclass, jstring host_profile, jstring toy_profile,
-    jint width, jint height, jint max_images) {
+    jint width, jint height, jint max_images, jobject output_surface,
+    jint output_rotation_degrees) {
     try {
         auto session = std::make_unique<CameraSession>();
+        if (output_surface == nullptr) {
+            throw std::invalid_argument("processed preview output Surface is null");
+        }
+        ANativeWindow* output_window = ANativeWindow_fromSurface(
+            environment, output_surface);
         session->initialize(
             utf8(environment, host_profile), utf8(environment, toy_profile),
-            width, height, max_images);
+            width, height, max_images, output_window,
+            static_cast<uint32_t>(output_rotation_degrees));
         return static_cast<jlong>(reinterpret_cast<uintptr_t>(session.release()));
     } catch (const std::exception& exception) {
         throw_java(environment, exception);
@@ -521,6 +606,16 @@ Java_com_phytoy_engine_PhyToyCameraSession_nativeSnapshot(
     } catch (const std::exception& exception) {
         throw_java(environment, exception);
         return nullptr;
+    }
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_phytoy_engine_PhyToyCameraSession_nativeSetProcessingFrameRate(
+    JNIEnv* environment, jclass, jlong handle, jint frames_per_second) {
+    try {
+        session_from(handle)->set_processing_frame_rate(frames_per_second);
+    } catch (const std::exception& exception) {
+        throw_java(environment, exception);
     }
 }
 

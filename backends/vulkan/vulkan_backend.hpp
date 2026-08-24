@@ -14,6 +14,10 @@ struct VulkanRuntimeStats {
     uint64_t resource_allocations{};
     uint64_t allocated_bytes{};
     uint64_t ahardware_buffer_imports{};
+    uint64_t presented_frames{};
+    uint64_t swapchain_recreates{};
+    uint32_t output_width{};
+    uint32_t output_height{};
 };
 
 class VulkanBackend {
@@ -26,6 +30,7 @@ public:
     [[nodiscard]] bool available() const noexcept;
     [[nodiscard]] bool ahardware_buffer_input_available() const noexcept;
     [[nodiscard]] VulkanRuntimeStats stats() const noexcept;
+    void set_output_window(::ANativeWindow* window, uint32_t rotation_degrees);
     void forget_ahardware_buffer(::AHardwareBuffer* buffer) noexcept;
     void render(
         const pte_frame_f32_t& frame,

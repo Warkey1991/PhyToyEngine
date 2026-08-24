@@ -16,6 +16,10 @@ PROGRESS = re.compile(
     r"imports=(?P<imports>\d+) zero_copy=(?P<zero_copy>\d+) "
     r"aimage_format=(?P<aimage_format>\d+) "
     r"buffer_format=(?P<buffer_format>\d+) usage=(?P<usage>\d+)"
+    r"(?: throttled=(?P<throttled>\d+) target_fps=(?P<target_fps>\d+))?"
+    r"(?: presented=(?P<presented>\d+) "
+    r"swapchain_recreates=(?P<swapchain_recreates>\d+) "
+    r"output=(?P<output_width>\d+)x(?P<output_height>\d+))?"
 )
 
 
@@ -32,6 +36,7 @@ def main() -> None:
     actual = {
         key: float(value) if key in {"p50", "p95"} else int(value)
         for key, value in latest.items()
+        if value is not None
     }
     limits = contract["smoke"]
     input_contract = contract["input"]
@@ -102,6 +107,67 @@ def main() -> None:
                 ),
             ]
         )
+        if "target_fps" in actual:
+            maximum_target = contract["thermal_adaptation"]["normal_processing_fps"]
+            accounted = (
+                actual["rendered"] + actual["dropped"] + actual["throttled"]
+            )
+            checks.extend(
+                [
+                    check(
+                        "processing_frame_rate_limit",
+                        0 < actual["target_fps"] <= maximum_target,
+                        actual["target_fps"],
+                        f"1..{maximum_target}",
+                    ),
+                    check(
+                        "frame_accounting",
+                        0 <= actual["received"] - accounted <= 2,
+                        {
+                            "received": actual["received"],
+                            "rendered": actual["rendered"],
+                            "dropped": actual["dropped"],
+                            "thermal_skipped": actual["throttled"],
+                        },
+                        "at most two pending/in-flight frames",
+                    ),
+                ]
+            )
+        if "presented" in actual:
+            presentation = contract["presentation"]
+            checks.extend(
+                [
+                    check(
+                        "processed_surface_every_frame",
+                        actual["presented"] == rendered,
+                        actual["presented"],
+                        rendered,
+                    ),
+                    check(
+                        "swapchain_recreate_limit",
+                        actual["swapchain_recreates"]
+                        <= presentation["maximum_swapchain_recreates"],
+                        actual["swapchain_recreates"],
+                        presentation["maximum_swapchain_recreates"],
+                    ),
+                    check(
+                        "preview_output_width",
+                        actual["output_width"] == presentation["output_width"],
+                        actual["output_width"],
+                        presentation["output_width"],
+                    ),
+                    check(
+                        "preview_output_height",
+                        actual["output_height"] >= presentation["minimum_output_height"],
+                        actual["output_height"],
+                        f">={presentation['minimum_output_height']}",
+                    ),
+                ]
+            )
+        else:
+            checks.append(
+                check("processed_surface_progress", False, None, "presentation metrics")
+            )
     else:
         checks.append(check("progress_record", False, None, "Camera2 PRIVATE progress line"))
 

@@ -1,0 +1,133 @@
+{
+  "contract": "phytoy.android.camera2_product_alpha.v1",
+  "passed": true,
+  "latest": {
+    "rendered": 30,
+    "received": 58,
+    "dropped": 0,
+    "p50": 52.622,
+    "p95": 59.161,
+    "errors": 0,
+    "submits": 30,
+    "imports": 7,
+    "zero_copy": 30,
+    "aimage_format": 34,
+    "buffer_format": 34,
+    "usage": 131328,
+    "throttled": 28,
+    "target_fps": 10,
+    "presented": 30,
+    "swapchain_recreates": 0,
+    "output_width": 720,
+    "output_height": 1560
+  },
+  "checks": [
+    {
+      "check": "reader_ready",
+      "passed": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "check": "minimum_rendered_frames",
+      "passed": true,
+      "actual": 30,
+      "expected": 30
+    },
+    {
+      "check": "maximum_error_frames",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "check": "latency_ms_p95_max",
+      "passed": true,
+      "actual": 59.161,
+      "expected": 65.0
+    },
+    {
+      "check": "one_submit_per_frame",
+      "passed": true,
+      "actual": 30,
+      "expected": 30
+    },
+    {
+      "check": "zero_copy_every_frame",
+      "passed": true,
+      "actual": 30,
+      "expected": 30
+    },
+    {
+      "check": "buffer_slot_cache",
+      "passed": true,
+      "actual": 7,
+      "expected": "1..8"
+    },
+    {
+      "check": "private_aimage_format",
+      "passed": true,
+      "actual": 34,
+      "expected": 34
+    },
+    {
+      "check": "hardware_buffer_format_reported",
+      "passed": true,
+      "actual": 34,
+      "expected": "vendor-defined nonzero format"
+    },
+    {
+      "check": "gpu_sampled_usage",
+      "passed": true,
+      "actual": 131328,
+      "expected": 256
+    },
+    {
+      "check": "processing_frame_rate_limit",
+      "passed": true,
+      "actual": 10,
+      "expected": "1..15"
+    },
+    {
+      "check": "frame_accounting",
+      "passed": true,
+      "actual": {
+        "received": 58,
+        "rendered": 30,
+        "dropped": 0,
+        "thermal_skipped": 28
+      },
+      "expected": "at most two pending/in-flight frames"
+    },
+    {
+      "check": "processed_surface_every_frame",
+      "passed": true,
+      "actual": 30,
+      "expected": 30
+    },
+    {
+      "check": "swapchain_recreate_limit",
+      "passed": true,
+      "actual": 0,
+      "expected": 1
+    },
+    {
+      "check": "preview_output_width",
+      "passed": true,
+      "actual": 720,
+      "expected": 720
+    },
+    {
+      "check": "preview_output_height",
+      "passed": true,
+      "actual": 1560,
+      "expected": ">=720"
+    },
+    {
+      "check": "no_fatal_process_error",
+      "passed": true,
+      "actual": false,
+      "expected": false
+    }
+  ]
+}

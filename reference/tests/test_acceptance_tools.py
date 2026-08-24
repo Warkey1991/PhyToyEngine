@@ -136,9 +136,11 @@ def test_camera2_private_log_evaluator_accepts_only_the_required_runtime_contrac
     log_path = tmp_path / "camera2_log.txt"
     log_path.write_text(
         "Camera2 PRIVATE input session ready: 1280x720 PhyToyEngine\n"
-        "Camera2 PRIVATE rendered=30 received=60 dropped=29 p50_ms=21.5 p95_ms=39.0 "
+        "Camera2 PRIVATE rendered=30 received=60 dropped=0 p50_ms=21.5 p95_ms=39.0 "
         "errors=0 submits=30 imports=4 zero_copy=30 "
-        "aimage_format=34 buffer_format=17 usage=256\n",
+        "aimage_format=34 buffer_format=17 usage=256 "
+        "throttled=30 target_fps=15 presented=30 "
+        "swapchain_recreates=0 output=720x1560\n",
         encoding="utf-8",
     )
     command = [
@@ -152,7 +154,13 @@ def test_camera2_private_log_evaluator_accepts_only_the_required_runtime_contrac
 
     accepted = subprocess.run(command, check=False, capture_output=True, text=True)
     assert accepted.returncode == 0, accepted.stdout + accepted.stderr
-    assert json.loads(accepted.stdout)["passed"] is True
+    accepted_report = json.loads(accepted.stdout)
+    assert accepted_report["passed"] is True
+    assert accepted_report["latest"]["target_fps"] == 15
+    assert next(
+        item for item in accepted_report["checks"]
+        if item["check"] == "frame_accounting"
+    )["passed"] is True
 
     log_path.write_text(
         log_path.read_text(encoding="utf-8").replace("zero_copy=30", "zero_copy=29"),

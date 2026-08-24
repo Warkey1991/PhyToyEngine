@@ -1,0 +1,188 @@
+--------- beginning of main
+08-24 12:32:01.586 22583 22583 I Zygote  : Process 22583 created for com.phytoy.sample
+08-24 12:32:01.587 22583 22583 I m.phytoy.sample: Using generational CollectorTypeCMC GC.
+08-24 12:32:01.592 22583 22583 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+08-24 12:32:01.594 22583 22583 D ActivityThread: setConscryptValidator
+08-24 12:32:01.594 22583 22583 D ActivityThread: setConscryptValidator - put
+08-24 12:32:01.650 22583 22583 D nativeloader: Configuring clns-9 for other apk /data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk. target_sdk_version=37, uses_libraries=, library_path=/data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/lib/arm64:/data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.phytoy.sample
+08-24 12:32:01.653 22583 22583 V GraphicsEnvironment: Currently set values for:
+08-24 12:32:01.653 22583 22583 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+08-24 12:32:01.653 22583 22583 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+08-24 12:32:01.653 22583 22583 V GraphicsEnvironment: com.phytoy.sample is not listed in per-application setting
+08-24 12:32:01.654 22583 22583 V GraphicsEnvironment: ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+08-24 12:32:01.654 22583 22583 V GraphicsEnvironment: No special selections for ANGLE, returning default driver choice
+08-24 12:32:01.654 22583 22583 V GraphicsEnvironment: App is not on the allowlist for updatable production driver.
+--------- beginning of system
+08-24 12:32:01.688 22583 22583 D ActivityThread: com.phytoy.sample will use render engine as VK
+08-24 12:32:01.688 22583 22583 D HWUI    : HWUI - treat SMPTE_170M as sRGB
+08-24 12:32:01.690 22583 22583 D DesktopExperienceFlags: Toggle override initialized to: false
+08-24 12:32:01.693 22583 22583 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+08-24 12:32:01.702 22583 22583 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+08-24 12:32:01.705 22583 22583 I DecorView: setWindowBackground: isPopOver=false color=ff303030 d=android.graphics.drawable.ColorDrawable@8da98b9
+08-24 12:32:01.720 22583 22626 I DisplayManager: Choreographer implicitly registered for the refresh rate.
+08-24 12:32:01.721 22583 22626 D HWUI    : CacheManager constructor. deviceInfo=(1080, 1920)
+08-24 12:32:01.721 22583 22626 D vulkan  : searching for layers in '/data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/lib/arm64'
+08-24 12:32:01.721 22583 22626 D vulkan  : searching for layers in '/data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk!/lib/arm64-v8a'
+08-24 12:32:01.729 22583 22626 E Adreno-AppProfiles: QSPM AIDL service doesn't exist
+08-24 12:32:01.730 22583 22626 I AdrenoVK-0: ===== BEGIN DUMP OF OVERRIDDEN SETTINGS =====
+08-24 12:32:01.730 22583 22626 I AdrenoVK-0: ===== END DUMP OF OVERRIDDEN SETTINGS =====
+08-24 12:32:01.741 22583 22583 D ViewRootImpl: desktopMode is false
+08-24 12:32:01.742 22583 22583 I ViewRootImpl: dVRR is disabled
+08-24 12:32:01.742 22583 22583 D HardwareRenderer: onDisplayChanged. displayId=0 current wxh=1080x2340 mLargest wxh=0x0
+08-24 12:32:01.742 22583 22583 D HardwareRenderer: Set largestWidth and largestHeight as logical resolution. (1080x2340)
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: QUALCOMM build          : f6b5df5188, I29aebc4401
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Build Date              : 09/19/25
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Shader Compiler Version : E031.45.02.26
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Local Branch            :
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Remote Branch           : refs/tags/AU_LINUX_ANDROID_LA.VENDOR.14.3.0.11.00.00.974.010
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Remote Branch           : NONE
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Reconstruct Branch      : NOTHING
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Build Config            : S P 16.1.2 AArch64
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Driver Path             : /vendor/lib64/hw/vulkan.adreno.so
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Driver Version          : 0762.41
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: PFP                     : 0x01520181
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: ME                      : 0x01520023
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Application Name    : android framework
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Application Version : 0x00000000
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Engine Name         : android framework
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Engine Version      : 0x00000000
+08-24 12:32:01.745 22583 22626 I AdrenoVK-0: Api Version         : 0x00401000
+08-24 12:32:01.759 22583 22626 D HWUI    : setMaxSurfaceArea requested wxh=(1080,2340) requestedSurfaceArea(2527200) mMaxSurfaceArea(2073600)
+08-24 12:32:01.759 22583 22626 D NativeCustomFrequencyManager: [NativeCFMS] BpCustomFrequencyManager::BpCustomFrequencyManager()
+08-24 12:32:01.762 22583 22583 D InputTransport: Input channel constructed: 'cbae1a1', fd=111
+08-24 12:32:01.763 22583 22583 I InsetsController: onStateChanged: host=com.phytoy.sample/com.phytoy.sample.MainActivity, from=android.view.ViewRootImpl.onInsetsStateChanged:3038, state=InsetsState: {mDisplayFrame=Rect(0, 0 - 1080, 2340), mDisplayCutout=DisplayCutout{insets=Rect(0, 103 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(511, 0 - 569, 103), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2340 physicalDisplayWidth=1080 physicalDisplayHeight=2340 density={3.0} cutoutSpec={M 0,0 H -9.666666666666667 V 34.33333333333333 H 9.666666666666667 V 0 H 0 Z @dp} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}} sideOverrides={}}, mRoundedCorners=RoundedCorners{[RoundedCorner{position=TopLeft, radius=108, center=Point(108, 108)}, RoundedCorner{position=TopRight, radius=108, center=Point(972, 108)}, RoundedCorner{position=BottomRight, radius=108, center=Point(972, 2232)}, RoundedCorner{position=BottomLeft, radius=108, center=Point(108, 2232)}]}  mRoundedCornerFrame=Rect(0, 0 - 1080, 2340), mPrivacyIndicatorBounds=PrivacyIndicatorBounds {static bounds=Rect(948, 0 - 1080, 103) rotation=0}, mDisplayShape=DisplayShape{ spec=1406003047 displayWidth=1080 displayHeight=2340 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}, mSources= { InsetsSource: {97630000 mType=statusBars mFrame=[0,0][1080,103] mAttachedInsets=null mVisible=true mFlags= mSideHint=TOP mBoundingRects=null}, InsetsSource: {97630005 mType=mandatorySystemGestures mFrame=[0,0][1080,139] mAttachedInsets=null mVisible=true mFlags= mSideHint=TOP mBoundingRects=null}, InsetsSource: {97630006 mType=tappableElement mFrame=[0,0][1080,103] mAttachedInsets=null mVisible=true mFlags= mSideHint=TOP mBoundingRects=null}, InsetsSource: {3 mType=ime mFrame=[0,0][0,0] mAttachedInsets=null mVisible=false mFlags=INVALID mSideHint=NONE mBoundingRects=null}, InsetsSource: {27 mType=displayCutout mFrame=[0,0][1080,103] mAttachedInsets=null mVisible=true mFlags= mSideHint=TOP mBoundingRects=null}, InsetsSource: {62090001 mType=navigationBars mFrame=[0,2295][1080,2340] mAttachedInsets=null mVisible=true mFlags=SUPPRESS_SCRIM mSideHint=BOTTOM mBoundingRects=null}, InsetsSource: {62090004 mType=systemGestures mFrame=[0,0][90,2340] mAttachedInsets=null mVisible=true mFlags= mSideHint=LEFT mBoundingRects=null}, InsetsSource: {62090005 mType=mandatorySystemGestures mFrame=[0,2244][1080,2340] mAttachedInsets=null mVisible=true mFlags= mSideHint=BOTTOM mBoundingRects=null}, InsetsSource: {62090006 mType=tappableElement mFrame=[0,0][0,0] mAttachedInsets=null mVisible=true mFlags= mSideHint=NONE mBoundingRects=null}, InsetsSource: {62090024 mType=systemGestures mFrame=[990,0][1080,2340] mAttachedInsets=null mVisible=true mFlags= mSideHint=RIGHT mBoundingRects=null} }
+08-24 12:32:01.764 22583 22583 I VRI[MainActivity]@c8fc3b0: synced displayState. AttachInfo displayState=2
+08-24 12:32:01.767 22583 22583 I VRI[MainActivity]@c8fc3b0: setView = com.android.internal.policy.DecorView@ae4d086 IsHRR=false mFlingFrameRateChange=0 TM=true
+08-24 12:32:01.767 22583 22583 I IDS_TAG : Clearing training data of android.app.Application@e477c4e
+08-24 12:32:01.767 22583 22583 I IDS_TAG : Starting IDS observe window
+08-24 12:32:01.767 22583 22583 I IDS_TAG : Getting Shared Preference for android.app.Application@e477c4e uid = 10805
+08-24 12:32:01.769 22583 22583 I IDS_TAG : App android.app.Application@e477c4e has not finished training
+08-24 12:32:01.770 22583 22626 D HWUI    : HWUI - treat SMPTE_170M as sRGB
+08-24 12:32:01.771 22583 22583 W ActivityThread: Caught exception from dumpGfxInfo()
+08-24 12:32:01.771 22583 22583 W ActivityThread: java.lang.NullPointerException: Attempt to read from field 'android.view.ThreadedRenderer android.view.View$AttachInfo.mThreadedRenderer' on a null object reference in method 'void android.view.WindowManagerGlobal.dumpGfxInfo(java.io.FileDescriptor, java.lang.String[])'
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.view.WindowManagerGlobal.dumpGfxInfo(WindowManagerGlobal.java:797)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.view.ThreadedRenderer.handleDumpGfxInfo(ThreadedRenderer.java:698)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.app.ActivityThread.handleDumpGfxInfo(ActivityThread.java:6366)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.app.ActivityThread.-$$Nest$mhandleDumpGfxInfo(ActivityThread.java:0)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3167)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.os.Handler.dispatchMessage(Handler.java:132)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.os.Looper.dispatchMessage(Looper.java:358)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.os.Looper.loopOnce(Looper.java:288)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.os.Looper.loop(Looper.java:392)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at android.app.ActivityThread.main(ActivityThread.java:10346)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at java.lang.reflect.Method.invoke(Native Method)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:638)
+08-24 12:32:01.771 22583 22583 W ActivityThread: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:972)
+08-24 12:32:01.771 22583 22583 I IDS_TAG : Closing IDS observe window
+08-24 12:32:01.771 22583 22583 I IDS_TAG : Getting Shared Preference for android.app.Application@e477c4e uid = 10805
+08-24 12:32:01.773 22583 22583 I IDS_TAG : IDS count updated to 1 for android.app.Application@e477c4e
+08-24 12:32:01.774 22583 22583 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Activity$$ExternalSyntheticLambda0@2b378e0
+08-24 12:32:01.774 22583 22583 D VRI[MainActivity]@c8fc3b0: WindowInsets changed: 1080x2340 statusBars:[0,103,0,0] navigationBars:[0,0,0,45] mandatorySystemGestures:[0,139,0,96]
+08-24 12:32:01.774 22583 22583 I HWUI    : Using FreeType backend (prop=Auto)
+08-24 12:32:01.779 22583 22583 E BufferQueueProducer: Unable to open libpenguin.so: dlopen failed: library "libpenguin.so" not found.
+08-24 12:32:01.779 22583 22583 E m.phytoy.sample: Unable to open libpenguin.so: dlopen failed: library "libpenguin.so" not found.
+08-24 12:32:01.779 22583 22583 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+08-24 12:32:01.779 22583 22583 I BufferQueueProducer: [](id:583700000000,api:0,p:-618567344,c:22583) setDequeueTimeout:2077252342
+08-24 12:32:01.779 22583 22583 I BLASTBufferQueue_Java: new BLASTBufferQueue, mName= VRI[MainActivity]@c8fc3b0 mNativeObject= 0xb400006f1b213640 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:3603 android.view.ViewRootImpl.relayoutWindow:11813 android.view.ViewRootImpl.performTraversals:4840 android.view.ViewRootImpl.doTraversal:3959 android.view.ViewRootImpl$TraversalRunnable.run:13034 android.view.Choreographer$CallbackRecord.run:1961 android.view.Choreographer$CallbackRecord.run:1970 android.view.Choreographer.doCallbacks:1423 android.view.Choreographer.doFrame:1348 android.view.Choreographer$FrameDisplayEventReceiver.run:1930
+08-24 12:32:01.779 22583 22583 I BLASTBufferQueue_Java: update, w= 1080 h= 2340 mName = VRI[MainActivity]@c8fc3b0 mNativeObject= 0xb400006f1b213640 sc.mNativeObject= 0xb40000700b218710 format= -1 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:3608 android.view.ViewRootImpl.relayoutWindow:11813 android.view.ViewRootImpl.performTraversals:4840 android.view.ViewRootImpl.doTraversal:3959 android.view.ViewRootImpl$TraversalRunnable.run:13034 android.view.Choreographer$CallbackRecord.run:1961
+08-24 12:32:01.780 22583 22583 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+08-24 12:32:01.780 22583 22583 I VRI[MainActivity]@c8fc3b0: Relayout returned: old=(0,0,1080,2340) new=(0,0,1080,2340) relayoutAsync=false req=(1080,2340)0 dur=2 res=0x3 s={true 0xb400006f2b233c40} ch=true seqId=0
+08-24 12:32:01.780 22583 22583 I VRI[MainActivity]@c8fc3b0: performConfigurationChange setNightDimText nightDimLevel=0
+08-24 12:32:01.780 22583 22583 D VRI[MainActivity]@c8fc3b0: mThreadedRenderer.initialize() mSurface={isValid=true 0xb400006f2b233c40} hwInitialized=true
+08-24 12:32:01.781 22583 22583 D VRI[MainActivity]@c8fc3b0: reportNextDraw android.view.ViewRootImpl.performTraversals:5507 android.view.ViewRootImpl.doTraversal:3959 android.view.ViewRootImpl$TraversalRunnable.run:13034 android.view.Choreographer$CallbackRecord.run:1961 android.view.Choreographer$CallbackRecord.run:1970
+08-24 12:32:01.781 22583 22583 D VRI[MainActivity]@c8fc3b0: Setup new sync=wmsSync-VRI[MainActivity]@c8fc3b0#0
+08-24 12:32:01.781 22583 22583 I VRI[MainActivity]@c8fc3b0: Creating new active sync group VRI[MainActivity]@c8fc3b0#1
+08-24 12:32:01.782 22583 22583 D VRI[MainActivity]@c8fc3b0: registerCallbacksForSync syncBuffer=false
+08-24 12:32:01.783 22583 22583 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+08-24 12:32:01.783 22583 22583 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+08-24 12:32:01.784 22583 22583 I CameraManagerGlobal: Connecting to camera service
+08-24 12:32:01.785 22583 22583 D VendorTagDescriptor: addVendorDescriptor: vendor tag id 15622750491770684145 added
+08-24 12:32:01.786 22583 22583 D VendorTagDescriptor: addVendorDescriptor: vendor tag id 8932615658386372252 added
+08-24 12:32:01.809 22583 22629 I CameraManagerGlobal: Camera 0 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client com.phytoy.sample API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22629 I CameraManagerGlobal: Camera 1 facing CAMERA_FACING_FRONT state now CAMERA_STATE_CLOSED for client com.tencent.mm API Level 1 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 2 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 20 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client com.sec.android.app.camera API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 21 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22629 I CameraManagerGlobal: Camera 23 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22629 I CameraManagerGlobal: Camera 3 facing CAMERA_FACING_FRONT state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 4 facing CAMERA_FACING_FRONT state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 52 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 56 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 58 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.809 22583 22660 I CameraManagerGlobal: Camera 90 facing CAMERA_FACING_FRONT state now CAMERA_STATE_CLOSED for client android.system API Level 2 User Id 0Device Id 0
+08-24 12:32:01.811 22583 22583 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+08-24 12:32:01.813 22583 22583 D nativeloader: Load /data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk!/lib/arm64-v8a/libphytoy_core.so using class loader ns clns-9 (caller=/data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk): ok
+08-24 12:32:01.813 22583 22583 D nativeloader: Load /data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk!/lib/arm64-v8a/libphytoy_android.so using class loader ns clns-9 (caller=/data/app/~~N7TT_IgBFWmXG24suvJ7ow==/com.phytoy.sample-fgXAAueVQ576PR2zM6C9PQ==/base.apk): ok
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: QUALCOMM build          : f6b5df5188, I29aebc4401
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Build Date              : 09/19/25
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Shader Compiler Version : E031.45.02.26
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Local Branch            :
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Remote Branch           : refs/tags/AU_LINUX_ANDROID_LA.VENDOR.14.3.0.11.00.00.974.010
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Remote Branch           : NONE
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Reconstruct Branch      : NOTHING
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Build Config            : S P 16.1.2 AArch64
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Driver Path             : /vendor/lib64/hw/vulkan.adreno.so
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Driver Version          : 0762.41
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: PFP                     : 0x01520181
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: ME                      : 0x01520023
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Application Name    : PhyToyEngine
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Application Version : 0x00003000
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Engine Name         : PhyToyEngine
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Engine Version      : 0x00003000
+08-24 12:32:01.816 22583 22583 I AdrenoVK-0: Api Version         : 0x00401000
+08-24 12:32:01.938 22583 22583 I AdrenoUtils: <ReadGpuID:357>: Reading chip ID through GSL
+08-24 12:32:01.938 22583 22583 E qdgralloc: GetGpuPixelFormat: No map for format: 0x3b
+08-24 12:32:01.938 22583 22583 E AdrenoUtils: <validate_memory_layout_input_params:1805>: Unknown Format 0
+08-24 12:32:01.938 22583 22583 E AdrenoUtils: <adreno_init_memory_layout:4055>: Memory Layout input parameter validation failed!
+08-24 12:32:01.938 22583 22583 W qdgralloc: GetGpuResourceSizeAndDimensions Graphics metadata init failed
+08-24 12:32:01.938 22583 22583 E Gralloc4: isSupported(1, 1, 59, 1, ...) failed with 7
+08-24 12:32:01.938 22583 22583 E GraphicBufferAllocator: Failed to allocate (4 x 4) layerCount 1 format 59 usage 300: 2
+08-24 12:32:01.938 22583 22583 E AHardwareBuffer: GraphicBuffer(w=4, h=4, lc=1) failed (Unknown error -2), handle=0x0
+08-24 12:32:01.938 22583 22583 E qdgralloc: GetGpuPixelFormat: No map for format: 0x3b
+08-24 12:32:01.938 22583 22583 E AdrenoUtils: <validate_memory_layout_input_params:1805>: Unknown Format 0
+08-24 12:32:01.938 22583 22583 E AdrenoUtils: <adreno_init_memory_layout:4055>: Memory Layout input parameter validation failed!
+08-24 12:32:01.938 22583 22583 W qdgralloc: GetGpuResourceSizeAndDimensions Graphics metadata init failed
+08-24 12:32:01.938 22583 22583 E Gralloc4: isSupported(1, 1, 59, 1, ...) failed with 7
+08-24 12:32:01.938 22583 22583 E GraphicBufferAllocator: Failed to allocate (4 x 4) layerCount 1 format 59 usage 300: 2
+08-24 12:32:01.938 22583 22583 E AHardwareBuffer: GraphicBuffer(w=4, h=4, lc=1) failed (Unknown error -2), handle=0x0
+08-24 12:32:01.939 22583 22583 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:01.939 22583 22583 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:01.939 22583 22583 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:01.940 22583 22583 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:01.940 22583 22583 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:01.948 22583 22583 W libc    : Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+08-24 12:32:01.948 22583 22583 I PhyToyCamera2: Camera2 PRIVATE input session ready: 1280x720 async_latest no_cpu_readback processed_gpu_surface rotation=90 thermal_cadence=15fps PhyToyEngine/0.3.0 ABI/2
+08-24 12:32:01.949 22583 22583 I PhyToyCamera2: Camera2 Vulkan processing target changed to 10 fps
+08-24 12:32:01.952 22583 22605 I CameraManagerGlobal: Camera 0 facing CAMERA_FACING_BACK state now CAMERA_STATE_OPENING for client com.phytoy.sample API Level 2 User Id 0Device Id 0
+08-24 12:32:01.959 22583 22605 I CameraManagerGlobal: Camera 0 facing CAMERA_FACING_BACK state now CAMERA_STATE_OPEN for client com.phytoy.sample API Level 2 User Id 0Device Id 0
+08-24 12:32:01.961 22583 22643 D VRI[MainActivity]@c8fc3b0: Received frameDrawingCallback syncResult=0 frameNum=1.
+08-24 12:32:01.961 22583 22643 I VRI[MainActivity]@c8fc3b0: mWNT: t=0xb400006e7b235ab0 mBlastBufferQueue=0xb400006f1b213640 fn= 1 HdrRenderState mRenderHdrSdrRatio=1.0 caller= android.view.ViewRootImpl$12.onFrameDraw:15561 android.view.ThreadedRenderer$1.onFrameDraw:751 <bottom of call stack>
+08-24 12:32:01.961 22583 22643 I VRI[MainActivity]@c8fc3b0: Setting up sync and frameCommitCallback
+08-24 12:32:01.961 22583 22626 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:01.967 22583 22626 I BLASTBufferQueue: [VRI[MainActivity]@c8fc3b0#0](f:0,a:0,s:0) onFrameAvailable the first frame is available
+08-24 12:32:01.967 22583 22626 I SurfaceComposerClient: apply transaction with the first frame. layerId: 218343, bufferData(ID: 96993246445571, frameNumber: 1)
+08-24 12:32:01.967 22583 22626 I VRI[MainActivity]@c8fc3b0: Received frameCommittedCallback lastAttemptedDrawFrameNum=1 didProduceBuffer=true
+08-24 12:32:01.968 22583 22626 D HWUI    : CFMS:: SetUp Pid : 22583    Tid : 22626
+08-24 12:32:01.968 22583 22583 D VRI[MainActivity]@c8fc3b0: reportDrawFinished seqId=0
+08-24 12:32:01.968 22583 22583 I InsetsSourceConsumer: applyRequestedVisibilityToControl: visible=true, type=navigationBars, host=com.phytoy.sample/com.phytoy.sample.MainActivity
+08-24 12:32:01.969 22583 22583 I InsetsSourceConsumer: applyRequestedVisibilityToControl: visible=true, type=statusBars, host=com.phytoy.sample/com.phytoy.sample.MainActivity
+08-24 12:32:01.985 22583 22583 D VRI[MainActivity]@c8fc3b0: mThreadedRenderer.initializeIfNeeded()#2 mSurface={isValid=true 0xb400006f2b233c40}
+08-24 12:32:01.986 22583 22583 D InputMethodManagerUtils: startInputInner - Id : 0
+08-24 12:32:01.986 22583 22583 I InputMethodManager: startInputInner - IInputMethodManagerGlobalInvoker.startInputOrWindowGainedFocus
+08-24 12:32:02.108 22583 22583 D InsetsController: hide(ime())
+08-24 12:32:02.108 22583 22583 I ImeTracker: com.phytoy.sample:42e09fa: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+08-24 12:32:02.122 22583 22660 D InputTransport: Input channel constructed: 'ClientS', fd=151
+08-24 12:32:02.220 22583 22630 I PhyToySample: Camera2 thermal FPS range changed to [15, 15]
+08-24 12:32:02.226 22583 22629 I CameraManagerGlobal: Camera 0 facing CAMERA_FACING_BACK state now CAMERA_STATE_ACTIVE for client com.phytoy.sample API Level 2 User Id 0Device Id 0
+08-24 12:32:02.230 22583 22626 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:02.272 22583 22626 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:02.733 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:02.778 22583 22712 I PhyToyCamera2: Camera2 PRIVATE rendered=1 received=1 dropped=0 p50_ms=52.622000 p95_ms=52.622000 errors=0 submits=1 imports=1 zero_copy=1 aimage_format=34 buffer_format=34 usage=131328 throttled=0 target_fps=10 presented=1 swapchain_recreates=0 output=720x1560
+08-24 12:32:02.781 22583 22626 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:02.856 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:02.992 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:03.128 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:03.389 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:03.529 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:03.794 22583 22712 W qdgralloc: getInterlacedFlag: getMetaData returned 3, defaulting to interlaced_flag = 0
+08-24 12:32:06.635 22583 22712 I PhyToyCamera2: Camera2 PRIVATE rendered=30 received=58 dropped=0 p50_ms=52.622000 p95_ms=59.161000 errors=0 submits=30 imports=7 zero_copy=30 aimage_format=34 buffer_format=34 usage=131328 throttled=28 target_fps=10 presented=30 swapchain_recreates=0 output=720x1560

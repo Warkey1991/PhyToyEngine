@@ -7,11 +7,11 @@
     <string name="status_opening">正在打开 Camera2 PRIVATE %1$d×%2$d</string>
     <string name="status_disconnected">相机已断开</string>
     <string name="status_camera_error">相机错误 %1$d</string>
-    <string name="status_active">Camera2 PRIVATE → Vulkan 已运行</string>
+    <string name="status_active">Camera2 → PhyToy Digital 01 → Vulkan GPU Surface</string>
     <string name="status_stream_rejected">设备拒绝了相机流组合</string>
     <string name="status_engine_error">引擎错误：%1$s</string>
     <string name="status_failure">%1$s：%2$s</string>
     <string name="verification_yes">通过</string>
     <string name="verification_waiting">等待中</string>
-    <string name="metrics_format">接收/渲染帧：%1$d / %2$d\n丢弃/错误：%3$d / %4$d\n最近/最大延迟：%5$.2f / %6$.2f ms\n滚动 P50/P95：%7$.2f / %8$.2f ms\n提交/导入/零拷贝：%9$d / %10$d / %11$d\nAImage/AHB 格式/用途：%12$d / %13$d / 0x%14$x\nVulkan 分配次数：%15$d，内存：%16$.1f MiB\nProduct Alpha 验收：%17$s\n预览当前显示未经处理的相机画面。</string>
+    <string name="metrics_format">接收/渲染帧：%1$d / %2$d\n队列丢弃/错误：%3$d / %4$d\n温控跳帧/引擎/状态/相机 FPS：%5$d / %6$d / %7$d / %8$s\n最近/最大延迟：%9$.2f / %10$.2f ms\n滚动 P50/P95：%11$.2f / %12$.2f ms\n提交/导入/零拷贝：%13$d / %14$d / %15$d\n显示帧/重建/输出：%16$d / %17$d / %18$d×%19$d\nAImage/AHB 格式/用途：%20$d / %21$d / 0x%22$x\nVulkan 分配/内存：%23$d / %24$.1f MiB\nSynthetic Alpha 实时效果：%25$s</string>
 </resources>

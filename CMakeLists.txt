@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(PhyToyEngine VERSION 0.2.1 LANGUAGES CXX)
+project(PhyToyEngine VERSION 0.3.0 LANGUAGES CXX)
 
 option(PHYTOY_BUILD_CLI "Build the native command-line renderer" ON)
 option(PHYTOY_BUILD_BENCHMARK "Build the runtime acceptance benchmark" ON)
@@ -44,17 +44,25 @@ if(PHYTOY_BUILD_VULKAN_SHADERS)
         set(PHYTOY_SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/backends/vulkan/shaders")
         set(PHYTOY_SPIRV_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated/spirv")
         set(PHYTOY_SPIRV_FILES)
-        foreach(SHADER_NAME normalize_ahb optics sensor isp)
-            set(SPIRV_FILE "${PHYTOY_SPIRV_DIR}/${SHADER_NAME}.spv")
+        foreach(SHADER_SOURCE normalize_ahb.comp optics.comp sensor.comp isp.comp present.vert present.frag)
+            get_filename_component(SHADER_NAME "${SHADER_SOURCE}" NAME_WE)
+            get_filename_component(SHADER_STAGE "${SHADER_SOURCE}" LAST_EXT)
+            string(SUBSTRING "${SHADER_STAGE}" 1 -1 SHADER_STAGE)
+            if(SHADER_STAGE STREQUAL "comp")
+                set(SHADER_ID "${SHADER_NAME}")
+            else()
+                set(SHADER_ID "${SHADER_NAME}_${SHADER_STAGE}")
+            endif()
+            set(SPIRV_FILE "${PHYTOY_SPIRV_DIR}/${SHADER_ID}.spv")
             add_custom_command(
                 OUTPUT "${SPIRV_FILE}"
                 COMMAND "${CMAKE_COMMAND}" -E make_directory "${PHYTOY_SPIRV_DIR}"
                 COMMAND "${PHYTOY_GLSLC}" --target-env=vulkan1.1 -O
-                    "${PHYTOY_SHADER_DIR}/${SHADER_NAME}.comp" -o "${SPIRV_FILE}"
-                DEPENDS "${PHYTOY_SHADER_DIR}/${SHADER_NAME}.comp"
+                    "${PHYTOY_SHADER_DIR}/${SHADER_SOURCE}" -o "${SPIRV_FILE}"
+                DEPENDS "${PHYTOY_SHADER_DIR}/${SHADER_SOURCE}"
                 VERBATIM
             )
-            list(APPEND PHYTOY_SPIRV_FILES "${SHADER_NAME}=${SPIRV_FILE}")
+            list(APPEND PHYTOY_SPIRV_FILES "${SHADER_ID}=${SPIRV_FILE}")
             list(APPEND PHYTOY_SPIRV_OUTPUTS "${SPIRV_FILE}")
         endforeach()
         set(PHYTOY_SPIRV_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/phytoy_spirv.hpp")

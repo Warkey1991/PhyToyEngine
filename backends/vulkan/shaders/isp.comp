@@ -182,7 +182,9 @@ void main() {
     if (x >= width || y >= height) return;
     int shared_x = int(gl_LocalInvocationID.x) + MAX_FILTER_RADIUS;
     int shared_y = int(gl_LocalInvocationID.y) + MAX_FILTER_RADIUS;
-    vec3 scene = gaussian_scene_shared(shared_x, shared_y, false);
+    vec3 scene = denoise_sigma <= 0.0
+        ? shared_scene(shared_x, shared_y)
+        : gaussian_scene_shared(shared_x, shared_y, false);
     if (sharpen_amount != 0.0) {
         vec3 low_pass = gaussian_scene_shared(shared_x, shared_y, true);
         scene += sharpen_amount * (scene - low_pass);

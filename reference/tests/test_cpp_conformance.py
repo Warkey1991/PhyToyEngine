@@ -17,6 +17,7 @@ pytestmark = pytest.mark.skipif(
     not LIBRARY_PATH or not PROFILE_DIR,
     reason="native library conformance environment is not configured",
 )
+PTE_ABI_VERSION = 2
 
 
 class Plane(ctypes.Structure):
@@ -95,7 +96,7 @@ def _native_render(
     output_array = np.empty_like(contiguous)
     planes = (Plane * 3)()
     planes[0] = Plane(contiguous.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), contiguous.shape[1] * 3)
-    frame = Frame(1, 1, contiguous.shape[1], contiguous.shape[0], planes, 0)
+    frame = Frame(PTE_ABI_VERSION, 1, contiguous.shape[1], contiguous.shape[0], planes, 0)
     output = Output(
         output_array.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
         output_array.size,
@@ -108,7 +109,7 @@ def _native_render(
         values = np.ctypeslib.as_array(data, shape=(width * height * channels,))
         stages[stage] = values.copy().reshape(height, width, channels)
 
-    options = Options(1, seed, callback, None)
+    options = Options(PTE_ABI_VERSION, seed, callback, None)
     try:
         status = library.pte_engine_render(engine, ctypes.byref(frame), ctypes.byref(options), ctypes.byref(output))
         assert status == 0, library.pte_engine_last_error(engine).decode("utf-8")
