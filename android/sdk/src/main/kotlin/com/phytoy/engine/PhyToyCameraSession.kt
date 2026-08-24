@@ -10,16 +10,20 @@ import java.io.Closeable
 import java.io.File
 
 /**
- * Owns one PhyToyEngine instance, a Camera2 PRIVATE input and a Vulkan GPU output surface.
- * Camera2 must target [inputSurface] only. Every displayed frame has passed through the complete
+ * Owns one PhyToyEngine instance, Camera2 PRIVATE preview/still inputs and a Vulkan GPU output.
+ * Camera2 must target [inputSurface] for repeating preview requests and [stillCaptureSurface] for
+ * explicit high-resolution captures. Every displayed and captured frame passes through the same
  * PhyToy profile graph; rendering and presentation run on a dedicated native worker.
  */
 class PhyToyCameraSession private constructor(
     private var nativeHandle: Long,
     val inputSurface: Surface,
+    val stillCaptureSurface: Surface,
     private val normalProcessingFrameRate: Int,
-    private val captureWidth: Int,
-    private val captureHeight: Int,
+    private val previewWidth: Int,
+    private val previewHeight: Int,
+    private val stillCaptureWidth: Int,
+    private val stillCaptureHeight: Int,
     private val outputRotationDegrees: Int,
 ) : Closeable {
 
@@ -120,12 +124,53 @@ class PhyToyCameraSession private constructor(
             }
             nativeCaptureNextFrame(handle, timeoutMillis)
         }
-        check(pixels.size == captureWidth * captureHeight) {
+        check(pixels.size == previewWidth * previewHeight) {
             "Unexpected native capture size"
         }
         return CapturedFrame(
-            width = captureWidth,
-            height = captureHeight,
+            width = previewWidth,
+            height = previewHeight,
+            rotationDegrees = outputRotationDegrees,
+            argb8888 = pixels,
+        )
+    }
+
+    /**
+     * Arms the high-resolution reader, invokes [trigger] to submit one Camera2 still request, then
+     * waits for that exact PRIVATE frame to finish the Digital 01 Vulkan graph. [trigger] runs on
+     * the caller's background thread after the native capture request is ready, avoiding races
+     * between Camera2 delivery and readback registration.
+     */
+    fun captureStillFrame(
+        timeoutMillis: Int = DEFAULT_CAPTURE_TIMEOUT_MILLIS,
+        trigger: () -> Unit,
+    ): CapturedFrame {
+        require(timeoutMillis in 250..MAXIMUM_CAPTURE_TIMEOUT_MILLIS) {
+            "timeoutMillis must be in 250..$MAXIMUM_CAPTURE_TIMEOUT_MILLIS"
+        }
+        check(Looper.myLooper() != Looper.getMainLooper()) {
+            "captureStillFrame must run off the main thread"
+        }
+        val pixels = synchronized(captureCallLock) {
+            val handle = synchronized(lifecycleLock) {
+                check(nativeHandle != 0L) { "Camera session is closed" }
+                nativeHandle
+            }
+            val requestId = nativeBeginStillCapture(handle)
+            try {
+                trigger()
+                nativeAwaitCapture(handle, requestId, timeoutMillis)
+            } catch (exception: Throwable) {
+                nativeCancelCapture(handle)
+                throw exception
+            }
+        }
+        check(pixels.size == stillCaptureWidth * stillCaptureHeight) {
+            "Unexpected native high-resolution capture size"
+        }
+        return CapturedFrame(
+            width = stillCaptureWidth,
+            height = stillCaptureHeight,
             rotationDegrees = outputRotationDegrees,
             argb8888 = pixels,
         )
@@ -142,6 +187,7 @@ class PhyToyCameraSession private constructor(
             // Wait for a cancelled or just-completed JNI capture call before deletion.
         }
         inputSurface.release()
+        stillCaptureSurface.release()
         nativeClose(handle)
     }
 
@@ -237,6 +283,8 @@ class PhyToyCameraSession private constructor(
             context: Context,
             width: Int,
             height: Int,
+            stillWidth: Int = width,
+            stillHeight: Int = height,
             outputSurface: Surface,
             outputRotationDegrees: Int,
             maxImages: Int = 4,
@@ -246,6 +294,9 @@ class PhyToyCameraSession private constructor(
             toyProfileAsset: String = "toy_phytoy_digital_01_v1_1.ptp",
         ): PhyToyCameraSession {
             require(width > 0 && height > 0) { "Camera dimensions must be positive" }
+            require(stillWidth > 0 && stillHeight > 0) {
+                "Still-capture dimensions must be positive"
+            }
             require(maxImages >= 3) { "maxImages must be at least 3 for asynchronous latest-frame processing" }
             require(processingFrameRateLimit in 1..60) {
                 "processingFrameRateLimit must be in 1..60"
@@ -260,6 +311,8 @@ class PhyToyCameraSession private constructor(
                 toy.absolutePath,
                 width,
                 height,
+                stillWidth,
+                stillHeight,
                 maxImages,
                 outputSurface,
                 outputRotationDegrees,
@@ -270,12 +323,18 @@ class PhyToyCameraSession private constructor(
                 val surface = checkNotNull(nativeInputSurface(handle)) {
                     "Native Camera2 input surface is unavailable"
                 }
+                val stillSurface = checkNotNull(nativeStillCaptureSurface(handle)) {
+                    "Native Camera2 still-capture surface is unavailable"
+                }
                 PhyToyCameraSession(
                     handle,
                     surface,
+                    stillSurface,
                     processingFrameRateLimit,
                     width,
                     height,
+                    stillWidth,
+                    stillHeight,
                     outputRotationDegrees,
                 ).also {
                     session = it
@@ -303,14 +362,23 @@ class PhyToyCameraSession private constructor(
             toyProfilePath: String,
             width: Int,
             height: Int,
+            stillWidth: Int,
+            stillHeight: Int,
             maxImages: Int,
             outputSurface: Surface,
             outputRotationDegrees: Int,
         ): Long
         @JvmStatic private external fun nativeInputSurface(handle: Long): Surface?
+        @JvmStatic private external fun nativeStillCaptureSurface(handle: Long): Surface?
         @JvmStatic private external fun nativeSnapshot(handle: Long): LongArray
         @JvmStatic private external fun nativeCaptureNextFrame(
             handle: Long,
+            timeoutMillis: Int,
+        ): IntArray
+        @JvmStatic private external fun nativeBeginStillCapture(handle: Long): Long
+        @JvmStatic private external fun nativeAwaitCapture(
+            handle: Long,
+            requestId: Long,
             timeoutMillis: Int,
         ): IntArray
         @JvmStatic private external fun nativeCancelCapture(handle: Long)

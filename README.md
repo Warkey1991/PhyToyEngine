@@ -11,8 +11,8 @@ Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**; Android no
 to the product-balanced **v1.1.0** tuning. The engine includes a Python reference,
 a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
 compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
-preview Surface, a Digital 01 Android shutter/JPEG/gallery flow, and numerical/statistical
-regression tooling. It is an engine core and a focused Android camera experience, not yet
+  preview Surface, a 12 MP Digital 01 Android capture/touch-focus/lens-switch flow, and
+  numerical/statistical regression tooling. It is an engine core and a focused Android camera experience, not yet
 a complete commercial camera application.
 
 ## Pipeline and architecture
@@ -55,8 +55,10 @@ Changing a camera look means replacing a validated profile, not editing engine c
   reuse, aliased production intermediates, cached `AHardwareBuffer` imports, sampler YCbCr
   conversion, sync-fd acquisition, and direct final-sRGB presentation through a Vulkan
   Android swapchain with no CPU readback.
-- Android still capture: on-demand readback of one fully processed sRGB frame, rotated and
-  saved through MediaStore while ordinary preview frames remain GPU-only.
+- Android still capture: a dedicated Camera2 PRIVATE surface up to 12.5 MP, on-demand
+  readback of one fully processed sRGB frame, rotation and MediaStore save while ordinary
+  preview frames remain GPU-only. The sample also maps touch AF/AE through crop/rotation/
+  front mirroring and rebuilds the pipeline when switching front/back lenses.
 - Product profile: immutable `PhyToy Digital 01 v1.0.0` baseline plus product-balanced
   `v1.1.0` tuning, explicitly marked as a designed synthetic camera rather than a measured replica.
 - Validation: strict semantic profile checks, SHA-256 checked `.ptp` packages, frozen
@@ -158,8 +160,9 @@ cmake --build build-android-arm64 --parallel
 
 The resulting `libphytoy_core.so` embeds validated SPIR-V. Normalization, optics, sensor,
 ISP, and the final GPU Surface graphics pass execute in one command buffer and one queue
-submission. Buffers, descriptors, parameters, and up to eight Camera2 buffer-slot imports
-are reused. `PTE_BACKEND_AUTO` falls back to CPU when Vulkan initialization is unavailable.
+submission. Buffers, descriptors, parameters, up to eight preview buffer slots and the
+on-demand still-buffer imports are reused. `PTE_BACKEND_AUTO` falls back to CPU when Vulkan
+initialization is unavailable.
 
 ### Camera2 zero-copy input
 
@@ -254,7 +257,8 @@ latency, memory, thermal, endurance, numerical, and statistical results.
   buffers plus the caller's output. Tiled/float16 internals and direct encoded output remain
   future memory reductions, not prerequisites of the current explicit acceptance contract.
 - The sensor model is digital-only; film chemistry, flash, rolling shutter, motion blur,
-  autofocus, and multi-camera fusion are outside this Alpha.
+  and multi-camera fusion are outside this Alpha. Android touch AF/AE controls the host
+  camera, but focus behavior is not simulated inside the toy optics model.
 - PhyToy Digital 01 is an original designed profile. It is commercially usable as a
   synthetic look after device acceptance, but it must not be marketed as a measured replica.
 
@@ -330,7 +334,8 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 **PhyToy Digital 01 v1.0.0**，Android 现默认使用产品化收敛后的 **v1.1.0** 调校。
 它不是完整商业相机 App，但已包含 Python 高精度
 参考实现、C++20 CPU Runtime、稳定 C ABI、Android Vulkan compute 后端、Camera2
-AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试。
+AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试。Android 示例已具备
+最高 12.5MP 的 Digital 01 静态成片、触摸 AF/AE、前后镜头切换、MediaStore 保存与回看。
 
 ## 当前能力
 
@@ -342,6 +347,8 @@ AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试�
   CPU 回退。
 - Vulkan 生产路径：每帧一次提交、持久资源复用、中间 Buffer 原地复用、Camera2
   Buffer 槽位缓存、外部格式 YCbCr conversion 和 acquire fence。
+- Android 相机：720p 处理后实时取景、最高 12.5MP PRIVATE 静态流、触摸对焦/测光、
+  前后镜头切换，以及系统相册 JPEG 保存。
 - 原创 Profile：PhyToy Digital 01 明确标记为 designed/synthetic，不冒充真实相机复刻。
 - 可验证性：固定 seed、Profile SHA-256、Golden manifest、Python/C++ 逐阶段误差
   对比和统计测试。

@@ -84,15 +84,17 @@ fi
 "$ADB_BIN" exec-out content read --uri "$photo_uri" > "$REPORT_DIR/captured.jpg"
 
 python3 - "$photo_uri" "$REPORT_DIR/media.txt" "$REPORT_DIR/captured.jpg" \
+    "$REPORT_DIR/capture_log.txt" \
     > "$REPORT_DIR/evaluation.json" <<'PY'
 import json
 import re
 import sys
 from pathlib import Path
 
-uri, metadata_path, image_path = sys.argv[1:]
+uri, metadata_path, image_path, log_path = sys.argv[1:]
 metadata = Path(metadata_path).read_text(encoding="utf-8", errors="replace")
 image = Path(image_path).read_bytes()
+capture_log = Path(log_path).read_text(encoding="utf-8", errors="replace")
 
 def field(name: str) -> str:
     match = re.search(rf"(?:^|, )\b{name}=([^,]+)", metadata)
@@ -103,10 +105,12 @@ height = int(field("height") or 0)
 checks = {
     "media_row_exists": metadata.startswith("Row:"),
     "jpeg_mime": field("mime_type") == "image/jpeg",
-    "portrait_dimensions": width >= 720 and height >= 1_000 and height > width,
+    "portrait_dimensions": width >= 3_000 and height >= 4_000 and height > width,
+    "high_resolution_12mp": width * height >= 12_000_000,
     "phytoy_album": field("relative_path").startswith("Pictures/PhyToy"),
     "jpeg_signature": image.startswith(b"\xff\xd8") and image.endswith(b"\xff\xd9"),
     "nonempty_file": len(image) >= 50_000,
+    "gpu_still_surface": "one_submission host_readback source=still" in capture_log,
 }
 result = {
     "passed": all(checks.values()),

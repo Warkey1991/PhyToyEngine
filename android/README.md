@@ -10,9 +10,10 @@ Android GPU Surface.
 ## Current milestone
 
 - `sdk`: packages the C++ engine, JNI bridge, Kotlin API, and immutable `.ptp` profiles.
-- `sample`: provides a full-screen Digital 01 camera UI, shutter state, MediaStore JPEG
-  saving and last-photo review. Its `TextureView` remains only the Vulkan swapchain output,
-  while Camera2 targets the engine-owned PRIVATE `AImageReader` surface exclusively.
+- `sample`: provides a full-screen Digital 01 camera UI, 12 MP still capture, touch AF/AE,
+  front/back switching, MediaStore JPEG saving and last-photo review. Its `TextureView`
+  remains only the Vulkan swapchain output. Camera2 targets the engine-owned PRIVATE
+  preview and high-resolution still surfaces.
 - JNI: acquires the latest image and its sync fence, immediately queues it to a dedicated
   latest-frame worker, imports the camera buffer into Vulkan, reuses stable buffer IDs, skips
   CPU readback, records normalization/optics/sensor/ISP and the graphics pass into one
@@ -58,17 +59,20 @@ val engine = PhyToyCameraSession.open(
     context = this,
     width = 1280,
     height = 720,
+    stillWidth = 4080,
+    stillHeight = 3060,
     outputSurface = previewSurface,
     outputRotationDegrees = 90,
 )
 ```
 
-Add only `engine.inputSurface` to Camera2. `previewSurface` belongs to Vulkan output and
-must never be added as a Camera2 target:
+Add both engine-owned inputs to the Camera2 session. Target only `inputSurface` from the
+repeating preview request and only `stillCaptureSurface` from explicit still requests.
+`previewSurface` belongs to Vulkan output and must never be a Camera2 target:
 
 ```kotlin
 cameraDevice.createCaptureSession(
-    listOf(engine.inputSurface),
+    listOf(engine.inputSurface, engine.stillCaptureSurface),
     captureSessionCallback,
     cameraHandler,
 )
@@ -94,14 +98,22 @@ previewSurface.release()
 
 ### Still capture
 
-Call `captureNextFrame()` from a background thread. The next admitted Camera2 frame runs
-through the same Digital 01 Vulkan graph and preview presentation, with one additional
-readback of its final sRGB pixels. Normal preview frames remain GPU-only and every frame,
-including the captured one, still uses one Vulkan queue submission:
+Call `captureStillFrame()` from a background thread. It arms the high-resolution reader
+before `trigger` submits the Camera2 `TEMPLATE_STILL_CAPTURE`, so the frame cannot race the
+readback request. The still PRIVATE buffer runs through the same Digital 01 Vulkan graph,
+with one readback of its final sRGB pixels. Normal preview frames remain GPU-only and every
+frame, including the captured one, still uses one Vulkan queue submission:
 
 ```kotlin
 photoExecutor.execute {
-    val photo = engine.captureNextFrame()
+    val photo = engine.captureStillFrame {
+        val request = cameraDevice.createCaptureRequest(
+            CameraDevice.TEMPLATE_STILL_CAPTURE
+        ).apply {
+            addTarget(engine.stillCaptureSurface)
+        }.build()
+        captureSession.capture(request, null, cameraHandler)
+    }
     // photo.argb8888 is photo.width × photo.height.
     // Apply photo.rotationDegrees before JPEG encoding.
 }
@@ -109,7 +121,15 @@ photoExecutor.execute {
 
 The sample rotates the result, encodes JPEG at quality 95, publishes it to
 `Pictures/PhyToy` through `MediaStore`, updates the lower-left thumbnail and opens the
-system photo viewer when that thumbnail is tapped.
+system photo viewer when that thumbnail is tapped. It selects the largest PRIVATE still
+size up to 12.5 MP; Samsung SM-S9210 resolves to 4080×3060 rear and 4000×3000 front.
+
+The sample maps taps through the processed preview's center crop, output rotation and
+front-camera mirror into `SENSOR_INFO_ACTIVE_ARRAY_SIZE`, then submits supported
+`CONTROL_AF_REGIONS` and `CONTROL_AE_REGIONS`. The focus marker reports Camera2 AF lock
+state and returns to continuous-picture AF after 3.5 seconds. Lens switching closes the
+Camera2 session and engine in order, mirrors only the front preview, and rebuilds both
+PRIVATE streams for the selected lens.
 
 Profile assets are copied into app-private storage because the native engine validates and
 opens packaged profile files. The default profiles are `host_generic_srgb.ptp` and the
@@ -122,6 +142,8 @@ Connect and unlock one Android device, enable USB debugging, then run:
 
 ```bash
 tools/run_android_camera2_smoke.sh
+tools/run_android_photo_smoke.sh
+tools/run_android_camera_controls_smoke.sh
 ```
 
 The script builds and installs a release-optimized, debug-signed benchmark sample, grants
@@ -150,9 +172,15 @@ fence 零拷贝进入 Vulkan，依次执行归一化、PhyToy Digital 01 光学�
 展示仍保持每帧一次 queue submission，并记录 `renderedFrames`、`presentedFrames`、交换链
 重建、输出尺寸、延迟、错误、内存与零拷贝指标。
 
-`captureNextFrame()` 必须在后台线程调用。它让下一张 PRIVATE 帧继续以一次 Vulkan
-submission 完成 Digital 01 处理和预览显示，同时仅对这张拍照帧读回最终 sRGB；普通预览
-仍无 CPU readback。示例 App 将结果旋转后以质量 95 写入 `Pictures/PhyToy`，并更新缩略图。
+`captureStillFrame()` 必须在后台线程调用。它先注册高分辨率读回，再由回调提交只包含
+`stillCaptureSurface` 的 Camera2 静态请求，确保 12MP PRIVATE 帧不会抢跑。该帧仍以一次
+Vulkan submission 完成 Digital 01 处理，同时仅对最终 sRGB 读回；普通预览仍无 CPU
+readback。示例 App 将结果旋转后以质量 95 写入 `Pictures/PhyToy`，并更新缩略图。
+
+示例 App 已支持触摸 AF/AE 和前后镜头切换。触摸点会逆向经过前摄镜像、取景中心裁切和
+输出旋转后映射到传感器有效区域；Camera2 对焦结束后焦点框给出成功/未锁定反馈，并在
+3.5 秒后恢复连续对焦。切换镜头时会按 capture session → CameraDevice → engine 的顺序
+关闭旧链路，并为新镜头重建 720p 预览与最高 12.5MP 静态 PRIVATE 流。
 
 Vulkan 引擎默认最多处理 15 FPS，并通过 Android Thermal API 自动调整为 Normal
 15 FPS、Light 10 FPS、Moderate 5 FPS、Severe 3 FPS、Critical 0 FPS。温控主动跳过的帧单独记录为
@@ -176,6 +204,8 @@ Android 真机后，可运行：
 
 ```bash
 tools/run_android_camera2_smoke.sh
+tools/run_android_photo_smoke.sh
+tools/run_android_camera_controls_smoke.sh
 ```
 
 验收脚本会安装 App、授权并启动相机，检查真实 PRIVATE Buffer 格式、GPU sampled usage、

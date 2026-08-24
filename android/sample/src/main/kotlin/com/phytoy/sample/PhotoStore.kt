@@ -18,7 +18,12 @@ import java.util.Date
 import java.util.Locale
 
 internal class PhotoStore(private val context: Context) {
-    data class SavedPhoto(val uri: Uri, val displayName: String)
+    data class SavedPhoto(
+        val uri: Uri,
+        val displayName: String,
+        val width: Int,
+        val height: Int,
+    )
 
     private val resolver = context.contentResolver
     private val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -71,7 +76,7 @@ internal class PhotoStore(private val context: Context) {
                     )
                 }
                 preferences.edit().putString(LAST_PHOTO_URI, uri.toString()).apply()
-                return SavedPhoto(uri, name)
+                return SavedPhoto(uri, name, bitmap.width, bitmap.height)
             } catch (exception: Throwable) {
                 resolver.delete(uri, null, null)
                 throw exception

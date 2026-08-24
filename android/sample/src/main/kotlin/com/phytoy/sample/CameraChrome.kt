@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
@@ -21,12 +22,19 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     val shutter: View
         get() = shutterControl
     val thumbnail = ImageView(context)
+    val switchCamera: View
+        get() = lensSwitchControl
 
     private val shutterControl = ShutterView(context)
+    private val lensSwitchControl = LensSwitchView(context)
+    private val focusIndicator = FocusIndicatorView(context)
+    private val captureFormat = TextView(context)
     private val liveBadge = TextView(context)
     private val message = TextView(context)
     private val flash = View(context)
     private val clearMessage = Runnable { message.visibility = INVISIBLE }
+    private var cameraReady = false
+    private var lensSwitchAvailable = false
 
     init {
         isClickable = false
@@ -34,9 +42,15 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         metrics.id = R.id.engine_metrics
         shutterControl.id = R.id.shutter
         thumbnail.id = R.id.last_photo
+        lensSwitchControl.id = R.id.switch_camera
+        focusIndicator.id = R.id.focus_indicator
         addScrims()
         addTopBar()
         addBottomControls()
+        addView(
+            focusIndicator,
+            LayoutParams(dp(76), dp(76)).apply { focusIndicator.visibility = INVISIBLE },
+        )
         addMetricsPanel()
 
         flash.setBackgroundColor(Color.WHITE)
@@ -55,7 +69,10 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     }
 
     fun setReady(ready: Boolean) {
+        cameraReady = ready
         shutterControl.setReady(ready)
+        lensSwitchControl.isEnabled = ready && lensSwitchAvailable
+        lensSwitchControl.alpha = if (lensSwitchControl.isEnabled) 1f else 0.35f
         liveBadge.text = context.getString(
             if (ready) R.string.live_badge else R.string.warming_badge
         )
@@ -66,6 +83,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     fun setCapturing() {
         removeCallbacks(clearMessage)
         shutterControl.setCapturing(true)
+        lensSwitchControl.isEnabled = false
+        lensSwitchControl.alpha = 0.35f
         message.text = context.getString(R.string.processing_photo)
         message.visibility = VISIBLE
         message.animate().alpha(1f).setDuration(120L).start()
@@ -74,6 +93,51 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     fun finishCapture() {
         shutterControl.setCapturing(false)
+        lensSwitchControl.isEnabled = cameraReady && lensSwitchAvailable
+        lensSwitchControl.alpha = if (lensSwitchControl.isEnabled) 1f else 0.35f
+    }
+
+    fun setLensSwitchAvailable(available: Boolean) {
+        lensSwitchAvailable = available
+        lensSwitchControl.isEnabled = available && cameraReady
+        lensSwitchControl.alpha = if (lensSwitchControl.isEnabled) 1f else 0.35f
+    }
+
+    fun setLensFacing(front: Boolean) {
+        lensSwitchControl.setFrontFacing(front)
+        lensSwitchControl.contentDescription = context.getString(
+            if (front) R.string.switch_to_back_camera else R.string.switch_to_front_camera
+        )
+    }
+
+    fun setCaptureSize(width: Int, height: Int) {
+        val megapixels = width.toLong() * height / 1_000_000.0
+        captureFormat.text = context.getString(R.string.capture_format, megapixels)
+    }
+
+    fun showFocusIndicator(x: Float, y: Float) {
+        focusIndicator.animate().cancel()
+        focusIndicator.setSuccess(null)
+        focusIndicator.x = x - focusIndicator.layoutParams.width / 2f
+        focusIndicator.y = y - focusIndicator.layoutParams.height / 2f
+        focusIndicator.alpha = 1f
+        focusIndicator.scaleX = 1.35f
+        focusIndicator.scaleY = 1.35f
+        focusIndicator.visibility = VISIBLE
+        focusIndicator.animate().scaleX(1f).scaleY(1f).setDuration(180L).start()
+        focusIndicator.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+    }
+
+    fun completeFocus(success: Boolean) {
+        focusIndicator.setSuccess(success)
+        focusIndicator.animate().alpha(0.72f).setDuration(180L).start()
+    }
+
+    fun clearFocusIndicator() {
+        focusIndicator.animate().cancel()
+        focusIndicator.animate().alpha(0f).setDuration(180L).withEndAction {
+            focusIndicator.visibility = INVISIBLE
+        }.start()
     }
 
     fun showMessage(text: CharSequence, temporary: Boolean = false) {
@@ -209,16 +273,26 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             bottomMargin = dp(56)
         })
 
-        val format = TextView(context).apply {
-            text = context.getString(R.string.capture_format)
+        captureFormat.apply {
+            text = context.getString(R.string.capture_format, 0.0)
             setTextColor(0xBFFFFFFF.toInt())
-            textSize = 11f
+            textSize = 10f
             letterSpacing = 0.08f
             gravity = Gravity.CENTER
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
         }
-        addView(format, LayoutParams(dp(64), dp(58), Gravity.BOTTOM or Gravity.END).apply {
-            rightMargin = dp(22)
+        addView(captureFormat, LayoutParams(dp(78), dp(42), Gravity.BOTTOM or Gravity.END).apply {
+            rightMargin = dp(14)
+            bottomMargin = dp(124)
+        })
+
+        lensSwitchControl.apply {
+            contentDescription = context.getString(R.string.switch_to_front_camera)
+            isClickable = true
+            isFocusable = true
+        }
+        addView(lensSwitchControl, LayoutParams(dp(58), dp(58), Gravity.BOTTOM or Gravity.END).apply {
+            rightMargin = dp(24)
             bottomMargin = dp(56)
         })
     }
@@ -252,6 +326,82 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         setColor(color)
         cornerRadius = radius
         if (strokeColor != null) setStroke(strokeWidth, strokeColor)
+    }
+
+    private class FocusIndicatorView(context: Context) : View(context) {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = resources.displayMetrics.density * 2f
+            strokeCap = Paint.Cap.SQUARE
+        }
+        private var success: Boolean? = null
+
+        fun setSuccess(value: Boolean?) {
+            success = value
+            invalidate()
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            paint.color = when (success) {
+                true -> 0xFF8BE28B.toInt()
+                false -> 0xFFFF786E.toInt()
+                null -> ACCENT
+            }
+            val inset = width * 0.14f
+            val edge = width * 0.24f
+            val right = width - inset
+            val bottom = height - inset
+            canvas.drawLine(inset, inset, inset + edge, inset, paint)
+            canvas.drawLine(inset, inset, inset, inset + edge, paint)
+            canvas.drawLine(right, inset, right - edge, inset, paint)
+            canvas.drawLine(right, inset, right, inset + edge, paint)
+            canvas.drawLine(inset, bottom, inset + edge, bottom, paint)
+            canvas.drawLine(inset, bottom, inset, bottom - edge, paint)
+            canvas.drawLine(right, bottom, right - edge, bottom, paint)
+            canvas.drawLine(right, bottom, right, bottom - edge, paint)
+        }
+    }
+
+    private class LensSwitchView(context: Context) : View(context) {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private val arc = RectF()
+        private var frontFacing = false
+
+        init {
+            setLayerType(LAYER_TYPE_SOFTWARE, null)
+        }
+
+        fun setFrontFacing(value: Boolean) {
+            frontFacing = value
+            invalidate()
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            val density = resources.displayMetrics.density
+            val centerX = width / 2f
+            val centerY = height / 2f
+            val radius = minOf(width, height) * 0.37f
+            paint.color = 0xA8000000.toInt()
+            paint.style = Paint.Style.FILL
+            canvas.drawCircle(centerX, centerY, minOf(width, height) * 0.48f, paint)
+            paint.color = 0xD9FFFFFF.toInt()
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 1.8f * density
+            paint.strokeCap = Paint.Cap.ROUND
+            arc.set(centerX - radius, centerY - radius, centerX + radius, centerY + radius)
+            canvas.drawArc(arc, 205f, 205f, false, paint)
+            canvas.drawArc(arc, 25f, 205f, false, paint)
+            paint.style = Paint.Style.FILL
+            val arrow = 4.2f * density
+            canvas.drawCircle(centerX - radius * 0.84f, centerY - radius * 0.54f, arrow, paint)
+            canvas.drawCircle(centerX + radius * 0.84f, centerY + radius * 0.54f, arrow, paint)
+            paint.textAlign = Paint.Align.CENTER
+            paint.typeface = Typeface.create("sans", Typeface.BOLD)
+            paint.textSize = 11f * density
+            canvas.drawText(if (frontFacing) "F" else "R", centerX, centerY + 4f * density, paint)
+        }
     }
 
     private class ShutterView(context: Context) : View(context) {

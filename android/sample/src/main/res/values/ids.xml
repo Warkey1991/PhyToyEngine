@@ -3,4 +3,6 @@
     <item name="engine_metrics" type="id" />
     <item name="last_photo" type="id" />
     <item name="shutter" type="id" />
+    <item name="switch_camera" type="id" />
+    <item name="focus_indicator" type="id" />
 </resources>
