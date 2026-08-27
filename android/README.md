@@ -152,6 +152,9 @@ opens packaged profile files. The default profiles are `host_generic_srgb.ptp` a
 outdoor-reviewed `toy_phytoy_digital_01_v1_2.ptp`; the immutable v1.0.0 and v1.1.0
 packages remain available for regression comparisons. Version 1.2 reduces CA separation
 by about 26% and gently raises the lower tone curve while retaining the v1.1 color response.
+The engine derives a coefficient-aware edge-safe overscan before distortion so radial,
+tangential and CA sampling cannot fold reflected pixels back into the image boundary. The
+same optical mapping is used for preview and high-resolution still capture.
 
 ## Real-device smoke acceptance
 

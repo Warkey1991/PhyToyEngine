@@ -213,14 +213,35 @@ float sample_bilinear_reflect(const Image& image, float x, float y, uint32_t cha
     return top * (1.0F - ty) + bottom * ty;
 }
 
+float distortion_safe_scale(const OpticsProfile& optics) {
+    const float k1 = optics.distortion[0];
+    const float k2 = optics.distortion[1];
+    const auto radial_at = [k1, k2](float radius2) {
+        return std::abs(1.0F + k1 * radius2 + k2 * radius2 * radius2);
+    };
+    float maximum_radial = std::max({radial_at(0.0F), radial_at(1.0F), radial_at(2.0F)});
+    if (std::abs(k2) > std::numeric_limits<float>::epsilon()) {
+        const float stationary_radius2 = -k1 / (2.0F * k2);
+        if (stationary_radius2 > 0.0F && stationary_radius2 < 2.0F) {
+            maximum_radial = std::max(maximum_radial, radial_at(stationary_radius2));
+        }
+    }
+    const float tangential_bound = 4.0F * (
+        std::abs(optics.distortion[2]) + std::abs(optics.distortion[3]));
+    const float maximum_ca = *std::max_element(optics.ca_scale.begin(), optics.ca_scale.end());
+    const float boundary_scale = maximum_ca * (maximum_radial + tangential_bound);
+    return 1.0F / std::max(boundary_scale, 1.0F);
+}
+
 Image warp_optics(const Image& source, const OpticsProfile& optics) {
     Image output(source.width, source.height, 3U);
     const float width = static_cast<float>(source.width);
     const float height = static_cast<float>(source.height);
+    const float safe_scale = distortion_safe_scale(optics);
     for (uint32_t y = 0; y < source.height; ++y) {
         for (uint32_t x = 0; x < source.width; ++x) {
-            const float xn = ((static_cast<float>(x) + 0.5F) / width) * 2.0F - 1.0F;
-            const float yn = ((static_cast<float>(y) + 0.5F) / height) * 2.0F - 1.0F;
+            const float xn = (((static_cast<float>(x) + 0.5F) / width) * 2.0F - 1.0F) * safe_scale;
+            const float yn = (((static_cast<float>(y) + 0.5F) / height) * 2.0F - 1.0F) * safe_scale;
             const float r2 = xn * xn + yn * yn;
             const float radial = 1.0F + optics.distortion[0] * r2 + optics.distortion[1] * r2 * r2;
             const float xb = xn * radial + 2.0F * optics.distortion[2] * xn * yn +

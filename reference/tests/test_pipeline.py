@@ -1,6 +1,7 @@
 import numpy as np
 
 from phytoy_ref.demosaic import mosaic
+from phytoy_ref.optics import _distortion_safe_scale
 from phytoy_ref.pipeline import ReferencePipeline
 from phytoy_ref.profiles import load_host_profile, load_toy_profile
 
@@ -15,6 +16,27 @@ def _gradient(height=48, width=64):
         ],
         axis=-1,
     )
+
+
+def test_distortion_safe_scale_only_crops_when_edge_sampling_would_fold():
+    neutral = _distortion_safe_scale(0.0, 0.0, 0.0, 0.0, np.ones(3))
+    assert neutral == 1.0
+
+    distortion = (0.024, -0.008, 0.001, -0.0007)
+    ca_scale = np.asarray([1.0026, 1.0, 0.9974])
+    safe_scale = _distortion_safe_scale(*distortion, ca_scale)
+    assert 0.97 < safe_scale < 0.98
+
+    k1, k2, p1, p2 = distortion
+    stationary_radius2 = -k1 / (2.0 * k2)
+    maximum_radial = max(
+        abs(1.0 + k1 * radius2 + k2 * radius2**2)
+        for radius2 in (0.0, 1.0, stationary_radius2, 2.0)
+    )
+    conservative_edge_bound = max(ca_scale) * (
+        maximum_radial + 4.0 * (abs(p1) + abs(p2))
+    )
+    assert conservative_edge_bound * safe_scale <= 1.0 + 1e-12
 
 
 def test_srgb_pipeline_is_seed_reproducible(host_srgb_path, toy_path):

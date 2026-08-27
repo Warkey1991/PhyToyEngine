@@ -22,12 +22,32 @@ def _to_pixel_coordinates(
     return x, y
 
 
+def _distortion_safe_scale(
+    k1: float, k2: float, p1: float, p2: float, ca_scale: np.ndarray
+) -> float:
+    candidates = [0.0, 1.0, 2.0]
+    if abs(k2) > np.finfo(np.float64).eps:
+        stationary_radius2 = -k1 / (2.0 * k2)
+        if 0.0 < stationary_radius2 < 2.0:
+            candidates.append(stationary_radius2)
+    maximum_radial = max(
+        abs(1.0 + k1 * radius2 + k2 * radius2 * radius2)
+        for radius2 in candidates
+    )
+    tangential_bound = 4.0 * (abs(p1) + abs(p2))
+    boundary_scale = float(np.max(ca_scale)) * (maximum_radial + tangential_bound)
+    return 1.0 / max(boundary_scale, 1.0)
+
+
 def warp_distortion_ca(image: np.ndarray, optics_profile: dict) -> np.ndarray:
     source = np.asarray(image, dtype=np.float64)
     height, width, _ = source.shape
     xn, yn = _normalized_grid(height, width)
     k1, k2, p1, p2 = [float(value) for value in optics_profile["distortion"]]
     ca_scale = np.asarray(optics_profile["ca_scale"], dtype=np.float64)
+    safe_scale = _distortion_safe_scale(k1, k2, p1, p2, ca_scale)
+    xn = xn * safe_scale
+    yn = yn * safe_scale
     radius2 = xn * xn + yn * yn
     radial = 1.0 + k1 * radius2 + k2 * radius2 * radius2
     x_base = xn * radial + 2.0 * p1 * xn * yn + p2 * (radius2 + 2.0 * xn * xn)
@@ -107,4 +127,3 @@ def apply_optics(scene_linear: np.ndarray, toy_profile: dict) -> np.ndarray:
     warped = warp_distortion_ca(scene_linear, optics)
     blurred = apply_spatial_psf(warped, optics)
     return apply_vignette(blurred, optics)
-

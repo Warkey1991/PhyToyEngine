@@ -41,8 +41,9 @@ float bilinear_source(float x, float y, int channel, int width, int height) {
 float warped_at(int output_x, int output_y, int channel, int width, int height) {
     output_x = reflect_index(output_x, width);
     output_y = reflect_index(output_y, height);
-    float xn = ((float(output_x) + 0.5) / float(width)) * 2.0 - 1.0;
-    float yn = ((float(output_y) + 0.5) / float(height)) * 2.0 - 1.0;
+    float safe_scale = parameters[20];
+    float xn = (((float(output_x) + 0.5) / float(width)) * 2.0 - 1.0) * safe_scale;
+    float yn = (((float(output_y) + 0.5) / float(height)) * 2.0 - 1.0) * safe_scale;
     float radius2 = xn * xn + yn * yn;
     float radial = 1.0 + parameters[2] * radius2 + parameters[3] * radius2 * radius2;
     float xb = xn * radial + 2.0 * parameters[4] * xn * yn +
@@ -66,7 +67,7 @@ float coefficient_at(int basis, int channel, int x, int y, int width, int height
     int y1 = min(y0 + 1, grid_height - 1);
     float tx = gx - float(x0);
     float ty = gy - float(y0);
-    int bases_offset = 20;
+    int bases_offset = 21;
     int coefficients_offset = bases_offset + basis_count * kernel_width * kernel_height;
     int map_offset = coefficients_offset + (basis * 3 + channel) * grid_width * grid_height;
     float top = mix(parameters[map_offset + y0 * grid_width + x0],
@@ -135,7 +136,7 @@ void main() {
             for (int kx = 0; kx < kernel_width; ++kx) {
                 float effective_kernel = 0.0;
                 for (int basis = 0; basis < basis_count; ++basis) {
-                    int kernel_index = 20 + basis * kernel_width * kernel_height +
+                    int kernel_index = 21 + basis * kernel_width * kernel_height +
                                        ky * kernel_width + kx;
                     effective_kernel += weights[basis] * parameters[kernel_index];
                 }

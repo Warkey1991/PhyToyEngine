@@ -49,6 +49,25 @@ void emit_stage(const Image& image, pte_stage_t stage,
     }
 }
 
+float distortion_safe_scale(const OpticsProfile& optics) {
+    const float k1 = optics.distortion[0];
+    const float k2 = optics.distortion[1];
+    const auto radial_at = [k1, k2](float radius2) {
+        return std::abs(1.0F + k1 * radius2 + k2 * radius2 * radius2);
+    };
+    float maximum_radial = std::max({radial_at(0.0F), radial_at(1.0F), radial_at(2.0F)});
+    if (std::abs(k2) > 1e-7F) {
+        const float stationary_radius2 = -k1 / (2.0F * k2);
+        if (stationary_radius2 > 0.0F && stationary_radius2 < 2.0F) {
+            maximum_radial = std::max(maximum_radial, radial_at(stationary_radius2));
+        }
+    }
+    const float tangential_bound = 4.0F * (
+        std::abs(optics.distortion[2]) + std::abs(optics.distortion[3]));
+    const float maximum_ca = *std::max_element(optics.ca_scale.begin(), optics.ca_scale.end());
+    return 1.0F / std::max(maximum_ca * (maximum_radial + tangential_bound), 1.0F);
+}
+
 std::vector<float> optics_parameters(uint32_t width, uint32_t height, const OpticsProfile& optics) {
     if (optics.psf_bases.empty()) throw std::runtime_error("Vulkan optics needs at least one PSF basis");
     const uint32_t kernel_width = optics.psf_bases.front().width;
@@ -68,7 +87,7 @@ std::vector<float> optics_parameters(uint32_t width, uint32_t height, const Opti
             throw std::runtime_error("Vulkan Alpha requires equal PSF coefficient grid dimensions");
         }
     }
-    std::vector<float> result(20U, 0.0F);
+    std::vector<float> result(21U, 0.0F);
     result[0] = static_cast<float>(width);
     result[1] = static_cast<float>(height);
     std::copy(optics.distortion.begin(), optics.distortion.end(), result.begin() + 2);
@@ -82,6 +101,7 @@ std::vector<float> optics_parameters(uint32_t width, uint32_t height, const Opti
     result[17] = static_cast<float>(kernel_height);
     result[18] = static_cast<float>(grid_width);
     result[19] = static_cast<float>(grid_height);
+    result[20] = distortion_safe_scale(optics);
     for (const auto& basis : optics.psf_bases) {
         result.insert(result.end(), basis.values.begin(), basis.values.end());
     }

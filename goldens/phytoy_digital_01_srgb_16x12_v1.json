@@ -6,32 +6,51 @@
     "01_scene_linear": {
       "mean": 0.299371078,
       "sha256_f32le": "38d62e0d367c561a91167cecd49ebd9719dc486e8d94163d6e7ab9651a77c989",
-      "shape": [12, 16, 3],
+      "shape": [
+        12,
+        16,
+        3
+      ],
       "standard_deviation": 0.241323817
     },
     "02_target_optics": {
-      "mean": 0.207722644,
-      "sha256_f32le": "51b60ba5cdff0fbdbf6a95e72cadf9d2908e681b0f7a726cafa67c3893964acb",
-      "shape": [12, 16, 3],
-      "standard_deviation": 0.145627262
+      "mean": 0.204808813,
+      "sha256_f32le": "2e4c29ffeeb68ec1d8694bc64ddc90db8ec5d41c684285ecc2e1e44ccad095db",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.13978923
     },
     "03_target_sensor_dn": {
-      "mean": 225.109375,
-      "sha256_f32le": "a4a02f1b8a0cfc61aeb518fac098303ffda37db761d19d7034adfc247b3119dc",
-      "shape": [12, 16],
-      "standard_deviation": 126.761519511
+      "mean": 223.005208333,
+      "sha256_f32le": "a0c0879219c2d01e607f93ab818c5c0399ef93d655bc76c86fe1ff4cd2ae3de3",
+      "shape": [
+        12,
+        16
+      ],
+      "standard_deviation": 119.126836178
     },
     "04_target_isp_linear": {
-      "mean": 0.238035414,
-      "sha256_f32le": "e7972c0343b3f903d000dde89ab885216e402a368eddd27f9f192e8dbddfce14",
-      "shape": [12, 16, 3],
-      "standard_deviation": 0.17573986
+      "mean": 0.234769249,
+      "sha256_f32le": "b99ca396a9e47932ac8c0ed60bf8c5c999906b50d038adf86cb8cfaaedc4c240",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.163946105
     },
     "05_output_srgb": {
-      "mean": 0.462537041,
-      "sha256_f32le": "df40b07558e01ca0ae2998b93c67ca7b7ecb21c376bdec1ca5465dd259962222",
-      "shape": [12, 16, 3],
-      "standard_deviation": 0.242054676
+      "mean": 0.463490722,
+      "sha256_f32le": "2f6955d01c1fc2cc2ccf79a7a90ed920dcc8d7319b59bfb24258fbac00cee6c4",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.232698486
     }
   },
   "toy_profile": "profiles/authoring/toy_phytoy_digital_01_v1.json"

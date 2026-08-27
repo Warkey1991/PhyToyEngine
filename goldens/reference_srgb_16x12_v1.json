@@ -2,37 +2,56 @@
   "fixture": "procedural_rgb_16x12_v1",
   "round_decimals": 6,
   "seed": 20260820,
-  "toy_profile": "profiles/authoring/toy_fixed_focus_alpha.json",
   "stages": {
     "01_scene_linear": {
       "mean": 0.299371078,
       "sha256_f32le": "38d62e0d367c561a91167cecd49ebd9719dc486e8d94163d6e7ab9651a77c989",
-      "shape": [12, 16, 3],
+      "shape": [
+        12,
+        16,
+        3
+      ],
       "standard_deviation": 0.241323817
     },
     "02_target_optics": {
-      "mean": 0.222789555,
-      "sha256_f32le": "f232059d874283b789189a2fdc7c97451df50d0b1acf6b73037b9ae164904337",
-      "shape": [12, 16, 3],
-      "standard_deviation": 0.151533583
+      "mean": 0.22121625,
+      "sha256_f32le": "992c826bfe7c7da5a836203ab9f18d1dc0f821a667043248bdec1110c89013b7",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.148264656
     },
     "03_target_sensor_dn": {
-      "mean": 227.213541667,
-      "sha256_f32le": "5f78a04dd04dec723f20b18f96846ce271ed3c6c61e6ccc4e2e4627a7b21b123",
-      "shape": [12, 16],
-      "standard_deviation": 120.231769339
+      "mean": 223.416666667,
+      "sha256_f32le": "279ef2408e1c98d19efb967f55d6f99bc68295d3d5537e4b36210b33f1df57e4",
+      "shape": [
+        12,
+        16
+      ],
+      "standard_deviation": 116.263320623
     },
     "04_target_isp_linear": {
-      "mean": 0.218338067,
-      "sha256_f32le": "e9dd04aceb1ffeb2e8a9c8ca3342582408b8079b1a3978d536699985a5e67a60",
-      "shape": [12, 16, 3],
-      "standard_deviation": 0.148888871
+      "mean": 0.212488807,
+      "sha256_f32le": "8b07c9a77b5fa52cbbbf32724e26715b0fedd813705d2d1056895bb96c871faa",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.142766617
     },
     "05_output_srgb": {
-      "mean": 0.446483522,
-      "sha256_f32le": "fe5dfa7ddb7d4b7fa8e6ee2821ba2dcc1c5b889a90edde84fd2e19045b697531",
-      "shape": [12, 16, 3],
-      "standard_deviation": 0.22166319
+      "mean": 0.442768175,
+      "sha256_f32le": "36790a7773f9f12079dbbb8d824a1c5b5fade3762fec2b7197e1073604f5b6be",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.213032184
     }
-  }
+  },
+  "toy_profile": "profiles/authoring/toy_fixed_focus_alpha.json"
 }
