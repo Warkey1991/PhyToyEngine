@@ -11,8 +11,9 @@ Android GPU Surface.
 
 - `sdk`: packages the C++ engine, JNI bridge, Kotlin API, and immutable `.ptp` profiles.
 - `sample`: provides a capture-matched 3:4 Digital 01 viewport, a bounded Camera2 3A
-  still-capture gate, 12 MP capture, touch AF/AE, front/back switching, MediaStore JPEG saving and
-  last-photo review. Its `TextureView`
+  still-capture gate, up-to-12 MP capture with automatic stream fallback, touch AF/AE,
+  vertical EV control, pinch zoom, Off/Auto/On flash, front/back switching, EXIF-bearing
+  MediaStore JPEG saving and last-photo review. Its `TextureView`
   remains only the Vulkan swapchain output. Camera2 targets the engine-owned PRIVATE
   preview and high-resolution still surfaces.
 - JNI: acquires the latest image and its sync fence, immediately queues it to a dedicated
@@ -120,19 +121,26 @@ photoExecutor.execute {
 }
 ```
 
-Before arming the reader, sample 0.7.0 runs a bounded Camera2 3A gate: it reuses a recent
+Before arming the reader, sample 0.8.0 runs a bounded Camera2 3A gate: it reuses a recent
 successful touch-focus lock or triggers AF, runs AE precapture when exposure is not
 converged, waits for AWB, and locks supported AE/AWB controls before submitting the
 high-resolution request. A 3-second timeout or failed vendor request falls back to capture
 instead of hanging the shutter; camera replacement cancels it. After the still frame
 arrives, the sample unlocks 3A and restores continuous-picture AF on the preview stream.
 
-The sample rotates the result, encodes JPEG at quality 95, publishes it to
+The sample rotates the result, encodes JPEG at quality 95, writes CaptureResult ISO,
+exposure time and focal length plus lens direction, capture time, EV, zoom, flash mode and
+Digital 01 version to EXIF, then publishes it to
 `Pictures/PhyToy` through `MediaStore`, updates the lower-left thumbnail and opens the
-system photo viewer when that thumbnail is tapped. It selects the largest PRIVATE still
-size up to 12.5 MP; Samsung SM-S9210 resolves to 4080×3060 rear and 4000×3000 front.
+system photo viewer when that thumbnail is tapped. It starts with the largest PRIVATE still
+size up to 12.5 MP; if a device rejects the dual-PRIVATE combination, it rebuilds the engine
+and Camera2 session with successively smaller same-aspect still streams. Samsung SM-S9210
+resolves to 4080×3060 rear and 4000×3000 front.
 
-The sample maps taps through the processed preview's center crop, output rotation and
+Vertical one-finger movement changes Camera2 exposure compensation, pinch gestures update
+`SCALER_CROP_REGION`, and the top flash control cycles Off/Auto/On. These parameters are
+shared by preview, 3A and still requests. The sample maps taps through the current zoom crop,
+the processed preview's center crop, output rotation and
 front-camera mirror into `SENSOR_INFO_ACTIVE_ARRAY_SIZE`, then submits supported
 `CONTROL_AF_REGIONS` and `CONTROL_AE_REGIONS`. The focus marker reports Camera2 AF lock
 state and returns to continuous-picture AF after 5 seconds. Lens switching closes the
@@ -186,15 +194,18 @@ fence 零拷贝进入 Vulkan，依次执行归一化、PhyToy Digital 01 光学�
 Vulkan submission 完成 Digital 01 处理，同时仅对最终 sRGB 读回；普通预览仍无 CPU
 readback。示例 App 将结果旋转后以质量 95 写入 `Pictures/PhyToy`，并更新缩略图。
 
-0.7.0 使用与成片一致的 3:4 PRIVATE 预览流和显示窗口。注册静态读回前会复用近期成功的
+0.8.0 使用与成片一致的 3:4 PRIVATE 预览流和显示窗口。注册静态读回前会复用近期成功的
 触摸锁焦，或重新触发 AF；AE 未收敛时执行预曝光，同时等待 AWB，并在设备支持时锁定
 AE/AWB 后再提交高分辨率请求。厂商 3A 请求失败或 3 秒未返回终态时继续兜底拍摄，不会
 卡住快门；相机被关闭或切换则取消本次拍摄。静态帧到达后会解锁 3A 并恢复连续对焦。
 
-示例 App 已支持触摸 AF/AE 和前后镜头切换。触摸点会逆向经过前摄镜像、取景中心裁切和
+示例 App 已支持上下滑动 EV、双指变焦、闪光灯 Off/Auto/On、触摸 AF/AE 和前后镜头切换。
+预览、3A 与静态请求共享这些控制值；触摸点会逆向经过当前变焦裁切、前摄镜像、取景中心裁切和
 输出旋转后映射到传感器有效区域；Camera2 对焦结束后焦点框给出成功/未锁定反馈，并在
 5 秒后恢复连续对焦。切换镜头时会按 capture session → CameraDevice → engine 的顺序
-关闭旧链路，并为新镜头重建 4:3 预览与最高 12.5MP 静态 PRIVATE 流。
+关闭旧链路，并为新镜头重建 4:3 预览与最高 12.5MP 静态 PRIVATE 流。若设备拒绝双
+PRIVATE 高分辨率组合，会自动按同画幅候选逐级降低静态尺寸并重建会话。最终 JPEG EXIF
+包含 CaptureResult 的 ISO、曝光时间、焦距，以及镜头方向、Digital 01 版本和拍摄时间。
 
 Vulkan 引擎默认最多处理 15 FPS，并通过 Android Thermal API 自动调整为 Normal
 15 FPS、Light 10 FPS、Moderate 5 FPS、Severe 3 FPS、Critical 0 FPS。温控主动跳过的帧单独记录为

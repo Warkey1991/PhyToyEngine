@@ -14,6 +14,15 @@
     <string name="front_camera">前置</string>
     <string name="back_camera">后置</string>
     <string name="debug_toggle_description">Digital 01；长按查看引擎诊断信息</string>
+    <string name="flash_off">闪光灯 关</string>
+    <string name="flash_auto">闪光灯 自动</string>
+    <string name="flash_on">闪光灯 开</string>
+    <string name="flash_unavailable">无闪光灯</string>
+    <string name="flash_control_description">切换闪光灯模式</string>
+    <string name="exposure_value">EV %1$+.1f</string>
+    <string name="exposure_control_description">曝光补偿；在取景画面上下滑动</string>
+    <string name="zoom_ratio">%1$.1f×</string>
+    <string name="zoom_control_description">变焦倍率；在取景画面双指缩放</string>
     <string name="preparing_capture">正在锁定对焦与曝光…</string>
     <string name="metering_exposure">正在测光…</string>
     <string name="capturing_high_resolution">正在拍摄高分辨率照片…</string>
@@ -34,6 +43,7 @@
     <string name="status_switching_camera">正在切换相机…</string>
     <string name="camera_switch_unavailable">另一颗相机不可用</string>
     <string name="status_stream_rejected">设备拒绝了相机流组合</string>
+    <string name="status_stream_fallback">本设备成片流已降至 %1$d×%2$d</string>
     <string name="status_engine_error">引擎错误：%1$s</string>
     <string name="status_failure">%1$s：%2$s</string>
     <string name="verification_yes">通过</string>

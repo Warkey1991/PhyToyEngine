@@ -11,7 +11,9 @@ Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**; Android no
 to the outdoor-reviewed **v1.2.0** tuning. The engine includes a Python reference,
 a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
 compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
-  preview Surface, a 12 MP Digital 01 Android capture/touch-focus/lens-switch flow, and
+  preview Surface, an up-to-12 MP Digital 01 Android capture flow with bounded 3A,
+  EV/pinch-zoom/flash controls, EXIF metadata, touch focus, lens switching and automatic
+  PRIVATE-stream fallback, and
   numerical/statistical regression tooling. It is an engine core and a focused Android camera experience, not yet
 a complete commercial camera application.
 

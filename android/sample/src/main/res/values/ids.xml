@@ -5,4 +5,7 @@
     <item name="shutter" type="id" />
     <item name="switch_camera" type="id" />
     <item name="focus_indicator" type="id" />
+    <item name="flash_mode" type="id" />
+    <item name="exposure_value" type="id" />
+    <item name="zoom_ratio" type="id" />
 </resources>

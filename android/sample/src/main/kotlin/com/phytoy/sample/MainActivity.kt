@@ -11,6 +11,7 @@ import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CaptureFailure
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
@@ -30,10 +31,12 @@ import android.os.SystemClock
 import android.util.Log
 import android.util.Range
 import android.util.Size
+import android.view.ScaleGestureDetector
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.view.MotionEvent
 import android.view.Gravity
@@ -42,6 +45,17 @@ import com.phytoy.engine.PhyToyCameraSession
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
+import kotlin.math.roundToInt
+
+private class CameraPreviewTextureView(context: Context) : TextureView(context) {
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
+    }
+}
 
 class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var preview: TextureView
@@ -49,6 +63,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var chrome: CameraChrome
     private lateinit var photoStore: PhotoStore
     private lateinit var shutterSound: MediaActionSound
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
     private val mainHandler = Handler(Looper.getMainLooper())
     private val photoExecutor: ExecutorService = Executors.newSingleThreadExecutor { runnable ->
         Thread(runnable, "PhyToyPhoto").apply { priority = Thread.NORM_PRIORITY - 1 }
@@ -62,6 +77,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var engineSession: PhyToyCameraSession? = null
     private var engineSize: Size? = null
     private var stillSize: Size? = null
+    private var stillSizeCandidates: List<Size> = emptyList()
+    private var stillSizeCandidateIndex = 0
     private var cameraFpsRanges: List<Range<Int>> = emptyList()
     private var availableAfModes: Set<Int> = emptySet()
     private var sensorActiveArray: Rect? = null
@@ -69,6 +86,15 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var maximumAeRegions = 0
     private var autoexposureLockAvailable = false
     private var autoWhiteBalanceLockAvailable = false
+    private var exposureCompensationRange = Range(0, 0)
+    private var exposureCompensationStep = 0f
+    @Volatile private var exposureCompensationIndex = 0
+    private var maximumZoomRatio = 1f
+    @Volatile private var currentZoomRatio = 1f
+    @Volatile private var currentCropRegion: Rect? = null
+    private var flashAvailable = false
+    @Volatile private var currentFlashMode = CameraFlashMode.OFF
+    private var fallbackFocalLengthMillimeters: Float? = null
     private var currentLensFacing = CameraCharacteristics.LENS_FACING_BACK
     private var availableLensFacings: Set<Int> = emptySet()
     private var currentCameraId: String? = null
@@ -87,6 +113,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var pendingCaptureAfterStoragePermission = false
     private var lastPhotoUri: Uri? = null
     @Volatile private var cameraGeneration = 0L
+    private var gestureStartY = 0f
+    private var gestureStartX = 0f
+    private var gestureStartExposureIndex = 0
+    private var gestureAdjustedExposure = false
+    private var gestureUsedPinch = false
+    @Volatile private var cameraControlUpdatePending = false
+    private val previewTouchSlop by lazy { ViewConfiguration.get(this).scaledTouchSlop }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,11 +168,23 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun createContentView() {
         val root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
         previewViewport = CaptureViewport(this)
-        preview = TextureView(this).apply { isOpaque = true }
-        preview.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) focusAt(event.x, event.y)
-            true
-        }
+        preview = CameraPreviewTextureView(this).apply { isOpaque = true }
+        scaleGestureDetector = ScaleGestureDetector(
+            this,
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                    gestureUsedPinch = true
+                    clearTouchFocusForControlChange()
+                    return cameraReady && !captureInProgress && maximumZoomRatio > 1f
+                }
+
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    setZoomRatio(currentZoomRatio * detector.scaleFactor)
+                    return true
+                }
+            },
+        )
+        preview.setOnTouchListener { _, event -> handlePreviewTouch(event) }
         previewViewport.addView(
             preview,
             FrameLayout.LayoutParams(
@@ -161,7 +206,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             shutter.setOnClickListener { capturePhoto() }
             thumbnail.setOnClickListener { openLastPhoto() }
             switchCamera.setOnClickListener { switchCamera() }
+            flashMode.setOnClickListener { cycleFlashMode() }
             setLensSwitchAvailable(false)
+            setFlashAvailable(false)
             showMessage(getString(R.string.status_waiting_permission))
         }
         root.addView(
@@ -276,14 +323,38 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             autoWhiteBalanceLockAvailable = characteristics.get(
                 CameraCharacteristics.CONTROL_AWB_LOCK_AVAILABLE
             ) == true
+            exposureCompensationRange = characteristics.get(
+                CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE
+            ) ?: Range(0, 0)
+            exposureCompensationStep = characteristics.get(
+                CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP
+            )?.toFloat() ?: 0f
+            exposureCompensationIndex = 0
+            maximumZoomRatio = (characteristics.get(
+                CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM
+            ) ?: 1f).coerceAtLeast(1f)
+            currentZoomRatio = 1f
+            currentCropRegion = sensorActiveArray?.let(::Rect)
+            flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+            currentFlashMode = CameraFlashMode.OFF
+            fallbackFocalLengthMillimeters = characteristics.get(
+                CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS
+            )?.firstOrNull()
+            chrome.setExposureCompensation(
+                0f,
+                exposureCompensationRange.lower != exposureCompensationRange.upper,
+            )
+            chrome.setZoomRatio(currentZoomRatio)
+            chrome.setFlashAvailable(flashAvailable)
+            chrome.setFlashMode(currentFlashMode)
             val map = checkNotNull(
                 characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
             ) { "Camera has no stream configuration map" }
-            val captureSize = chooseStillSize(map)
-            val size = chooseEngineSize(map, captureSize)
+            stillSizeCandidates = chooseStillSizeCandidates(map)
+            stillSizeCandidateIndex = 0
+            val requestedCaptureSize = stillSizeCandidates.first()
+            val size = chooseEngineSize(map, requestedCaptureSize)
             engineSize = size
-            stillSize = captureSize
-            chrome.setCaptureSize(captureSize.width, captureSize.height)
 
             val texture = checkNotNull(preview.surfaceTexture)
             val outputWidth = preview.width.coerceIn(1, PREVIEW_OUTPUT_WIDTH)
@@ -296,15 +367,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             previewSurface = processedPreviewSurface
             val outputRotation = relativeCameraRotation(characteristics, currentLensFacing)
             currentOutputRotation = outputRotation
-            engineSession = PhyToyCameraSession.open(
-                context = this,
-                width = size.width,
-                height = size.height,
-                stillWidth = captureSize.width,
-                stillHeight = captureSize.height,
-                outputSurface = processedPreviewSurface,
-                outputRotationDegrees = outputRotation,
-            )
+            openEngineWithAvailableStillSize(size)
+            val captureSize = checkNotNull(stillSize)
+            chrome.setCaptureSize(captureSize.width, captureSize.height)
             val generation = ++cameraGeneration
             chrome.showMessage(
                 getString(
@@ -364,16 +429,63 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             ?: sizes.minBy { it.width.toLong() * it.height }
     }
 
-    private fun chooseStillSize(map: StreamConfigurationMap): Size {
+    private fun chooseStillSizeCandidates(map: StreamConfigurationMap): List<Size> {
         val sizes = checkNotNull(map.getOutputSizes(android.graphics.ImageFormat.PRIVATE)) {
             "Camera has no PRIVATE still output sizes"
         }
-        return sizes.filter {
+        val bounded = sizes.filter {
             it.width.toLong() * it.height <= MAXIMUM_STILL_PIXELS
-        }.maxByOrNull {
-            it.width.toLong() * it.height
-        } ?: sizes.minBy { it.width.toLong() * it.height }
+        }.ifEmpty { listOf(sizes.minBy { it.width.toLong() * it.height }) }
+            .sortedByDescending { it.width.toLong() * it.height }
+        val preferred = bounded.first()
+        val preferredAspect = preferred.width.toDouble() / preferred.height
+        val aspectMatched = bounded.filter {
+            abs(it.width.toDouble() / it.height - preferredAspect) <=
+                MAXIMUM_PREVIEW_ASPECT_ERROR
+        }.ifEmpty { bounded }
+        val maximumArea = preferred.width.toLong() * preferred.height
+        val candidates = linkedSetOf<Size>()
+        STILL_FALLBACK_AREA_RATIOS.forEach { ratio ->
+            aspectMatched.firstOrNull {
+                it.width.toLong() * it.height <= maximumArea * ratio
+            }?.let(candidates::add)
+        }
+        candidates += aspectMatched.last()
+        return candidates.toList()
     }
+
+    private fun openEngineWithAvailableStillSize(size: Size) {
+        var lastFailure: Throwable? = null
+        while (stillSizeCandidateIndex < stillSizeCandidates.size) {
+            val captureSize = stillSizeCandidates[stillSizeCandidateIndex]
+            try {
+                engineSession = openEngineSession(size, captureSize)
+                stillSize = captureSize
+                return
+            } catch (exception: Throwable) {
+                lastFailure = exception
+                Log.w(
+                    LOG_TAG,
+                    "Engine rejected PRIVATE still ${captureSize.width}x${captureSize.height}; " +
+                        "trying a smaller stream",
+                    exception,
+                )
+                stillSizeCandidateIndex += 1
+            }
+        }
+        throw IllegalStateException("No compatible PRIVATE still stream", lastFailure)
+    }
+
+    private fun openEngineSession(size: Size, captureSize: Size): PhyToyCameraSession =
+        PhyToyCameraSession.open(
+            context = this,
+            width = size.width,
+            height = size.height,
+            stillWidth = captureSize.width,
+            stillHeight = captureSize.height,
+            outputSurface = checkNotNull(previewSurface),
+            outputRotationDegrees = currentOutputRotation,
+        )
 
     @Suppress("DEPRECATION")
     private fun relativeCameraRotation(
@@ -445,7 +557,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 listOf(engineSurface, stillSurface),
                 object : CameraCaptureSession.StateCallback() {
                     override fun onConfigured(session: CameraCaptureSession) {
-                        if (cameraDevice !== camera) return
+                        if (cameraDevice !== camera) {
+                            session.close()
+                            return
+                        }
                         captureSession = session
                         submitRepeatingRequest(
                             camera,
@@ -468,9 +583,12 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
                     override fun onConfigureFailed(session: CameraCaptureSession) {
                         cameraReady = false
-                        runOnUiThread {
-                            chrome.setReady(false)
-                            chrome.showMessage(getString(R.string.status_stream_rejected))
+                        session.close()
+                        if (cameraDevice !== camera || !configureNextStillSize(camera)) {
+                            runOnUiThread {
+                                chrome.setReady(false)
+                                chrome.showMessage(getString(R.string.status_stream_rejected))
+                            }
                         }
                     }
                 },
@@ -479,6 +597,47 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         } catch (exception: Throwable) {
             showFailure("Session failed", exception)
         }
+    }
+
+    private fun configureNextStillSize(camera: CameraDevice): Boolean {
+        val size = engineSize ?: return false
+        engineSession?.close()
+        engineSession = null
+        while (++stillSizeCandidateIndex < stillSizeCandidates.size) {
+            val captureSize = stillSizeCandidates[stillSizeCandidateIndex]
+            try {
+                engineSession = openEngineSession(size, captureSize)
+                stillSize = captureSize
+                Log.w(
+                    LOG_TAG,
+                    "Camera2 dual PRIVATE stream fallback to " +
+                        "${captureSize.width}x${captureSize.height}",
+                )
+                runOnUiThread {
+                    chrome.setCaptureSize(captureSize.width, captureSize.height)
+                    chrome.showMessage(
+                        getString(
+                            R.string.status_stream_fallback,
+                            captureSize.width,
+                            captureSize.height,
+                        ),
+                        true,
+                    )
+                }
+                createCaptureSession(camera)
+                return true
+            } catch (exception: Throwable) {
+                Log.w(
+                    LOG_TAG,
+                    "Fallback PRIVATE still stream rejected by engine: " +
+                        "${captureSize.width}x${captureSize.height}",
+                    exception,
+                )
+                engineSession?.close()
+                engineSession = null
+            }
+        }
+        return false
     }
 
     private fun selectCameraFpsRange(): Range<Int>? {
@@ -537,7 +696,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO)
             set(CaptureRequest.CONTROL_AF_MODE, selectedAfMode())
             set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
-            set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+            set(CaptureRequest.CONTROL_AE_MODE, selectedAutoexposureMode())
             set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO)
             if (autoexposureLockAvailable) {
                 set(CaptureRequest.CONTROL_AE_LOCK, false)
@@ -546,8 +705,144 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 set(CaptureRequest.CONTROL_AWB_LOCK, false)
             }
             fpsRange?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
+            applyExposureAndZoom(this)
             applyMeteringRegion(this)
         }
+    }
+
+    private fun selectedAutoexposureMode(): Int = when {
+        !flashAvailable || currentFlashMode == CameraFlashMode.OFF -> {
+            CaptureRequest.CONTROL_AE_MODE_ON
+        }
+        currentFlashMode == CameraFlashMode.AUTO -> CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+        else -> CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+    }
+
+    private fun applyExposureAndZoom(builder: CaptureRequest.Builder) {
+        if (exposureCompensationRange.lower != exposureCompensationRange.upper) {
+            builder.set(
+                CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION,
+                exposureCompensationIndex.coerceIn(
+                    exposureCompensationRange.lower,
+                    exposureCompensationRange.upper,
+                ),
+            )
+        }
+        currentCropRegion?.let { builder.set(CaptureRequest.SCALER_CROP_REGION, it) }
+    }
+
+    private fun handlePreviewTouch(event: MotionEvent): Boolean {
+        scaleGestureDetector.onTouchEvent(event)
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                gestureStartX = event.x
+                gestureStartY = event.y
+                gestureStartExposureIndex = exposureCompensationIndex
+                gestureAdjustedExposure = false
+                gestureUsedPinch = false
+            }
+
+            MotionEvent.ACTION_POINTER_DOWN -> gestureUsedPinch = true
+
+            MotionEvent.ACTION_MOVE -> {
+                if (event.pointerCount == 1 &&
+                    !scaleGestureDetector.isInProgress &&
+                    exposureCompensationStep > 0f &&
+                    exposureCompensationRange.lower != exposureCompensationRange.upper
+                ) {
+                    val verticalDistance = gestureStartY - event.y
+                    if (abs(verticalDistance) > previewTouchSlop) {
+                        if (!gestureAdjustedExposure) clearTouchFocusForControlChange()
+                        gestureAdjustedExposure = true
+                        val pixelsPerStep = EV_GESTURE_STEP_DP * resources.displayMetrics.density
+                        setExposureCompensationIndex(
+                            gestureStartExposureIndex +
+                                (verticalDistance / pixelsPerStep).roundToInt(),
+                        )
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_UP -> {
+                val tap = !gestureUsedPinch &&
+                    !gestureAdjustedExposure &&
+                    abs(event.x - gestureStartX) <= previewTouchSlop &&
+                    abs(event.y - gestureStartY) <= previewTouchSlop
+                if (tap) {
+                    preview.performClick()
+                    focusAt(event.x, event.y)
+                }
+            }
+        }
+        return true
+    }
+
+    private fun setExposureCompensationIndex(index: Int) {
+        val clamped = index.coerceIn(
+            exposureCompensationRange.lower,
+            exposureCompensationRange.upper,
+        )
+        if (clamped == exposureCompensationIndex) return
+        exposureCompensationIndex = clamped
+        val ev = clamped * exposureCompensationStep
+        chrome.setExposureCompensation(ev, true)
+        requestCameraControlUpdate()
+        Log.i(LOG_TAG, "Camera2 exposure compensation changed index=$clamped ev=$ev")
+    }
+
+    private fun setZoomRatio(ratio: Float) {
+        val clamped = ratio.coerceIn(1f, maximumZoomRatio)
+        if (abs(clamped - currentZoomRatio) < MINIMUM_ZOOM_CHANGE) return
+        currentZoomRatio = clamped
+        currentCropRegion = sensorActiveArray?.let { activeArray ->
+            val width = (activeArray.width() / clamped).roundToInt().coerceAtLeast(2)
+            val height = (activeArray.height() / clamped).roundToInt().coerceAtLeast(2)
+            val left = activeArray.left + (activeArray.width() - width) / 2
+            val top = activeArray.top + (activeArray.height() - height) / 2
+            Rect(left, top, left + width, top + height)
+        }
+        chrome.setZoomRatio(clamped)
+        requestCameraControlUpdate()
+    }
+
+    private fun cycleFlashMode() {
+        if (!flashAvailable || !cameraReady || captureInProgress) return
+        currentFlashMode = when (currentFlashMode) {
+            CameraFlashMode.OFF -> CameraFlashMode.AUTO
+            CameraFlashMode.AUTO -> CameraFlashMode.ON
+            CameraFlashMode.ON -> CameraFlashMode.OFF
+        }
+        clearTouchFocusForControlChange()
+        chrome.setFlashMode(currentFlashMode)
+        requestCameraControlUpdate()
+        Log.i(LOG_TAG, "Camera2 flash mode changed to $currentFlashMode")
+    }
+
+    private fun clearTouchFocusForControlChange() {
+        focusGeneration += 1L
+        focusResolvedGeneration = -1L
+        touchFocusActive = false
+        meteringRegion = null
+        touchFocusSucceeded = false
+        touchFocusLockedAtMillis = 0L
+        chrome.clearFocusIndicator()
+    }
+
+    private fun requestCameraControlUpdate() {
+        if (cameraControlUpdatePending) return
+        val handler = cameraHandler ?: return
+        cameraControlUpdatePending = true
+        handler.postDelayed({
+            cameraControlUpdatePending = false
+            val camera = cameraDevice ?: return@postDelayed
+            val session = captureSession ?: return@postDelayed
+            if (!cameraReady || captureInProgress) return@postDelayed
+            try {
+                submitRepeatingRequest(camera, session, selectCameraFpsRange())
+            } catch (exception: Throwable) {
+                showFailure("Camera control update failed", exception)
+            }
+        }, CAMERA_CONTROL_UPDATE_DELAY_MILLIS)
     }
 
     private fun selectedAfMode(): Int = when {
@@ -575,7 +870,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     private fun focusAt(viewX: Float, viewY: Float) {
         if (!cameraReady || captureInProgress) return
-        val activeArray = sensorActiveArray ?: return
+        val activeArray = currentCropRegion ?: sensorActiveArray ?: return
         val previewSize = engineSize ?: return
         val viewWidth = preview.width.takeIf { it > 0 } ?: return
         val viewHeight = preview.height.takeIf { it > 0 } ?: return
@@ -744,6 +1039,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         shutterSound.play(MediaActionSound.SHUTTER_CLICK)
         photoExecutor.execute {
             try {
+                val metadataCollector = StillCaptureMetadataCollector(captureMetadataSnapshot())
                 val frame = try {
                     val threeA = awaitCapture3A(camera, cameraSession, generation)
                     check(threeA.canCapture) {
@@ -762,6 +1058,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                             cameraSession,
                             generation,
                             lock3A = threeA.status == Camera3AController.Status.READY,
+                            metadataCollector = metadataCollector,
                         )
                     }
                 } finally {
@@ -772,7 +1069,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         chrome.updateCaptureMessage(getString(R.string.processing_photo))
                     }
                 }
-                val saved = photoStore.save(frame)
+                val metadata = metadataCollector.await(STILL_RESULT_TIMEOUT_MILLIS)
+                val saved = photoStore.save(frame, metadata)
                 val thumbnail = photoStore.loadThumbnail(saved.uri)
                 mainHandler.post {
                     if (isDestroyed) {
@@ -920,6 +1218,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         session: CameraCaptureSession,
         generation: Long,
         lock3A: Boolean,
+        metadataCollector: StillCaptureMetadataCollector,
     ) {
         check(generation == cameraGeneration && cameraDevice === camera) {
             "Camera changed before still capture"
@@ -931,7 +1230,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_STILL_CAPTURE)
             set(CaptureRequest.CONTROL_AF_MODE, selectedAfMode())
             set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
-            set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+            set(CaptureRequest.CONTROL_AE_MODE, selectedAutoexposureMode())
             set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE)
             set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO)
             if (autoexposureLockAvailable) {
@@ -940,15 +1239,53 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             if (autoWhiteBalanceLockAvailable) {
                 set(CaptureRequest.CONTROL_AWB_LOCK, lock3A)
             }
+            applyExposureAndZoom(this)
             applyMeteringRegion(this)
         }.build()
-        session.capture(request, null, cameraHandler)
+        session.capture(
+            request,
+            object : CameraCaptureSession.CaptureCallback() {
+                override fun onCaptureCompleted(
+                    session: CameraCaptureSession,
+                    request: CaptureRequest,
+                    result: TotalCaptureResult,
+                ) {
+                    metadataCollector.complete(result)
+                }
+
+                override fun onCaptureFailed(
+                    session: CameraCaptureSession,
+                    request: CaptureRequest,
+                    failure: CaptureFailure,
+                ) {
+                    metadataCollector.fail()
+                    Log.w(LOG_TAG, "Still CaptureResult failed reason=${failure.reason}")
+                }
+            },
+            cameraHandler,
+        )
         Log.i(
             LOG_TAG,
             "Camera2 high-resolution PRIVATE capture submitted: " +
                 "${stillSize?.width}x${stillSize?.height} lens=$currentLensFacing",
         )
     }
+
+    private fun captureMetadataSnapshot(): CaptureMetadata = CaptureMetadata(
+        iso = null,
+        exposureTimeNanos = null,
+        focalLengthMillimeters = fallbackFocalLengthMillimeters,
+        lensFacing = if (currentLensFacing == CameraCharacteristics.LENS_FACING_FRONT) {
+            "FRONT"
+        } else {
+            "BACK"
+        },
+        digital01Version = DIGITAL_01_VERSION,
+        capturedAtMillis = System.currentTimeMillis(),
+        zoomRatio = currentZoomRatio,
+        exposureCompensation = exposureCompensationIndex * exposureCompensationStep,
+        flashMode = currentFlashMode,
+    )
 
     private fun openLastPhoto() {
         val uri = lastPhotoUri
@@ -1081,6 +1418,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         previewSurface = null
         engineSize = null
         stillSize = null
+        stillSizeCandidates = emptyList()
+        stillSizeCandidateIndex = 0
         cameraFpsRanges = emptyList()
         availableAfModes = emptySet()
         sensorActiveArray = null
@@ -1091,6 +1430,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         currentCameraId = null
         activeCameraFpsRange = null
         pendingCameraFpsRange = null
+        cameraControlUpdatePending = false
     }
 
     private fun showFailure(prefix: String, exception: Throwable) {
@@ -1120,6 +1460,32 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
 
+    private class StillCaptureMetadataCollector(fallback: CaptureMetadata) {
+        private val latch = CountDownLatch(1)
+        @Volatile private var metadata = fallback
+
+        fun complete(result: TotalCaptureResult) {
+            metadata = metadata.copy(
+                iso = result.get(CaptureResult.SENSOR_SENSITIVITY) ?: metadata.iso,
+                exposureTimeNanos = result.get(CaptureResult.SENSOR_EXPOSURE_TIME)
+                    ?: metadata.exposureTimeNanos,
+                focalLengthMillimeters = result.get(CaptureResult.LENS_FOCAL_LENGTH)
+                    ?: metadata.focalLengthMillimeters,
+                capturedAtMillis = System.currentTimeMillis(),
+            )
+            latch.countDown()
+        }
+
+        fun fail() {
+            latch.countDown()
+        }
+
+        fun await(timeoutMillis: Long): CaptureMetadata {
+            latch.await(timeoutMillis, TimeUnit.MILLISECONDS)
+            return metadata
+        }
+    }
+
     companion object {
         private const val CAMERA_PERMISSION_REQUEST = 901
         private const val STORAGE_PERMISSION_REQUEST = 902
@@ -1136,10 +1502,16 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         private const val MAXIMUM_PREVIEW_ASPECT_ERROR = 0.015
         private const val CAMERA_PREVIEW_FPS = 15
         private const val CAPTURE_TIMEOUT_MILLIS = 10_000
+        private const val STILL_RESULT_TIMEOUT_MILLIS = 1_500L
         private const val THREE_A_TIMEOUT_MILLIS = 3_000L
         private const val MAXIMUM_STILL_PIXELS = 12_500_000L
         private const val METERING_REGION_FRACTION = 0.12f
         private const val TOUCH_FOCUS_HOLD_MILLIS = 5_000L
         private const val RECENT_TOUCH_FOCUS_MILLIS = 5_000L
+        private const val EV_GESTURE_STEP_DP = 32f
+        private const val MINIMUM_ZOOM_CHANGE = 0.005f
+        private const val CAMERA_CONTROL_UPDATE_DELAY_MILLIS = 24L
+        private const val DIGITAL_01_VERSION = "1.2.0"
+        private val STILL_FALLBACK_AREA_RATIOS = doubleArrayOf(1.0, 0.75, 0.5, 0.33, 0.2)
     }
 }

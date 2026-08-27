@@ -24,17 +24,23 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     val thumbnail = ImageView(context)
     val switchCamera: View
         get() = lensSwitchControl
+    val flashMode: View
+        get() = flashModeControl
 
     private val shutterControl = ShutterView(context)
     private val lensSwitchControl = LensSwitchView(context)
     private val focusIndicator = FocusIndicatorView(context)
     private val captureFormat = TextView(context)
     private val liveBadge = TextView(context)
+    private val flashModeControl = TextView(context)
+    private val exposureControl = TextView(context)
+    private val zoomControl = TextView(context)
     private val message = TextView(context)
     private val flash = View(context)
     private val clearMessage = Runnable { message.visibility = INVISIBLE }
     private var cameraReady = false
     private var lensSwitchAvailable = false
+    private var flashAvailable = false
 
     init {
         isClickable = false
@@ -44,6 +50,9 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         thumbnail.id = R.id.last_photo
         lensSwitchControl.id = R.id.switch_camera
         focusIndicator.id = R.id.focus_indicator
+        flashModeControl.id = R.id.flash_mode
+        exposureControl.id = R.id.exposure_value
+        zoomControl.id = R.id.zoom_ratio
         addScrims()
         addTopBar()
         addBottomControls()
@@ -73,6 +82,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         shutterControl.setReady(ready)
         lensSwitchControl.isEnabled = ready && lensSwitchAvailable
         lensSwitchControl.alpha = if (lensSwitchControl.isEnabled) 1f else 0.35f
+        flashModeControl.isEnabled = ready && flashAvailable
+        flashModeControl.alpha = if (flashModeControl.isEnabled) 1f else 0.35f
         liveBadge.text = context.getString(
             if (ready) R.string.live_badge else R.string.warming_badge
         )
@@ -85,6 +96,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         shutterControl.setCapturing(true)
         lensSwitchControl.isEnabled = false
         lensSwitchControl.alpha = 0.35f
+        flashModeControl.isEnabled = false
+        flashModeControl.alpha = 0.35f
         message.text = context.getString(R.string.preparing_capture)
         message.visibility = VISIBLE
         message.animate().alpha(1f).setDuration(120L).start()
@@ -103,6 +116,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         shutterControl.setCapturing(false)
         lensSwitchControl.isEnabled = cameraReady && lensSwitchAvailable
         lensSwitchControl.alpha = if (lensSwitchControl.isEnabled) 1f else 0.35f
+        flashModeControl.isEnabled = cameraReady && flashAvailable
+        flashModeControl.alpha = if (flashModeControl.isEnabled) 1f else 0.35f
     }
 
     fun setLensSwitchAvailable(available: Boolean) {
@@ -116,6 +131,36 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         lensSwitchControl.contentDescription = context.getString(
             if (front) R.string.switch_to_back_camera else R.string.switch_to_front_camera
         )
+    }
+
+    fun setFlashAvailable(available: Boolean) {
+        flashAvailable = available
+        flashModeControl.isEnabled = available && cameraReady
+        flashModeControl.alpha = if (flashModeControl.isEnabled) 1f else 0.35f
+        if (!available) flashModeControl.text = context.getString(R.string.flash_unavailable)
+    }
+
+    fun setFlashMode(mode: CameraFlashMode) {
+        if (!flashAvailable) {
+            flashModeControl.text = context.getString(R.string.flash_unavailable)
+            return
+        }
+        flashModeControl.text = context.getString(
+            when (mode) {
+                CameraFlashMode.OFF -> R.string.flash_off
+                CameraFlashMode.AUTO -> R.string.flash_auto
+                CameraFlashMode.ON -> R.string.flash_on
+            }
+        )
+    }
+
+    fun setExposureCompensation(ev: Float, supported: Boolean) {
+        exposureControl.text = context.getString(R.string.exposure_value, ev)
+        exposureControl.alpha = if (supported) 1f else 0.35f
+    }
+
+    fun setZoomRatio(ratio: Float) {
+        zoomControl.text = context.getString(R.string.zoom_ratio, ratio)
     }
 
     fun setCaptureSize(width: Int, height: Int) {
@@ -234,6 +279,25 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             rightMargin = dp(20)
             topMargin = dp(20)
         })
+
+        flashModeControl.apply {
+            text = context.getString(R.string.flash_unavailable)
+            contentDescription = context.getString(R.string.flash_control_description)
+            setTextColor(Color.WHITE)
+            textSize = 9f
+            letterSpacing = 0.06f
+            gravity = Gravity.CENTER
+            typeface = Typeface.create("sans", Typeface.BOLD)
+            background = rounded(0x75000000, dp(16).toFloat(), 0x42FFFFFF, dp(1))
+            isClickable = true
+            isFocusable = true
+        }
+        addView(
+            flashModeControl,
+            LayoutParams(dp(88), dp(32), Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply {
+                topMargin = dp(72)
+            },
+        )
     }
 
     private fun addBottomControls() {
@@ -249,6 +313,39 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             bottomMargin = dp(143)
         })
 
+        zoomControl.apply {
+            text = context.getString(R.string.zoom_ratio, 1.0)
+            contentDescription = context.getString(R.string.zoom_control_description)
+            setTextColor(Color.WHITE)
+            textSize = 12f
+            gravity = Gravity.CENTER
+            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            background = rounded(0x75000000, dp(16).toFloat(), 0x42FFFFFF, dp(1))
+        }
+        addView(
+            zoomControl,
+            LayoutParams(dp(64), dp(32), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL).apply {
+                bottomMargin = dp(176)
+            },
+        )
+
+        exposureControl.apply {
+            text = context.getString(R.string.exposure_value, 0.0)
+            contentDescription = context.getString(R.string.exposure_control_description)
+            setTextColor(Color.WHITE)
+            textSize = 10f
+            gravity = Gravity.CENTER
+            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            background = rounded(0x75000000, dp(14).toFloat(), 0x42FFFFFF, dp(1))
+        }
+        addView(
+            exposureControl,
+            LayoutParams(dp(68), dp(30), Gravity.BOTTOM or Gravity.START).apply {
+                leftMargin = dp(18)
+                bottomMargin = dp(126)
+            },
+        )
+
         message.apply {
             setTextColor(Color.WHITE)
             textSize = 13f
@@ -258,7 +355,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             visibility = INVISIBLE
         }
         addView(message, LayoutParams(LayoutParams.WRAP_CONTENT, dp(36), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL).apply {
-            bottomMargin = dp(183)
+            bottomMargin = dp(216)
         })
 
         shutterControl.contentDescription = context.getString(R.string.shutter_description)
