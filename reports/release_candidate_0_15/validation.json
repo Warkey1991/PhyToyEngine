@@ -1,0 +1,583 @@
+{
+  "schema_version": 1,
+  "physical_cpu_270x258": {
+    "full_chain": {
+      "reproduction": {
+        "cwd": "PhyToyEngine",
+        "environment": {
+          "PYTHONPATH": "reference"
+        },
+        "argv": [
+          "python3",
+          "tools/compare_device_stages.py",
+          "--synthetic",
+          "--width",
+          "270",
+          "--height",
+          "258",
+          "--stages",
+          "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258",
+          "--host-profile",
+          "profiles/authoring/host_generic_srgb.json",
+          "--toy-profile",
+          "profiles/authoring/toy_isp_filter_conformance.json",
+          "--seed",
+          "1234",
+          "--contract",
+          "acceptance/synthetic_alpha_v1.json"
+        ],
+        "exit_code": 1
+      },
+      "result": {
+        "comparison_scope": "all five stages against independently rendered reference",
+        "height": 258,
+        "native_sensor_input": null,
+        "passed": false,
+        "seed": 1234,
+        "stages": {
+          "01_scene_linear": {
+            "limit": 2e-05,
+            "max_absolute": 2.9503551512988224e-07,
+            "mean_absolute": 4.802311117794026e-08,
+            "passed": true,
+            "rmse": 6.612607343661457e-08
+          },
+          "02_target_optics": {
+            "limit": 8e-05,
+            "max_absolute": 1.708459984181218e-05,
+            "mean_absolute": 4.982823478830798e-08,
+            "passed": true,
+            "rmse": 1.2192155443570866e-07
+          },
+          "03_target_sensor_dn": {
+            "limit": 0.51,
+            "max_absolute": 1,
+            "mean_absolute": 2.8710881424059718e-05,
+            "passed": false,
+            "rmse": 0.005358253579671245
+          },
+          "04_target_isp_linear": {
+            "limit": 0.002,
+            "max_absolute": 0.0007141642522052183,
+            "mean_absolute": 7.405617552564681e-08,
+            "passed": true,
+            "rmse": 3.996029407401863e-06
+          },
+          "05_output_srgb": {
+            "limit": 0.003,
+            "max_absolute": 0.0007608064587484309,
+            "mean_absolute": 2.508239506955035e-06,
+            "passed": true,
+            "rmse": 5.954957900226709e-06
+          }
+        },
+        "width": 270
+      },
+      "adc_threshold_failure": {
+        "pixels_over_limit": 2,
+        "coordinates_xy": [
+          [
+            218,
+            80
+          ],
+          [
+            27,
+            157
+          ]
+        ],
+        "max_difference_dn": 1.0,
+        "contract_limit_dn": 0.51,
+        "contract_changed": false,
+        "interpretation": "The one-DN difference is consistent with native float32/reference float64 ADC threshold rounding. It remains an independently rendered full-chain failure; the conditioned ISP comparison does not resolve it or establish full calibration."
+      },
+      "stage_dump_evidence": [
+        {
+          "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/01_scene_linear.pfm",
+          "sha256": "a1411216bdd1d4a933a6ca8e032ab9d5c5d7ff905dbb3d664feed7a7dc96ec2d"
+        },
+        {
+          "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/02_target_optics.pfm",
+          "sha256": "8c930a45e0b7b71f1e2529d2d4f69bbb8d4709bfe4f228624c58d5f33b71ec06"
+        },
+        {
+          "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/03_target_sensor_dn.pfm",
+          "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b"
+        },
+        {
+          "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/04_target_isp_linear.pfm",
+          "sha256": "0a7adf29aa71f1418cb52e727b8cc963892502d2cd65a48a9fb4cf8520e4d758"
+        },
+        {
+          "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/05_output_srgb.pfm",
+          "sha256": "a494ecde899eec6881723c709cf1a8b1dce6c2ebe643c582387eec5e798f89d9"
+        }
+      ]
+    },
+    "runtime_report": {
+      "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258_runtime.json",
+      "sha256": "f48f9d970d189962ce15b2ecfc192cf46ed40262b089ac3be9e0db311069bad7"
+    },
+    "isp_conditioned": {
+      "report": {
+        "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258_isp_comparison.json",
+        "sha256": "7b9659673ac6493af4f9ebb1152e69de8af368a823abb7360b765f63c4ca6266"
+      },
+      "result": {
+        "comparison_scope": "ISP/output conditioned on actual native sensor DN",
+        "height": 258,
+        "native_sensor_input": {
+          "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/03_target_sensor_dn.pfm",
+          "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b"
+        },
+        "passed": true,
+        "seed": 1234,
+        "stages": {
+          "04_target_isp_linear": {
+            "limit": 0.002,
+            "max_absolute": 4.3688356943238915e-07,
+            "mean_absolute": 3.1032184880290414e-08,
+            "passed": true,
+            "rmse": 4.895420836477431e-08
+          },
+          "05_output_srgb": {
+            "limit": 0.003,
+            "max_absolute": 3.968181547361199e-05,
+            "mean_absolute": 2.450639696122027e-06,
+            "passed": true,
+            "rmse": 4.154890585314047e-06
+          }
+        },
+        "width": 270
+      },
+      "scope": "ISP/output only, conditioned on actual native sensor-stage DN; does not make the independent full-chain comparison pass."
+    }
+  },
+  "generated_at_utc": "2026-10-01T01:39:05.963248+00:00",
+  "status": "incomplete",
+  "store_ready": false,
+  "candidate": {
+    "version_name": "0.15.0-rc1",
+    "version_code": 16,
+    "engine_version": "PhyToyEngine/0.3.0 ABI/2",
+    "application_id": "com.phytoy.sample"
+  },
+  "source_state": {
+    "android_app_source_changed_after_recorded_builds_and_product_audits": true,
+    "changes_in_progress": "Gallery/settings UI and review accessibility changes; root agent will rebuild and repeat final app audit.",
+    "final_packaging_rebuild_required": true,
+    "recorded_artifact_hashes_are_final_submission_hashes": false,
+    "hash_refresh_required_after_final_rebuild": true,
+    "engine_host_checks_apply_to_completed_engine_changes": true
+  },
+  "host": {
+    "status": "passed",
+    "pytest_passed": 124,
+    "ctest_passed": 2,
+    "ctest_total": 2,
+    "commands": [
+      "cmake --build build -j4",
+      "ctest --test-dir build --output-on-failure",
+      "PYTHONPATH=reference PHYTOY_CPP_LIBRARY=\"$PWD/build/libphytoy_core.dylib\" PHYTOY_CPP_PROFILE_DIR=\"$PWD/build/profiles\" python3 -m pytest reference/tests"
+    ],
+    "logs": [
+      {
+        "path": "reports/release_candidate_0_15/native-final-build.log",
+        "sha256": "3e9e2a414c1c8328fad66038dc3857218fdc2c1c51bad1fe590e53a307bc8f22"
+      },
+      {
+        "path": "reports/release_candidate_0_15/native-final-tests.log",
+        "sha256": "4f044f0b660bd4c934b8725effc053b2f9e85360a47a039d3edd676aa6350b28"
+      }
+    ],
+    "c_abi_exception_review": "Passed for valid pointers and normal lifetime. Covers mutex acquisition, business exceptions, allocation-safe error reporting, cross-thread snapshots and four callback exception types. Real rejecting-allocator failure was injected into error storage; no exhaustive CPU/Vulkan allocation sweep.",
+    "isp_spirv": {
+      "workgroup_memory_bytes": 23196,
+      "minimum_supported_budget_bytes": 32768,
+      "passed": true
+    }
+  },
+  "packaging": {
+    "status": "passed",
+    "scope": "release_candidate_packaging",
+    "report": {
+      "path": "reports/release_candidate_0_15/packaging.json",
+      "sha256": "ccebe7b020bcf5643d132e66b125987eb956b9d3b51707bc3c42b3bc0cef8368"
+    },
+    "signed": false,
+    "store_ready": false,
+    "application_id": "com.phytoy.sample",
+    "uses_development_application_id": true,
+    "manifest": {
+      "application_id": "com.phytoy.sample",
+      "version_code": 16,
+      "version_name": "0.15.0-rc1",
+      "min_sdk": 26,
+      "target_sdk": 37,
+      "debuggable": false,
+      "test_only": false,
+      "cleartext": false,
+      "features": {
+        "android.hardware.camera.any": {
+          "required": true,
+          "version": 0
+        },
+        "android.hardware.vulkan.level": {
+          "required": true,
+          "version": 1
+        },
+        "android.hardware.vulkan.version": {
+          "required": true,
+          "version": 4198400
+        }
+      }
+    },
+    "apk": {
+      "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/apk/release/sample-release-unsigned.apk",
+      "sha256": "2f5689ccee9048d74ec35203a3c163456baff85a1b01ae109d157005b4ff4fec",
+      "bytes": 1724188,
+      "has_signature": false
+    },
+    "aab": {
+      "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/bundle/release/sample-release.aab",
+      "sha256": "d8b282aa72c6e0c864fd32f16bbf6e722443ba11c9007161da1b51c57df74028",
+      "bytes": 3447281,
+      "has_jar_signature": false,
+      "generated_apk_page_alignment": 16384
+    },
+    "native_load_alignments_bytes": {
+      "libc++_shared.so": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "libphytoy_android.so": [
+        16384,
+        16384,
+        16384
+      ],
+      "libphytoy_core.so": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    "relro_overlap_passed": true,
+    "limitations": [
+      "Packaging passed for the recorded artifacts; Android source changed after that build.",
+      "Unsigned artifacts and development application ID are not store submission ready.",
+      "Final signed/profile hashes and device acceptance remain separate gates."
+    ]
+  },
+  "physical_device": {
+    "model": "Samsung SM-S9210",
+    "serial": "RFCX80BD3XN",
+    "product": {
+      "status": "partial_disconnected",
+      "passed": false,
+      "report": {
+        "path": "reports/release_candidate_0_15/product/evaluation.json",
+        "sha256": "31de43b5a758c7fe621fc2b99d33cfdbb91b8f90918bc0f84259112ef70be9a9"
+      },
+      "checks": [
+        {
+          "name": "camera opens and shutter becomes ready",
+          "passed": true
+        },
+        {
+          "name": "offline privacy text is accessible",
+          "passed": true
+        },
+        {
+          "name": "5 background/resume cycles",
+          "passed": true
+        }
+      ],
+      "styles_completed": 0,
+      "failure": "Command '['/Users/songyuanjin/Library/Android/sdk/platform-tools/adb', '-s', 'RFCX80BD3XN', 'shell', 'uiautomator', 'dump', '/sdcard/phytoy_product_qa.xml']' returned non-zero exit status 255.",
+      "interruption_context": "Physical device disconnected during front-camera capture audit; six-style capture and subsequent product checks did not complete.",
+      "latest_app_source_validated": false
+    },
+    "small_stage_conformance": {
+      "status": "passed",
+      "cases": [
+        {
+          "backend": "cpu",
+          "input": "f32",
+          "dimensions": [
+            2,
+            2
+          ],
+          "passed": true,
+          "comparison_scope": "all five stages against independently rendered reference",
+          "stage_max_absolute_errors": {
+            "01_scene_linear": 4.906163496298799e-11,
+            "02_target_optics": 4.906163496298799e-11,
+            "03_target_sensor_dn": 0.0,
+            "04_target_isp_linear": 0.0,
+            "05_output_srgb": 0.0
+          },
+          "comparison_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_2x2_comparison.json",
+            "sha256": "50805a1015dd46a89920816a1f0c9dfcb6f73734b6ca197376303040611b4dde"
+          },
+          "runtime_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_2x2_runtime.json",
+            "sha256": "bf0852cbe4227470442d10e37c0a0b2f2e2ade7f667965d83fa23fd4abf541c9"
+          },
+          "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
+        },
+        {
+          "backend": "vulkan",
+          "input": "f32",
+          "dimensions": [
+            2,
+            2
+          ],
+          "passed": true,
+          "comparison_scope": "all five stages against independently rendered reference",
+          "stage_max_absolute_errors": {
+            "01_scene_linear": 4.906163496298799e-11,
+            "02_target_optics": 4.906163496298799e-11,
+            "03_target_sensor_dn": 0.0,
+            "04_target_isp_linear": 0.0,
+            "05_output_srgb": 0.0
+          },
+          "comparison_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_2x2_comparison.json",
+            "sha256": "50805a1015dd46a89920816a1f0c9dfcb6f73734b6ca197376303040611b4dde"
+          },
+          "runtime_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_2x2_runtime.json",
+            "sha256": "e3d40dbbfb416872517d5707ed49f6b0f193cf225054e00b0909eeb847cd6b51"
+          },
+          "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
+        },
+        {
+          "backend": "vulkan",
+          "input": "ahb",
+          "dimensions": [
+            2,
+            2
+          ],
+          "passed": true,
+          "comparison_scope": "all five stages against independently rendered reference",
+          "stage_max_absolute_errors": {
+            "01_scene_linear": 4.906163496298799e-11,
+            "02_target_optics": 4.906163496298799e-11,
+            "03_target_sensor_dn": 0.0,
+            "04_target_isp_linear": 0.0,
+            "05_output_srgb": 0.0
+          },
+          "comparison_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_2x2_comparison.json",
+            "sha256": "a1df9f234245d549e2b75cb755a8cd3d689d7ac10a72c00bfefb560727d531ba"
+          },
+          "runtime_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_2x2_runtime.json",
+            "sha256": "d7f66ed20c7299fb04e5ff10c5c1ee2a9a5466f359fadfa31b1d34b0e8552763"
+          },
+          "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
+        },
+        {
+          "backend": "cpu",
+          "input": "f32",
+          "dimensions": [
+            22,
+            18
+          ],
+          "passed": true,
+          "comparison_scope": "all five stages against independently rendered reference",
+          "stage_max_absolute_errors": {
+            "01_scene_linear": 2.6416564352649274e-09,
+            "02_target_optics": 2.6416564352649274e-09,
+            "03_target_sensor_dn": 0.0,
+            "04_target_isp_linear": 3.2784330094431935e-09,
+            "05_output_srgb": 4.0748162500464646e-07
+          },
+          "comparison_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_22x18_comparison.json",
+            "sha256": "4f510e93616d25b3c538710577c8c3367a11f660cb6c8b74bfdc767add95f21a"
+          },
+          "runtime_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_22x18_runtime.json",
+            "sha256": "fd5f5e6aa7eb488ccf6f2aae72094ac5302a88da28f59c00a4d7f1c5da842bc2"
+          },
+          "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
+        },
+        {
+          "backend": "vulkan",
+          "input": "f32",
+          "dimensions": [
+            22,
+            18
+          ],
+          "passed": true,
+          "comparison_scope": "all five stages against independently rendered reference",
+          "stage_max_absolute_errors": {
+            "01_scene_linear": 2.6416564352649274e-09,
+            "02_target_optics": 2.6416564352649274e-09,
+            "03_target_sensor_dn": 0.0,
+            "04_target_isp_linear": 1.078430930320784e-08,
+            "05_output_srgb": 4.410898062634505e-07
+          },
+          "comparison_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_22x18_comparison.json",
+            "sha256": "07131c77036b72707922a913243c492a2eccfdeb57b72803cf8b049b207bb988"
+          },
+          "runtime_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_22x18_runtime.json",
+            "sha256": "5fe2538d1b3f4fe84f065017cbc442f1bdc380604a689527ed3ace4ca7ea3308"
+          },
+          "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
+        },
+        {
+          "backend": "vulkan",
+          "input": "ahb",
+          "dimensions": [
+            22,
+            18
+          ],
+          "passed": true,
+          "comparison_scope": "all five stages against independently rendered reference",
+          "stage_max_absolute_errors": {
+            "01_scene_linear": 5.3430839440371525e-09,
+            "02_target_optics": 7.2057290932681095e-09,
+            "03_target_sensor_dn": 0.0,
+            "04_target_isp_linear": 1.078430930320784e-08,
+            "05_output_srgb": 4.410898062634505e-07
+          },
+          "comparison_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_22x18_comparison.json",
+            "sha256": "7fcc16941b68142da3c36dbdba42643c82720750e4467ade0a2316f2d2ce92b3"
+          },
+          "runtime_report": {
+            "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_22x18_runtime.json",
+            "sha256": "abdeb5430960f0b28483df3d2018768cf68c93c64e0dcd51fce63069a98840fc"
+          },
+          "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
+        }
+      ]
+    },
+    "large_vulkan_stage_conformance": {
+      "status": "not_recorded",
+      "reason": "No successful 270x258 Vulkan f32/AHB run is present in this report directory; physical device disconnected."
+    }
+  },
+  "emulator_16kb": {
+    "serial": "emulator-5580",
+    "api_level": 36,
+    "abi": "arm64-v8a",
+    "page_size_bytes": 16384,
+    "native_elf_load_alignment_bytes": 16384,
+    "gpu": "SwiftShader software Vulkan",
+    "camera_front": "emulated",
+    "camera_back": "emulated",
+    "sdk_image_modified": false,
+    "native": {
+      "status": "passed",
+      "summary": {
+        "path": "reports/release_candidate_0_15/emulator16k/summary.json",
+        "sha256": "4885b2e3e99d09e4b169e0dd7cbee69048fe8b4289a45ac2640d1f00d983a16a"
+      },
+      "dimensions": [
+        22,
+        18
+      ],
+      "seed": 1234,
+      "warmup_frames": 1,
+      "measured_frames": 3,
+      "cpu": {
+        "benchmark_exit_code": 0,
+        "stage_contract_passed": true,
+        "resource_allocation_delta_after_warmup": 0,
+        "queue_submission_delta": 0,
+        "isp_max_absolute_error": 3.2784330094431935e-09,
+        "output_max_absolute_error": 4.0748162500464646e-07
+      },
+      "vulkan": {
+        "benchmark_exit_code": 0,
+        "stage_contract_passed": true,
+        "resource_allocation_delta_after_warmup": 0,
+        "queue_submission_delta": 3,
+        "isp_max_absolute_error": 1.1820034196211027e-08,
+        "output_max_absolute_error": 4.3409098679503266e-07
+      }
+    },
+    "app": {
+      "status": "failed_audit_pending_final_fix_verification",
+      "passed": false,
+      "attempts": [
+        {
+          "report": {
+            "path": "reports/release_candidate_0_15/emulator16k/product/evaluation.json",
+            "sha256": "dbd14bfe29499d76d836353271e20fc53776fdd46866507cd89fa429fb308fb8"
+          },
+          "passed": false,
+          "checks": [
+            {
+              "name": "camera opens and shutter becomes ready",
+              "passed": true
+            }
+          ],
+          "styles_completed": 0,
+          "failure": "Timed out waiting for button3, enabled=True"
+        },
+        {
+          "report": {
+            "path": "reports/release_candidate_0_15/emulator16k/product-final/evaluation.json",
+            "sha256": "f1e773db3cdef5c3a226f577d23f4f81feed88b6e6fc19b993e99e106e2769d1"
+          },
+          "passed": false,
+          "checks": [
+            {
+              "name": "camera opens and shutter becomes ready",
+              "passed": true
+            },
+            {
+              "name": "offline privacy text is accessible",
+              "passed": true
+            },
+            {
+              "name": "3 background/resume cycles",
+              "passed": true
+            }
+          ],
+          "styles_completed": 0,
+          "failure": "Review must isolate camera controls from accessibility"
+        }
+      ],
+      "latest_app_source_validated": false,
+      "required_next_action": "Rebuild and repeat final app audit after gallery/settings and review accessibility fixes."
+    },
+    "limitations": [
+      "SwiftShader/emulated-camera results establish actual 16KB loader and small native-stage compatibility.",
+      "Emulator timings do not represent physical-device performance.",
+      "Native f32 smoke does not establish Camera2/AHardwareBuffer or complete app lifecycle correctness."
+    ]
+  },
+  "preview_photo_consistency": {
+    "status": "not_verified_on_same_scene_physical_capture",
+    "paired_live_preview_and_saved_photo_measurement_completed": false,
+    "evidence": "Only synthetic preview-detail modeling and separate native-stage conformance are recorded.",
+    "remaining": "Record paired viewfinder screenshots and saved images of the same owned static scene with matching lens/style/exposure/viewport on a physical device; compare detail/MTF, color/exposure, aspect/crop and orientation.",
+    "synthetic_diagnostics": [
+      "reports/preview_detail_20260930_native_surface/metrics.json",
+      "reports/preview_detail_20260930_720_surface/metrics.json"
+    ],
+    "limitations": [
+      "Synthetic MTF/RMSE results are not measured camera improvements.",
+      "Physical high-resolution preview frame-time and sustained thermal budget remain unverified for the latest app source."
+    ]
+  },
+  "remaining_release_gates": [
+    "Rebuild final Android artifacts and refresh packaging hashes after ongoing gallery/settings UI changes.",
+    "Pass final emulator app audit including review accessibility isolation.",
+    "Complete interrupted physical six-style capture/EXIF/return-to-preview, lifecycle and permission audit.",
+    "Finish same-scene physical preview/photo consistency measurements.",
+    "Investigate and retain the 270x258 ADC full-chain failure without silently broadening its contract.",
+    "Record large physical Vulkan f32/AHardwareBuffer stage conformance.",
+    "Complete additional vendor/minimum Android and sustained unplugged device coverage.",
+    "Provide production application ID, upload signing identity, publisher/privacy contacts, final store materials and account testing requirements."
+  ]
+}

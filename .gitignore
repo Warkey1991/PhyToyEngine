@@ -29,5 +29,11 @@
 .idea/
 .vscode/
 
+# Signing credentials are supplied outside the checkout.
+*.jks
+*.keystore
+/android/keystore.properties
+/release-artifacts/
+
 # Private product-analysis and research working documents
 /phytoy_engine_core_detailed_research_and_implementation_spec_2026.md

@@ -109,10 +109,15 @@ public:
                     int32_t still_width, int32_t still_height, int32_t max_images,
                     ANativeWindow* output_window, uint32_t output_rotation_degrees) {
         output_window_ = output_window;
-        if (width <= 0 || height <= 0 || still_width <= 0 || still_height <= 0 ||
-            max_images < 3) {
+        const auto supported_dimensions = [](int32_t w, int32_t h) {
+            return w > 0 && h > 0 && w <= 8192 && h <= 8192 &&
+                static_cast<uint64_t>(w) * static_cast<uint64_t>(h) <= 16'777'216ULL;
+        };
+        if (!supported_dimensions(width, height) ||
+            !supported_dimensions(still_width, still_height) ||
+            max_images < 3 || max_images > 16) {
             throw std::invalid_argument(
-                "invalid Camera2 ImageReader dimensions or maxImages; async preview requires at least 3");
+                "Camera2 dimensions must fit 8192-side / 16MP; maxImages must be in 3..16");
         }
         width_ = static_cast<uint32_t>(width);
         height_ = static_cast<uint32_t>(height);
@@ -424,6 +429,13 @@ private:
 
         const uint64_t sequence = ++received_frames_;
         PendingImage incoming(image, acquire_fence_fd, sequence, still_capture);
+        int64_t image_timestamp_ns = 0;
+        if (!still_capture) {
+            // Camera callbacks may arrive in short bursts even when sensor exposure timestamps
+            // are evenly spaced. Cadencing on callback wall time incorrectly discarded valid
+            // 30 FPS frames, so prefer the sensor timestamp and keep wall time only as fallback.
+            AImage_getTimestamp(image, &image_timestamp_ns);
+        }
         {
             std::lock_guard lock(queue_mutex_);
             if (worker_stopping_) {
@@ -442,18 +454,31 @@ private:
                     ++throttled_frames_;
                     return;
                 }
-                const uint64_t now_ns = static_cast<uint64_t>(
-                    std::chrono::duration_cast<std::chrono::nanoseconds>(
-                        std::chrono::steady_clock::now().time_since_epoch()).count());
+                const uint64_t cadence_time_ns = image_timestamp_ns > 0
+                    ? static_cast<uint64_t>(image_timestamp_ns)
+                    : static_cast<uint64_t>(
+                        std::chrono::duration_cast<std::chrono::nanoseconds>(
+                            std::chrono::steady_clock::now().time_since_epoch()).count());
                 const uint64_t interval_ns = kNanosecondsPerSecond / target_fps;
                 const uint64_t jitter_tolerance_ns = std::min<uint64_t>(
                     interval_ns / 20U, 4'000'000ULL);
                 if (last_admitted_time_ns_ != 0U &&
-                    now_ns + jitter_tolerance_ns < last_admitted_time_ns_ + interval_ns) {
+                    cadence_time_ns >= last_admitted_time_ns_ &&
+                    cadence_time_ns + jitter_tolerance_ns <
+                        last_admitted_time_ns_ + interval_ns) {
                     ++throttled_frames_;
                     return;
                 }
-                last_admitted_time_ns_ = now_ns;
+                if (last_admitted_time_ns_ == 0U ||
+                    cadence_time_ns < last_admitted_time_ns_) {
+                    last_admitted_time_ns_ = cadence_time_ns;
+                } else {
+                    const uint64_t elapsed_ns = cadence_time_ns - last_admitted_time_ns_;
+                    const uint64_t elapsed_intervals = std::max<uint64_t>(
+                        1U,
+                        (elapsed_ns + jitter_tolerance_ns) / interval_ns);
+                    last_admitted_time_ns_ += elapsed_intervals * interval_ns;
+                }
             }
             if (pending_image_) {
                 if (!still_capture && pending_image_.is_still_capture()) {
@@ -587,7 +612,7 @@ private:
                     }
                     complete_capture(capture_request_id, std::move(pixels));
                     log_info(
-                        "Digital 01 still capture ready: " +
+                        "Profile still capture ready: " +
                         std::to_string(frame_width) + "x" +
                         std::to_string(frame_height) +
                         " one_submission host_readback source=" +

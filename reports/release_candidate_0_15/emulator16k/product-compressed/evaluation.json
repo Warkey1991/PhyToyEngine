@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    },
+    {
+      "name": "offline privacy text is accessible",
+      "passed": true
+    },
+    {
+      "name": "3 background/resume cycles",
+      "passed": true
+    },
+    {
+      "name": "front and back camera with a saved front photo",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "failure": ""
+}

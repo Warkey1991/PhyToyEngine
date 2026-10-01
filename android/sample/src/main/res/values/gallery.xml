@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gallery_title">Your photos</string>
+    <string name="gallery_back_description">Back to camera</string>
+    <string name="gallery_newest_first">Newest first · stored on this device</string>
+    <string name="gallery_loading">Loading your photos…</string>
+    <string name="gallery_empty">Your photos will appear here. Return to the camera to take your first shot.</string>
+    <string name="gallery_load_failed">Couldn’t load your photo list. Please try again.</string>
+    <string name="gallery_retry">Retry</string>
+    <string name="gallery_thumbnail_failed">Unavailable</string>
+    <string name="gallery_item_description">%1$s photo, %2$s. Open photo.</string>
+    <plurals name="gallery_photo_count">
+        <item quantity="one">%1$d photo · newest first</item>
+        <item quantity="other">%1$d photos · newest first</item>
+    </plurals>
+</resources>

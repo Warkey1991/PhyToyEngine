@@ -31,6 +31,7 @@ class PhyToyCameraSession private constructor(
     private val captureCallLock = Any()
     @Volatile private var observedThermalStatus = THERMAL_STATUS_UNAVAILABLE
     @Volatile private var appliedProcessingFrameRate = -1
+    private var processingFrameRateBudget = normalProcessingFrameRate
     private var thermalPowerManager: PowerManager? = null
     private var thermalListener: PowerManager.OnThermalStatusChangedListener? = null
 
@@ -106,7 +107,7 @@ class PhyToyCameraSession private constructor(
     }
 
     /**
-     * Waits for the next admitted Camera2 frame and returns its final Digital 01 pixels.
+     * Waits for the next admitted Camera2 frame and returns its final active-profile pixels.
      * The selected frame still uses one Vulkan submission and is presented to the preview;
      * only this explicitly requested frame performs a CPU readback.
      */
@@ -137,7 +138,7 @@ class PhyToyCameraSession private constructor(
 
     /**
      * Arms the high-resolution reader, invokes [trigger] to submit one Camera2 still request, then
-     * waits for that exact PRIVATE frame to finish the Digital 01 Vulkan graph. [trigger] runs on
+     * waits for that exact PRIVATE frame to finish the active Vulkan profile graph. [trigger] runs on
      * the caller's background thread after the native capture request is ready, avoiding races
      * between Camera2 delivery and readback registration.
      */
@@ -247,15 +248,25 @@ class PhyToyCameraSession private constructor(
         thermalPowerManager = null
     }
 
+    /** Cap preview cadence to measured device throughput; thermal limits still take priority. */
+    fun setPreviewFrameRateBudget(framesPerSecond: Int) {
+        require(framesPerSecond in 1..normalProcessingFrameRate)
+        synchronized(lifecycleLock) {
+            processingFrameRateBudget = framesPerSecond
+            applyThermalStatus(observedThermalStatus)
+        }
+    }
+
     private fun applyThermalStatus(status: Int) {
-        val targetFrameRate = when {
+        val thermalFrameRate = when {
             status >= PowerManager.THERMAL_STATUS_CRITICAL -> 0
-            status >= PowerManager.THERMAL_STATUS_SEVERE -> 3
-            status >= PowerManager.THERMAL_STATUS_MODERATE -> 5
-            status >= PowerManager.THERMAL_STATUS_LIGHT -> 10
+            status >= PowerManager.THERMAL_STATUS_SEVERE -> minOf(normalProcessingFrameRate, 5)
+            status >= PowerManager.THERMAL_STATUS_MODERATE -> minOf(normalProcessingFrameRate, 15)
+            status >= PowerManager.THERMAL_STATUS_LIGHT -> minOf(normalProcessingFrameRate, 24)
             else -> normalProcessingFrameRate
         }
         synchronized(lifecycleLock) {
+            val targetFrameRate = minOf(thermalFrameRate, processingFrameRateBudget)
             observedThermalStatus = status
             if (nativeHandle != 0L && targetFrameRate != appliedProcessingFrameRate) {
                 nativeSetProcessingFrameRate(nativeHandle, targetFrameRate)
@@ -272,6 +283,8 @@ class PhyToyCameraSession private constructor(
         private const val DEFAULT_PROCESSING_FRAME_RATE = 15
         private const val DEFAULT_CAPTURE_TIMEOUT_MILLIS = 3_000
         private const val MAXIMUM_CAPTURE_TIMEOUT_MILLIS = 10_000
+        private const val MAXIMUM_IMAGE_DIMENSION = 8_192
+        private const val MAXIMUM_IMAGE_PIXELS = 16_777_216L
 
         init {
             System.loadLibrary("phytoy_core")
@@ -293,11 +306,9 @@ class PhyToyCameraSession private constructor(
             hostProfileAsset: String = "host_generic_srgb.ptp",
             toyProfileAsset: String = "toy_phytoy_digital_01_v1_2.ptp",
         ): PhyToyCameraSession {
-            require(width > 0 && height > 0) { "Camera dimensions must be positive" }
-            require(stillWidth > 0 && stillHeight > 0) {
-                "Still-capture dimensions must be positive"
-            }
-            require(maxImages >= 3) { "maxImages must be at least 3 for asynchronous latest-frame processing" }
+            validateDimensions(width, height, "Preview")
+            validateDimensions(stillWidth, stillHeight, "Still capture")
+            require(maxImages in 3..16) { "maxImages must be in 3..16 for bounded asynchronous processing" }
             require(processingFrameRateLimit in 1..60) {
                 "processingFrameRateLimit must be in 1..60"
             }
@@ -319,13 +330,15 @@ class PhyToyCameraSession private constructor(
             )
             check(handle != 0L) { "Unable to create native PhyToy Camera2 session" }
             var session: PhyToyCameraSession? = null
+            var input: Surface? = null
+            var stillInput: Surface? = null
             return try {
                 val surface = checkNotNull(nativeInputSurface(handle)) {
                     "Native Camera2 input surface is unavailable"
-                }
+                }.also { input = it }
                 val stillSurface = checkNotNull(nativeStillCaptureSurface(handle)) {
                     "Native Camera2 still-capture surface is unavailable"
-                }
+                }.also { stillInput = it }
                 PhyToyCameraSession(
                     handle,
                     surface,
@@ -341,18 +354,38 @@ class PhyToyCameraSession private constructor(
                     it.attachThermalControl(context.applicationContext, thermalAdaptive)
                 }
             } catch (exception: Throwable) {
-                session?.close() ?: nativeClose(handle)
+                if (session != null) session.close()
+                else {
+                    input?.release()
+                    stillInput?.release()
+                    nativeClose(handle)
+                }
                 throw exception
             }
         }
 
+        private fun validateDimensions(width: Int, height: Int, label: String) {
+            require(width in 1..MAXIMUM_IMAGE_DIMENSION && height in 1..MAXIMUM_IMAGE_DIMENSION &&
+                width.toLong() * height <= MAXIMUM_IMAGE_PIXELS
+            ) { "$label dimensions exceed the supported 8192-side / 16MP memory budget" }
+        }
+
         private fun materializeProfile(context: Context, name: String): File {
-            require('/' !in name && '\\' !in name) { "Profile asset must be a file name" }
+            require(name.isNotBlank() && name != "." && name != ".." &&
+                '/' !in name && '\\' !in name
+            ) { "Profile asset must be a file name" }
             val directory = File(context.noBackupFilesDir, "phytoy/$PROFILE_CACHE_VERSION")
             check(directory.exists() || directory.mkdirs()) { "Unable to create profile cache" }
             val target = File(directory, name)
-            context.assets.open("$PROFILE_ASSET_DIRECTORY/$name").use { source ->
-                target.outputStream().use(source::copyTo)
+            // Parallel SDK clients cannot observe a half-written profile.
+            val temporary = File.createTempFile("profile-", ".tmp", directory)
+            try {
+                context.assets.open("$PROFILE_ASSET_DIRECTORY/$name").use { source ->
+                    temporary.outputStream().use(source::copyTo)
+                }
+                check(temporary.renameTo(target)) { "Unable to install profile cache" }
+            } finally {
+                temporary.delete()
             }
             return target
         }

@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.harinezumi_2pp_daylight",
+  "version": "0.3.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "public_sample_approximation",
+    "target_name": "Digital Harinezumi 2++ daylight study",
+    "source": "Public owner photographs and shooting notes; https://hendigi.com/digital-harinezumi-2-double-plus/ ; https://hendigi.com/digital-harinezumi-again/ ; https://blindlight.wordpress.com/2010/08/10/superheadz-digital-harinezumi-2-review/",
+    "created_utc": "2026-09-09T00:00:00Z",
+    "license": "MIT",
+    "notes": [
+      "Research approximation of the 2++ color / ISO 100 / distant-subject condition; not a measured replica or an endorsed product.",
+      "All optical, matrix and electron-domain values are engineering hypotheses, not measured Harinezumi hardware specifications.",
+      "Use restrained optical defects, dense primary colors, soft fine detail and a short highlight shoulder. No synthetic light leaks or film grain.",
+      "ISO 100 describes the research target only. Host Camera2 autoexposure and autofocus remain active, and EXIF records actual host exposure.",
+      "Android uses 4:3 framing with a 3.2 megapixel output ceiling as a research delivery policy, not a verified sensor specification.",
+      "Preview/still sampling, automatic white balance dynamics, focus-distance response and JPEG artifacts are not calibrated in v0.1.0.",
+      "v0.2: PSF/ISP footprints and noise power scale from a 1920x1440 parameter reference. Approximation of reduced sensor area, not a fixed CFA simulation or measured sensor specification.",
+      "v0.3 visual review: retain saturated object gradients rather than hard primary plateaus; open the shadow toe and reduce fixed magenta bias. References: 2010 pict0009/pict0003/pict0002 and 2025 PICT0015/PICT0017/PICT0021 on hendigi.com. Parameters are subjective hypotheses, not a fit to paired scene data."
+    ]
+  },
+  "optics": {
+    "distortion": [
+      0.006,
+      -0.002,
+      0,
+      0
+    ],
+    "ca_scale": [
+      1.0008,
+      1,
+      0.9994
+    ],
+    "vignette": [
+      [
+        0.07,
+        0.018
+      ],
+      [
+        0.075,
+        0.018
+      ],
+      [
+        0.065,
+        0.02
+      ]
+    ],
+    "psf": {
+      "bases": [
+        [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            0.003,
+            0.0133,
+            0.0219,
+            0.0133,
+            0.003
+          ],
+          [
+            0.0133,
+            0.0596,
+            0.0983,
+            0.0596,
+            0.0133
+          ],
+          [
+            0.0219,
+            0.0983,
+            0.1621,
+            0.0983,
+            0.0219
+          ],
+          [
+            0.0133,
+            0.0596,
+            0.0983,
+            0.0596,
+            0.0133
+          ],
+          [
+            0.003,
+            0.0133,
+            0.0219,
+            0.0133,
+            0.003
+          ]
+        ]
+      ],
+      "coefficients": [
+        [
+          [
+            [
+              0.32,
+              0.52,
+              0.32
+            ],
+            [
+              0.52,
+              0.76,
+              0.52
+            ],
+            [
+              0.32,
+              0.52,
+              0.32
+            ]
+          ],
+          [
+            [
+              0.32,
+              0.52,
+              0.32
+            ],
+            [
+              0.52,
+              0.76,
+              0.52
+            ],
+            [
+              0.32,
+              0.52,
+              0.32
+            ]
+          ],
+          [
+            [
+              0.32,
+              0.52,
+              0.32
+            ],
+            [
+              0.52,
+              0.76,
+              0.52
+            ],
+            [
+              0.32,
+              0.52,
+              0.32
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              0.68,
+              0.48,
+              0.68
+            ],
+            [
+              0.48,
+              0.24,
+              0.48
+            ],
+            [
+              0.68,
+              0.48,
+              0.68
+            ]
+          ],
+          [
+            [
+              0.68,
+              0.48,
+              0.68
+            ],
+            [
+              0.48,
+              0.24,
+              0.48
+            ],
+            [
+              0.68,
+              0.48,
+              0.68
+            ]
+          ],
+          [
+            [
+              0.68,
+              0.48,
+              0.68
+            ],
+            [
+              0.48,
+              0.24,
+              0.48
+            ],
+            [
+              0.68,
+              0.48,
+              0.68
+            ]
+          ]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ],
+    "exposure_scale_e": 10600,
+    "full_well_e": 10400,
+    "conversion_gain_e_per_dn": 2.6,
+    "black_level_dn": 64,
+    "white_level_dn": 4095,
+    "adc_bits": 12,
+    "read_noise_e": 7.5,
+    "row_noise_e": 0.7,
+    "column_noise_e": 0.35,
+    "prnu_sigma": 0.006,
+    "dsnu_e": 0.6,
+    "profile_seed": 220100
+  },
+  "isp": {
+    "white_balance": [
+      1,
+      1.008,
+      1.012
+    ],
+    "sensor_to_rec2020": [
+      [
+        1.22,
+        -0.16,
+        -0.06
+      ],
+      [
+        -0.08,
+        1.16,
+        -0.08
+      ],
+      [
+        -0.065,
+        0.01,
+        1.055
+      ]
+    ],
+    "tone_curve": [
+      [
+        0,
+        0
+      ],
+      [
+        0.015,
+        0.007
+      ],
+      [
+        0.055,
+        0.032
+      ],
+      [
+        0.18,
+        0.165
+      ],
+      [
+        0.4,
+        0.47
+      ],
+      [
+        0.7,
+        0.86
+      ],
+      [
+        0.9,
+        1
+      ],
+      [
+        1.2,
+        1
+      ]
+    ],
+    "denoise_sigma": 0.42,
+    "sharpen_amount": 0.06,
+    "sharpen_radius": 0.7
+  },
+  "reference_sampling": {
+    "width": 1920,
+    "height": 1440
+  }
+}

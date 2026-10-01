@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="info_about" type="id" />
+    <item name="info_privacy" type="id" />
+    <item name="info_licenses" type="id" />
     <item name="engine_metrics" type="id" />
     <item name="last_photo" type="id" />
     <item name="shutter" type="id" />
@@ -8,4 +11,17 @@
     <item name="flash_mode" type="id" />
     <item name="exposure_value" type="id" />
     <item name="zoom_ratio" type="id" />
+    <item name="increase_value" type="id" />
+    <item name="decrease_value" type="id" />
+    <item name="review_photo" type="id" />
+    <item name="review_back" type="id" />
+    <item name="review_continue" type="id" />
+    <item name="about_privacy" type="id" />
+    <item name="camera_recovery" type="id" />
+    <item name="style_dh_color" type="id" />
+    <item name="style_dh_mono" type="id" />
+    <item name="style_digital" type="id" />
+    <item name="style_plastic" type="id" />
+    <item name="style_street" type="id" />
+    <item name="style_fisheye" type="id" />
 </resources>

@@ -9,11 +9,19 @@ Android GPU Surface.
 
 ## Current milestone
 
+Camera release candidate 0.15.0-rc1 includes **DH 2++ color v0.4** and **DH 2++ monochrome v0.2**, research profiles inspired by Digital
+Harinezumi 2++. Fresh installs select it by default; upgrades retain saved choices.
+It prefers 4:3 capture streams and caps saved images at 3.2 MP. Preview now targets 1280×960 (up to 1440×1080), and its presentation buffer follows the visible viewport instead of an intermediate 720-pixel surface. Supported host edge/noise/tone modes use FAST in both preview and still requests. A measured P95 cadence budget works alongside thermal limits to avoid generating frames faster than the engine can process.
+Optics/ISP footprints and CFA-aware noise power use a shared 1920×1440 parameter
+reference to reduce preview/still differences without lowering capture resolution. Host Camera2 exposure
+and EXIF remain actual device values. This is an unmeasured public-sample approximation;
+see [scope, limitations and comparison commands](../research/harinezumi_2pp_daylight.md).
+
 - `sdk`: packages the C++ engine, JNI bridge, Kotlin API, and immutable `.ptp` profiles.
 - `sample`: provides a capture-matched 3:4 Digital 01 viewport, a bounded Camera2 3A
   still-capture gate, up-to-12 MP capture with automatic stream fallback, touch AF/AE,
   vertical EV control, pinch zoom, Off/Auto/On flash, front/back switching, EXIF-bearing
-  MediaStore JPEG saving and last-photo review. Its `TextureView`
+  MediaStore JPEG saving, a virtualized local photo list and full-screen review. Its `TextureView`
   remains only the Vulkan swapchain output. Camera2 targets the engine-owned PRIVATE
   preview and high-resolution still surfaces.
 - JNI: acquires the latest image and its sync fence, immediately queues it to a dedicated
@@ -26,6 +34,10 @@ Android GPU Surface.
 
 There is no raw Camera2 preview bypass in 0.3.0. If the profile graph or presentation fails,
 the user does not receive an unprocessed fallback image disguised as an effect preview.
+
+Release candidates also provide permission/preview recovery, offline privacy information,
+TalkBack adjustment actions, a local photo list and camera settings (default/last style, resolution ceiling, grid, sound, haptics and optional immediate review). Settings stay on the device; browsing suspends Camera2 repeating requests. See [Google Play release preparation](../release/README.md)
+and [artifact/signing commands](../release/ANDROID_BUILD.md).
 
 ## Requirements
 
@@ -130,12 +142,10 @@ arrives, the sample unlocks 3A and restores continuous-picture AF on the preview
 
 The sample rotates the result, encodes JPEG at quality 95, writes CaptureResult ISO,
 exposure time and focal length plus lens direction, capture time, EV, zoom, flash mode and
-Digital 01 version to EXIF, then publishes it to
-`Pictures/PhyToy` through `MediaStore`, updates the lower-left thumbnail and opens the
-system photo viewer when that thumbnail is tapped. It starts with the largest PRIVATE still
-size up to 12.5 MP; if a device rejects the dual-PRIVATE combination, it rebuilds the engine
-and Camera2 session with successively smaller same-aspect still streams. Samsung SM-S9210
-resolves to 4080×3060 rear and 4000×3000 front.
+the selected PhyToy style/version to EXIF, then publishes it to
+`Pictures/PhyToy` through `MediaStore`, updates the lower-left thumbnail and opens a
+full-screen review after capture when enabled. Tapping the thumbnail opens the photo list, where images can be opened and returned to the list or camera. The settings default to a 5 MP ceiling (DH styles retain their 3.2 MP cap); High allows up to 12.5 MP, subject to camera and device-memory limits. It starts with the largest permitted PRIVATE still size; if a device rejects the dual-PRIVATE combination, it rebuilds the engine
+and Camera2 session with successively smaller same-aspect still streams. The historical maximum-resolution Digital 01 configuration on Samsung SM-S9210 resolved to 4080×3060 rear and 4000×3000 front; those numbers are not the default for all styles or settings.
 
 Vertical one-finger movement changes Camera2 exposure compensation, pinch gestures update
 `SCALER_CROP_REGION`, and the top flash control cycles Off/Auto/On. These parameters are
@@ -148,9 +158,11 @@ Camera2 session and engine in order, mirrors only the front preview, and rebuild
 PRIVATE streams for the selected lens.
 
 Profile assets are copied into app-private storage because the native engine validates and
-opens packaged profile files. The default profiles are `host_generic_srgb.ptp` and the
-outdoor-reviewed `toy_phytoy_digital_01_v1_2.ptp`; the immutable v1.0.0 and v1.1.0
-packages remain available for regression comparisons. Version 1.2 reduces CA separation
+opens packaged profile files. The host profile is `host_generic_srgb.ptp`; the thumb-reachable
+style strip switches among DH 2++ color/monochrome, Digital 01, Plastic 82, Street 84 and Fisheye 05 while rebuilding
+the engine session. The visible viewport and saved center crop follow each style's 3:4, 1:1
+or 2:3 framing. The immutable Digital 01 v1.0.0 and v1.1.0 packages remain available for
+regression comparisons. Version 1.2 reduces CA separation
 by about 26% and gently raises the lower tone curve while retaining the v1.1 color response.
 The engine derives a coefficient-aware edge-safe overscan before distortion so radial,
 tangential and CA sampling cannot fold reflected pixels back into the image boundary. The
@@ -210,14 +222,15 @@ AE/AWB 后再提交高分辨率请求。厂商 3A 请求失败或 3 秒未返回
 PRIVATE 高分辨率组合，会自动按同画幅候选逐级降低静态尺寸并重建会话。最终 JPEG EXIF
 包含 CaptureResult 的 ISO、曝光时间、焦距，以及镜头方向、Digital 01 版本和拍摄时间。
 
-Vulkan 引擎默认最多处理 15 FPS，并通过 Android Thermal API 自动调整为 Normal
-15 FPS、Light 10 FPS、Moderate 5 FPS、Severe 3 FPS、Critical 0 FPS。温控主动跳过的帧单独记录为
+SDK 的 Vulkan 引擎默认最多处理 15 FPS；示例 App 显式使用 30 FPS。Android Thermal
+API 会把示例 App 调整为 Normal 30 FPS、Light 24 FPS、Moderate 15 FPS、Severe 5 FPS、
+Critical 0 FPS。温控主动跳过的帧单独记录为
 `throttledFrames`，不会混入表示处理管线跟不上的 `droppedFrames`。可通过
-`PhyToyCameraSession.open(..., processingFrameRateLimit = 15, thermalAdaptive = true)`
+`PhyToyCameraSession.open(..., processingFrameRateLimit = 30, thermalAdaptive = true)`
 配置正常档位或关闭自动温控。
 
-示例 App 将 Camera2 AE 固定为 15 FPS，避免在只显示引擎结果时生成无效的 24–30 FPS
-原始帧，从而降低厂商 Camera HAL/ISP 的持续负载；SDK 本身不直接控制调用方 request。
+示例 App 把 PRIVATE 预览输入限制在 640×480，并让 Camera2 AE 帧率跟随引擎的正常/温控
+目标，避免生成引擎会主动跳过的原始帧；SDK 本身不直接控制调用方 request。
 
 构建命令：
 

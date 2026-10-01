@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.plastic_82",
+  "version": "1.0.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "synthetic_tuned",
+    "target_name": "PhyToy Plastic 82",
+    "source": "PhyToyEngine original design inspired by the broad plastic 120 toy-camera category",
+    "created_utc": "2026-08-27T00:00:00Z",
+    "license": "MIT",
+    "notes": [
+      "Square framing, soft edges, warm color drift and pronounced corner falloff define this original digital profile.",
+      "This is not a calibrated replica or digital twin of any physical camera."
+    ]
+  },
+  "optics": {
+    "distortion": [0.065, -0.02, 0.0022, -0.0015],
+    "ca_scale": [1.006, 1.0, 0.994],
+    "vignette": [[0.36, 0.12], [0.41, 0.14], [0.48, 0.17]],
+    "psf": {
+      "bases": [
+        [
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 1.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0]
+        ],
+        [
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.0219, 0.0983, 0.1621, 0.0983, 0.0219],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003]
+        ]
+      ],
+      "coefficients": [
+        [
+          [[0.18, 0.38, 0.18], [0.35, 0.82, 0.35], [0.18, 0.38, 0.18]],
+          [[0.2, 0.4, 0.2], [0.37, 0.84, 0.37], [0.2, 0.4, 0.2]],
+          [[0.14, 0.32, 0.14], [0.3, 0.77, 0.3], [0.14, 0.32, 0.14]]
+        ],
+        [
+          [[0.82, 0.62, 0.82], [0.65, 0.18, 0.65], [0.82, 0.62, 0.82]],
+          [[0.8, 0.6, 0.8], [0.63, 0.16, 0.63], [0.8, 0.6, 0.8]],
+          [[0.86, 0.68, 0.86], [0.7, 0.23, 0.7], [0.86, 0.68, 0.86]]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [[1.045, -0.02, -0.025], [-0.025, 1.04, -0.015], [-0.005, -0.04, 1.045]],
+    "exposure_scale_e": 640.0,
+    "full_well_e": 740.0,
+    "conversion_gain_e_per_dn": 0.8,
+    "black_level_dn": 64.0,
+    "white_level_dn": 1023.0,
+    "adc_bits": 10,
+    "read_noise_e": 3.8,
+    "row_noise_e": 1.05,
+    "column_noise_e": 0.8,
+    "prnu_sigma": 0.019,
+    "dsnu_e": 0.9,
+    "profile_seed": 820120
+  },
+  "isp": {
+    "white_balance": [1.2, 1.0, 0.78],
+    "sensor_to_rec2020": [[1.12, -0.07, -0.05], [-0.035, 1.03, 0.005], [0.03, -0.1, 1.07]],
+    "tone_curve": [[0.0, 0.012], [0.02, 0.04], [0.08, 0.13], [0.2, 0.28], [0.5, 0.59], [0.82, 0.84], [1.0, 0.94], [1.3, 1.0]],
+    "denoise_sigma": 0.16,
+    "sharpen_amount": 0.0,
+    "sharpen_radius": 1.1
+  }
+}

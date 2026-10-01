@@ -390,7 +390,12 @@ Image simulate_sensor(const Image& optical, const SensorProfile& sensor, uint64_
         for (uint32_t x = 0; x < optical.width; ++x) {
             const uint32_t channel = static_cast<uint32_t>(cfa_channel(sensor.cfa, x, y));
             const float electrons = std::clamp(sensor_rgb.at(x, y, channel), 0.0F, sensor.full_well_e);
-            const float value = std::round(electrons / sensor.conversion_gain_e_per_dn + sensor.black_level_dn);
+            const float adc = electrons / sensor.conversion_gain_e_per_dn + sensor.black_level_dn;
+            // Nonnegative ADC values use half-up, including exact .5 ties.
+            // Split the fractional part: adc + .5 can round a value immediately
+            // below a boundary onto it, or change large integral float values.
+            const float integral = std::floor(adc);
+            const float value = integral + (adc - integral >= 0.5F ? 1.0F : 0.0F);
             dn.at(x, y) = std::clamp(value, 0.0F, sensor.white_level_dn);
         }
     }
@@ -399,7 +404,12 @@ Image simulate_sensor(const Image& optical, const SensorProfile& sensor, uint64_
 
 std::vector<float> gaussian_kernel(float sigma) {
     if (sigma <= 0.0F) return {1.0F};
-    const int radius = std::max(1, static_cast<int>(std::ceil(4.0F * sigma)));
+    if (!std::isfinite(sigma) || sigma > static_cast<float>(std::numeric_limits<int>::max() / 8)) {
+        throw std::invalid_argument("CPU Gaussian sigma exceeds safe kernel indexing");
+    }
+    // scipy gaussian_filter uses round(truncate * sigma), not ceil. Matching
+    // the reference also makes very small sigma an exact identity filter.
+    const int radius = static_cast<int>(std::floor(4.0F * sigma + 0.5F));
     std::vector<float> kernel(static_cast<size_t>(radius * 2 + 1));
     float sum = 0.0F;
     for (int i = -radius; i <= radius; ++i) {
@@ -474,9 +484,15 @@ std::pair<Image, Image> run_isp(const Image& sensor_dn, const SensorProfile& sen
             scene.pixels[i] += isp.sharpen_amount * (scene.pixels[i] - low_pass.pixels[i]);
         }
     }
+    if (isp.monochrome) {
+        for (size_t i = 0; i < scene.pixels.size(); i += 3U) {
+            const float y = 0.2627F * scene.pixels[i] + 0.6780F * scene.pixels[i + 1U] + 0.0593F * scene.pixels[i + 2U];
+            scene.pixels[i] = scene.pixels[i + 1U] = scene.pixels[i + 2U] = y;
+        }
+    }
     Image toned(scene.width, scene.height, 3U);
     for (size_t i = 0; i < toned.pixels.size(); ++i) toned.pixels[i] = tone_value(std::max(scene.pixels[i], 0.0F), isp.tone_curve);
-    Image encoded = apply_matrix(toned, REC2020_TO_SRGB);
+    Image encoded = isp.monochrome ? toned : apply_matrix(toned, REC2020_TO_SRGB);
     for (float& value : encoded.pixels) value = clamp01(srgb_encode(value));
     return {std::move(toned), std::move(encoded)};
 }
@@ -500,11 +516,12 @@ Image render_cpu(
     Image scene = normalize_cpu(frame, host);
     emit_stage(scene, PTE_STAGE_SCENE_LINEAR, stage_callback, stage_user_data);
 
-    Image optical = apply_optics(scene, toy.optics);
+    const ToyProfile resolved = profile_for_resolution(toy, frame.width, frame.height);
+    Image optical = apply_optics(scene, resolved.optics);
     emit_stage(optical, PTE_STAGE_TARGET_OPTICS, stage_callback, stage_user_data);
-    Image sensor_dn = simulate_sensor(optical, toy.sensor, seed);
+    Image sensor_dn = simulate_sensor(optical, resolved.sensor, seed);
     emit_stage(sensor_dn, PTE_STAGE_TARGET_SENSOR_DN, stage_callback, stage_user_data);
-    auto [toned, encoded] = run_isp(sensor_dn, toy.sensor, toy.isp);
+    auto [toned, encoded] = run_isp(sensor_dn, resolved.sensor, resolved.isp);
     emit_stage(toned, PTE_STAGE_TARGET_ISP_LINEAR, stage_callback, stage_user_data);
     emit_stage(encoded, PTE_STAGE_OUTPUT_SRGB, stage_callback, stage_user_data);
     return encoded;

@@ -113,7 +113,7 @@ PhyToyEngine 是一个开源、由 Profile 驱动的物理玩具相机成像引�
 
 项目最终希望形成一个可理解、可测量、可移植的物理玩具相机渲染基础，并逐步用于 Android 和 iOS 商业相机产品。
 
-## 当前 Alpha 能力
+## 当前能力
 
 - Python 高精度参考实现，用于算法研究、实验和回归测试。
 - 支持稳定 C ABI 的 C++20 Runtime，方便移动端集成。
@@ -127,9 +127,10 @@ PhyToyEngine 是一个开源、由 Profile 驱动的物理玩具相机成像引�
 
 当前 Synthetic Alpha 候选版提供原创且版本锁定的 **PhyToy Digital 01** 设计 Profile，
 以及一台支持 RAW 的 Android 宿主 Profile。其合成 AHardwareBuffer 协议已在 Samsung
-SM-S9210 / Adreno 750 上通过 720p、12MP、温控、10,000 帧和跨后端检查。它仍是引擎
-内核，不是完整相机 App，也不是实验室标定的真实相机复刻；下一道 Android 门槛是
-真实 Camera2 PRIVATE 拍摄会话验收。
+SM-S9210 / Adreno 750 上通过 720p、12MP、温控、10,000 帧和跨后端检查。当前还包含 Android 相机应用发布候选版：真实 Camera2 PRIVATE 取景、六种风格、
+前后镜头切换、曝光与变焦、MediaStore/EXIF 保存和回看，以及离线隐私说明、
+权限恢复、无障碍操作和正式构建检查。所有研究风格均未经过实验室真机标定。
+发布候选不是商店提交完成；剩余条件见 [发布准备文档](release/README.md)。
 
 ## 适合哪些人？
 
@@ -143,9 +144,8 @@ PhyToyEngine 适合：
 
 ## 面向产品引擎的下一步
 
-下一阶段重点包括真实 Camera2 PRIVATE 拍摄会话验收、动态 Camera2 元数据、进一步
-降低 12MP 内存、iOS Metal 后端、完整 Android/iOS App，以及未来带不可变数据集的
-真实标定 Profile。
+当前重点是多厂商设备验收、16KB 环境运行验证、不插电长时间稳定性测试及 Google Play 提交流程。
+后续研究方向包括宿主相机标定、进一步降低 12MP 内存、iOS Metal 后端以及可再分发的实测 Profile。
 
 ## 如何参与贡献？
 

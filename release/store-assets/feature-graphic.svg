@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title desc">
+  <title id="title">PhyToy feature graphic</title>
+  <desc id="desc">PhyToy, a little camera, a different view. Original warm color and monochrome geometric postcards.</desc>
+  <rect width="1024" height="500" fill="#172019"/>
+  <ellipse cx="900" cy="180" rx="290" ry="350" fill="#263025"/>
+  <rect x="1008" width="16" height="500" fill="#F4B942"/>
+  <rect x="80" y="172" width="44" height="6" rx="3" fill="#F4B942"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="80" y="125" font-size="47" font-weight="700" letter-spacing="4" fill="#F4EEDC">PHYTOY</text>
+    <text x="80" y="262" font-size="42" font-weight="700" fill="#F4B942">A little camera.</text>
+    <text x="80" y="320" font-size="42" font-weight="700" fill="#F4EEDC">A different view.</text>
+    <text x="80" y="390" font-size="25" fill="#C8CDBD">Color. Monochrome. Character.</text>
+  </g>
+  <g transform="translate(627 144) rotate(-10 88.0 121.0)">
+    <rect width="176" height="242" rx="16" fill="#7D897E"/>
+    <rect x="8" y="8" width="160" height="210" rx="9" fill="#2C3A30"/>
+    <circle cx="96.80" cy="67.76" r="36.96" fill="#BCC5B7"/>
+    <polygon points="8.00,154.88 61.60,111.32 116.16,147.62 168.00,96.80 168.00,218.00 8.00,218.00" fill="#556658"/>
+  </g>
+  <g transform="translate(689 104) rotate(4 88.0 121.0)">
+    <rect width="176" height="242" rx="16" fill="#C3A264"/>
+    <rect x="8" y="8" width="160" height="210" rx="9" fill="#99763D"/>
+    <circle cx="96.80" cy="67.76" r="36.96" fill="#EED391"/>
+    <polygon points="8.00,154.88 61.60,111.32 116.16,147.62 168.00,96.80 168.00,218.00 8.00,218.00" fill="#4D5C3D"/>
+  </g>
+  <g transform="translate(747 164) rotate(13 80.0 111.5)">
+    <rect width="160" height="223" rx="16" fill="#F4B942"/>
+    <rect x="8" y="8" width="144" height="191" rx="9" fill="#3D573A"/>
+    <circle cx="88.00" cy="62.44" r="33.60" fill="#D3B562"/>
+    <polygon points="8.00,142.72 56.00,102.58 105.60,136.03 152.00,89.20 152.00,199.00 8.00,199.00" fill="#1C3024"/>
+  </g>
+</svg>

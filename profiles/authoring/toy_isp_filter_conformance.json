@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.isp_filter_conformance",
+  "version": "1.0.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "optics": {
+    "distortion": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "ca_scale": [
+      1,
+      1,
+      1
+    ],
+    "vignette": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "psf": {
+      "bases": [
+        [
+          [
+            1.0
+          ]
+        ]
+      ],
+      "coefficients": [
+        [
+          [
+            [
+              1.0
+            ]
+          ],
+          [
+            [
+              1.0
+            ]
+          ],
+          [
+            [
+              1.0
+            ]
+          ]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "exposure_scale_e": 720.0,
+    "full_well_e": 900.0,
+    "conversion_gain_e_per_dn": 1.0,
+    "black_level_dn": 64.0,
+    "white_level_dn": 1023.0,
+    "adc_bits": 10,
+    "read_noise_e": 0.0,
+    "row_noise_e": 0.0,
+    "column_noise_e": 0.0,
+    "prnu_sigma": 0.0,
+    "dsnu_e": 0.0,
+    "profile_seed": 17991,
+    "noise_enabled": false
+  },
+  "isp": {
+    "white_balance": [
+      1,
+      1,
+      1
+    ],
+    "sensor_to_rec2020": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ],
+    "tone_curve": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1.5,
+        1
+      ]
+    ],
+    "denoise_sigma": 0.8,
+    "sharpen_amount": 1.2,
+    "sharpen_radius": 0.65
+  },
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "synthetic_locked",
+    "target_name": "ISP denoise/sharpen conformance fixture",
+    "source": "Engineering regression fixture with both spatial filters enabled; no real-camera fidelity claim",
+    "license": "MIT"
+  }
+}

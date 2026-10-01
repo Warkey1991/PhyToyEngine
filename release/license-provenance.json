@@ -1,0 +1,7 @@
+{
+  "exifinterface_version": "1.4.2",
+  "androidx_notice_source": "META-INF/androidx/exifinterface/exifinterface/LICENSE.txt in official 1.4.2 AAR",
+  "ndk_version": "28.2.13676358",
+  "ndk_notice_sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
+  "bundled_notices_sha256": "cab3b56bea1d66442957ebd0036340b765e0f7b667b39cba30db10fbdb3f7b07"
+}

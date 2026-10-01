@@ -1,0 +1,10 @@
+Internal ctest changing into directory: /Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build
+Test project /Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build
+    Start 1: phytoy_core_tests
+1/2 Test #1: phytoy_core_tests ................   Passed    0.60 sec
+    Start 2: phytoy_python_reference_tests
+2/2 Test #2: phytoy_python_reference_tests ....   Passed   13.99 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =  14.60 sec

@@ -11,6 +11,7 @@ from .normalize import normalize_raw, normalize_srgb, normalize_yuv420
 from .optics import apply_optics
 from .profiles import load_host_profile, load_toy_profile
 from .sensor import simulate_sensor
+from .sampling import profile_for_resolution
 
 
 @dataclass(frozen=True)
@@ -49,12 +50,13 @@ class ReferencePipeline:
         return self._render_scene(scene, seed=seed)
 
     def _render_scene(self, scene: np.ndarray, *, seed: int) -> RenderResult:
+        toy = profile_for_resolution(self.toy_profile, scene.shape[1], scene.shape[0])
         stages: dict[str, np.ndarray] = {"01_scene_linear": scene.copy()}
-        optical = apply_optics(scene, self.toy_profile)
+        optical = apply_optics(scene, toy)
         stages["02_target_optics"] = optical.copy()
-        sensor_dn = simulate_sensor(optical, self.toy_profile, seed=seed)
+        sensor_dn = simulate_sensor(optical, toy, seed=seed)
         stages["03_target_sensor_dn"] = sensor_dn.copy()
-        toned, output = run_isp(sensor_dn, self.toy_profile)
+        toned, output = run_isp(sensor_dn, toy)
         stages["04_target_isp_linear"] = toned.copy()
         stages["05_output_srgb"] = output.copy()
         return RenderResult(
@@ -64,4 +66,3 @@ class ReferencePipeline:
             host_profile_id=self.host_profile["id"],
             toy_profile_id=self.toy_profile["id"],
         )
-

@@ -6,6 +6,9 @@ layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float outpu
 layout(std430, set = 0, binding = 2) buffer AuxBuffer { float aux_pixels[]; };
 layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float parameters[]; };
 
+shared float row_noise_tile[16];
+shared float column_noise_tile[16];
+
 uint hash32(uint value) {
     value ^= value >> 16;
     value *= 0x7feb352du;
@@ -52,6 +55,20 @@ void main() {
     int y = int(gl_GlobalInvocationID.y);
     int width = int(parameters[0] + 0.5);
     int height = int(parameters[1] + 0.5);
+    uint profile_seed = floatBitsToUint(parameters[21]);
+    uint photo_seed = floatBitsToUint(parameters[22]);
+    bool noise_enabled = parameters[24] > 0.5;
+    if (noise_enabled && gl_LocalInvocationID.y == 0u) {
+        column_noise_tile[gl_LocalInvocationID.x] = parameters[18] * normal_sample(
+            profile_seed ^ 0x434f4cu,
+            uint(x + 1));
+    }
+    if (noise_enabled && gl_LocalInvocationID.x == 0u) {
+        row_noise_tile[gl_LocalInvocationID.y] = parameters[17] * normal_sample(
+            photo_seed ^ 0x524f57u,
+            uint(y + 1));
+    }
+    barrier();
     if (x >= width || y >= height) return;
     int pattern = int(parameters[23] + 0.5);
     int channel = cfa_channel(pattern, x, y);
@@ -63,21 +80,22 @@ void main() {
         parameters[matrix_offset + 1] * input_pixels[rgb_offset + 1] +
         parameters[matrix_offset + 2] * input_pixels[rgb_offset + 2], 0.0);
     float expected = response * parameters[11];
-    uint profile_seed = floatBitsToUint(parameters[21]);
-    uint photo_seed = floatBitsToUint(parameters[22]);
     uint counter = uint(rgb_offset + channel + 1);
-    bool noise_enabled = parameters[24] > 0.5;
     if (noise_enabled && parameters[19] > 0.0) {
         expected *= max(1.0 + parameters[19] * normal_sample(profile_seed, counter + 11u), 0.0);
     }
     float electrons = noise_enabled ? poisson_sample(expected, photo_seed, counter + 101u) : expected;
     if (noise_enabled) {
-        electrons += parameters[17] * normal_sample(photo_seed ^ 0x524f57u, uint(y + 1));
-        electrons += parameters[18] * normal_sample(profile_seed ^ 0x434f4cu, uint(x + 1));
+        electrons += row_noise_tile[gl_LocalInvocationID.y];
+        electrons += column_noise_tile[gl_LocalInvocationID.x];
         electrons += parameters[16] * normal_sample(photo_seed ^ 0x52454144u, counter);
         electrons += parameters[20] * normal_sample(profile_seed ^ 0x44534e55u, counter);
     }
     electrons = clamp(electrons, 0.0, parameters[12]);
-    output_pixels[pixel] = clamp(round(electrons / parameters[13] + parameters[14]),
-                                 0.0, parameters[15]);
+    float adc = electrons / parameters[13] + parameters[14];
+    // GLSL round leaves .5 ties implementation-dependent. Use the same
+    // nonnegative half-up rule as CPU/reference, without adding .5 first.
+    float integral = floor(adc);
+    float quantized = integral + (adc - integral >= 0.5 ? 1.0 : 0.0);
+    output_pixels[pixel] = clamp(quantized, 0.0, parameters[15]);
 }

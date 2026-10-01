@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="gallery_page" type="id" />
+    <item name="gallery_back" type="id" />
+    <item name="gallery_item" type="id" />
+    <item name="gallery_empty" type="id" />
+    <item name="gallery_count" type="id" />
+</resources>

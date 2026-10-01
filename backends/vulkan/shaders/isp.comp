@@ -7,16 +7,20 @@ layout(std430, set = 0, binding = 2) buffer AuxBuffer { float aux_pixels[]; };
 layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float parameters[]; };
 
 const int MAX_FILTER_RADIUS = 4;
-const int SCENE_TILE_WIDTH = 16 + MAX_FILTER_RADIUS * 2;
-const int RAW_TILE_WIDTH = SCENE_TILE_WIDTH + 2;
+const int LOCAL_WIDTH = 16;
+const int MAX_COMBINED_RADIUS = MAX_FILTER_RADIUS * 2;
+const int MAX_SCENE_TILE_WIDTH = LOCAL_WIDTH + MAX_COMBINED_RADIUS * 2;
+const int MAX_RAW_TILE_WIDTH = MAX_SCENE_TILE_WIDTH + 2;
 const int FILTER_WIDTH = MAX_FILTER_RADIUS * 2 + 1;
-const int FILTER_SAMPLES = FILTER_WIDTH * FILTER_WIDTH;
-shared float raw_tile[RAW_TILE_WIDTH * RAW_TILE_WIDTH];
-shared vec4 scene_tile[SCENE_TILE_WIDTH * SCENE_TILE_WIDTH];
-shared float denoise_weights[FILTER_SAMPLES];
-shared float sharpen_weights[FILTER_SAMPLES];
-shared float denoise_weight_sum;
-shared float sharpen_weight_sum;
+const int COMBINED_FILTER_WIDTH = MAX_COMBINED_RADIUS * 2 + 1;
+// Packed RGB keeps the maximum halo under Vulkan's guaranteed 32 KiB workgroup
+// shared-memory budget: 23,196 bytes, without vec4 padding or extra frame buffers.
+shared float raw_tile[MAX_RAW_TILE_WIDTH * MAX_RAW_TILE_WIDTH];
+shared float scene_tile[MAX_SCENE_TILE_WIDTH * MAX_SCENE_TILE_WIDTH * 3];
+shared float sharpen_horizontal[LOCAL_WIDTH * MAX_SCENE_TILE_WIDTH * 3];
+shared float denoise_axis_weights[FILTER_WIDTH];
+shared float sharpen_axis_weights[FILTER_WIDTH];
+shared float lowpass_axis_weights[COMBINED_FILTER_WIDTH];
 
 int mirror_index(int coordinate, int size) {
     if (size <= 1) return 0;
@@ -35,12 +39,12 @@ int cfa_channel(int pattern, int x, int y) {
     int colors[4] = int[4](1, 2, 0, 1); return colors[parity];
 }
 
-float shared_raw(int x, int y) {
-    return raw_tile[y * RAW_TILE_WIDTH + x];
+float shared_raw(int x, int y, int raw_width) {
+    return raw_tile[y * raw_width + x];
 }
 
 vec3 demosaic_shared(int tile_x, int tile_y, int global_x, int global_y,
-                     int width, int height, int pattern) {
+                     int width, int height, int pattern, int raw_width) {
     float kernel[9] = float[9](1.0, 2.0, 1.0, 2.0, 4.0, 2.0, 1.0, 2.0, 1.0);
     vec3 numerator = vec3(0.0);
     vec3 denominator = vec3(0.0);
@@ -50,7 +54,7 @@ vec3 demosaic_shared(int tile_x, int tile_y, int global_x, int global_y,
             int sy = mirror_index(global_y + ky, height);
             int channel = cfa_channel(pattern, sx, sy);
             float weight = kernel[(ky + 1) * 3 + kx + 1];
-            numerator[channel] += shared_raw(tile_x + 1 + kx, tile_y + 1 + ky) * weight;
+            numerator[channel] += shared_raw(tile_x + 1 + kx, tile_y + 1 + ky, raw_width) * weight;
             denominator[channel] += weight;
         }
     }
@@ -65,87 +69,133 @@ vec3 color_transform(vec3 rgb) {
         dot(vec3(parameters[14], parameters[15], parameters[16]), rgb));
 }
 
-void populate_shared_tiles(int width, int height, int pattern) {
+void populate_shared_tiles(int width, int height, int pattern, int halo) {
     int local_index = int(gl_LocalInvocationIndex);
-    int base_x = int(gl_WorkGroupID.x) * 16;
-    int base_y = int(gl_WorkGroupID.y) * 16;
-    for (int index = local_index; index < RAW_TILE_WIDTH * RAW_TILE_WIDTH; index += 256) {
-        int tile_x = index % RAW_TILE_WIDTH;
-        int tile_y = index / RAW_TILE_WIDTH;
-        int source_x = mirror_index(base_x + tile_x - MAX_FILTER_RADIUS - 1, width);
-        int source_y = mirror_index(base_y + tile_y - MAX_FILTER_RADIUS - 1, height);
+    int base_x = int(gl_WorkGroupID.x) * LOCAL_WIDTH;
+    int base_y = int(gl_WorkGroupID.y) * LOCAL_WIDTH;
+    int scene_width = LOCAL_WIDTH + halo * 2;
+    int raw_width = scene_width + 2;
+    for (int index = local_index; index < raw_width * raw_width; index += 256) {
+        int tile_x = index % raw_width;
+        int tile_y = index / raw_width;
+        int source_x = mirror_index(base_x + tile_x - halo - 1, width);
+        int source_y = mirror_index(base_y + tile_y - halo - 1, height);
         raw_tile[index] = max(
             (input_pixels[source_y * width + source_x] - parameters[2]) /
             max(parameters[3] - parameters[2], 1e-12), 0.0);
     }
     barrier();
-    for (int index = local_index; index < SCENE_TILE_WIDTH * SCENE_TILE_WIDTH; index += 256) {
-        int tile_x = index % SCENE_TILE_WIDTH;
-        int tile_y = index / SCENE_TILE_WIDTH;
-        int global_x = base_x + tile_x - MAX_FILTER_RADIUS;
-        int global_y = base_y + tile_y - MAX_FILTER_RADIUS;
+    for (int index = local_index; index < scene_width * scene_width; index += 256) {
+        int tile_x = index % scene_width;
+        int tile_y = index / scene_width;
+        int global_x = base_x + tile_x - halo;
+        int global_y = base_y + tile_y - halo;
         vec3 scene = color_transform(demosaic_shared(
-            tile_x, tile_y, global_x, global_y, width, height, pattern));
-        scene_tile[index] = vec4(scene, 0.0);
+            tile_x, tile_y, global_x, global_y, width, height, pattern, raw_width));
+        int offset = index * 3;
+        scene_tile[offset] = scene.r;
+        scene_tile[offset + 1] = scene.g;
+        scene_tile[offset + 2] = scene.b;
     }
     barrier();
 }
 
-vec3 shared_scene(int x, int y) {
-    return scene_tile[y * SCENE_TILE_WIDTH + x].rgb;
+vec3 shared_scene(int x, int y, int scene_width) {
+    int offset = (y * scene_width + x) * 3;
+    return vec3(scene_tile[offset], scene_tile[offset + 1], scene_tile[offset + 2]);
 }
 
 int filter_radius(float sigma) {
-    return sigma <= 0.0
-        ? 0
-        : min(max(int(ceil(4.0 * sigma)), 1), MAX_FILTER_RADIUS);
+    // Match scipy.ndimage.gaussian_filter's truncate=4 radius, including radius
+    // zero for subpixel sigma. The host rejects active sigma above 1 beforehand.
+    return sigma <= 0.0 ? 0 : min(int(floor(4.0 * sigma + 0.5)), MAX_FILTER_RADIUS);
 }
 
 void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
     int local_index = int(gl_LocalInvocationIndex);
-    for (int index = local_index; index < FILTER_SAMPLES; index += 256) {
-        int kx = index % FILTER_WIDTH - MAX_FILTER_RADIUS;
-        int ky = index / FILTER_WIDTH - MAX_FILTER_RADIUS;
-        float distance2 = float(kx * kx + ky * ky);
-        int denoise_radius = filter_radius(denoise_sigma);
-        int sharpen_radius = filter_radius(sharpen_sigma);
-        denoise_weights[index] = denoise_sigma <= 0.0
-            ? ((kx == 0 && ky == 0) ? 1.0 : 0.0)
-            : ((abs(kx) <= denoise_radius && abs(ky) <= denoise_radius)
-                ? exp(-0.5 * distance2 / (denoise_sigma * denoise_sigma))
-                : 0.0);
-        sharpen_weights[index] = sharpen_sigma <= 0.0
-            ? ((kx == 0 && ky == 0) ? 1.0 : 0.0)
-            : ((abs(kx) <= sharpen_radius && abs(ky) <= sharpen_radius)
-                ? exp(-0.5 * distance2 / (sharpen_sigma * sharpen_sigma))
-                : 0.0);
+    int denoise_radius = filter_radius(denoise_sigma);
+    int sharpen_radius = filter_radius(sharpen_sigma);
+    if (local_index < FILTER_WIDTH) {
+        int offset = local_index - MAX_FILTER_RADIUS;
+        denoise_axis_weights[local_index] = denoise_radius == 0
+            ? (offset == 0 ? 1.0 : 0.0)
+            : (abs(offset) <= denoise_radius
+                ? exp(-0.5 * float(offset * offset) / (denoise_sigma * denoise_sigma)) : 0.0);
+        sharpen_axis_weights[local_index] = sharpen_radius == 0
+            ? (offset == 0 ? 1.0 : 0.0)
+            : (abs(offset) <= sharpen_radius
+                ? exp(-0.5 * float(offset * offset) / (sharpen_sigma * sharpen_sigma)) : 0.0);
     }
     barrier();
     if (local_index == 0) {
-        denoise_weight_sum = 0.0;
-        sharpen_weight_sum = 0.0;
-        for (int index = 0; index < FILTER_SAMPLES; ++index) {
-            denoise_weight_sum += denoise_weights[index];
-            sharpen_weight_sum += sharpen_weights[index];
+        float denoise_sum = 0.0;
+        float sharpen_sum = 0.0;
+        for (int index = 0; index < FILTER_WIDTH; ++index) {
+            denoise_sum += denoise_axis_weights[index];
+            sharpen_sum += sharpen_axis_weights[index];
         }
+        for (int index = 0; index < FILTER_WIDTH; ++index) {
+            denoise_axis_weights[index] /= max(denoise_sum, 1e-12);
+            sharpen_axis_weights[index] /= max(sharpen_sum, 1e-12);
+        }
+    }
+    barrier();
+    if (local_index < COMBINED_FILTER_WIDTH) {
+        int combined_offset = local_index - MAX_COMBINED_RADIUS;
+        float value = 0.0;
+        for (int index = 0; index < FILTER_WIDTH; ++index) {
+            int sharpen_index = combined_offset - (index - MAX_FILTER_RADIUS) + MAX_FILTER_RADIUS;
+            if (sharpen_index >= 0 && sharpen_index < FILTER_WIDTH) {
+                value += denoise_axis_weights[index] * sharpen_axis_weights[sharpen_index];
+            }
+        }
+        // G_sharpen * G_denoise is precisely blur(denoised scene), rather than
+        // the former low-pass of the original, unfiltered demosaic.
+        lowpass_axis_weights[local_index] = value;
     }
     barrier();
 }
 
-vec3 gaussian_scene_shared(int x, int y, bool sharpen_kernel, int radius) {
+void populate_sharpen_horizontal(int radius, int halo, int scene_width) {
+    int local_index = int(gl_LocalInvocationIndex);
+    for (int index = local_index; index < LOCAL_WIDTH * scene_width; index += 256) {
+        int output_x = index % LOCAL_WIDTH;
+        int tile_y = index / LOCAL_WIDTH;
+        int scene_x = output_x + halo;
+        vec3 sum = vec3(0.0);
+        for (int kx = -radius; kx <= radius; ++kx) {
+            sum += shared_scene(scene_x + kx, tile_y, scene_width) *
+                   lowpass_axis_weights[kx + MAX_COMBINED_RADIUS];
+        }
+        int offset = index * 3;
+        sharpen_horizontal[offset] = sum.r;
+        sharpen_horizontal[offset + 1] = sum.g;
+        sharpen_horizontal[offset + 2] = sum.b;
+    }
+    barrier();
+}
+
+vec3 gaussian_sharpen_separable(int local_x, int local_y, int radius) {
+    vec3 sum = vec3(0.0);
+    for (int ky = -radius; ky <= radius; ++ky) {
+        int offset = ((local_y + ky) * LOCAL_WIDTH + local_x) * 3;
+        sum += vec3(sharpen_horizontal[offset], sharpen_horizontal[offset + 1],
+                    sharpen_horizontal[offset + 2]) *
+               lowpass_axis_weights[ky + MAX_COMBINED_RADIUS];
+    }
+    return sum;
+}
+
+vec3 gaussian_denoise_shared(int x, int y, int radius, int scene_width) {
     vec3 sum = vec3(0.0);
     for (int ky = -radius; ky <= radius; ++ky) {
         for (int kx = -radius; kx <= radius; ++kx) {
-            int index = (ky + MAX_FILTER_RADIUS) * FILTER_WIDTH +
-                        kx + MAX_FILTER_RADIUS;
-            float weight = sharpen_kernel
-                ? sharpen_weights[index]
-                : denoise_weights[index];
-            sum += shared_scene(x + kx, y + ky) * weight;
+            float weight = denoise_axis_weights[kx + MAX_FILTER_RADIUS] *
+                           denoise_axis_weights[ky + MAX_FILTER_RADIUS];
+            sum += shared_scene(x + kx, y + ky, scene_width) * weight;
         }
     }
-    float weight_sum = sharpen_kernel ? sharpen_weight_sum : denoise_weight_sum;
-    return sum / max(weight_sum, 1e-12);
+    return sum;
 }
 
 float apply_tone(float value, int count, int offset) {
@@ -179,20 +229,31 @@ void main() {
     float denoise_sigma = parameters[filter_offset];
     float sharpen_amount = parameters[filter_offset + 1];
     float sharpen_radius = parameters[filter_offset + 2];
-    populate_shared_tiles(width, height, pattern);
-    populate_filter_weights(denoise_sigma, sharpen_radius);
-    if (x >= width || y >= height) return;
-    int shared_x = int(gl_LocalInvocationID.x) + MAX_FILTER_RADIUS;
-    int shared_y = int(gl_LocalInvocationID.y) + MAX_FILTER_RADIUS;
-    vec3 scene = denoise_sigma <= 0.0
-        ? shared_scene(shared_x, shared_y)
-        : gaussian_scene_shared(
-            shared_x, shared_y, false, filter_radius(denoise_sigma));
+    int denoise_radius = filter_radius(denoise_sigma);
+    float active_sharpen_sigma = sharpen_amount != 0.0 ? sharpen_radius : 0.0;
+    int lowpass_radius = denoise_radius + filter_radius(active_sharpen_sigma);
+    int halo = sharpen_amount != 0.0 ? lowpass_radius : denoise_radius;
+    int scene_width = LOCAL_WIDTH + halo * 2;
+    populate_shared_tiles(width, height, pattern, halo);
+    populate_filter_weights(denoise_sigma, active_sharpen_sigma);
     if (sharpen_amount != 0.0) {
-        vec3 low_pass = gaussian_scene_shared(
-            shared_x, shared_y, true, filter_radius(sharpen_radius));
+        populate_sharpen_horizontal(lowpass_radius, halo, scene_width);
+    }
+    // Every invocation, including the partial right/bottom workgroup, reaches
+    // all barriers before only the active image coordinates write output.
+    if (x >= width || y >= height) return;
+    int shared_x = int(gl_LocalInvocationID.x) + halo;
+    int shared_y = int(gl_LocalInvocationID.y) + halo;
+    vec3 scene = denoise_radius == 0
+        ? shared_scene(shared_x, shared_y, scene_width)
+        : gaussian_denoise_shared(shared_x, shared_y, denoise_radius, scene_width);
+    if (sharpen_amount != 0.0) {
+        vec3 low_pass = gaussian_sharpen_separable(
+            int(gl_LocalInvocationID.x), shared_y, lowpass_radius);
         scene += sharpen_amount * (scene - low_pass);
     }
+    bool monochrome = parameters[filter_offset + 3] > 0.5;
+    if (monochrome) scene = vec3(dot(scene, vec3(0.2627, 0.6780, 0.0593)));
     vec3 toned = vec3(
         apply_tone(max(scene.r, 0.0), tone_count, tone_offset),
         apply_tone(max(scene.g, 0.0), tone_count, tone_offset),
@@ -205,6 +266,7 @@ void main() {
         dot(vec3(1.66024000, -0.58754781, -0.07284033), toned),
         dot(vec3(-0.12455047, 1.13292614, -0.00834956), toned),
         dot(vec3(-0.01815076, -0.10060300, 1.11899818), toned));
+    if (monochrome) linear_srgb = toned;
     output_pixels[output_offset] = clamp(srgb_encode(linear_srgb.r), 0.0, 1.0);
     output_pixels[output_offset + 1] = clamp(srgb_encode(linear_srgb.g), 0.0, 1.0);
     output_pixels[output_offset + 2] = clamp(srgb_encode(linear_srgb.b), 0.0, 1.0);

@@ -1,0 +1,18 @@
+test_aab_alignment_16kb (test_android_release.ReleaseGateTest) ... ok
+test_aab_rejects_default_4kb (test_android_release.ReleaseGateTest) ... ok
+test_allows_safe_partial_relro_page (test_android_release.ReleaseGateTest) ... ok
+test_apk_aapt_legacy_security_flags (test_android_release.ReleaseGateTest) ... ok
+test_apk_aapt_modern_security_flags (test_android_release.ReleaseGateTest) ... ok
+test_elf_valid_16kb (test_android_release.ReleaseGateTest) ... ok
+test_rejects_4kb_elf (test_android_release.ReleaseGateTest) ... ok
+test_rejects_executable_stack (test_android_release.ReleaseGateTest) ... ok
+test_rejects_overprotecting_writable_memory (test_android_release.ReleaseGateTest) ... ok
+test_rejects_truncated_program_table (test_android_release.ReleaseGateTest) ... ok
+test_rejects_truncated_proto (test_android_release.ReleaseGateTest) ... ok
+test_rejects_write_execute_segment (test_android_release.ReleaseGateTest) ... ok
+test_xml_reads_compiled_false (test_android_release.ReleaseGateTest) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.003s
+
+OK

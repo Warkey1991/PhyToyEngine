@@ -19,6 +19,7 @@ def _digest(array: np.ndarray, decimals: int) -> str:
     "manifest_name",
     [
         "reference_srgb_16x12_v1.json",
+        "harinezumi_2pp_daylight_srgb_16x12_v0_1.json",
         "phytoy_digital_01_srgb_16x12_v1.json",
         "phytoy_digital_01_srgb_16x12_v1_1.json",
     ],

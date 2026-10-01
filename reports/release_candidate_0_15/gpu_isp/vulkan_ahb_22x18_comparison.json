@@ -1,0 +1,43 @@
+{
+  "height": 18,
+  "passed": true,
+  "seed": 1234,
+  "stages": {
+    "01_scene_linear": {
+      "limit": 2e-05,
+      "max_absolute": 5.3430839440371525e-09,
+      "mean_absolute": 5.565823625609737e-10,
+      "passed": true,
+      "rmse": 8.091518555583693e-10
+    },
+    "02_target_optics": {
+      "limit": 8e-05,
+      "max_absolute": 7.2057290932681095e-09,
+      "mean_absolute": 5.797163705207465e-10,
+      "passed": true,
+      "rmse": 8.567151300021379e-10
+    },
+    "03_target_sensor_dn": {
+      "limit": 0.51,
+      "max_absolute": 0.0,
+      "mean_absolute": 0.0,
+      "passed": true,
+      "rmse": 0.0
+    },
+    "04_target_isp_linear": {
+      "limit": 0.002,
+      "max_absolute": 1.078430930320784e-08,
+      "mean_absolute": 8.766948825403934e-10,
+      "passed": true,
+      "rmse": 1.3861129545896584e-09
+    },
+    "05_output_srgb": {
+      "limit": 0.003,
+      "max_absolute": 4.410898062634505e-07,
+      "mean_absolute": 1.5209262277136476e-07,
+      "passed": true,
+      "rmse": 1.8330710248284855e-07
+    }
+  },
+  "width": 22
+}

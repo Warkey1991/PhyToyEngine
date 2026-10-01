@@ -22,6 +22,10 @@ extern "C" {
 
 #define PTE_ABI_VERSION 2u
 
+/* Production frame budget; invalid dimensions are rejected before allocation. */
+#define PTE_MAX_IMAGE_DIMENSION 8192u
+#define PTE_MAX_IMAGE_PIXELS 16777216u
+
 typedef struct pte_engine pte_engine_t;
 typedef struct AHardwareBuffer AHardwareBuffer;
 typedef struct ANativeWindow ANativeWindow;
@@ -74,6 +78,8 @@ typedef struct pte_frame_f32 {
 
 typedef struct pte_output_f32 {
     float* data;
+    /* Must cover (height - 1) * effective_stride + width * 3 floats.
+       Zero row stride uses width * 3; row padding is never written. */
     size_t capacity_floats;
     uint32_t row_stride_floats;
 } pte_output_f32_t;
@@ -134,7 +140,10 @@ typedef struct pte_ahardware_buffer_frame {
 
 PTE_API const char* pte_version_string(void);
 
-/* Thread-local error for calls that fail before an engine exists, including create. */
+/* C++ exceptions are contained by the C ABI. Error reporting uses a static
+   fallback if allocating diagnostic text fails. This thread-local error is
+   used before an engine exists, including create, and for mutex-acquisition
+   failures where engine state cannot safely be accessed. */
 PTE_API const char* pte_last_error(void);
 
 PTE_API pte_status_t pte_engine_create(
@@ -198,6 +207,8 @@ PTE_API pte_status_t pte_engine_render(
     const pte_render_options_t* options,
     pte_output_f32_t* output);
 
+/* Thread-local snapshot, stable across renders on other threads. Valid until
+   the next pte_engine_last_error call on the same thread. NULL returns pte_last_error. */
 PTE_API const char* pte_engine_last_error(const pte_engine_t* engine);
 
 #ifdef __cplusplus

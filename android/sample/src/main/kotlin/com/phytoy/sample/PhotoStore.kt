@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
+import androidx.exifinterface.media.ExifInterface
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
@@ -26,6 +26,14 @@ internal class PhotoStore(private val context: Context) {
         val displayName: String,
         val width: Int,
         val height: Int,
+        val styleName: String,
+        val styleCode: String,
+    )
+
+    data class SaveResult(
+        val photo: SavedPhoto,
+        val thumbnail: Bitmap,
+        val review: Bitmap,
     )
 
     private val resolver = context.contentResolver
@@ -34,10 +42,30 @@ internal class PhotoStore(private val context: Context) {
     fun save(
         frame: PhyToyCameraSession.CapturedFrame,
         metadata: CaptureMetadata,
-    ): SavedPhoto {
-        val bitmap = frame.toOrientedBitmap()
-        var temporaryJpeg: File? = null
+        reviewMaximumWidth: Int,
+        reviewMaximumHeight: Int,
+    ): SaveResult {
+        val allocated = mutableListOf<Bitmap>()
+        fun own(bitmap: Bitmap): Bitmap = bitmap.also { allocated.add(it) }
+        var retainedReview: Bitmap? = null
+        var retainedThumbnail: Bitmap? = null
         try {
+            val oriented = own(frame.toOrientedBitmap())
+            val cropped = oriented.centerCrop(metadata.outputAspect).also {
+                if (it !== oriented) oriented.recycle()
+            }.let(::own)
+            val bitmap = cropped.fitPixelBudget(metadata.maximumOutputPixels).also {
+                if (it !== cropped) cropped.recycle()
+            }.let(::own)
+            val review = own(bitmap.scaledToFit(reviewMaximumWidth, reviewMaximumHeight))
+            val thumbnail = ThumbnailUtils.extractThumbnail(
+                review,
+                THUMBNAIL_SIZE,
+                THUMBNAIL_SIZE,
+            ).let { extracted ->
+                if (extracted !== review) extracted
+                else checkNotNull(extracted.copy(Bitmap.Config.ARGB_8888, false))
+            }.let(::own)
             val capturedAt = Date(metadata.capturedAtMillis)
             val name = "PT_${FILE_STAMP.format(capturedAt)}.jpg"
             val values = ContentValues().apply {
@@ -70,95 +98,136 @@ internal class PhotoStore(private val context: Context) {
                 resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             ) { "MediaStore rejected the new photo" }
             try {
-                temporaryJpeg = File.createTempFile("phytoy_capture_", ".jpg", context.cacheDir)
-                temporaryJpeg.outputStream().use { stream ->
+                resolver.openOutputStream(uri, "w").use { stream ->
+                    checkNotNull(stream) { "Unable to open the new photo" }
                     check(bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, stream)) {
                         "JPEG encoder failed"
                     }
                 }
-                writeExif(temporaryJpeg, metadata)
-                resolver.openOutputStream(uri, "w").use { stream ->
-                    checkNotNull(stream) { "Unable to open the new photo" }
-                    temporaryJpeg.inputStream().use { source -> source.copyTo(stream) }
-                }
+                writeExif(uri, metadata)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    resolver.update(
+                    check(resolver.update(
                         uri,
                         ContentValues().apply { put(MediaStore.Images.Media.IS_PENDING, 0) },
                         null,
                         null,
-                    )
+                    ) == 1) { "Unable to publish the new photo" }
                 }
-                preferences.edit().putString(LAST_PHOTO_URI, uri.toString()).apply()
-                return SavedPhoto(uri, name, bitmap.width, bitmap.height)
+                val saved = SavedPhoto(
+                    uri = uri,
+                    displayName = name,
+                    width = bitmap.width,
+                    height = bitmap.height,
+                    styleName = metadata.styleName,
+                    styleCode = metadata.styleCode,
+                )
+                preferences.edit()
+                    .putString(LAST_PHOTO_URI, uri.toString())
+                    .putString(LAST_PHOTO_NAME, saved.displayName)
+                    .putInt(LAST_PHOTO_WIDTH, saved.width)
+                    .putInt(LAST_PHOTO_HEIGHT, saved.height)
+                    .putString(LAST_PHOTO_STYLE_NAME, saved.styleName)
+                    .putString(LAST_PHOTO_STYLE_CODE, saved.styleCode)
+                    .apply()
+                retainedReview = review
+                retainedThumbnail = thumbnail
+                return SaveResult(saved, thumbnail, review)
             } catch (exception: Throwable) {
-                resolver.delete(uri, null, null)
+                // Keep the actual encoding/storage failure if cleanup also fails.
+                runCatching { resolver.delete(uri, null, null) }
+                    .exceptionOrNull()?.let(exception::addSuppressed)
                 throw exception
             }
         } finally {
-            temporaryJpeg?.delete()
-            bitmap.recycle()
+            allocated.forEach { bitmap ->
+                if (bitmap !== retainedReview && bitmap !== retainedThumbnail && !bitmap.isRecycled) {
+                    bitmap.recycle()
+                }
+            }
         }
     }
 
-    private fun writeExif(file: File, metadata: CaptureMetadata) {
+    private fun writeExif(uri: Uri, metadata: CaptureMetadata) {
         val dateTime = EXIF_STAMP.format(Date(metadata.capturedAtMillis))
-        ExifInterface(file.absolutePath).apply {
-            setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL.toString())
-            setAttribute(ExifInterface.TAG_DATETIME, dateTime)
-            setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, dateTime)
-            setAttribute(ExifInterface.TAG_DATETIME_DIGITIZED, dateTime)
-            metadata.iso?.let {
-                setAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS, it.toString())
-            }
-            metadata.exposureTimeNanos?.let {
+        resolver.openFileDescriptor(uri, "rw").use { descriptor ->
+            checkNotNull(descriptor) { "Unable to reopen the new photo for EXIF" }
+            ExifInterface(descriptor.fileDescriptor).apply {
+                setAttribute(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL.toString())
+                setAttribute(ExifInterface.TAG_DATETIME, dateTime)
+                setAttribute(ExifInterface.TAG_DATETIME_ORIGINAL, dateTime)
+                setAttribute(ExifInterface.TAG_DATETIME_DIGITIZED, dateTime)
+                metadata.iso?.let {
+                    setAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY, it.toString())
+                }
+                metadata.exposureTimeNanos?.let {
+                    setAttribute(
+                        ExifInterface.TAG_EXPOSURE_TIME,
+                        String.format(Locale.US, "%.9f", it / 1_000_000_000.0),
+                    )
+                }
+                metadata.focalLengthMillimeters?.let {
+                    setAttribute(
+                        ExifInterface.TAG_FOCAL_LENGTH,
+                        "${(it * EXIF_RATIONAL_SCALE).roundToInt()}/$EXIF_RATIONAL_SCALE",
+                    )
+                }
                 setAttribute(
-                    ExifInterface.TAG_EXPOSURE_TIME,
-                    String.format(Locale.US, "%.9f", it / 1_000_000_000.0),
+                    ExifInterface.TAG_EXPOSURE_BIAS_VALUE,
+                    "${(metadata.exposureCompensation * EXIF_RATIONAL_SCALE).roundToInt()}/" +
+                        EXIF_RATIONAL_SCALE,
                 )
-            }
-            metadata.focalLengthMillimeters?.let {
                 setAttribute(
-                    ExifInterface.TAG_FOCAL_LENGTH,
-                    "${(it * EXIF_RATIONAL_SCALE).roundToInt()}/$EXIF_RATIONAL_SCALE",
+                    ExifInterface.TAG_SOFTWARE,
+                    "PhyToy Camera / ${metadata.styleCode} ${metadata.styleVersion}",
                 )
+                setAttribute(
+                    ExifInterface.TAG_IMAGE_DESCRIPTION,
+                    "PhyToy ${metadata.styleCode} ${metadata.styleVersion}",
+                )
+                setAttribute(
+                    ExifInterface.TAG_USER_COMMENT,
+                    "Lens=${metadata.lensFacing}; Style=${metadata.styleCode}; " +
+                        "StyleVersion=${metadata.styleVersion}; " +
+                        "Zoom=${String.format(Locale.US, "%.2f", metadata.zoomRatio)}x; " +
+                        "EV=${String.format(Locale.US, "%+.2f", metadata.exposureCompensation)}; " +
+                        "Flash=${metadata.flashMode}",
+                )
+                saveAttributes()
             }
-            setAttribute(
-                ExifInterface.TAG_EXPOSURE_BIAS_VALUE,
-                "${(metadata.exposureCompensation * EXIF_RATIONAL_SCALE).roundToInt()}/" +
-                    EXIF_RATIONAL_SCALE,
-            )
-            setAttribute(
-                ExifInterface.TAG_SOFTWARE,
-                "PhyToy Camera / Digital 01 ${metadata.digital01Version}",
-            )
-            setAttribute(
-                ExifInterface.TAG_IMAGE_DESCRIPTION,
-                "PhyToy Digital 01 ${metadata.digital01Version}",
-            )
-            setAttribute(
-                ExifInterface.TAG_USER_COMMENT,
-                "Lens=${metadata.lensFacing}; Digital01=${metadata.digital01Version}; " +
-                    "Zoom=${String.format(Locale.US, "%.2f", metadata.zoomRatio)}x; " +
-                    "EV=${String.format(Locale.US, "%+.2f", metadata.exposureCompensation)}; " +
-                    "Flash=${metadata.flashMode}",
-            )
-            saveAttributes()
         }
-        val verified = ExifInterface(file.absolutePath)
-        check(verified.getAttribute(ExifInterface.TAG_SOFTWARE)?.contains(
-            metadata.digital01Version
-        ) == true) { "Digital 01 EXIF verification failed" }
+        resolver.openFileDescriptor(uri, "r").use { descriptor ->
+            checkNotNull(descriptor) { "Unable to verify the new photo EXIF" }
+            val verified = ExifInterface(descriptor.fileDescriptor)
+            check(verified.getAttribute(ExifInterface.TAG_SOFTWARE)?.contains(
+                metadata.styleVersion
+            ) == true) { "PhyToy style EXIF verification failed" }
+        }
         Log.i(
             LOG_TAG,
-            "Digital 01 EXIF written iso=${metadata.iso ?: "unknown"} " +
+            "${metadata.styleCode} EXIF written iso=${metadata.iso ?: "unknown"} " +
                 "exposure_ns=${metadata.exposureTimeNanos ?: "unknown"} " +
                 "focal_mm=${metadata.focalLengthMillimeters ?: "unknown"} " +
-                "lens=${metadata.lensFacing} version=${metadata.digital01Version}",
+                "lens=${metadata.lensFacing} version=${metadata.styleVersion}",
         )
     }
 
-    fun lastPhotoUri(): Uri? = preferences.getString(LAST_PHOTO_URI, null)?.let(Uri::parse)
+    fun lastPhoto(): SavedPhoto? {
+        val uri = preferences.getString(LAST_PHOTO_URI, null)?.let(Uri::parse) ?: return null
+        return SavedPhoto(
+            uri = uri,
+            displayName = preferences.getString(LAST_PHOTO_NAME, null).orEmpty(),
+            width = preferences.getInt(LAST_PHOTO_WIDTH, 0),
+            height = preferences.getInt(LAST_PHOTO_HEIGHT, 0),
+            styleName = preferences.getString(LAST_PHOTO_STYLE_NAME, null)
+                ?: "PHYTOY",
+            styleCode = preferences.getString(LAST_PHOTO_STYLE_CODE, null)
+                ?: "PT",
+        )
+    }
+
+    fun forgetLastPhoto() {
+        preferences.edit().clear().apply()
+    }
 
     fun loadThumbnail(uri: Uri): Bitmap? = try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -173,6 +242,34 @@ internal class PhotoStore(private val context: Context) {
                 ThumbnailUtils.extractThumbnail(source, THUMBNAIL_SIZE, THUMBNAIL_SIZE).also {
                     if (it !== source) source.recycle()
                 }
+            }
+        }
+    } catch (_: Throwable) {
+        null
+    }
+
+    fun loadReview(uri: Uri, maximumWidth: Int, maximumHeight: Int): Bitmap? = try {
+        val width = maximumWidth.coerceAtLeast(1)
+        val height = maximumHeight.coerceAtLeast(1)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            resolver.loadThumbnail(uri, Size(width, height), null)
+        } else {
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            resolver.openInputStream(uri).use { stream ->
+                BitmapFactory.decodeStream(stream, null, bounds)
+            }
+            var sample = 1
+            while (bounds.outWidth / (sample * 2) >= width &&
+                bounds.outHeight / (sample * 2) >= height
+            ) {
+                sample *= 2
+            }
+            resolver.openInputStream(uri).use { stream ->
+                BitmapFactory.decodeStream(
+                    stream,
+                    null,
+                    BitmapFactory.Options().apply { inSampleSize = sample },
+                )
             }
         }
     } catch (_: Throwable) {
@@ -195,9 +292,68 @@ internal class PhotoStore(private val context: Context) {
         return result
     }
 
+    private fun Bitmap.centerCrop(targetAspect: Float): Bitmap {
+        require(targetAspect > 0f)
+        val sourceAspect = width.toFloat() / height
+        if (kotlin.math.abs(sourceAspect - targetAspect) < 0.0001f) return this
+        val cropWidth: Int
+        val cropHeight: Int
+        if (sourceAspect > targetAspect) {
+            cropWidth = (height * targetAspect).roundToInt().coerceIn(1, width)
+            cropHeight = height
+        } else {
+            cropWidth = width
+            cropHeight = (width / targetAspect).roundToInt().coerceIn(1, height)
+        }
+        return Bitmap.createBitmap(
+            this,
+            (width - cropWidth) / 2,
+            (height - cropHeight) / 2,
+            cropWidth,
+            cropHeight,
+        )
+    }
+
+    private fun Bitmap.fitPixelBudget(maximumPixels: Long): Bitmap {
+        require(maximumPixels > 0)
+        val pixels = width.toLong() * height
+        if (pixels <= maximumPixels) return this
+        val scale = kotlin.math.sqrt(maximumPixels.toDouble() / pixels)
+        return Bitmap.createScaledBitmap(
+            this,
+            (width * scale).toInt().coerceAtLeast(1),
+            (height * scale).toInt().coerceAtLeast(1),
+            true,
+        )
+    }
+
+    private fun Bitmap.scaledToFit(maximumWidth: Int, maximumHeight: Int): Bitmap {
+        val widthLimit = maximumWidth.coerceAtLeast(1)
+        val heightLimit = maximumHeight.coerceAtLeast(1)
+        val scale = minOf(
+            widthLimit.toFloat() / width,
+            heightLimit.toFloat() / height,
+            1f,
+        )
+        if (scale >= 1f) {
+            return checkNotNull(copy(Bitmap.Config.ARGB_8888, false))
+        }
+        return Bitmap.createScaledBitmap(
+            this,
+            (width * scale).roundToInt().coerceAtLeast(1),
+            (height * scale).roundToInt().coerceAtLeast(1),
+            true,
+        )
+    }
+
     companion object {
         private const val PREFERENCES_NAME = "phytoy_camera"
         private const val LAST_PHOTO_URI = "last_photo_uri"
+        private const val LAST_PHOTO_NAME = "last_photo_name"
+        private const val LAST_PHOTO_WIDTH = "last_photo_width"
+        private const val LAST_PHOTO_HEIGHT = "last_photo_height"
+        private const val LAST_PHOTO_STYLE_NAME = "last_photo_style_name"
+        private const val LAST_PHOTO_STYLE_CODE = "last_photo_style_code"
         private const val ALBUM_NAME = "PhyToy"
         private const val JPEG_MIME_TYPE = "image/jpeg"
         private const val JPEG_QUALITY = 95

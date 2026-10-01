@@ -1,0 +1,94 @@
+{
+  "serial": "emulator-5580",
+  "api_level": 36,
+  "abi": "arm64-v8a",
+  "page_size_bytes": 16384,
+  "boot_completed": true,
+  "workspace_avd": "build/avd/phytoy_16k.avd",
+  "sdk_image_modified": false,
+  "camera_front": "emulated",
+  "camera_back": "emulated",
+  "gpu": "SwiftShader software Vulkan",
+  "dimensions": [
+    22,
+    18
+  ],
+  "seed": 1234,
+  "warmup_frames": 1,
+  "measured_frames": 3,
+  "noise_enabled": false,
+  "denoise_sigma": 0.8,
+  "sharpen_amount": 1.2,
+  "sharpen_sigma": 0.65,
+  "contract": "acceptance/synthetic_alpha_v1.json",
+  "artifacts": {
+    "build-android-arm64/libphytoy_core.so": {
+      "sha256": "a715f31c542a9fbfdbb19a82c46317f08810b6c207c8481c05a5c38e4de2703d",
+      "bytes": 8775744
+    },
+    "build-android-arm64/phytoy_benchmark": {
+      "sha256": "73f43da639566b8e0acf27281278af65d445e85adfed722b620ac626fb08dbd1",
+      "bytes": 2349768
+    }
+  },
+  "scope": "Native loader and small CPU/Vulkan f32 stage conformance smoke on actual 16 KB Android; does not measure physical GPU performance, Camera2/AHB or application lifecycle.",
+  "cpu": {
+    "benchmark_exit_code": 0,
+    "stage_contract_passed": true,
+    "resource_allocation_delta_after_warmup": 0,
+    "queue_submission_delta": 0,
+    "isp_max_absolute_error": 3.2784330094431935e-09,
+    "output_max_absolute_error": 4.0748162500464646e-07
+  },
+  "vulkan": {
+    "benchmark_exit_code": 0,
+    "stage_contract_passed": true,
+    "resource_allocation_delta_after_warmup": 0,
+    "queue_submission_delta": 3,
+    "isp_max_absolute_error": 1.1820034196211027e-08,
+    "output_max_absolute_error": 4.3409098679503266e-07
+  },
+  "native_elf_load_alignment_bytes": 16384,
+  "host_validation": {
+    "ctest_passed": 2,
+    "ctest_total": 2,
+    "pytest_passed": 139,
+    "isp_spirv_workgroup_bytes": 23196,
+    "isp_spirv_workgroup_limit_bytes": 32768,
+    "cpp_abi_review": "No escaping C++ exceptions found for valid pointers and normal lifetime; allocator failure injected specifically into diagnostic storage; no full CPU/Vulkan allocation sweep."
+  },
+  "generated_at_utc": "2026-10-01T02:00:33.862850+00:00",
+  "adc_half_tie": {
+    "scope": "Exact nonnegative ADC half-tie regression, constant black source, native final binaries on actual 16KB Android",
+    "width": 22,
+    "height": 18,
+    "seed": 1234,
+    "constant_input_u8": 0,
+    "toy_profile": "toy_adc_half_tie_conformance.ptp",
+    "pre_adc_dn": 64.5,
+    "expected_sensor_dn": 65.0,
+    "warmup_frames": 1,
+    "measured_frames": 3,
+    "cpu": {
+      "benchmark_exit_code": 0,
+      "comparison_report": "reports/release_candidate_0_15/emulator16k/adc_cpu_22x18_comparison.json",
+      "runtime_report": "reports/release_candidate_0_15/emulator16k/adc_cpu_22x18_runtime.json",
+      "passed": true,
+      "sensor_dn_all_65": true,
+      "resource_allocation_delta_after_warmup": 0,
+      "queue_submission_delta": 0,
+      "rss_growth_kib": 0
+    },
+    "vulkan": {
+      "benchmark_exit_code": 0,
+      "comparison_report": "reports/release_candidate_0_15/emulator16k/adc_vulkan_22x18_comparison.json",
+      "runtime_report": "reports/release_candidate_0_15/emulator16k/adc_vulkan_22x18_runtime.json",
+      "passed": true,
+      "sensor_dn_all_65": true,
+      "resource_allocation_delta_after_warmup": 0,
+      "queue_submission_delta": 3,
+      "rss_growth_kib": 0
+    }
+  },
+  "engine_version": "PhyToyEngine/0.3.1 ABI/2"
+}

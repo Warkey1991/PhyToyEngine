@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    },
+    {
+      "name": "offline privacy text is accessible",
+      "passed": true
+    },
+    {
+      "name": "5 background/resume cycles",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "failure": "Command '['/Users/songyuanjin/Library/Android/sdk/platform-tools/adb', '-s', 'RFCX80BD3XN', 'shell', 'uiautomator', 'dump', '/sdcard/phytoy_product_qa.xml']' returned non-zero exit status 255."
+}

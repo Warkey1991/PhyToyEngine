@@ -24,6 +24,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            ndk { debugSymbolLevel = "FULL" }
         }
     }
 
@@ -44,7 +45,9 @@ android {
     }
 
     lint {
-        // Product Alpha intentionally ships only the Vulkan-tested arm64 runtime.
+        abortOnError = true
+        checkReleaseBuilds = true
+        // The release supports only the validated Vulkan arm64 runtime.
         disable += "ChromeOsAbiSupport"
     }
 }

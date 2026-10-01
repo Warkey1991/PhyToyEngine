@@ -8,6 +8,16 @@ from .color import apply_matrix
 from .demosaic import mosaic
 
 
+def _round_adc_half_up(values: np.ndarray) -> np.ndarray:
+    """Round nonnegative pre-ADC values; .5 ties select the higher integer.
+
+    Splitting the fraction avoids moving nextafter(.5, below) onto the tie
+    when adding .5 in finite precision, and preserves large integral values.
+    """
+    integral = np.floor(values)
+    return integral + (values - integral >= 0.5)
+
+
 def simulate_sensor(
     optical_rgb: np.ndarray, toy_profile: dict, *, seed: int
 ) -> np.ndarray:
@@ -26,7 +36,7 @@ def simulate_sensor(
         gain = float(sensor["conversion_gain_e_per_dn"])
         black = float(sensor["black_level_dn"])
         white = float(sensor["white_level_dn"])
-        return np.clip(np.rint(mosaic_e / gain + black), 0.0, white)
+        return np.clip(_round_adc_half_up(mosaic_e / gain + black), 0.0, white)
 
     profile_seed = int(sensor.get("profile_seed", 1))
     fixed_rng = np.random.Generator(np.random.Philox(profile_seed))
@@ -62,5 +72,5 @@ def simulate_sensor(
     gain = float(sensor["conversion_gain_e_per_dn"])
     black = float(sensor["black_level_dn"])
     white = float(sensor["white_level_dn"])
-    dn = np.rint(mosaic_e / gain + black)
+    dn = _round_adc_half_up(mosaic_e / gain + black)
     return np.clip(dn, 0.0, white)

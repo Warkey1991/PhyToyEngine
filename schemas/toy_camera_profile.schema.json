@@ -14,6 +14,29 @@
     "id": {"type": "string", "minLength": 1},
     "version": {"type": "string", "minLength": 1},
     "capture_medium_family": {"const": "digital_sensor_v1"},
+    "reference_sampling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height"
+      ],
+      "description": "Optional parameter reference grid; resolution-aware approximation, not measured sensor dimensions.",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 8192,
+          "multipleOf": 2
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 8192,
+          "multipleOf": 2
+        }
+      }
+    },
     "provenance": {
       "type": "object",
       "additionalProperties": false,
@@ -113,6 +136,7 @@
           "type": "array", "minItems": 2,
           "items": {"$ref": "#/$defs/vector2"}
         },
+        "monochrome": {"type": "boolean", "default": false},
         "denoise_sigma": {"type": "number", "minimum": 0},
         "sharpen_amount": {"type": "number"},
         "sharpen_radius": {"type": "number", "exclusiveMinimum": 0}

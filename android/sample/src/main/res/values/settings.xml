@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_intro">Make the camera yours. Your choices are saved on this device.</string>
+    <string name="settings_section_camera">CAMERA</string>
+    <string name="settings_section_shooting">SHOOTING</string>
+    <string name="settings_section_information">INFORMATION</string>
+    <string name="settings_choice_value">%1$s\n%2$s</string>
+    <string name="settings_default_style">Default style</string>
+    <string name="settings_default_style_hint">Used when the last style is not remembered, or on your first launch.</string>
+    <string name="settings_remember_style">Remember last style</string>
+    <string name="settings_remember_style_hint">Open the camera with the style you last used.</string>
+    <string name="settings_quality">Photo resolution</string>
+    <string name="settings_quality_hint">Choose a maximum resolution. Camera hardware and the selected style can limit the actual size; DH 2++ is capped at 3.2 MP.</string>
+    <string name="settings_quality_high">High · up to 12.5 MP</string>
+    <string name="settings_quality_balanced">Balanced · up to 5 MP</string>
+    <string name="settings_quality_compact">Compact · up to 3.2 MP</string>
+    <string name="settings_grid">Composition grid</string>
+    <string name="settings_grid_hint">Show a rule-of-thirds grid over the viewfinder.</string>
+    <string name="settings_sound">Shutter sound</string>
+    <string name="settings_sound_hint">Play camera feedback when taking a photo.</string>
+    <string name="settings_haptics">Touch feedback</string>
+    <string name="settings_haptics_hint">Use light vibration for camera controls, when enabled in Android settings.</string>
+    <string name="settings_review">Review after capture</string>
+    <string name="settings_review_hint">Open the photo after saving. Turn off to keep shooting; you can still tap the thumbnail.</string>
+    <string name="settings_about">About PhyToy</string>
+    <string name="settings_about_hint">Read the camera guide and app information.</string>
+    <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_privacy_hint">See how photos, permissions and local preferences are handled.</string>
+    <string name="settings_licenses">License agreements</string>
+    <string name="settings_licenses_hint">Read the licenses and notices for included software.</string>
+    <string name="settings_reset">Reset preferences</string>
+    <string name="settings_reset_hint">Restore this page’s defaults. Your current style and photos are kept.</string>
+    <string name="settings_reset_confirm_title">Reset preferences?</string>
+    <string name="settings_reset_confirm_body">Restore the preferences on this page, including the startup defaults, balanced resolution and shooting options. Your current camera style and saved photos are kept.</string>
+    <string name="settings_reset_done">Preferences reset. Current style and photos kept.</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_local_only">Settings stay on this device. No account or network connection is needed.</string>
+</resources>

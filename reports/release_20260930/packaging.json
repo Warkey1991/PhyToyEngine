@@ -1,0 +1,4 @@
+{
+  "status": "failed",
+  "error": "Release must require Vulkan API 1.1 in its manifest (feature level is a separate declaration)"
+}

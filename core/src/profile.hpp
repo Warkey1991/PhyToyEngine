@@ -73,6 +73,7 @@ struct IspProfile {
     std::array<float, 3> white_balance{};
     std::array<float, 9> sensor_to_rec2020{};
     std::vector<std::pair<float, float>> tone_curve;
+    bool monochrome{false};
     float denoise_sigma{};
     float sharpen_amount{};
     float sharpen_radius{};
@@ -95,7 +96,12 @@ struct ToyProfile {
     OpticsProfile optics;
     SensorProfile sensor;
     IspProfile isp;
+    // Zero means legacy pixel-based behavior. Otherwise parameters use this grid.
+    uint32_t reference_width{};
+    uint32_t reference_height{};
 };
+
+ToyProfile profile_for_resolution(const ToyProfile& profile, uint32_t width, uint32_t height);
 
 HostProfile load_host_profile_package(const std::filesystem::path& path);
 ToyProfile load_toy_profile_package(const std::filesystem::path& path);

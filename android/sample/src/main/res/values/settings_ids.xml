@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="settings_page" type="id" />
+    <item name="settings_back" type="id" />
+    <item name="settings_default_style" type="id" />
+    <item name="settings_remember_style" type="id" />
+    <item name="settings_quality" type="id" />
+    <item name="settings_grid" type="id" />
+    <item name="settings_sound" type="id" />
+    <item name="settings_haptics" type="id" />
+    <item name="settings_review" type="id" />
+    <item name="settings_about" type="id" />
+    <item name="settings_privacy" type="id" />
+    <item name="settings_licenses" type="id" />
+    <item name="settings_reset" type="id" />
+</resources>

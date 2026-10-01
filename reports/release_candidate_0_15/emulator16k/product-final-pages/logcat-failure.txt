@@ -1,0 +1,777 @@
+--------- beginning of main
+10-01 10:03:14.649 10653 10653 I AconfigPackage: android.os.profiling is mapped to com.android.profiling
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.os.statsd.flags is mapped to com.android.os.statsd
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.cellbroadcastreceiver.flags is mapped to com.android.cellbroadcast
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.adservices.flags is mapped to com.android.adservices
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.sdksandbox.flags is mapped to com.android.adservices
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.uwb.flags is mapped to com.android.uwb
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.ranging.flags is mapped to com.android.uwb
+10-01 10:03:14.649 10653 10653 I AconfigPackage: android.graphics.pdf.flags is mapped to com.android.mediaprovider
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.providers.media.flags is mapped to com.android.mediaprovider
+10-01 10:03:14.649 10653 10653 I AconfigPackage: android.graphics.pdf.flags.readonly is mapped to com.android.mediaprovider
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.net.ct.flags is mapped to com.android.tethering
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.net.flags is mapped to com.android.tethering
+10-01 10:03:14.649 10653 10653 I AconfigPackage: android.net.vcn is mapped to com.android.tethering
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.nearby.flags is mapped to com.android.tethering
+10-01 10:03:14.649 10653 10653 I AconfigPackage: android.net.http is mapped to com.android.tethering
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.net.thread.flags is mapped to com.android.tethering
+10-01 10:03:14.649 10653 10653 I AconfigPackage: com.android.system.virtualmachine.flags is mapped to com.android.virt
+10-01 10:03:14.649 10653 10653 E FeatureFlagsImplExport: android.os.flagging.AconfigStorageReadException: ERROR_PACKAGE_NOT_FOUND: package android.xr cannot be found on the device
+10-01 10:03:14.650 10653 10653 D UiAutomationConnection: Created on user UserHandle{0}
+10-01 10:03:14.650 10653 10653 I UiAutomation: Initialized for user 0 on display 0
+10-01 10:03:14.650 10653 10653 W UiAutomation: Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+--------- beginning of system
+10-01 10:03:14.651   632   975 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+10-01 10:03:14.651   632   975 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation, flags=0x0) when called by user 0
+10-01 10:03:14.651   632   975 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+10-01 10:03:14.655   632   975 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-01 10:03:14.655  1623  2718 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+10-01 10:03:14.656  1252  1288 D QuickstepModelDelegate: notifyAppTargetEvent action=1 launchLocation=workspace/0/[-1,-1]/[1,1]
+10-01 10:03:14.656  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.656  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.656  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.656  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.656  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.656  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.656  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.656  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.656  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.656  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.660   987  1579 V WindowManagerShell: onTransitionReady(transaction=2714419334380)
+10-01 10:03:14.661   987  1099 V WindowManagerShell: onTransitionReady (#45) android.os.BinderProxy@e73be30: {id=45 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+10-01 10:03:14.661   987  1099 V WindowManagerShell:         {m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x5bef61c sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0 taskParent=-1},
+10-01 10:03:14.661   987  1099 V WindowManagerShell:         {m=CLOSE f=NONE leash=Surface(name=Task=12)/@0x6f38225 sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0 taskParent=-1},
+10-01 10:03:14.661   987  1099 V WindowManagerShell:         {m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{f010b46 showWhenLocked=false})/@0x4f3dffa sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0}
+10-01 10:03:14.661   987  1099 V WindowManagerShell:     ]}
+10-01 10:03:14.661   987  1099 V WindowManagerShell: Playing animation for (#45) android.os.BinderProxy@e73be30@0
+10-01 10:03:14.662   987  1099 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+10-01 10:03:14.662   987  1099 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=45 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x5bef61c sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0 taskParent=-1},{m=CLOSE f=NONE leash=Surface(name=Task=12)/@0x6f38225 sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0 taskParent=-1},{m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{f010b46 showWhenLocked=false})/@0x4f3dffa sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0}]}
+10-01 10:03:14.662   987  1099 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@738a242 windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@5996253, appThread = android.app.IApplicationThread$Stub$Proxy@d765790, debugName = overlayBackTransition }}
+10-01 10:03:14.662   987  1099 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@3715889, appThread = android.app.IApplicationThread$Stub$Proxy@332a08e, debugName = LauncherToDream }}
+10-01 10:03:14.662   987  1099 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@54dd0af, appThread = android.app.IApplicationThread$Stub$Proxy@e115cbc, debugName = QuickstepLaunchHome }}
+10-01 10:03:14.662   987  1099 D RemoteTransitionHandler: Found filterPair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@54dd0af, appThread = android.app.IApplicationThread$Stub$Proxy@e115cbc, debugName = QuickstepLaunchHome }}
+10-01 10:03:14.662   987  1099 V WindowManagerShell:  Delegate animation for (#45) to RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@54dd0af, appThread = android.app.IApplicationThread$Stub$Proxy@e115cbc, debugName = QuickstepLaunchHome }
+10-01 10:03:14.669  1252  1252 D StateManager: createAtomicAnimation - fromState: Background, toState: Normal, partial trace:
+10-01 10:03:14.669  1252  1252 D StateManager: 	at com.android.quickstep.util.WorkspaceRevealAnim.prepareToAnimate(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:22)
+10-01 10:03:14.669  1252  1252 D StateManager: 	at com.android.quickstep.util.WorkspaceRevealAnim.<init>(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:11)
+10-01 10:03:14.669  1252  1252 D StateManager: 	at com.android.launcher3.QuickstepTransitionManager.createWallpaperOpenAnimations(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:339)
+10-01 10:03:14.670  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.670  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.670  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.670  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.671  1252  1252 D b/311077782: LauncherAnimationRunner.setAnimation
+10-01 10:03:14.674  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.674  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:14.674  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:14.674   632   651 V WindowManager: Sent Transition (#45) createdAt=10-01 10:03:13.638 via request=TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=12 effectiveUid=10213 displayId=0 isRunning=false baseIntent=Intent { flg=0x10000000 cmp=com.phytoy.sample/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{com.phytoy.sample/com.phytoy.sample.MainActivity} numActivities=0 lastActiveTime=2911605 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{2215cb0 Task{4eda0b2 #12 type=standard A=10213:com.phytoy.sample}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=true lastNonFullscreenBounds=Rect(87, 256 - 453, 796) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 0, 0) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=undefined}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 45 }
+10-01 10:03:14.675   632   651 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+10-01 10:03:14.675   632   651 V WindowManager:     info={id=45 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+10-01 10:03:14.675   632   651 V WindowManager:         {WCT{RemoteToken{d81de61 Task{2b75a9d #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x82b98e5 sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0 taskParent=-1},
+10-01 10:03:14.675   632   651 V WindowManager:         {WCT{RemoteToken{2215cb0 Task{4eda0b2 #12 type=standard A=10213:com.phytoy.sample}}} m=CLOSE f=NONE leash=Surface(name=Task=12)/@0xfab9a62 sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0 taskParent=-1},
+10-01 10:03:14.675   632   651 V WindowManager:         {m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{f010b46 showWhenLocked=false})/@0xa8e6104 sb=Rect(0, 0 - 540, 960) eb=Rect(0, 0 - 540, 960) epz=Point(540, 960) d=0}
+10-01 10:03:14.675   632   651 V WindowManager:     ]}
+10-01 10:03:14.675   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:14.676   987  1099 V WindowManagerShell:  animated by com.android.wm.shell.transition.RemoteTransitionHandler@d763a5b
+10-01 10:03:14.677   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.677   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.682   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.682   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.683   632   632 D BatterySaverPolicy: accessibility changed to true, updating policy.
+10-01 10:03:14.686 10029 10029 I Choreographer: Skipped 60 frames!  The application may be doing too much work on its main thread.
+10-01 10:03:14.686  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:14.692  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.692  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.692  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.692  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:14.709   632   758 I ImeTracker: com.google.android.apps.nexuslauncher:1683c3db: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-01 10:03:14.711   448   448 I RanchuHwc: logCompositionFallbackIfChanged: layer 96 CompositionType fallback from 2 to 1
+10-01 10:03:14.711   448   448 I RanchuHwc: logCompositionFallbackIfChanged: layer 97 CompositionType fallback from 2 to 1
+10-01 10:03:14.752   632  1793 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+10-01 10:03:14.752   632  1793 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-01 10:03:14.752   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.752   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.752   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.753   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.753   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.753   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.753   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.753   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.753  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:14.762  8194  8194 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2043 
+10-01 10:03:14.763  8194  8194 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 0, locked = false
+10-01 10:03:14.763  8194  8194 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1293 onStartInput(EditorInfo{EditorInfo{packageName=com.google.android.apps.nexuslauncher, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: EmojiCompatManager.getEmojiCompatIfLoaded():343 EmojiCompat.init() was never called.
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: java.lang.IllegalStateException: EmojiCompat is not initialized. Please call EmojiCompat.init() first
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at asx.p(PG:6)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at axb.b(PG:13)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at jnr.b(PG:2)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at jnr.c(PG:4)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at jnr.f(PG:3)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at jnx.c(PG:3)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at kif.cz(PG:47)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at lhl.run(PG:1025)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at jaf.execute(PG:12)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at nco.v(PG:13)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at lhn.m(PG:96)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at lhn.k(PG:25)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at kgn.onStartInput(PG:250)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService.doStartInput(InputMethodService.java:3521)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.startInput(InputMethodService.java:879)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.inputmethodservice.InputMethodService$InputMethodImpl.dispatchStartInput(InputMethodService.java:908)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.inputmethodservice.IInputMethodWrapper.executeMessage(IInputMethodWrapper.java:201)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at com.android.internal.os.HandlerCaller$MyHandler.handleMessage(HandlerCaller.java:44)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.os.Looper.loopOnce(Looper.java:248)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.os.Looper.loop(Looper.java:338)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at android.app.ActivityThread.main(ActivityThread.java:9067)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at java.lang.reflect.Method.invoke(Native Method)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+10-01 10:03:14.764  8194  8194 I EmojiCompatManager: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+10-01 10:03:14.764  8194  8194 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():100 repeatCheckTimes = 1, locked = false
+10-01 10:03:14.764   632  1877 W PackageConfigPersister: App-specific configuration not found for packageName: com.google.android.apps.nexuslauncher and userId: 0
+10-01 10:03:14.765  8194  8194 I InputMethodEntryManager: InputMethodEntryManager.clearTemporarilyEnabledLanguages():2071 temporarilyEnabledEntryTuples [LanguageTagVariantTuple{languageTag=zh-CN, variant=qwerty}]
+10-01 10:03:14.765  8194  8194 I InputMethodEntryManager: InputMethodEntryManager.changeCurrentInputMethodEntry():2958 Set current input method entry: source=UNSPECIFIED, entryChanged=true, kek{languageTag=en-US, variant=qwerty, hasLocalizedResources=true, conditionCacheKey=_app_first_start_timestamp=1790817288807_cache_additional_ime_defs_for_condition_change=false_cache_ime_defs_for_condition_change=false_deprecate_long_press_space_for_ime_picker=false_device=phone_device_size=default_enable_access_points_in_password_number=false_enable_flick_symbols=true_enable_more_candidates_view_for_multilingual=false_enable_number_row=false_enable_preemptive_decode=true_enable_premium_exp_tablet_layout_change=false_enable_secondary_digits=true_enable_secondary_symbols=false_expressions=normal_four_or_more_letter_rows=false_keyboard_mode=normal_language=en-US_layout_9key_split=false_orientation=portrait_physical_keyboard=nokeys_rtl_layout=false_show_secondary_digits=true_show_suggestions=true_split_with_duplicate_keys=true_variant=qwerty, imeDef.stringId=ime_english_united_states, imeDef.className=com.google.android.libraries.inputmethod.ime.experiment.ExperimentImeWrapper, imeDef.languageTag=en-US}
+10-01 10:03:14.766  8194  8194 I InputMethodEntryManager: InputMethodEntryManager.loadAdditionalImeDefsForCurrentEntry():2981 loadAdditionalImeDefsForCurrentEntry(): kek{languageTag=en-US, variant=qwerty, hasLocalizedResources=true, conditionCacheKey=_app_first_start_timestamp=1790817288807_cache_additional_ime_defs_for_condition_change=false_cache_ime_defs_for_condition_change=false_deprecate_long_press_space_for_ime_picker=false_device=phone_device_size=default_enable_access_points_in_password_number=false_enable_flick_symbols=true_enable_more_candidates_view_for_multilingual=false_enable_number_row=false_enable_preemptive_decode=true_enable_premium_exp_tablet_layout_change=false_enable_secondary_digits=true_enable_secondary_symbols=false_expressions=normal_four_or_more_letter_rows=false_keyboard_mode=normal_language=en-US_layout_9key_split=false_orientation=portrait_physical_keyboard=nokeys_rtl_layout=false_show_secondary_digits=true_show_suggestions=true_split_with_duplicate_keys=true_variant=qwerty, imeDef.stringId=ime_english_united_states, imeDef.className=com.google.android.libraries.inputmethod.ime.experiment.ExperimentImeWrapper, imeDef.languageTag=en-US}
+10-01 10:03:14.766  8194  8194 I InputMethodEntryManager: InputMethodEntryManager$6.onSuccess():2997 Success load additional ImeDefs, entryChanged=true, additionalImeDefsChanged=false, [kyj{stringId=password, language=und-Latn-x-password, languageTag=und-Latn-x-password, processedConditions={variant=qwerty, enable_access_points_in_password_number=false, enable_number_row=false, device=phone}, className=com.google.android.libraries.inputmethod.ime.password.PasswordIme, label=2132019061, keyEventInterpreter=null, inlineComposing=true, autoCapital=true, announceAutoSelectedCandidate=true, statusIcon=0, primeKeyboardType=SOFT, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@f96de92, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=number, language=und-Latn-x-number, languageTag=und-Latn-x-number, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019005, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=0, primeKeyboardType=SOFT, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@1f97063, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=number_password, language=und-Latn-x-number-password, languageTag=und-Latn-x-number-password, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019006, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=0, primeKeyboardType=SOFT, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@7053460, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=phone_number, language=und-Latn-x-phone-number, languageTag=und-Latn-x-phone-number, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019096, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=0, primeKeyboardType=SOFT, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@56cbd19, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=date_time, language=und-Latn-x-date-time, languageTag=und-Latn-x-date-time, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132017724, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=0, primeKeyboardType=SOFT, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@b4051de, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=dummy_hard, language=en, languageTag=en, processedConditions={device=unknown}, className=com.google.android.apps.inputmethod.libs.latin5.LatinDummyIme, label=0, keyEventI
+10-01 10:03:14.766  8194  8194 I InputMethodEntryManager: nterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=true, statusIcon=0, primeKeyboardType=HARD_QWERTY, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@308afbf, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=password_floating_hard_qwerty, language=und-Latn-x-password, languageTag=und-Latn-x-password, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019097, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=2131231749, primeKeyboardType=HARD_QWERTY, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@cf9368c, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=phone_number_floating_hard_qwerty, language=und-Latn-x-phone-number, languageTag=und-Latn-x-phone-number, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019097, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=2131231925, primeKeyboardType=HARD_QWERTY, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@10311d5, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=number_floating_hard_qwerty, language=und-Latn-x-number, languageTag=und-Latn-x-number, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019097, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=2131231925, primeKeyboardType=HARD_QWERTY, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@d7badea, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}, kyj{stringId=date_time_floating_hard_qwerty, language=und-Latn-x-date-time, languageTag=und-Latn-x-date-time, processedConditions={}, className=com.google.android.libraries.inputmethod.ime.DummyIme, label=2132019097, keyEventInterpreter=null, inlineComposing=true, autoCapital=false, announceAutoSelectedCandidate=false, statusIcon=2131231925, primeKeyboardType=HARD_QWERTY, indicatorIcon=0, indicatorLabel=null, displayAppCompletions=false, extraValues=kyb{}, processors=lac@4cf7c1d, unacceptableMetaKeys=4098, languageSpecificSettings=0, asciiCapable=false, alwaysShowSuggestions=false, useAsciiPasswordKeyboard=false, secondaryIme=null, keyboardGroupDef=kzl@9a288db, phenotypeFlagId=0, localizationLanguageTag=null, supportsInlineSuggestion=false}]
+10-01 10:03:14.766  8194  8194 I InputMethodEntryManager: InputMethodEntryManager.onSuccessLoadingAdditionalImeDefs():3063 Additional ImeDefs have been loaded, maybe notify entry change: true
+10-01 10:03:14.774   632   647 I ImeTracker: system_server:c3e2a6e8: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+10-01 10:03:14.775 10029 10173 I HWUI    : Davey! duration=1078ms; Flags=0, FrameTimelineVsyncId=112925, IntendedVsync=2949293680593, Vsync=2950293680553, InputEventId=1990007297, HandleInputStart=2950302885906, AnimationStart=2950302886490, PerformTraversalsStart=2950303170073, DrawStart=2950303197365, FrameDeadline=2949310347259, FrameStartTime=2950302608240, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=2950303913948, SyncStart=2950304140406, IssueDrawCommandsStart=2950305618281, SwapBuffers=2950331378323, FrameCompleted=2950372152198, DequeueBufferDuration=132625, QueueBufferDuration=18924166, GpuCompleted=2950372152198, SwapBuffersCompleted=2950358323365, DisplayPresentTime=0, CommandSubmissionCompleted=2950331378323, 
+10-01 10:03:14.777  8194  8194 I SystemSubtypesReportModule: SystemSubtypesReportModule$3.onCurrentInputMethodEntryChanged():149 entry: en-US, source: UNSPECIFIED
+10-01 10:03:14.777  8194  8194 I SystemSubtypesReportModule: SystemSubtypesReportModule$3.onCurrentInputMethodEntryChanged():163 switchSubtype(en-US)
+10-01 10:03:14.786   632   654 I ImeTracker: system_server:c3e2a6e8: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-01 10:03:14.788  1252  1252 D InsetsController: hide(ime(), fromIme=false)
+10-01 10:03:14.789  1252  1252 I ImeTracker: com.google.android.apps.nexuslauncher:1683c3db: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+10-01 10:03:14.789  1623  2718 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+10-01 10:03:14.789  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.789  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.789  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.789  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.789  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.789  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.789  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.789  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.789  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.789  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.790  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:14.790  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:14.793   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:14.796  1623  2718 I AiAiEcho: Settings changed for uri: content://settings/secure/input_methods_subtype_history
+10-01 10:03:14.796  1623  2718 I AiAiEcho: Settings changed for uri: content://settings/secure/selected_input_method_subtype
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.796  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.796  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.797  8194  8194 W NotificationCenter: NotificationCenter$NotificationQueue.notifyPendingNotificationsOnExecutor():877 Heavy notify work detected on UI thread: [kds->iic, kds->lcn, kds->lwm, kds->ktx, jwt->jws] takes 31ms
+10-01 10:03:14.797  8194  8194 I ModuleManager: ModuleManager$ModuleInitListener.maybeUnloadModuleOnUnavailable():1350 module ggx is unavailable
+10-01 10:03:14.797   632   753 I InputReader: Reconfiguring input devices, changes=KEYBOARD_LAYOUTS
+10-01 10:03:14.798  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:14.798  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:14.798  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:14.800  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:14.801  8194  8194 W NotificationCenter: NotificationCenter$NotificationQueue.notifyPendingNotificationsOnExecutor():877 Heavy notify work detected on UI thread: [kds->leg] takes 35ms
+10-01 10:03:14.810   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:14.810   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:14.821  8194  8194 I ModuleManager: ModuleManager$ModuleInitListener.maybeUnloadModuleOnUnavailable():1350 module etf is unavailable
+10-01 10:03:14.822  8194  8194 I GoogleInputMethodService: GoogleInputMethodService.onCurrentInputMethodEntryChanged():2285 onCurrentInputMethodEntryChanged(): imeDefsChanged=true, entryLanguageVariantChanged=true, keyboardContextChanged=true
+10-01 10:03:14.822  8194  8194 I GoogleInputMethodService: GoogleInputMethodService.clearInputMethodServiceData():1016 clearInputMethodServiceData for entryChange
+10-01 10:03:14.823  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension.maybeDestroyExistingKeyboardGroupManager():537 Destroy existing keyboard group manager in eay
+10-01 10:03:14.823  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension.createKeyboardGroupManagerListenableFuture():121 Create keyboard group manager listenable future in eay
+10-01 10:03:14.823  8194  9960 I KeyboardGroupDefParser: KeyboardGroupDefParser.parseKeyboardGroupDef():86 parseKeyboardGroupDef() 2132214031 -> 0_resource_name_obfuscated : WaitTime = 0 ms : RunTime = 0 ms
+10-01 10:03:14.823  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension.maybeDestroyExistingKeyboardGroupManager():537 Destroy existing keyboard group manager in fso
+10-01 10:03:14.823  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension.createKeyboardGroupManagerListenableFuture():121 Create keyboard group manager listenable future in fso
+10-01 10:03:14.823  8194  9955 I KeyboardGroupDefParser: KeyboardGroupDefParser.parseKeyboardGroupDef():86 parseKeyboardGroupDef() 2132214028 -> 0_resource_name_obfuscated : WaitTime = 0 ms : RunTime = 0 ms
+10-01 10:03:14.823  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension.maybeDestroyExistingKeyboardGroupManager():537 Destroy existing keyboard group manager in fve
+10-01 10:03:14.823  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension.createKeyboardGroupManagerListenableFuture():121 Create keyboard group manager listenable future in fve
+10-01 10:03:14.824  8194  8194 I KeyboardModeManager: KeyboardModeManager.onCurrentInputMethodEntryChanged():1400 Reload data for context change
+10-01 10:03:14.824  8194  8194 I GoogleInputMethodService: GoogleInputMethodService.initializeInputMethodServiceData():834 initializeInputMethodServiceData for kek{languageTag=en-US, variant=qwerty, hasLocalizedResources=true, conditionCacheKey=_app_first_start_timestamp=1790817288807_cache_additional_ime_defs_for_condition_change=false_cache_ime_defs_for_condition_change=false_deprecate_long_press_space_for_ime_picker=false_device=phone_device_size=default_enable_access_points_in_password_number=false_enable_flick_symbols=true_enable_more_candidates_view_for_multilingual=false_enable_number_row=false_enable_preemptive_decode=true_enable_premium_exp_tablet_layout_change=false_enable_secondary_digits=true_enable_secondary_symbols=false_expressions=normal_four_or_more_letter_rows=false_keyboard_mode=normal_language=en-US_layout_9key_split=false_orientation=portrait_physical_keyboard=nokeys_rtl_layout=false_show_secondary_digits=true_show_suggestions=true_split_with_duplicate_keys=true_variant=qwerty, imeDef.stringId=ime_english_united_states, imeDef.className=com.google.android.libraries.inputmethod.ime.experiment.ExperimentImeWrapper, imeDef.languageTag=en-US}
+10-01 10:03:14.824   632   654 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:14.827   632   647 D FileUtils: Rounded bytes from 2096840704 to 4000000000
+10-01 10:03:14.833  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:14.833  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.833  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.833  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.833  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:14.833  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:14.836  8194  8194 I KeyboardThemeProvider: KeyboardThemeProvider.applyKeyboardTheme():27 Apply keyboard theme: theme_!gsf_!pgsans_!pgsf_!use_system_font_BORDER=true_FLAVOR_DPI=HDPI_KEYBOARD_WIDTH_CATEGORY=NORMAL_LIGHT_THEME=true_PHYSICAL_DIAGONAL=4.132829_SCREEN_SHORTEST_WIDTH=360_SCREEN_SHORTEST_WIDTH_NO_SCALE=360_enable_google_fonts_icons=true_enable_popup_on_keypress=true_keyboard_redesign_google_sans=true_noshadow_overlay_builtin_dynamic_color_light_base.binarypb:gm3-light-fffaf8ff-ff495d92-82b625f90d810779661adb8ce93b5ac5_silkpopup_unify_function_key_color=true
+10-01 10:03:14.838  8194  9960 I KeyboardGroupDefParser: KeyboardGroupDefParser.parseKeyboardGroupDef():86 parseKeyboardGroupDef() 2132214032 -> 0_resource_name_obfuscated : WaitTime = 15 ms : RunTime = 0 ms
+10-01 10:03:14.836  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.839  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.839  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.839  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:14.842  8194  8194 I AndroidIME: InputBundleManager.loadActiveInputBundleId():483 loadActiveInputBundleId: und-Latn-x-password, password
+10-01 10:03:14.842  8194  8194 I InputMethodEntryManager: InputMethodEntryManager.disableTemporaryEnabledEntries():2109 
+10-01 10:03:14.843  8194  9965 I DelightKLPDownloader: DelightKLPDownloader.downloadKLPInternal():199 downloading KLP for en_840
+10-01 10:03:14.844  8194  9965 I ManifestedDataDownloader: ManifestedDataDownloader.download():63 downloading manifest https://www.gstatic.com/android/keyboard/dictionarypack/2025031619/metadata.json-perlang/en-840.json?v=2025052001
+10-01 10:03:14.870  8194  8194 I SystemSubtypesReportModule: SystemSubtypesReportModule$2.onEnabledInputMethodEntriesChanged():131 1 entries
+10-01 10:03:14.873  8194  9966 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:14.877  8194  8194 I HardKeyTracker: HardKeyTracker.unregisterKeySequence():182 Unregister key sequence lsr{labelResId=0, callback=jlb@2dd7adb, lastModifier=0, keyCodes=[59, 59], actions=[1, 0]}
+10-01 10:03:14.877  8194  8194 I HardKeyTracker: HardKeyTracker.unregisterKeySequence():182 Unregister key sequence lsr{labelResId=0, callback=jlb@c3d8b6, lastModifier=0, keyCodes=[60, 60], actions=[1, 0]}
+10-01 10:03:14.877  8194  8194 I ModuleManager: ModuleManager$ModuleInitListener.maybeUnloadModuleOnUnavailable():1350 module kty is unavailable
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.877  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.877  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.877  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:14.880  8194  8194 W NotificationCenter: NotificationCenter$NotificationQueue.notifyPendingNotificationsOnExecutor():877 Heavy notify work detected on UI thread: [kig->jjs] takes 116ms
+10-01 10:03:14.880  8194  8194 I HandwritingOfflineSuperpacks: HandwritingOfflineSuperpacks.syncInternal():80 no bundled lm for handwriting.
+10-01 10:03:14.880  8194  8194 I DictionarySuperpacksManager: DictionarySuperpacksManager$1.onEnabledInputMethodEntriesChanged():65 onEnabledInputMethodEntriesChanged
+10-01 10:03:14.881  8194  8194 I HandwritingSuperpacks: HandwritingSuperpacks.register():273 register(): version '86', url 'https://dl.google.com/handwriting/models/handwriting_release.superpack_manifest.20231127.json' [ONLINE]
+10-01 10:03:14.881  8194  8194 I SystemSubtypesReportModule: SystemSubtypesReportModule$4.onSetCurrentInputMethodSubtype():192 en_US
+10-01 10:03:14.881  8194  8194 I SystemSubtypesReportModule: SystemSubtypesReportModule$4.onSetCurrentInputMethodSubtype():204 Subtype en_US was caused by entry
+10-01 10:03:14.881  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension$3.onSuccess():555 KeyboardGroupManager destroyed in eay.
+10-01 10:03:14.881  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension$3.onSuccess():555 KeyboardGroupManager destroyed in fso.
+10-01 10:03:14.882  8194  8194 I AbstractOpenableExtension: AbstractOpenableExtension$3.onSuccess():555 KeyboardGroupManager destroyed in fve.
+10-01 10:03:14.882  8194  9955 I LatinImeEntryActivation: LatinImeActivationContentObserver.activeLanguagesHaveChanged():70 Active entries changed: [en-US, zh-CN] -> {en-US}
+10-01 10:03:14.882  8194  9955 I LmManager: LmManager.asyncUpdateEnabledLanguageModels():96 asyncUpdateEnabledLanguageModels()
+10-01 10:03:14.882  8194  9955 I SuperDelight: SuperDelightManager.initializeOverridesSuperpacks():405 initializeOverridesSuperpacks()
+10-01 10:03:14.883  8194  9955 I DelightKLPDownloader: DelightKLPDownloader.downloadKLPInternal():199 downloading KLP for en_840
+10-01 10:03:14.883  8194  9955 I ManifestedDataDownloader: ManifestedDataDownloader.download():63 downloading manifest https://www.gstatic.com/android/keyboard/dictionarypack/2025031619/metadata.json-perlang/en-840.json?v=2025052001
+10-01 10:03:14.883  8194  9955 I SuperDelight: SuperDelightManager.initializeBundledDelightSuperpacks():379 initializeBundledDelightSuperpacks()
+10-01 10:03:14.925  1623  2906 I AiAiEcho: Settings changed for uri: content://settings/secure/enabled_input_methods
+10-01 10:03:14.925  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.925  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.925  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.925  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.925  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.925  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:14.925  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:14.925  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:14.925  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:14.926  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:14.926  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:14.926  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:14.926   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:14.952  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:14.952  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.952  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.952  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:14.952  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:14.993  8194 10241 I DownloadManager: DownloadManager.downloadInternal():412 Download for __KLP_manifest_delight__en-840 scheduled with params DownloadParams{allowMetered=true, requireCharging=false, foreground=false, immediately=true, priority=0}
+10-01 10:03:14.993  8194 10241 I DownloadManager: DownloadManager.startDownload():495 start download of __KLP_manifest_delight__en-840
+10-01 10:03:15.017  1252  1252 D WorkspaceRevealAnim: onAnimationEnd: workspace alpha = 1.0
+10-01 10:03:15.017   987  1099 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#45) android.os.BinderProxy@e73be30@0
+10-01 10:03:15.018   632   651 V WindowManager: Finish Transition (#45): created at 10-01 10:03:13.638 collect-started=0.034ms request-sent=0.171ms started=11.939ms ready=700.454ms sent=1022.14ms commit=18.047ms finished=1380.336ms
+10-01 10:03:15.020 10029 10029 D VRI[MainActivity]: visibilityChanged oldVisibility=true newVisibility=false
+10-01 10:03:15.022   987  1099 V WindowManagerShell: Track 0 became idle
+10-01 10:03:15.022   987  1099 V WindowManagerShell: All active transition animations finished
+10-01 10:03:15.067  8194  9968 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.068  8194  9966 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.072  8194  9955 I SuperDelight: SuperDelightManager.syncOverridesLanguageModels():687 SuperDelightManager#syncOverridesLanguageModels(): Superpack delight_overrides not found or negative version provided
+10-01 10:03:15.072  8194  9955 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: delight_overrides
+10-01 10:03:15.072  8194 10241 I DownloadManager: DownloadManager$4.onSuccess():564 download for __KLP_manifest_delight__en-840 is finished with files # mxp@e1af7ff4
+10-01 10:03:15.073  8194 10241 I DownloadManager: DownloadManager.downloadInternal():412 Download for __SP_MANIFEST_emoticon_content_description scheduled with params DownloadParams{allowMetered=true, requireCharging=false, foreground=false, immediately=true, priority=0}
+10-01 10:03:15.073  8194 10241 I DownloadManager: DownloadManager.startDownload():495 start download of __SP_MANIFEST_emoticon_content_description
+10-01 10:03:15.073  8194 10241 I DownloadManager: DownloadManager.downloadInternal():412 Download for __KLP_manifest_delight__en-840 scheduled with params DownloadParams{allowMetered=true, requireCharging=false, foreground=false, immediately=true, priority=0}
+10-01 10:03:15.073  8194 10241 I DownloadManager: DownloadManager.startDownload():495 start download of __KLP_manifest_delight__en-840
+10-01 10:03:15.073  8194 10241 I DownloadManager: DownloadManager.downloadInternal():412 Download for __SP_MANIFEST_bundled_delight scheduled with params DownloadParams{allowMetered=true, requireCharging=false, foreground=false, immediately=true, priority=0}
+10-01 10:03:15.073  8194 10241 I DownloadManager: DownloadManager.startDownload():495 start download of __SP_MANIFEST_bundled_delight
+10-01 10:03:15.074 10029 10029 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=a3@2835c9e
+10-01 10:03:15.074   632   647 D CoreBackPreview: Window{b5b8836 u0 com.phytoy.sample/com.phytoy.sample.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@917a843, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+10-01 10:03:15.084 10029 10029 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@27e3ad9
+10-01 10:03:15.086 10029 10029 D ViewRootImpl: Skipping stats log for color mode
+10-01 10:03:15.089  1252  1252 D RecentsView: onTaskRemoved: 12, not handling task stack changes
+10-01 10:03:15.089  1252  1252 D RecentsView: onTaskRemoved: 12, not handling task stack changes
+10-01 10:03:15.089   632   948 D BackgroundInstallControlService: Package event received: 0
+10-01 10:03:15.092   632  1870 W WindowManager: Failed looking up window session=Session{56b9c5b 10029:u0a10213} callers=com.android.server.wm.WindowManagerService.windowForClientLocked:6410 com.android.server.wm.Session.setOnBackInvokedCallbackInfo:1002 android.view.IWindowSession$Stub.onTransact:1156 
+10-01 10:03:15.092   632  1870 I WindowManager: setOnBackInvokedCallback(): No window state for package:com.phytoy.sample
+10-01 10:03:15.119  8194 10241 I DownloadManager: DownloadManager.downloadInternal():412 Download for __SP_MANIFEST_handwriting_recognition scheduled with params DownloadParams{allowMetered=true, requireCharging=false, foreground=false, immediately=true, priority=0}
+10-01 10:03:15.119  8194 10241 I DownloadManager: DownloadManager.startDownload():495 start download of __SP_MANIFEST_handwriting_recognition
+10-01 10:03:15.119  8194 10241 I DownloadManager: DownloadManager$4.onSuccess():564 download for __SP_MANIFEST_emoticon_content_description is finished with files # mxp@cfc28571
+10-01 10:03:15.120  8194 10241 I DownloadManager: DownloadManager$4.onSuccess():564 download for __KLP_manifest_delight__en-840 is finished with files # mxp@e1af7ff4
+10-01 10:03:15.121  8194  9985 E MDDSuperpacks: MDDSuperpacks.parseManifest():476 cannot find metadata for delight_overrides
+10-01 10:03:15.122  8194  9975 I ManifestedDataDownloader: ManifestedDataDownloader.checkVersionAndDownload():91 filegroup __KLP_delight__en-840 with version 2025031300 is already downloaded
+10-01 10:03:15.122  8194  9975 I DelightKLPDownloader: DelightKLPDownloader$2.onSuccess():222 klp en_840 downloaded with version 2025031300
+10-01 10:03:15.123  8194  9960 I MDDSuperpacks: MDDSuperpacks.sync():223 sync requested for emoticon_content_description
+10-01 10:03:15.124  8194  9971 I SuperDelight: SuperDelightBundledMetadataParser.addSystemLms():202 system lm dir /system/usr/share/ime/google/d3_lms does not exist or is not readable
+10-01 10:03:15.124  8194  9971 I SuperDelight: SuperDelightBundledMetadataParser.parse():192 SuperDelightBundledMetadataParser#parse(): manifest parsed with 1 packs
+10-01 10:03:15.126  8194 10087 W MDDSuperpacks: MDDSuperpacks.constructPackSet():578 file group is empty
+10-01 10:03:15.127  8194 10241 I DownloadManager: DownloadManager$4.onSuccess():564 download for __SP_MANIFEST_bundled_delight is finished with files # mxp@f7613d01
+10-01 10:03:15.129  8194  9984 I SuperDelight: SuperDelightBundledMetadataParser.addSystemLms():202 system lm dir /system/usr/share/ime/google/d3_lms does not exist or is not readable
+10-01 10:03:15.139  8194 10241 I DownloadManager: DownloadManager$4.onSuccess():564 download for __SP_MANIFEST_handwriting_recognition is finished with files # mxp@bafae184
+10-01 10:03:15.139  8194  9984 I SuperDelight: SuperDelightBundledMetadataParser.parse():192 SuperDelightBundledMetadataParser#parse(): manifest parsed with 1 packs
+10-01 10:03:15.139  8194  9985 E MDDSuperpacks: MDDSuperpacks.parseManifest():476 cannot find metadata for delight_overrides
+10-01 10:03:15.139  8194  9960 I SuperDelight: SuperDelightManager$2.onSuccess():635 delight_overrides sync success, adding to data file manager
+10-01 10:03:15.139  8194 10240 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [] got for superpack: delight_overrides
+10-01 10:03:15.139  8194  9975 I ManifestedDataDownloader: ManifestedDataDownloader.checkVersionAndDownload():91 filegroup __KLP_delight__en-840 with version 2025031300 is already downloaded
+10-01 10:03:15.139  8194  9975 I DelightKLPDownloader: DelightKLPDownloader$2.onSuccess():222 klp en_840 downloaded with version 2025031300
+10-01 10:03:15.139  8194  9975 I HandwritingOnlineSuperpacks: HandwritingOnlineSuperpacks.syncInternal():168 syncPackMapping()
+10-01 10:03:15.140  8194  9975 I MDDSuperpacks: MDDSuperpacks.sync():223 sync requested for handwriting_recognition
+10-01 10:03:15.140  8194 10087 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.141  8194 10087 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: emoticon_content_description
+10-01 10:03:15.142  8194  9968 I SuperDelight: SuperDelightBundledMetadataParser.addSystemLms():202 system lm dir /system/usr/share/ime/google/d3_lms does not exist or is not readable
+10-01 10:03:15.142  8194  9985 E MDDSuperpacks: MDDSuperpacks.parseManifest():476 cannot find metadata for delight_overrides
+10-01 10:03:15.142  8194  9968 I SuperDelight: SuperDelightBundledMetadataParser.parse():192 SuperDelightBundledMetadataParser#parse(): manifest parsed with 1 packs
+10-01 10:03:15.148  8194 10240 I SuperDelight: SuperDelightBundledMetadataParser.addSystemLms():202 system lm dir /system/usr/share/ime/google/d3_lms does not exist or is not readable
+10-01 10:03:15.152  8194  9955 I SuperDelight: SuperDelightManager.syncBundledLanguageModels():773 SuperDelightManager#syncBundledLanguageModels(): Syncing for version 2025021100
+10-01 10:03:15.152  8194  9955 I MDDSuperpacks: MDDSuperpacks.sync():223 sync requested for bundled_delight
+10-01 10:03:15.153  8194 10240 I SuperDelight: SuperDelightBundledMetadataParser.parse():192 SuperDelightBundledMetadataParser#parse(): manifest parsed with 1 packs
+10-01 10:03:15.155  8194  9985 I SuperDelight: SuperDelightBundledMetadataParser.addSystemLms():202 system lm dir /system/usr/share/ime/google/d3_lms does not exist or is not readable
+10-01 10:03:15.155  8194  9985 I SuperDelight: SuperDelightBundledMetadataParser.parse():192 SuperDelightBundledMetadataParser#parse(): manifest parsed with 1 packs
+10-01 10:03:15.158  8194  9971 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [3c27e76d2c13b8d849a3711831ff8dbd, 7a635888cb828dfa2fc744b7b9b50f04] got for superpack: emoticon_content_description
+10-01 10:03:15.158  8194  9981 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: emoticon_content_description
+10-01 10:03:15.159  8194  9984 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: bundled_delight
+10-01 10:03:15.160  8194  9985 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.160  8194  9984 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [3c27e76d2c13b8d849a3711831ff8dbd, 7a635888cb828dfa2fc744b7b9b50f04] got for superpack: emoticon_content_description
+10-01 10:03:15.160  8194  9968 I MDDSuperpacks: MDDSuperpacks$2.onSuccess():274 Sync success for emoticon_content_description with result: {old=[3c27e76d2c13b8d849a3711831ff8dbd, 7a635888cb828dfa2fc744b7b9b50f04], new=[3c27e76d2c13b8d849a3711831ff8dbd, 7a635888cb828dfa2fc744b7b9b50f04], metadata=false, last batch=true}
+10-01 10:03:15.161  8194  9985 I SuperDelight: SuperDelightBundledSlicingStrategy.getSlices():41 BundledSlicing#getSlices() : Locale = [en_US]
+10-01 10:03:15.161  8194  9985 I SuperDelight: SuperDelightBundledSlicingStrategy.getSlices():67 BundledSlicing#getSlices(): result {slices=[bundled_delight:main_en_us_2024102000_2], last batch=true, sync metadata=false}
+10-01 10:03:15.161  8194  9968 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: bundled_delight
+10-01 10:03:15.161  8194  9984 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [main_en_us_2024102000_2] got for superpack: bundled_delight
+10-01 10:03:15.163  8194 10087 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [main_en_us_2024102000_2] got for superpack: bundled_delight
+10-01 10:03:15.164  8194  9971 I LmManager: LmManager$1.onSuccess():82 Bundled delight sync success
+10-01 10:03:15.164  8194  9960 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: bundled_delight
+10-01 10:03:15.164  8194 10087 I MDDSuperpacks: MDDSuperpacks$2.onSuccess():274 Sync success for bundled_delight with result: {old=[main_en_us_2024102000_2], new=[main_en_us_2024102000_2], metadata=false, last batch=true}
+10-01 10:03:15.164  8194 10087 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [main_en_us_2024102000_2] got for superpack: bundled_delight
+10-01 10:03:15.164  8194  9960 I SuperDelight: SuperDelightManager$2.onSuccess():635 bundled_delight sync success, adding to data file manager
+10-01 10:03:15.164  8194  9960 I DataFileManager: DataFileManager.addDataWithoutNotify():181 data en-US already exists
+10-01 10:03:15.164  8194  9985 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.164  8194 10087 I HandwritingSlicingStrategy: HandwritingSlicingStrategy.getSlices():44 getSlices(): handwriting_recognition.86 useForeground=true
+10-01 10:03:15.164  8194 10087 I HandwritingSlicingStrategy: HandwritingSlicingStrategy.getSlices():103 getSlices(): result {slices=[{handwriting_recognition:pack_mapping_v1_lstm_20231127, m:*:*:*, fg}, {handwriting_recognition:transformer_latin_tflite_20231010_zip, m:*:*:*, fg}, {handwriting_recognition:qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, m:*:*:*, fg}, {handwriting_recognition:transformer_latin_conf_tflite_20231010_zip, m:*:*:*, fg}, {handwriting_recognition:transformer_latin_seg_tflite_20231010_zip, m:*:*:*, fg}, {handwriting_recognition:en_us_20230613_compact_fst_zip, m:*:*:*, fg}, {handwriting_recognition:scribe_latin_20231123_tflite_zip, m:*:*:*, fg}, {handwriting_recognition:scribe_latin_20231123_recospec_zip, m:*:*:*, fg}], last batch=true, sync metadata=false}
+10-01 10:03:15.164  8194  9985 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.167  8194  9968 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.167  8194  9966 I HandwritingOnlineSuperpacks: HandwritingOnlineSuperpacks.syncInternal():187 syncInternal(): syncing packs
+10-01 10:03:15.167  8194  9966 I HandwritingOnlineSuperpacks: HandwritingOnlineSuperpacks$2.onSyncSuccess():225 syncInternal(): complete {old=[en_us_20230613_compact_fst_zip, pack_mapping_v1_lstm_20231127, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_chinese_20231123_recospec_zip, scribe_chinese_20231123_tflite_zip, scribe_latin_20231123_recospec_zip, scribe_latin_20231123_tflite_zip, transformer_chinese_conf_tflite_20231016_zip, transformer_chinese_seg_tflite_20231016_zip, transformer_chinese_tflite_20231016_zip, transformer_latin_conf_tflite_20231010_zip, transformer_latin_seg_tflite_20231010_zip, transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip], new=[en_us_20230613_compact_fst_zip, pack_mapping_v1_lstm_20231127, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_chinese_20231123_recospec_zip, scribe_chinese_20231123_tflite_zip, scribe_latin_20231123_recospec_zip, scribe_latin_20231123_tflite_zip, transformer_chinese_conf_tflite_20231016_zip, transformer_chinese_seg_tflite_20231016_zip, transformer_chinese_tflite_20231016_zip, transformer_latin_conf_tflite_20231010_zip, transformer_latin_seg_tflite_20231010_zip, transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip], metadata=false, last batch=true}
+10-01 10:03:15.167  8194 10087 I MDDSuperpacks: MDDSuperpacks$2.onSuccess():274 Sync success for handwriting_recognition with result: {old=[en_us_20230613_compact_fst_zip, pack_mapping_v1_lstm_20231127, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_chinese_20231123_recospec_zip, scribe_chinese_20231123_tflite_zip, scribe_latin_20231123_recospec_zip, scribe_latin_20231123_tflite_zip, transformer_chinese_conf_tflite_20231016_zip, transformer_chinese_seg_tflite_20231016_zip, transformer_chinese_tflite_20231016_zip, transformer_latin_conf_tflite_20231010_zip, transformer_latin_seg_tflite_20231010_zip, transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip], new=[en_us_20230613_compact_fst_zip, pack_mapping_v1_lstm_20231127, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_chinese_20231123_recospec_zip, scribe_chinese_20231123_tflite_zip, scribe_latin_20231123_recospec_zip, scribe_latin_20231123_tflite_zip, transformer_chinese_conf_tflite_20231016_zip, transformer_chinese_seg_tflite_20231016_zip, transformer_chinese_tflite_20231016_zip, transformer_latin_conf_tflite_20231010_zip, transformer_latin_seg_tflite_20231010_zip, transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip], metadata=false, last batch=true}
+10-01 10:03:15.167  8194  9966 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.169  8194  9966 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.171  8194 10087 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.172  8194  9966 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition_offline
+10-01 10:03:15.172  8194 10087 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.172  8194  9981 W MDDSuperpacks: MDDSuperpacks.constructPackSet():578 file group is empty
+10-01 10:03:15.172  8194  9973 E HandwritingSuperpacksUtil: HandwritingSuperpacksUtil.getPackMappingPackName():40 No pack mapping pack found in []
+10-01 10:03:15.172  8194  9973 I HandwritingSuperpacks: HandwritingSuperpacks.reloadCache():237 updatePackMappingsCache(): pack mapping pack unavailable [OFFLINE]
+10-01 10:03:15.172  8194  9973 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.172  8194  9968 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [] got for superpack: handwriting_recognition_offline
+10-01 10:03:15.175  8194  9973 I MDDSuperpacks: MDDSuperpacks.getPacks():548 getting packs for superpack: handwriting_recognition
+10-01 10:03:15.175  8194  9968 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:15.181  8194 10087 I MDDSuperpacks: MDDSuperpacks$3.onSuccess():558 packs [transformer_latin_tflite_20231010_zip, zh_cn_20230706_compact_fst_zip, transformer_chinese_tflite_20231016_zip, qrnn_en_us_reco_20231010_fst_20230613_recospec_zip, pack_mapping_v1_lstm_20231127, transformer_latin_seg_tflite_20231010_zip, transformer_chinese_conf_tflite_20231016_zip, qrnn_zh_cn_reco_20231016_fst_20230706_recospec_zip, scribe_latin_20231123_recospec_zip, en_us_20230613_compact_fst_zip, scribe_chinese_20231123_tflite_zip, transformer_chinese_seg_tflite_20231016_zip, scribe_latin_20231123_tflite_zip, transformer_latin_conf_tflite_20231010_zip, scribe_chinese_20231123_recospec_zip] got for superpack: handwriting_recognition
+10-01 10:03:17.673 10653 10653 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@5e42c; boundsInParent: Rect(0, 0 - 0, 0); boundsInScreen: Rect(0, 128 - 0, 128); boundsInWindow: Rect(0, 128 - 0, 128); packageName: com.google.android.apps.nexuslauncher; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; containerTitle: null; viewIdResName: null; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; granularScrollingSupported: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+10-01 10:03:17.674 10653 10653 W AccessibilityNodeInfoDumper: Fetch time: 6ms
+10-01 10:03:17.675   632  1870 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+10-01 10:03:17.679   632  1870 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-01 10:03:17.679   632  1870 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.680   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.681   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.681   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.681   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:17.681  1623  2906 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+10-01 10:03:17.681   632   632 D BatterySaverPolicy: accessibility changed to false, updating policy.
+10-01 10:03:17.685 10653 10664 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+10-01 10:03:17.686 10653 10665 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+10-01 10:03:17.686 10653 10668 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+10-01 10:03:17.688 10653 10653 D AndroidRuntime: Shutting down VM
+10-01 10:03:17.703  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:17.704  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:17.704  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:17.704  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:17.704  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:17.705  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:17.705  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:17.705  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:17.705  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:17.705  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:17.705  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:17.706  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:17.706   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:17.706  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:17.706  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:17.706  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:17.706  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:17.706  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:18.091   632  3151 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+10-01 10:03:18.727 10674 10674 W screencap: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: SurfaceFlingerAIDL
+10-01 10:03:18.727 10674 10674 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+10-01 10:03:18.727 10674 10674 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-01 10:03:18.735   494   549 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+10-01 10:03:18.735   494   549 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
+10-01 10:03:19.065 10676 10676 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-01 10:03:19.069 10676 10676 I AndroidRuntime: Using default boot image
+10-01 10:03:19.069 10676 10676 I AndroidRuntime: Leaving lock profiling enabled
+10-01 10:03:19.070 10676 10676 I app_process: Using CollectorTypeCMC GC.
+10-01 10:03:19.118 10676 10676 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-01 10:03:19.125 10676 10676 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-01 10:03:19.125 10676 10676 D app_process: u_setTimeZoneFilesDirectory("/apex/com.android.tzdata/etc/tz/versioned/9/icu") succeeded. 
+10-01 10:03:19.125 10676 10676 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt76l.dat
+10-01 10:03:19.125 10676 10676 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-01 10:03:19.126 10676 10676 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-01 10:03:19.128 10676 10676 W app_process: ClassLoaderContext shared library size mismatch. Expected=2, found=0 (PCL[]{PCL[/system/framework/android.test.base.jar*2789897741]#PCL[/system/framework/android.test.mock.jar*3361312393]} | PCL[])
+10-01 10:03:19.128 10676 10676 W app_process: ClassLoaderContext classpath size mismatch. expected=0, found=1 (PCL[]{PCL[/system/framework/android.test.runner.jar*895143020]#PCL[/system/framework/android.test.base.jar*2789897741]} | PCL[/system/framework/android.test.runner.jar*895143020])
+10-01 10:03:19.142 10676 10676 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-01 10:03:19.142 10676 10676 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-01 10:03:19.144 10676 10676 I AconfigPackage: android.media.swcodec.flags is mapped to com.android.media.swcodec
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.google.android.settings.simplemode.flags is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.google.android.systemui is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.google.android.apps.nexuslauncher is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.settings.accessibility is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.settings.flags is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.google.android.apps.miphone.aiai.matchmaker.overview.ui is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.google.android.settings.flags is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.launcher3 is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.wallpaper is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.settings.media_drm is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.systemui.accessibility.accessibilitymenu is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.settings.keyboard is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.server.policy.feature.flags is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.settings.factory_reset is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.google.android.haptics.flags is mapped to system_ext
+10-01 10:03:19.144 10676 10676 I AconfigPackage: com.android.permission.flags is mapped to com.android.permission
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.icu is mapped to com.android.i18n
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.appsearch.flags is mapped to com.android.appsearch
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.uprobestats.mainline.flags is mapped to com.android.uprobestats
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.provider.flags is mapped to com.android.configinfrastructure
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.deviceconfig is mapped to com.android.configinfrastructure
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.nfc.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.admin.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.database.sqlite is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.providers.calendar is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.power.feature.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.performance.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.contextualsearch.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.ondeviceintelligence.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.projection.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.companion is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.controls.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.text.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.providers.contactkeys.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.intentresolver is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.companion.virtualdevice.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.uprobestats.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.net.thread.platform.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.view.contentprotection.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.dreams is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.graphics.surfaceflinger.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.hardware.input is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.sdk is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.input.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.tracing is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.biometrics is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.view.contentcapture.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.job is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.content.res is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.net.platform.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.aconfig.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.graphics.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.server.app is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.speech.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.stats is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.hardware.biometrics is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.car.feature is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.adpf is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.location.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.settingslib.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.managedprovisioning.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.assist.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.net is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.settingslib.widget.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.camera.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.hardware.libsensor.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.jank is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.providers.settings is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.multiuser is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.power.optimization is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.calllogbackup is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.graphics.libvulkan.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.appfunctions.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.smartspace.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.providers.contacts.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.shell.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.aaudio is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.hardware.radio is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.google.wear.services.infra.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: suspend_service.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.media.midi is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.libcore.readonly is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.settingslib.widget.selectorwithwidgetpreference.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.notification is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.systemui.shared is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.jank is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.wearable is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.audio is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.chooser is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.compat is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.alarm is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.apex.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.quickaccesswallet is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.usage is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.accessibility is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app.supervision.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.utils is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.chre.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.content.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.media.codec is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.os is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.nfc.nci.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.app is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.security.keystore2 is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.crashrecovery.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.tradeinmode.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.hardware.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.telecom.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.settingslib.media.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.policy is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.media.audiopolicy is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.egg.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.compat.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.security is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.autofill is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.example.android.aconfig.demo.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.view.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.companion.virtual.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.aconfig_new_storage is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.feature.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.systemui is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.power.batterysaver is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.widget.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.editing.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.codec.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.powerstats is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.graphics.egl.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.audioserver is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.deviceidle is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.nfc is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.permission.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.voice.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.content.pm is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.power.hint is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.os is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.service.dreams is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.graphics.libgui.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.hardware.usb.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.provider is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.job is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.foldables.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.telephony.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.webkit is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.credentials.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.display.feature.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.notification is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.appwidget.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.frameworks.sensorservice.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.printspooler.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.window.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.adaptiveauth is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.net.wifi.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.media.tv.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.usb.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.os.vibrator is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.hardware.devicestate.feature.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.usage is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.server is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.wm.shell is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.view.inputmethod is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.graphics.hwui.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.backup is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.internal.pm.pkg.component.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.view.accessibility is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.google.wear.sdk is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: android.media.audio is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.server.am is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.playback.flags is mapped to system
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.art.flags is mapped to com.android.art
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.libcore is mapped to com.android.art
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.extractor.flags is mapped to com.android.media
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.media.mainline.flags is mapped to com.android.media
+10-01 10:03:19.145 10676 10676 I AconfigPackage: com.android.wifi.flags is mapped to com.android.wifi
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.org.conscrypt.flags is mapped to com.android.conscrypt
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.healthfitness.flags is mapped to com.android.healthfitness
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.google.android.input.twoshay.flags is mapped to vendor
+10-01 10:03:19.146 10676 10676 I AconfigPackage: libgooglecamerahal.flags is mapped to vendor
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.ipsec.flags is mapped to com.android.ipsec
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.nfc.module.flags is mapped to com.android.nfcservices
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.adservices.ondevicepersonalization.flags is mapped to com.android.ondevicepersonalization
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.bluetooth.flags is mapped to com.android.bt
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.devicelock.flags is mapped to com.android.devicelock
+10-01 10:03:19.146 10676 10676 I AconfigPackage: android.os.profiling is mapped to com.android.profiling
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.os.statsd.flags is mapped to com.android.os.statsd
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.cellbroadcastreceiver.flags is mapped to com.android.cellbroadcast
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.adservices.flags is mapped to com.android.adservices
+10-01 10:03:19.146 10676 10676 I AconfigPackage: com.android.sdksandbox.flags is mapped to com.android.adservices
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.uwb.flags is mapped to com.android.uwb
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.ranging.flags is mapped to com.android.uwb
+10-01 10:03:19.147 10676 10676 I AconfigPackage: android.graphics.pdf.flags is mapped to com.android.mediaprovider
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.providers.media.flags is mapped to com.android.mediaprovider
+10-01 10:03:19.147 10676 10676 I AconfigPackage: android.graphics.pdf.flags.readonly is mapped to com.android.mediaprovider
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.net.ct.flags is mapped to com.android.tethering
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.net.flags is mapped to com.android.tethering
+10-01 10:03:19.147 10676 10676 I AconfigPackage: android.net.vcn is mapped to com.android.tethering
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.nearby.flags is mapped to com.android.tethering
+10-01 10:03:19.147 10676 10676 I AconfigPackage: android.net.http is mapped to com.android.tethering
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.net.thread.flags is mapped to com.android.tethering
+10-01 10:03:19.147 10676 10676 I AconfigPackage: com.android.system.virtualmachine.flags is mapped to com.android.virt
+10-01 10:03:19.147 10676 10676 E FeatureFlagsImplExport: android.os.flagging.AconfigStorageReadException: ERROR_PACKAGE_NOT_FOUND: package android.xr cannot be found on the device
+10-01 10:03:19.148 10676 10676 D UiAutomationConnection: Created on user UserHandle{0}
+10-01 10:03:19.148 10676 10676 I UiAutomation: Initialized for user 0 on display 0
+10-01 10:03:19.148 10676 10676 W UiAutomation: Created with deprecatead constructor, assumes DEFAULT_DISPLAY
+10-01 10:03:19.150   632  1877 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+10-01 10:03:19.150   632  1877 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation, flags=0x0) when called by user 0
+10-01 10:03:19.150   632  1877 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+10-01 10:03:19.151   632  1877 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-01 10:03:19.151  1623  2906 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+10-01 10:03:19.152   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.152  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:19.152   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.152  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:19.152  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:19.152  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:19.152   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.152  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:19.152  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:19.152  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:19.152  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:19.152  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:19.152  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:19.152  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:19.152  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:19.152  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:19.152  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:19.152  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:19.152  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:19.152  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:19.153   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:19.153   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.154   632  1877 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+10-01 10:03:19.154   632  1877 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-01 10:03:19.154   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.154   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.154   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.154  1623  2906 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+10-01 10:03:19.154   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.155   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.155   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.155   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.155   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.155  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:19.155  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:19.155  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:19.155  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:19.155  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:19.156  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:19.156  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:19.156  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:19.156  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:19.156  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:19.156  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:19.156  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:19.157   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.157   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.157   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.157   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.157  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:19.157  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:19.157  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:19.157  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:19.157  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:19.158   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.158   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.158   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.158   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:19.158   632   632 D BatterySaverPolicy: accessibility changed to true, updating policy.
+10-01 10:03:19.159   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:20.034  8194  8199 W putmethod.latin: Suspending all threads took: 6.107ms
+10-01 10:03:20.172 10676 10676 W AccessibilityNodeInfoDumper: Fetch time: 7ms
+10-01 10:03:20.173   632   647 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+10-01 10:03:20.173   632   647 W MagnificationConnectionManager: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-01 10:03:20.173   632   647 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+10-01 10:03:20.173   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.173   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 W IPCThreadState: Sending oneway calls to frozen process.
+10-01 10:03:20.174   632   632 D BatterySaverPolicy: accessibility changed to false, updating policy.
+10-01 10:03:20.174 10676 10686 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+10-01 10:03:20.175 10676 10685 W IPCThreadState: call to talkWithDriver in joinThreadPool returned error: -9 (Bad file descriptor), FD: -1
+10-01 10:03:20.176 10676 10676 D AndroidRuntime: Shutting down VM
+10-01 10:03:20.177  1623  2906 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+10-01 10:03:20.177  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:20.177  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:20.177  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:20.177  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:20.177  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:20.178  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface home with targets# 0 (types=[])
+10-01 10:03:20.178  1623  1892 I AiAiEcho: Predicting[0]:  [CONTEXT sampling_count=5 ]
+10-01 10:03:20.178  1623  1892 I AiAiEcho: EchoTargets: 
+10-01 10:03:20.178  1623  1892 I AiAiEcho: Filtered by AiAi flag check: 
+10-01 10:03:20.178  1623  1892 I AiAiEcho: [CONTEXT ratelimit_period="10 SECONDS" ]
+10-01 10:03:20.178  1623  1892 I AiAiEcho: #remoteViewsTwiddler: feature disabled.
+10-01 10:03:20.178  1623  1892 I AiAiEcho: #postPredictionTargets: Sending updates to UISurface lockscreen with targets# 0 (types=[])
+10-01 10:03:20.185  1252  1252 D SsBaseTemplateCard: No text view can be set up
+10-01 10:03:20.185  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:20.185  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:20.185  1252  1252 D SsBaseTemplateCard: Passed-in item info is null
+10-01 10:03:20.185  1252  1252 I SsBaseTemplateCard: Secondary card pane is null
+10-01 10:03:20.186   987   987 W PageIndicator: Total number of pages invalid: 0. Assuming 1 page.
+10-01 10:03:21.831   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-01 10:03:21.831   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-01 10:03:21.831   632   905 D InetDiagMessage: Destroyed live tcp sockets for uids={10168} in 1ms
+10-01 10:03:21.831   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-01 10:03:21.831   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-01 10:03:21.831   632   905 D InetDiagMessage: Destroyed live tcp sockets for uids={20168} in 0ms
+10-01 10:03:23.072  8411 10698 I GmscoreIpa: Starting mediastore instant index [CONTEXT service_id=255 ]
+10-01 10:03:23.285  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:03:25.027   632   742 D ActivityManager: freezing 10029 com.phytoy.sample
+10-01 10:03:25.033   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-01 10:03:25.033   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-01 10:03:25.033   632   905 D InetDiagMessage: Destroyed live tcp sockets for uids={10213} in 0ms
+10-01 10:03:26.832   632   742 D ActivityManager: freezing 5618 com.google.android.apps.photos
+10-01 10:03:26.834   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+10-01 10:03:26.834   632   905 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+10-01 10:03:26.834   632   905 D InetDiagMessage: Destroyed live tcp sockets for uids={10168} in 1ms
+10-01 10:03:33.290  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:03:43.301  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:03:53.301  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:04:00.062  1647  2126 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+10-01 10:04:03.305  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:04:13.310  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:04:23.314  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:04:33.318  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:04:43.318  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:04:53.326  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-01 10:05:00.059  1647  2195 I bdee    : (REDACTED) getHotwordActive::active query: %s, watch: %s, devices connected: %s
+10-01 10:05:03.327  1143  1419 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled

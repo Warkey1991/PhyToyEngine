@@ -138,6 +138,12 @@ std::vector<float> sensor_parameters(
 
 std::vector<float> isp_parameters(
     uint32_t width, uint32_t height, const SensorProfile& sensor, const IspProfile& isp) {
+    if (!std::isfinite(isp.denoise_sigma) || isp.denoise_sigma < 0.0F ||
+        isp.denoise_sigma > 1.0F || !std::isfinite(isp.sharpen_amount) ||
+        !std::isfinite(isp.sharpen_radius) || isp.sharpen_radius <= 0.0F ||
+        (isp.sharpen_amount != 0.0F && isp.sharpen_radius > 1.0F)) {
+        throw std::invalid_argument("Vulkan ISP requires finite active Gaussian sigma in [0,1]");
+    }
     std::vector<float> result(18U, 0.0F);
     result[0] = static_cast<float>(width);
     result[1] = static_cast<float>(height);
@@ -154,6 +160,7 @@ std::vector<float> isp_parameters(
     result.push_back(isp.denoise_sigma);
     result.push_back(isp.sharpen_amount);
     result.push_back(isp.sharpen_radius);
+    result.push_back(isp.monochrome ? 1.0F : 0.0F);
     return result;
 }
 
@@ -1797,9 +1804,10 @@ struct VulkanBackend::Impl {
         }
         const std::vector<float> ahb_params =
             ahb_normalization_parameters(width, height, host);
-        const std::vector<float> optics_params = optics_parameters(width, height, toy.optics);
-        const std::vector<float> sensor_params = sensor_parameters(width, height, toy.sensor, seed);
-        const std::vector<float> isp_params = isp_parameters(width, height, toy.sensor, toy.isp);
+        const ToyProfile resolved = profile_for_resolution(toy, width, height);
+        const std::vector<float> optics_params = optics_parameters(width, height, resolved.optics);
+        const std::vector<float> sensor_params = sensor_parameters(width, height, resolved.sensor, seed);
+        const std::vector<float> isp_params = isp_parameters(width, height, resolved.sensor, resolved.isp);
         const VkDeviceSize pixels = static_cast<VkDeviceSize>(width) * height;
         const VkDeviceSize rgb_bytes = pixels * 3U * sizeof(float);
         const VkDeviceSize raw_bytes = pixels * sizeof(float);
@@ -1857,9 +1865,10 @@ struct VulkanBackend::Impl {
     void render(const Image& scene, const ToyProfile& toy, uint64_t seed,
                 pte_stage_callback_f32 callback, void* user_data,
                 pte_output_f32_t& destination) {
-        const std::vector<float> optics_params = optics_parameters(scene.width, scene.height, toy.optics);
-        const std::vector<float> sensor_params = sensor_parameters(scene.width, scene.height, toy.sensor, seed);
-        const std::vector<float> isp_params = isp_parameters(scene.width, scene.height, toy.sensor, toy.isp);
+        const ToyProfile resolved = profile_for_resolution(toy, scene.width, scene.height);
+        const std::vector<float> optics_params = optics_parameters(scene.width, scene.height, resolved.optics);
+        const std::vector<float> sensor_params = sensor_parameters(scene.width, scene.height, resolved.sensor, seed);
+        const std::vector<float> isp_params = isp_parameters(scene.width, scene.height, resolved.sensor, resolved.isp);
         const VkDeviceSize rgb_bytes = static_cast<VkDeviceSize>(scene.pixels.size() * sizeof(float));
         const VkDeviceSize raw_bytes = static_cast<VkDeviceSize>(scene.width) * scene.height * sizeof(float);
         ensure_frame_resources(
@@ -2030,8 +2039,12 @@ void VulkanBackend::render_ahardware_buffer(
 }
 
 bool vulkan_backend_available() noexcept {
-    VulkanBackend backend;
-    return backend.available();
+    try {
+        VulkanBackend backend;
+        return backend.available();
+    } catch (...) {
+        return false;
+    }
 }
 
 }  // namespace phytoy

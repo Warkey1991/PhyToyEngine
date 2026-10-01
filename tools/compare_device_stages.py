@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,6 +11,8 @@ import numpy as np
 from PIL import Image
 
 from phytoy_ref.pipeline import ReferencePipeline
+from phytoy_ref.isp import run_isp
+from phytoy_ref.sampling import profile_for_resolution
 from phytoy_ref.profiles import load_host_profile, load_toy_profile
 
 
@@ -19,6 +22,8 @@ def read_pfm(path: Path) -> np.ndarray:
         if magic not in {b"PF", b"Pf"}:
             raise ValueError(f"not a PFM file: {path}")
         width, height = [int(value) for value in stream.readline().split()]
+        if not 1 <= width <= 8192 or not 1 <= height <= 8192 or width * height > 16777216:
+            raise ValueError(f"PFM dimensions exceed the frame budget: {width}x{height}")
         scale = float(stream.readline())
         dtype = "<f4" if scale < 0.0 else ">f4"
         channels = 3 if magic == b"PF" else 1
@@ -46,6 +51,8 @@ def main() -> None:
     parser.add_argument("--toy-profile", required=True, type=Path)
     parser.add_argument("--seed", required=True, type=int)
     parser.add_argument("--contract", type=Path)
+    parser.add_argument("--isp-only-from-native-sensor", action="store_true",
+                        help="check only stages 04/05 conditioned on actual stage 03 DN, isolating ISP from ADC threshold rounding")
     arguments = parser.parse_args()
 
     if arguments.synthetic:
@@ -60,9 +67,22 @@ def main() -> None:
             np.asarray(Image.open(arguments.input).convert("RGB"), dtype=np.float64) / 255.0
         )
 
-    reference = ReferencePipeline(
-        load_host_profile(arguments.host_profile), load_toy_profile(arguments.toy_profile)
-    ).render_srgb(source_image, seed=arguments.seed)
+    toy = load_toy_profile(arguments.toy_profile)
+    sensor_input = None
+    if arguments.isp_only_from_native_sensor:
+        sensor_path = arguments.stages / "03_target_sensor_dn.pfm"
+        sensor_dn = read_pfm(sensor_path)
+        if sensor_dn.shape != source_image.shape[:2] or not np.all(np.isfinite(sensor_dn)):
+            raise ValueError("native sensor stage must be finite single-channel DN matching the source dimensions")
+        resolved = profile_for_resolution(toy, sensor_dn.shape[1], sensor_dn.shape[0])
+        toned, encoded = run_isp(sensor_dn, resolved)
+        expected_stages = {"04_target_isp_linear": toned, "05_output_srgb": encoded}
+        sensor_input = {"path": str(sensor_path),
+                        "sha256": hashlib.sha256(sensor_path.read_bytes()).hexdigest()}
+    else:
+        expected_stages = ReferencePipeline(
+            load_host_profile(arguments.host_profile), toy
+        ).render_srgb(source_image, seed=arguments.seed).stages
     limits = None
     if arguments.contract:
         contract = json.loads(arguments.contract.read_text(encoding="utf-8"))
@@ -76,8 +96,12 @@ def main() -> None:
         "05_output_srgb": "output_srgb",
     }
     stages = {}
-    for name, expected in reference.stages.items():
+    for name, expected in expected_stages.items():
         actual = read_pfm(arguments.stages / f"{name}.pfm")
+        if actual.shape != expected.shape:
+            raise ValueError(f"{name} shape mismatch: actual {actual.shape}, expected {expected.shape}")
+        if not np.all(np.isfinite(actual)) or not np.all(np.isfinite(expected)):
+            raise ValueError(f"{name} contains non-finite stage pixels")
         difference = actual - expected
         maximum = float(np.max(np.abs(difference)))
         limit = limits[limit_names[name]] if limits is not None else None
@@ -93,6 +117,8 @@ def main() -> None:
         json.dumps(
             {
                 "passed": passed,
+                "comparison_scope": "ISP/output conditioned on actual native sensor DN" if sensor_input else "all five stages against independently rendered reference",
+                "native_sensor_input": sensor_input,
                 "width": int(source_image.shape[1]),
                 "height": int(source_image.shape[0]),
                 "seed": arguments.seed,

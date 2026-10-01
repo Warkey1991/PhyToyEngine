@@ -1,0 +1,57 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    },
+    {
+      "name": "offline privacy text is accessible",
+      "passed": true
+    },
+    {
+      "name": "3 background/resume cycles",
+      "passed": true
+    },
+    {
+      "name": "front and back camera with a saved front photo",
+      "passed": true
+    },
+    {
+      "name": "all six profiles switch, save, review and return to shooting",
+      "passed": true
+    },
+    {
+      "name": "photo list retains captures, opens a photo and supports both return paths",
+      "passed": true
+    }
+  ],
+  "styles": [
+    {
+      "id": "style_dh_color",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_dh_mono",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_digital",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_plastic",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_street",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_fisheye",
+      "saved_and_reviewed": true
+    }
+  ],
+  "failure": "StopIteration: "
+}

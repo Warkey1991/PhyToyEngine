@@ -1,13 +1,24 @@
 #include "phytoy/phytoy.h"
+#include "../src/error_state.hpp"
 
 #include <algorithm>
 #include <array>
 #include <cassert>
+
+#ifdef NDEBUG
+#error "Native regression tests require active assertions"
+#endif
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <iostream>
+#include <limits>
+#include <memory>
+#include <new>
+#include <stdexcept>
 #include <string>
+#include <thread>
+#include <utility>
 #include <vector>
 
 namespace {
@@ -176,6 +187,262 @@ void test_argument_validation() {
 #endif
 }
 
+void test_dimensions_and_padded_stride_validation() {
+    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_fixed_focus_conformance.ptp"));
+    std::vector<float> input(4U * 4U * 3U, 0.35F);
+    std::vector<float> output(input.size(), -7.0F);
+    pte_frame_f32_t frame{};
+    frame.abi_version = PTE_ABI_VERSION;
+    frame.format = PTE_PIXEL_FORMAT_SRGB_F32;
+    frame.width = 4U;
+    frame.height = 4U;
+    frame.plane[0] = {input.data(), 12U};
+    pte_output_f32_t destination{output.data(), output.size(), 12U};
+    pte_render_options_t options{PTE_ABI_VERSION, 1234U, nullptr, nullptr};
+    for (const auto& [width, height] : std::array{
+             std::pair{0U, 4U}, std::pair{4U, 0U},
+             std::pair{8193U, 1U}, std::pair{1U, 8193U},
+             std::pair{8192U, 2049U}, std::pair{65536U, 65536U},
+             std::pair{std::numeric_limits<uint32_t>::max(), 2U}}) {
+        frame.width = width;
+        frame.height = height;
+        assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+        assert(std::string(pte_engine_last_error(engine.value)).find("dimension") != std::string::npos);
+        assert(std::all_of(output.begin(), output.end(), [](float value) { return value == -7.0F; }));
+    }
+    // A frame exactly at the budget passes dimension validation but cannot read
+    // the tiny test input, because output capacity is checked before rendering.
+    frame.width = 8192U;
+    frame.height = 2048U;
+    frame.plane[0].row_stride_floats = frame.width * 3U;
+    assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+    destination.row_stride_floats = 0U;
+    assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_BUFFER_TOO_SMALL);
+    frame.width = frame.height = 4U;
+    frame.plane[0].row_stride_floats = std::numeric_limits<uint32_t>::max();
+    assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+    assert(std::string(pte_engine_last_error(engine.value)).find("memory budget") != std::string::npos);
+    frame.plane[0].row_stride_floats = 12U;
+    destination.row_stride_floats = std::numeric_limits<uint32_t>::max();
+    assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+    assert(std::string(pte_engine_last_error(engine.value)).find("memory budget") != std::string::npos);
+
+    // AHardwareBuffer dimensions are checked even on hosts without Vulkan, so
+    // invalid dimensions never reach buffer import or backend initialization.
+    pte_ahardware_buffer_frame_t ahb{};
+    ahb.abi_version = PTE_ABI_VERSION;
+    ahb.buffer = reinterpret_cast<AHardwareBuffer*>(static_cast<uintptr_t>(1U));
+    ahb.width = std::numeric_limits<uint32_t>::max();
+    ahb.height = 4U;
+    ahb.acquire_fence_fd = -1;
+    assert(pte_engine_process_ahardware_buffer(engine.value, &ahb, &options) == PTE_STATUS_INVALID_ARGUMENT);
+    assert(pte_engine_render_ahardware_buffer(engine.value, &ahb, &options, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+
+    pte_runtime_stats_t stats{};
+    stats.abi_version = PTE_ABI_VERSION;
+    assert(pte_engine_get_runtime_stats(engine.value, &stats) == PTE_STATUS_OK);
+    assert(stats.rendered_frames == 0U);
+}
+
+void test_padded_last_row_capacity_and_guards() {
+    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_fixed_focus_conformance.ptp"));
+    constexpr uint32_t width = 5U;
+    constexpr uint32_t height = 3U;
+    constexpr uint32_t input_stride = 19U;
+    constexpr uint32_t output_stride = 22U;
+    constexpr size_t output_span = (height - 1U) * output_stride + width * 3U;
+    std::vector<float> padded_input((height - 1U) * input_stride + width * 3U, -77.0F);
+    std::vector<float> packed_input(width * height * 3U);
+    for (uint32_t y = 0; y < height; ++y) {
+        for (uint32_t x = 0; x < width * 3U; ++x) {
+            const float value = 0.15F + static_cast<float>((x + y * 3U) % 9U) * 0.055F;
+            padded_input[y * input_stride + x] = value;
+            packed_input[y * width * 3U + x] = value;
+        }
+    }
+    pte_frame_f32_t frame{};
+    frame.abi_version = PTE_ABI_VERSION;
+    frame.format = PTE_PIXEL_FORMAT_SRGB_F32;
+    frame.width = width;
+    frame.height = height;
+    frame.plane[0] = {packed_input.data(), width * 3U};
+    const auto expected = render(engine, frame, 1234U);
+    frame.plane[0] = {padded_input.data(), input_stride};
+    std::vector<float> guarded_output(output_span + 2U, -77.0F);
+    pte_output_f32_t destination{guarded_output.data() + 1U, output_span - 1U, output_stride};
+    pte_render_options_t options{PTE_ABI_VERSION, 1234U, nullptr, nullptr};
+    assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_BUFFER_TOO_SMALL);
+    assert(std::all_of(guarded_output.begin(), guarded_output.end(), [](float value) { return value == -77.0F; }));
+    destination.capacity_floats = output_span;
+    assert(pte_engine_render(engine.value, &frame, &options, &destination) == PTE_STATUS_OK);
+    assert(guarded_output.front() == -77.0F && guarded_output.back() == -77.0F);
+    for (uint32_t y = 0; y < height; ++y) {
+        for (uint32_t x = 0; x < width * 3U; ++x) {
+            assert(guarded_output[1U + y * output_stride + x] == expected[y * width * 3U + x]);
+        }
+        if (y + 1U < height) {
+            for (uint32_t x = width * 3U; x < output_stride; ++x) {
+                assert(guarded_output[1U + y * output_stride + x] == -77.0F);
+            }
+        }
+    }
+}
+
+void test_yuv_and_raw_stride_budget_validation() {
+    for (const auto& [host, format] : std::array{
+             std::pair{"host_generic_yuv420.ptp", PTE_PIXEL_FORMAT_YUV420_BT709_F32},
+             std::pair{"host_reference_raw.ptp", PTE_PIXEL_FORMAT_RAW_BAYER_F32}}) {
+        Engine engine(profile(host), profile("toy_fixed_focus_conformance.ptp"));
+        std::vector<float> input(16U, 0.4F);
+        std::vector<float> uv(8U, 0.5F);
+        std::vector<float> output(48U, -77.0F);
+        pte_frame_f32_t frame{};
+        frame.abi_version = PTE_ABI_VERSION;
+        frame.format = format;
+        frame.width = frame.height = 4U;
+        frame.plane[0] = {input.data(), std::numeric_limits<uint32_t>::max()};
+        frame.plane[1] = {uv.data(), 4U};
+        pte_output_f32_t destination{output.data(), output.size(), 0U};
+        assert(pte_engine_render(engine.value, &frame, nullptr, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+        if (format == PTE_PIXEL_FORMAT_YUV420_BT709_F32) {
+            frame.plane[0].row_stride_floats = 4U;
+            frame.plane[1].row_stride_floats = std::numeric_limits<uint32_t>::max();
+            assert(pte_engine_render(engine.value, &frame, nullptr, &destination) == PTE_STATUS_INVALID_ARGUMENT);
+        }
+        assert(std::all_of(output.begin(), output.end(), [](float value) { return value == -77.0F; }));
+    }
+}
+
+void test_error_snapshot_survives_a_render_on_another_thread() {
+    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_fixed_focus_conformance.ptp"));
+    std::vector<float> input(4U * 4U * 3U, 0.3F);
+    std::vector<float> output(input.size());
+    pte_frame_f32_t frame{};
+    frame.abi_version = PTE_ABI_VERSION;
+    frame.format = PTE_PIXEL_FORMAT_SRGB_F32;
+    frame.width = frame.height = 4U;
+    frame.plane[0] = {input.data(), 12U};
+    pte_output_f32_t destination{output.data(), 1U, 12U};
+    assert(pte_engine_render(engine.value, &frame, nullptr, &destination) == PTE_STATUS_BUFFER_TOO_SMALL);
+    const char* snapshot = pte_engine_last_error(engine.value);
+    const std::string expected(snapshot);
+    assert(expected.find("capacity") != std::string::npos);
+    std::thread worker([&] {
+        destination.capacity_floats = output.size();
+        assert(pte_engine_render(engine.value, &frame, nullptr, &destination) == PTE_STATUS_OK);
+        assert(std::string(pte_engine_last_error(engine.value)).empty());
+    });
+    worker.join();
+    assert(std::string(snapshot) == expected);
+    assert(std::string(pte_engine_last_error(engine.value)).empty());
+}
+
+thread_local bool reject_error_allocations{};
+
+template <typename T>
+struct RejectingAllocator {
+    using value_type = T;
+    RejectingAllocator() = default;
+    template <typename U> RejectingAllocator(const RejectingAllocator<U>&) noexcept {}
+    T* allocate(size_t count) {
+        if (reject_error_allocations) throw std::bad_alloc();
+        return std::allocator<T>{}.allocate(count);
+    }
+    void deallocate(T* value, size_t count) noexcept {
+        std::allocator<T>{}.deallocate(value, count);
+    }
+    template <typename U> bool operator==(const RejectingAllocator<U>&) const noexcept { return true; }
+};
+
+void test_error_storage_allocation_failure_has_static_fallback() {
+    std::basic_string<char, std::char_traits<char>, RejectingAllocator<char>> message;
+    const char* fallback{};
+    reject_error_allocations = true;
+    phytoy::detail::store_error(message, fallback,
+        "A diagnostic message longer than small-string storage must fail allocation in this test, "
+        "while the static fallback remains readable after the exception has been destroyed.");
+    reject_error_allocations = false;
+    assert(message.empty());
+    assert(fallback != nullptr);
+    assert(std::string(fallback) == "unable to allocate error message");
+    const char* snapshot = fallback;
+    phytoy::detail::store_error(message, fallback, "recovered error storage");
+    assert(fallback == nullptr);
+    assert(message == "recovered error storage");
+    assert(std::string(snapshot) == "unable to allocate error message");
+}
+
+enum class CallbackFailure { Runtime, InvalidArgument, Allocation, Unknown };
+
+void throwing_stage(void* user, pte_stage_t, const float*, uint32_t, uint32_t, uint32_t) {
+    switch (*static_cast<CallbackFailure*>(user)) {
+        case CallbackFailure::Runtime:
+            throw std::runtime_error("stage callback raised a runtime error that must be contained by the C ABI");
+        case CallbackFailure::InvalidArgument:
+            throw std::invalid_argument("stage callback rejected its input");
+        case CallbackFailure::Allocation:
+            throw std::bad_alloc();
+        case CallbackFailure::Unknown:
+            throw 42;
+    }
+}
+
+void test_c_abi_contains_callback_exceptions_and_recovers() {
+    Engine engine(profile("host_generic_srgb.ptp"), profile("toy_fixed_focus_conformance.ptp"));
+    std::vector<float> input(4U * 4U * 3U, 0.3F);
+    std::vector<float> output(input.size(), -77.0F);
+    pte_frame_f32_t frame{};
+    frame.abi_version = PTE_ABI_VERSION;
+    frame.format = PTE_PIXEL_FORMAT_SRGB_F32;
+    frame.width = frame.height = 4U;
+    frame.plane[0] = {input.data(), 12U};
+    pte_output_f32_t destination{output.data(), output.size(), 12U};
+    for (auto failure : {CallbackFailure::Runtime, CallbackFailure::InvalidArgument,
+                         CallbackFailure::Allocation, CallbackFailure::Unknown}) {
+        pte_render_options_t options{PTE_ABI_VERSION, 1234U, throwing_stage, &failure};
+        const auto expected = failure == CallbackFailure::InvalidArgument
+            ? PTE_STATUS_INVALID_ARGUMENT : PTE_STATUS_INTERNAL_ERROR;
+        assert(pte_engine_render(engine.value, &frame, &options, &destination) == expected);
+        const std::string error(pte_engine_last_error(engine.value));
+        assert(!error.empty());
+        if (failure == CallbackFailure::Runtime) assert(error.find("runtime error") != std::string::npos);
+        if (failure == CallbackFailure::Unknown) assert(error == "unknown render error");
+        assert(std::all_of(output.begin(), output.end(), [](float value) { return value == -77.0F; }));
+        pte_runtime_stats_t stats{};
+        stats.abi_version = PTE_ABI_VERSION;
+        assert(pte_engine_get_runtime_stats(engine.value, &stats) == PTE_STATUS_OK);
+        assert(stats.rendered_frames == 0U);
+    }
+    assert(pte_engine_render(engine.value, &frame, nullptr, &destination) == PTE_STATUS_OK);
+    assert(std::string(pte_engine_last_error(engine.value)).empty());
+
+    auto* invalid = reinterpret_cast<pte_engine_t*>(static_cast<uintptr_t>(1U));
+    assert(pte_engine_create(nullptr, nullptr, &invalid) == PTE_STATUS_INVALID_ARGUMENT);
+    assert(invalid == nullptr);
+    assert(std::string(pte_last_error()).find("required") != std::string::npos);
+    const auto absent = profile("intentionally_missing_profile.ptp");
+    assert(pte_engine_create(absent.c_str(), absent.c_str(), &invalid) != PTE_STATUS_OK);
+    assert(invalid == nullptr);
+    assert(!std::string(pte_last_error()).empty());
+    pte_engine_destroy(nullptr);
+}
+
+void test_product_toy_profiles_open() {
+    for (const auto& [filename, expected_id] : std::array{
+             std::pair{"toy_phytoy_plastic_82_v1.ptp", "phytoy.toy.plastic_82"},
+             std::pair{"toy_phytoy_street_84_v1.ptp", "phytoy.toy.street_84"},
+             std::pair{"toy_phytoy_fisheye_05_v1.ptp", "phytoy.toy.fisheye_05"},
+         }) {
+        Engine engine(profile("host_generic_srgb.ptp"), profile(filename));
+        pte_engine_profile_info_t info{};
+        info.abi_version = PTE_ABI_VERSION;
+        assert(pte_engine_get_profile_info(engine.value, &info) == PTE_STATUS_OK);
+        assert(std::string(info.toy_profile_id) == expected_id);
+        assert(std::string(info.toy_profile_version) == "1.0.0");
+        assert(std::string(info.toy_profile_type) == "designed");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -183,6 +450,13 @@ int main() {
     test_srgb_determinism_and_stages();
     test_yuv_and_raw_execute();
     test_argument_validation();
+    test_product_toy_profiles_open();
+    test_dimensions_and_padded_stride_validation();
+    test_padded_last_row_capacity_and_guards();
+    test_yuv_and_raw_stride_budget_validation();
+    test_error_snapshot_survives_a_render_on_another_thread();
+    test_error_storage_allocation_failure_has_static_fallback();
+    test_c_abi_contains_callback_exceptions_and_recovers();
     std::cout << "all native core tests passed\n";
     return 0;
 }

@@ -1,0 +1,57 @@
+{
+  "fixture": "procedural_rgb_16x12_v1",
+  "round_decimals": 6,
+  "seed": 20260820,
+  "stages": {
+    "01_scene_linear": {
+      "mean": 0.299371078,
+      "sha256_f32le": "38d62e0d367c561a91167cecd49ebd9719dc486e8d94163d6e7ab9651a77c989",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.241323817
+    },
+    "02_target_optics": {
+      "mean": 0.279705712,
+      "sha256_f32le": "e970b566eeaa73712b42024dea00c505890dc562d3a790406926e641c2d57c9c",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.201053194
+    },
+    "03_target_sensor_dn": {
+      "mean": 1202.479166667,
+      "sha256_f32le": "44efd0a914c7fea4549717a029275bf2007ab06aafb3c64a9f8f0fc1a6be7d36",
+      "shape": [
+        12,
+        16
+      ],
+      "standard_deviation": 879.75817557
+    },
+    "04_target_isp_linear": {
+      "mean": 0.321869602,
+      "sha256_f32le": "af7bae2d3a2173d140c256a83aacd71f2123456a8b7095571d6b37c91e4b63ef",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.285228525
+    },
+    "05_output_srgb": {
+      "mean": 0.484676367,
+      "sha256_f32le": "775d846efbb204afd0961090aa4f546aeed7b3e5ad0bbd52350d6795832bcdd8",
+      "shape": [
+        12,
+        16,
+        3
+      ],
+      "standard_deviation": 0.333414971
+    }
+  },
+  "toy_profile": "profiles/authoring/toy_harinezumi_2pp_daylight_v0_1.json"
+}

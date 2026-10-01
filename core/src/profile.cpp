@@ -234,6 +234,23 @@ ToyProfile load_toy_profile_package(const std::filesystem::path& path) {
     ToyProfile result;
     result.id = root.at("id").as_string();
     result.version = root.at("version").as_string();
+    if (const json::Value* sampling = root.find("reference_sampling")) {
+        const auto& fields = sampling->as_object();
+        if (fields.size() != 2U || sampling->find("width") == nullptr ||
+            sampling->find("height") == nullptr) {
+            throw std::runtime_error("reference_sampling requires only width and height");
+        }
+        const auto dimension = [](const json::Value& value) {
+            const double number = value.as_number();
+            if (!std::isfinite(number) || number < 16.0 || number > 8192.0 ||
+                std::floor(number) != number || static_cast<uint32_t>(number) % 2U != 0U) {
+                throw std::runtime_error("reference_sampling dimensions must be even integers in [16,8192]");
+            }
+            return static_cast<uint32_t>(number);
+        };
+        result.reference_width = dimension(sampling->at("width"));
+        result.reference_height = dimension(sampling->at("height"));
+    }
     if (!is_semver_triplet(result.version)) {
         throw std::runtime_error("toy profile version must use MAJOR.MINOR.PATCH");
     }
@@ -329,9 +346,14 @@ ToyProfile load_toy_profile_package(const std::filesystem::path& path) {
         previous_y = point[1];
     }
     if (result.isp.tone_curve.size() < 2U) throw std::runtime_error("tone curve needs at least two points");
+    result.isp.monochrome = optional_bool(isp, "monochrome", false);
     result.isp.denoise_sigma = optional_number(isp, "denoise_sigma", 0.0F);
     result.isp.sharpen_amount = optional_number(isp, "sharpen_amount", 0.0F);
     result.isp.sharpen_radius = optional_number(isp, "sharpen_radius", 1.0F);
+    if (result.isp.denoise_sigma < 0.0F) {
+        throw std::runtime_error("denoise_sigma must be nonnegative");
+    }
+    require_positive(result.isp.sharpen_radius, "sharpen_radius");
     return result;
 }
 

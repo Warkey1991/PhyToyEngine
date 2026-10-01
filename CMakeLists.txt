@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(PhyToyEngine VERSION 0.3.0 LANGUAGES CXX)
+project(PhyToyEngine VERSION 0.3.1 LANGUAGES CXX)
 
 option(PHYTOY_BUILD_CLI "Build the native command-line renderer" ON)
 option(PHYTOY_BUILD_BENCHMARK "Build the runtime acceptance benchmark" ON)
@@ -12,6 +12,7 @@ add_library(phytoy_core SHARED
     core/src/engine.cpp
     core/src/json.cpp
     core/src/profile.cpp
+    core/src/sampling.cpp
     core/src/sha256.cpp
     backends/cpu/cpu_backend.cpp
     backends/vulkan/vulkan_backend.cpp
@@ -117,9 +118,20 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             "${PHYTOY_GENERATED_PROFILE_DIR}/host_samsung_sm_s9210_camera0_raw.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_alpha.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_isp_filter_conformance.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_adc_half_tie_conformance.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_1.ptp"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_2.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_plastic_82_v1.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_street_84_v1.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_fisheye_05_v1.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_1.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_2.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_3.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_4.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_mono_v0_1.ptp"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_mono_v0_2.ptp"
         COMMAND "${CMAKE_COMMAND}" -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
@@ -153,6 +165,16 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
         COMMAND "${CMAKE_COMMAND}" -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_isp_filter_conformance.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_isp_filter_conformance.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_adc_half_tie_conformance.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_adc_half_tie_conformance.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
             "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_digital_01_v1.json"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
         COMMAND "${CMAKE_COMMAND}" -E env
@@ -165,6 +187,51 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
             "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_digital_01_v1_2.json"
             "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_2.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_plastic_82_v1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_plastic_82_v1.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_street_84_v1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_street_84_v1.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_phytoy_fisheye_05_v1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_fisheye_05_v1.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_harinezumi_2pp_daylight_v0_1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_1.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_harinezumi_2pp_daylight_v0_2.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_2.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_harinezumi_2pp_daylight_v0_3.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_3.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_harinezumi_2pp_daylight_v0_4.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_4.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_harinezumi_2pp_mono_v0_1.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_mono_v0_1.ptp"
+        COMMAND "${CMAKE_COMMAND}" -E env
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/reference"
+            "${Python3_EXECUTABLE}" -m phytoy_ref.profile_package
+            "${CMAKE_CURRENT_SOURCE_DIR}/profiles/authoring/toy_harinezumi_2pp_mono_v0_2.json"
+            "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_mono_v0_2.ptp"
         DEPENDS
             profiles/authoring/host_generic_srgb.json
             profiles/authoring/host_generic_yuv420.json
@@ -172,9 +239,20 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
             profiles/authoring/host_samsung_sm_s9210_camera0_raw.json
             profiles/authoring/toy_fixed_focus_alpha.json
             profiles/authoring/toy_fixed_focus_conformance.json
+            profiles/authoring/toy_isp_filter_conformance.json
+            profiles/authoring/toy_adc_half_tie_conformance.json
             profiles/authoring/toy_phytoy_digital_01_v1.json
             profiles/authoring/toy_phytoy_digital_01_v1_1.json
             profiles/authoring/toy_phytoy_digital_01_v1_2.json
+            profiles/authoring/toy_phytoy_plastic_82_v1.json
+            profiles/authoring/toy_phytoy_street_84_v1.json
+            profiles/authoring/toy_phytoy_fisheye_05_v1.json
+            profiles/authoring/toy_harinezumi_2pp_daylight_v0_1.json
+            profiles/authoring/toy_harinezumi_2pp_daylight_v0_2.json
+            profiles/authoring/toy_harinezumi_2pp_daylight_v0_3.json
+            profiles/authoring/toy_harinezumi_2pp_daylight_v0_4.json
+            profiles/authoring/toy_harinezumi_2pp_mono_v0_1.json
+            profiles/authoring/toy_harinezumi_2pp_mono_v0_2.json
             reference/phytoy_ref/profile_package.py
             reference/phytoy_ref/profiles.py
         VERBATIM
@@ -186,13 +264,31 @@ if(BUILD_TESTING AND PHYTOY_BUILD_TESTS)
         "${PHYTOY_GENERATED_PROFILE_DIR}/host_samsung_sm_s9210_camera0_raw.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_alpha.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_fixed_focus_conformance.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_isp_filter_conformance.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_adc_half_tie_conformance.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_1.ptp"
         "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_digital_01_v1_2.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_plastic_82_v1.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_street_84_v1.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_phytoy_fisheye_05_v1.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_1.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_2.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_3.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_daylight_v0_4.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_mono_v0_1.ptp"
+        "${PHYTOY_GENERATED_PROFILE_DIR}/toy_harinezumi_2pp_mono_v0_2.ptp"
     )
 
     add_executable(phytoy_core_tests core/tests/test_core.cpp)
     target_compile_features(phytoy_core_tests PRIVATE cxx_std_20)
+    # The native suite uses assert, including API calls inside assertions.
+    # Keep these checks active in Release and RelWithDebInfo as well.
+    if(MSVC)
+        target_compile_options(phytoy_core_tests PRIVATE /UNDEBUG)
+    else()
+        target_compile_options(phytoy_core_tests PRIVATE -UNDEBUG)
+    endif()
     target_link_libraries(phytoy_core_tests PRIVATE PhyToy::Core)
     target_compile_definitions(phytoy_core_tests PRIVATE
         PHYTOY_TEST_PROFILE_DIR="${PHYTOY_GENERATED_PROFILE_DIR}"

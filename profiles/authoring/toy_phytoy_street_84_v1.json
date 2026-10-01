@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.street_84",
+  "version": "1.0.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "synthetic_tuned",
+    "target_name": "PhyToy Street 84",
+    "source": "PhyToyEngine original design inspired by the broad compact 35 mm street-camera category",
+    "created_utc": "2026-08-27T00:00:00Z",
+    "license": "MIT",
+    "notes": [
+      "Portrait 2:3 framing, punchy contrast, saturated color and dark corners define this original digital profile.",
+      "This is not a calibrated replica or digital twin of any physical camera."
+    ]
+  },
+  "optics": {
+    "distortion": [0.01, -0.003, 0.0005, -0.0003],
+    "ca_scale": [1.0015, 1.0, 0.9985],
+    "vignette": [[0.2, 0.055], [0.23, 0.065], [0.27, 0.075]],
+    "psf": {
+      "bases": [
+        [
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 1.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0]
+        ],
+        [
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.0219, 0.0983, 0.1621, 0.0983, 0.0219],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003]
+        ]
+      ],
+      "coefficients": [
+        [
+          [[0.46, 0.68, 0.46], [0.64, 0.98, 0.64], [0.46, 0.68, 0.46]],
+          [[0.48, 0.7, 0.48], [0.66, 0.98, 0.66], [0.48, 0.7, 0.48]],
+          [[0.42, 0.64, 0.42], [0.6, 0.96, 0.6], [0.42, 0.64, 0.42]]
+        ],
+        [
+          [[0.54, 0.32, 0.54], [0.36, 0.02, 0.36], [0.54, 0.32, 0.54]],
+          [[0.52, 0.3, 0.52], [0.34, 0.02, 0.34], [0.52, 0.3, 0.52]],
+          [[0.58, 0.36, 0.58], [0.4, 0.04, 0.4], [0.58, 0.36, 0.58]]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [[1.06, -0.035, -0.025], [-0.025, 1.06, -0.035], [-0.01, -0.045, 1.055]],
+    "exposure_scale_e": 610.0,
+    "full_well_e": 700.0,
+    "conversion_gain_e_per_dn": 0.78,
+    "black_level_dn": 64.0,
+    "white_level_dn": 1023.0,
+    "adc_bits": 10,
+    "read_noise_e": 3.3,
+    "row_noise_e": 0.9,
+    "column_noise_e": 0.65,
+    "prnu_sigma": 0.017,
+    "dsnu_e": 0.8,
+    "profile_seed": 840135
+  },
+  "isp": {
+    "white_balance": [1.02, 1.0, 0.98],
+    "sensor_to_rec2020": [[1.18, -0.12, -0.06], [-0.06, 1.15, -0.09], [-0.02, -0.11, 1.13]],
+    "tone_curve": [[0.0, 0.0], [0.02, 0.005], [0.08, 0.045], [0.18, 0.15], [0.45, 0.56], [0.72, 0.88], [0.92, 0.99], [1.25, 1.0]],
+    "denoise_sigma": 0.05,
+    "sharpen_amount": 0.26,
+    "sharpen_radius": 0.7
+  }
+}

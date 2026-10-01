@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "comparison_scope": "independent reference on constant black RGB plus exact ADC half-tie assertion",
+  "width": 22,
+  "height": 18,
+  "seed": 1234,
+  "constant_input_u8": 0,
+  "sensor_dn_all_65": true,
+  "sensor_dn_min": 65.0,
+  "sensor_dn_max": 65.0,
+  "stages": {
+    "01_scene_linear": {
+      "max_absolute": 0.0,
+      "limit": 2e-05,
+      "passed": true
+    },
+    "02_target_optics": {
+      "max_absolute": 0.0,
+      "limit": 8e-05,
+      "passed": true
+    },
+    "03_target_sensor_dn": {
+      "max_absolute": 0.0,
+      "limit": 0.51,
+      "passed": true
+    },
+    "04_target_isp_linear": {
+      "max_absolute": 2.480733381302752e-11,
+      "limit": 0.002,
+      "passed": true
+    },
+    "05_output_srgb": {
+      "max_absolute": 7.314159121418751e-08,
+      "limit": 0.003,
+      "passed": true
+    }
+  }
+}

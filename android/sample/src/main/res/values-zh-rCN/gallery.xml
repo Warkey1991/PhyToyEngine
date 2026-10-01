@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gallery_title">我的照片</string>
+    <string name="gallery_back_description">返回相机</string>
+    <string name="gallery_newest_first">最新在前 · 保存在本机</string>
+    <string name="gallery_loading">正在载入照片…</string>
+    <string name="gallery_empty">拍下的照片会显示在这里，返回相机开始拍摄吧。</string>
+    <string name="gallery_load_failed">无法载入照片列表，请重试。</string>
+    <string name="gallery_retry">重试</string>
+    <string name="gallery_thumbnail_failed">暂不可用</string>
+    <string name="gallery_item_description">%1$s 风格照片，%2$s。打开照片。</string>
+    <plurals name="gallery_photo_count">
+        <item quantity="other">%1$d 张照片 · 最新在前</item>
+    </plurals>
+</resources>

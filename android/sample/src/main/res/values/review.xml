@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="review_navigate_back">Go back</string>
+    <string name="review_action_continue">Keep shooting</string>
+    <string name="review_saved_details">%1$s · %2$d × %3$d · Saved</string>
+</resources>

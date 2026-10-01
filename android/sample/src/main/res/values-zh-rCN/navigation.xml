@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_settings_action">相机设置</string>
+    <string name="camera_gallery_action">查看拍摄的照片</string>
+    <string name="camera_header_description">PhyToy Camera。当前风格：%1$s</string>
+</resources>

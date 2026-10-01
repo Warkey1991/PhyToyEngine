@@ -1,0 +1,9 @@
+[0/1] Re-running CMake...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build
+[1/5] Building CXX object CMakeFiles/phytoy_core.dir/core/src/engine.cpp.o
+[2/5] Linking CXX shared library libphytoy_core.dylib
+[3/5] Linking CXX executable phytoy_cli
+[4/5] Linking CXX executable phytoy_benchmark
+[5/5] Linking CXX executable phytoy_core_tests

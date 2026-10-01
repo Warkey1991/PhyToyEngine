@@ -6,16 +6,20 @@ PhyToyEngine is a profile-driven physical toy-camera imaging engine. It reconstr
 canonical scene-linear image from a host camera and then simulates a fixed-focus toy
 camera's optics, digital sensor, ADC, and ISP in a fixed physical order.
 
-This repository currently delivers the **Synthetic Alpha device-accepted engine candidate**.
-Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**; Android now defaults
-to the outdoor-reviewed **v1.2.0** tuning. The engine includes a Python reference,
+This repository delivers a **Google Play release candidate camera app (0.15.0-rc1)** and the independently versioned imaging engine.
+Release builds use R8/resource optimization, explicit signing configuration and an artifact audit.
+See [release preparation and remaining submission gates](release/README.md).
+Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**. Fresh Android installs now default
+to **DH 2++ daylight study v0.4.0**; existing saved style choices are retained.
+This public-sample approximation is not a hardware-calibrated replica.
+A monochrome v0.2 study is also selectable, with linear-luminance mixing before tone response.
+See the [research scope and comparison workflow](research/harinezumi_2pp_daylight.md). The engine includes a Python reference,
 a C++20 CPU runtime with a versioned C ABI, integrity-checked profiles, an Android Vulkan
 compute/presentation backend, Camera2 `AHardwareBuffer` zero-copy input, a processed GPU
   preview Surface, an up-to-12 MP Digital 01 Android capture flow with bounded 3A,
-  EV/pinch-zoom/flash controls, EXIF metadata, touch focus, lens switching and automatic
+  EV/pinch-zoom/flash controls, EXIF metadata, touch focus, lens switching, a local photo list, persisted camera settings and automatic
   PRIVATE-stream fallback, and
-  numerical/statistical regression tooling. It is an engine core and a focused Android camera experience, not yet
-a complete commercial camera application.
+  numerical/statistical regression tooling. The candidate still needs publisher/signing details and the release device matrix before store submission.
 
 ## Pipeline and architecture
 
@@ -253,11 +257,11 @@ latency, memory, thermal, endurance, numerical, and statistical results.
   720×1560 swapchain with no recreation. See the
   [processed-preview report](reports/android_camera2_sm_s9210_0_3_0_processed_preview/evaluation.json).
   A 30-minute unplugged run and the multi-vendor matrix remain product gates.
-- Android 0.3.0 uses a 15 FPS normal processed preview and automatically steps down to
-  10/5/3/0 FPS at light, moderate, severe, and critical thermal states. Camera2 is fixed at
-  15 FPS because the raw preview bypass has been removed; generating unseen 24–30 FPS
-  frames would only increase Camera HAL/ISP power. Thermal skips remain separate from true
-  queue drops.
+- The current Android sample targets a 30 FPS processed preview at a target 1280×960 input (up to 1440×1080 when that is the closest supported 4:3 stream),
+  then steps down to 24/15/5/0 FPS at light, moderate, severe, and critical thermal states.
+  Camera2 follows the same target instead of continuing to generate frames the Vulkan graph
+  will skip. Thermal skips remain separate from true queue drops. The 0.3.0 acceptance report
+  above remains a historical 15 FPS baseline.
 - The 12MP production path uses approximately 336 MiB of persistent Vulkan float32 working
   buffers plus the caller's output. Tiled/float16 internals and direct encoded output remain
   future memory reductions, not prerequisites of the current explicit acceptance contract.
@@ -335,9 +339,11 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 宿主相机的 sRGB、YUV420 或 Bayer RAW 输入归一化为统一的场景线性 Rec.2020，
 再按照固定顺序模拟目标玩具相机的镜头、数字传感器、ADC 和 ISP。
 
-当前仓库交付的是 **Synthetic Alpha 已通过设备协议的引擎候选版**，第一款锁定的原创虚拟相机是
+当前仓库包含 **Google Play 相机应用发布候选版 0.15.0-rc1**，以及独立版本的成像引擎。
+正式构建已启用 R8/资源优化、显式签名配置和产物审核，提交前门槛见
+[发布准备文档](release/README.md)。第一款锁定的原创虚拟相机是
 **PhyToy Digital 01 v1.0.0**，Android 现默认使用经户外成片复核后的 **v1.2.0** 调校。
-它不是完整商业相机 App，但已包含 Python 高精度
+相机应用仍需完成发布者信息、正式签名及发布设备矩阵。引擎包含 Python 高精度
 参考实现、C++20 CPU Runtime、稳定 C ABI、Android Vulkan compute 后端、Camera2
 AHardwareBuffer 零拷贝输入、Profile 编译校验、Golden 和统计测试。Android 示例已具备
 最高 12.5MP 的 Digital 01 静态成片、与成片一致的 3:4 取景、有界 AF/AE/AWB 收敛与
@@ -428,10 +434,11 @@ SM-S9210 上通过 17/17 项效果预览验收：30 帧渲染/提交/零拷贝/�
 [处理后预览报告](reports/android_camera2_sm_s9210_0_3_0_processed_preview/evaluation.json)。
 30 分钟不插电长稳测试和多厂商设备矩阵仍属于后续产品门槛。
 
-Android 0.3.0 的效果预览正常档为 15 FPS，并在 Light、Moderate、Severe、Critical
-温控状态下自动降至 10、5、3、0 FPS。Camera2 固定为 15 FPS，因为原始预览旁路已经
-删除；继续生成用户看不到的 24–30 FPS 只会增加 Camera HAL/ISP 功耗。温控主动跳帧与
-真正的队列丢帧仍分开统计。
+当前 Android 相机把处理后预览目标设为 30 FPS，输入目标 1280×960、上限 1440×1080，
+展示缓冲匹配实际取景尺寸；按实测 P95 调整帧率预算。进入
+Light、Moderate、Severe、Critical 温控状态后依次降为 24、15、5、0 FPS。Camera2
+会同步跟随目标帧率，不再持续生成 Vulkan 管线必然跳过的帧。温控主动跳帧与真正的
+队列丢帧仍分开统计；上方 0.3.0 验收报告保留为历史 15 FPS 基线。
 
 ## 参考论文与开源项目
 

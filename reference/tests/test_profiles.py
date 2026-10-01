@@ -34,6 +34,35 @@ def test_outdoor_tuned_digital_01_profile_validates(outdoor_tuned_toy_path):
     assert toy["provenance"]["calibration_status"] == "synthetic_tuned"
 
 
+@pytest.mark.parametrize(
+    ("filename", "profile_id", "target_name"),
+    [
+        ("toy_phytoy_plastic_82_v1.json", "phytoy.toy.plastic_82", "PhyToy Plastic 82"),
+        ("toy_phytoy_street_84_v1.json", "phytoy.toy.street_84", "PhyToy Street 84"),
+        ("toy_phytoy_fisheye_05_v1.json", "phytoy.toy.fisheye_05", "PhyToy Fisheye 05"),
+    ],
+)
+def test_original_toy_camera_profiles_validate_and_package(
+    project_root,
+    tmp_path,
+    filename,
+    profile_id,
+    target_name,
+):
+    source = project_root / "profiles" / "authoring" / filename
+    toy = load_toy_profile(source)
+    assert toy["id"] == profile_id
+    assert toy["version"] == "1.0.0"
+    assert toy["capture_medium_family"] == "digital_sensor_v1"
+    assert toy["provenance"]["profile_type"] == "designed"
+    assert toy["provenance"]["target_name"] == target_name
+    assert "replica" in " ".join(toy["provenance"]["notes"]).lower()
+
+    destination = tmp_path / filename.replace(".json", ".ptp")
+    compile_profile(source, destination)
+    assert load_compiled_profile(destination)["id"] == profile_id
+
+
 def test_profile_package_round_trip(tmp_path, toy_path):
     destination = tmp_path / "toy.ptp"
     compile_profile(toy_path, destination)

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">设置</string>
+    <string name="settings_back">返回</string>
+    <string name="settings_intro">让相机更顺手。你的选择只保存在这台设备上。</string>
+    <string name="settings_section_camera">相机</string>
+    <string name="settings_section_shooting">拍摄</string>
+    <string name="settings_section_information">信息</string>
+    <string name="settings_choice_value">%1$s\n%2$s</string>
+    <string name="settings_default_style">默认风格</string>
+    <string name="settings_default_style_hint">不记住上次风格或首次启动时，使用此风格。</string>
+    <string name="settings_remember_style">记住上次风格</string>
+    <string name="settings_remember_style_hint">启动相机时，恢复上次使用的风格。</string>
+    <string name="settings_quality">照片分辨率</string>
+    <string name="settings_quality_hint">选择分辨率上限。实际尺寸还取决于相机硬件和所选风格；DH 2++ 最高为 320 万像素。</string>
+    <string name="settings_quality_high">高 · 最高 1250 万像素</string>
+    <string name="settings_quality_balanced">均衡 · 最高 500 万像素</string>
+    <string name="settings_quality_compact">轻巧 · 最高 320 万像素</string>
+    <string name="settings_grid">构图网格</string>
+    <string name="settings_grid_hint">在取景器上显示三分法参考线。</string>
+    <string name="settings_sound">快门声音</string>
+    <string name="settings_sound_hint">拍摄时播放相机反馈声音。</string>
+    <string name="settings_haptics">触感反馈</string>
+    <string name="settings_haptics_hint">操作相机按钮时轻微振动，遵循 Android 系统设置。</string>
+    <string name="settings_review">拍后回看</string>
+    <string name="settings_review_hint">保存后打开照片。关闭可继续拍摄，仍可轻点缩略图回看。</string>
+    <string name="settings_about">关于 PhyToy</string>
+    <string name="settings_about_hint">查看相机使用指南与应用信息。</string>
+    <string name="settings_privacy">隐私政策</string>
+    <string name="settings_privacy_hint">了解照片、权限与本机偏好的处理方式。</string>
+    <string name="settings_licenses">许可协议</string>
+    <string name="settings_licenses_hint">查看所用软件的许可和声明。</string>
+    <string name="settings_reset">还原偏好设置</string>
+    <string name="settings_reset_hint">还原此页默认偏好，保留当前相机风格和照片。</string>
+    <string name="settings_reset_confirm_title">还原偏好设置？</string>
+    <string name="settings_reset_confirm_body">还原此页的偏好，包括启动默认选项、均衡分辨率与拍摄设置。当前相机风格和已保存的照片会保留。</string>
+    <string name="settings_reset_done">已还原偏好，保留当前风格和照片。</string>
+    <string name="settings_cancel">取消</string>
+    <string name="settings_local_only">设置只保存在本机，无需账号或联网。</string>
+</resources>

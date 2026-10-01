@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "failure": "Timed out waiting for button3, enabled=True"
+}

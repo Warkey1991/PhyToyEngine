@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.fisheye_05",
+  "version": "1.0.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "synthetic_tuned",
+    "target_name": "PhyToy Fisheye 05",
+    "source": "PhyToyEngine original design inspired by the broad circular fisheye toy-camera category",
+    "created_utc": "2026-08-27T00:00:00Z",
+    "license": "MIT",
+    "notes": [
+      "Square framing, strong barrel character, chromatic edges and a circular dark falloff define this original profile.",
+      "A phone main camera cannot synthesize a physical 170-degree field of view; this profile deliberately creates a fisheye visual character from the available field.",
+      "This is not a calibrated replica or digital twin of any physical camera."
+    ]
+  },
+  "optics": {
+    "distortion": [-0.28, 0.055, 0.004, -0.003],
+    "ca_scale": [1.012, 1.0, 0.988],
+    "vignette": [[0.62, 0.32], [0.68, 0.3], [0.74, 0.28]],
+    "psf": {
+      "bases": [
+        [
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 1.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0],
+          [0.0, 0.0, 0.0, 0.0, 0.0]
+        ],
+        [
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.0219, 0.0983, 0.1621, 0.0983, 0.0219],
+          [0.0133, 0.0596, 0.0983, 0.0596, 0.0133],
+          [0.003, 0.0133, 0.0219, 0.0133, 0.003]
+        ]
+      ],
+      "coefficients": [
+        [
+          [[0.24, 0.5, 0.24], [0.46, 0.9, 0.46], [0.24, 0.5, 0.24]],
+          [[0.27, 0.53, 0.27], [0.49, 0.92, 0.49], [0.27, 0.53, 0.27]],
+          [[0.19, 0.43, 0.19], [0.4, 0.86, 0.4], [0.19, 0.43, 0.19]]
+        ],
+        [
+          [[0.76, 0.5, 0.76], [0.54, 0.1, 0.54], [0.76, 0.5, 0.76]],
+          [[0.73, 0.47, 0.73], [0.51, 0.08, 0.51], [0.73, 0.47, 0.73]],
+          [[0.81, 0.57, 0.81], [0.6, 0.14, 0.6], [0.81, 0.57, 0.81]]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [[1.04, -0.02, -0.02], [-0.02, 1.05, -0.03], [-0.015, -0.04, 1.055]],
+    "exposure_scale_e": 600.0,
+    "full_well_e": 690.0,
+    "conversion_gain_e_per_dn": 0.78,
+    "black_level_dn": 64.0,
+    "white_level_dn": 1023.0,
+    "adc_bits": 10,
+    "read_noise_e": 3.5,
+    "row_noise_e": 0.9,
+    "column_noise_e": 0.7,
+    "prnu_sigma": 0.018,
+    "dsnu_e": 0.85,
+    "profile_seed": 50170
+  },
+  "isp": {
+    "white_balance": [0.98, 1.0, 1.04],
+    "sensor_to_rec2020": [[1.08, -0.04, -0.04], [-0.02, 1.08, -0.06], [-0.02, -0.08, 1.1]],
+    "tone_curve": [[0.0, 0.0], [0.02, 0.01], [0.08, 0.065], [0.2, 0.23], [0.5, 0.66], [0.8, 0.93], [1.0, 0.995], [1.25, 1.0]],
+    "denoise_sigma": 0.09,
+    "sharpen_amount": 0.08,
+    "sharpen_radius": 0.9
+  }
+}

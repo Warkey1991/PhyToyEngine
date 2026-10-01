@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-from .color import apply_matrix, scene_linear_to_srgb
+from .color import apply_matrix, scene_linear_to_srgb, srgb_encode
 from .demosaic import demosaic_bilinear
 
 
@@ -35,6 +35,11 @@ def run_isp(sensor_dn: np.ndarray, toy_profile: dict) -> tuple[np.ndarray, np.nd
         low_pass = gaussian_filter(scene, sigma=(radius, radius, 0.0), mode="mirror")
         scene = scene + sharpen_amount * (scene - low_pass)
 
+    # Mix linear sensor-derived luminance before the nonlinear tone response.
+    if isp.get("monochrome", False):
+        luminance = scene @ np.array([0.2627, 0.6780, 0.0593])
+        scene = np.repeat(luminance[..., None], 3, axis=-1)
     toned = _apply_tone(np.maximum(scene, 0.0), isp["tone_curve"])
-    return toned, scene_linear_to_srgb(toned)
+    return toned, (np.clip(srgb_encode(toned), 0, 1) if isp.get("monochrome", False)
+                   else scene_linear_to_srgb(toned))
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_info_title">PhyToy Camera · %1$s</string>
+    <string name="product_info_body">Six camera styles, processed on your device.\n\nTap the viewfinder to focus. Slide vertically to adjust exposure and pinch to zoom. Photos are saved to Pictures/PhyToy and can be viewed in the photo list by tapping the thumbnail. Camera settings let you choose photo quality, a composition grid, capture feedback and whether to review each shot.\n\nPreview and photos use the same imaging engine. Their resolution, sensor processing and random noise can differ slightly. In warm conditions, preview speed adapts to keep the camera stable.\n\nCamera styles are independent interpretations. They are not certified reproductions or endorsed by any camera manufacturer.\n\nEngine and application: MIT License. No sample photographs from third-party websites are included.</string>
+    <string name="product_privacy_title">Privacy</string>
+    <string name="product_privacy_body">Updated 1 October 2026\n\nCamera access is used only while the camera screen is active, for a live viewfinder and photos you take. Frames are processed locally and released when the session closes.\n\nPhotos are saved on your device in Pictures/PhyToy. JPEG metadata includes the capture time, camera exposure and selected style; no location is requested or added. Delete photos with your system gallery. Uninstalling this app does not delete saved photos.\n\nThe app stores camera preferences, permission-request state and a local index of photos you take with this app in private local storage. Clearing app storage removes these settings.\n\nThis build has no Internet permission, advertising, analytics, user account or server upload. It does not collect or share your photos or settings with us. Device logs may contain local diagnostic information; they are not uploaded automatically.\n\nYou can revoke camera access at any time in Android Settings → Apps → PhyToy Camera → Permissions.</string>
+    <string name="product_info_close">Close</string>
+    <string name="product_licenses_title">Open source licenses</string>
+    <string name="product_about_title">Camera and shooting guide</string>
+    <string name="permission_camera_title">Enable your camera</string>
+    <string name="permission_camera_body">PhyToy uses your camera for the viewfinder and the photos you choose to take. Image processing stays on your device. Photos are saved to Pictures/PhyToy.</string>
+    <string name="permission_continue">Continue</string>
+    <string name="permission_not_now">Not now</string>
+    <string name="permission_allow_camera">Allow camera</string>
+    <string name="permission_open_settings">Open settings</string>
+    <string name="camera_retry">Restart camera</string>
+    <string name="camera_recovery_failed">The camera could not start. Close other camera apps and try again.</string>
+    <string name="camera_preview_stalled">The viewfinder stopped updating. Restart the camera to continue.</string>
+    <string name="camera_overheated">Your device is too warm. Let it cool down; the viewfinder will resume automatically.</string>
+    <string name="photo_retry_hint">Please try again. If saving keeps failing, check your device’s free storage.</string>
+</resources>

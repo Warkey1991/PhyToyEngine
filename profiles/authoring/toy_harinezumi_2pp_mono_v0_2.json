@@ -1,0 +1,333 @@
+{
+  "schema_version": 1,
+  "kind": "toy",
+  "id": "phytoy.toy.harinezumi_2pp_mono",
+  "version": "0.2.0",
+  "capture_medium_family": "digital_sensor_v1",
+  "provenance": {
+    "profile_type": "designed",
+    "calibration_status": "public_sample_approximation",
+    "target_name": "Digital Harinezumi 2++ monochrome study",
+    "source": "https://hendigi.com/digital-harinezumi-again/",
+    "created_utc": "2026-09-30T00:00:00Z",
+    "license": "MIT",
+    "notes": [
+      "Public-sample inspired monochrome design, not hardware calibration. The article confirms monochrome shooting but does not identify the ISO of the monochrome examples.",
+      "Inherits the daylight study optical and sensor hypotheses. Rec.2020 luminance is mixed before a dedicated contrast curve; no post-encoded desaturation or film-grain overlay.",
+      "Host exposure, ISO and focus remain automatic. No claim of ISO 800 simulation.",
+      "2026-09-30: visually reviewed nine owner samples from digital-harinezumi-again. Retain object texture by reducing Gaussian denoise and using restrained detail recovery. No paired scene fit; these are design hypotheses.",
+      "Monochrome samples show intermediate grays in black bicycle frames and foliage. Open the shadow toe and soften upper-midtone rise while retaining black and clipped highlights."
+    ]
+  },
+  "optics": {
+    "distortion": [
+      0.006,
+      -0.002,
+      0,
+      0
+    ],
+    "ca_scale": [
+      1.0008,
+      1,
+      0.9994
+    ],
+    "vignette": [
+      [
+        0.07,
+        0.018
+      ],
+      [
+        0.075,
+        0.018
+      ],
+      [
+        0.065,
+        0.02
+      ]
+    ],
+    "psf": {
+      "bases": [
+        [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        [
+          [
+            0.003,
+            0.0133,
+            0.0219,
+            0.0133,
+            0.003
+          ],
+          [
+            0.0133,
+            0.0596,
+            0.0983,
+            0.0596,
+            0.0133
+          ],
+          [
+            0.0219,
+            0.0983,
+            0.1621,
+            0.0983,
+            0.0219
+          ],
+          [
+            0.0133,
+            0.0596,
+            0.0983,
+            0.0596,
+            0.0133
+          ],
+          [
+            0.003,
+            0.0133,
+            0.0219,
+            0.0133,
+            0.003
+          ]
+        ]
+      ],
+      "coefficients": [
+        [
+          [
+            [
+              0.32,
+              0.52,
+              0.32
+            ],
+            [
+              0.52,
+              0.76,
+              0.52
+            ],
+            [
+              0.32,
+              0.52,
+              0.32
+            ]
+          ],
+          [
+            [
+              0.32,
+              0.52,
+              0.32
+            ],
+            [
+              0.52,
+              0.76,
+              0.52
+            ],
+            [
+              0.32,
+              0.52,
+              0.32
+            ]
+          ],
+          [
+            [
+              0.32,
+              0.52,
+              0.32
+            ],
+            [
+              0.52,
+              0.76,
+              0.52
+            ],
+            [
+              0.32,
+              0.52,
+              0.32
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              0.68,
+              0.48,
+              0.68
+            ],
+            [
+              0.48,
+              0.24,
+              0.48
+            ],
+            [
+              0.68,
+              0.48,
+              0.68
+            ]
+          ],
+          [
+            [
+              0.68,
+              0.48,
+              0.68
+            ],
+            [
+              0.48,
+              0.24,
+              0.48
+            ],
+            [
+              0.68,
+              0.48,
+              0.68
+            ]
+          ],
+          [
+            [
+              0.68,
+              0.48,
+              0.68
+            ],
+            [
+              0.48,
+              0.24,
+              0.48
+            ],
+            [
+              0.68,
+              0.48,
+              0.68
+            ]
+          ]
+        ]
+      ]
+    }
+  },
+  "sensor": {
+    "cfa": "RGGB",
+    "scene_to_sensor": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ],
+    "exposure_scale_e": 10600,
+    "full_well_e": 10400,
+    "conversion_gain_e_per_dn": 2.6,
+    "black_level_dn": 64,
+    "white_level_dn": 4095,
+    "adc_bits": 12,
+    "read_noise_e": 7.5,
+    "row_noise_e": 0.7,
+    "column_noise_e": 0.35,
+    "prnu_sigma": 0.006,
+    "dsnu_e": 0.6,
+    "profile_seed": 220100
+  },
+  "isp": {
+    "white_balance": [
+      1,
+      1,
+      1
+    ],
+    "sensor_to_rec2020": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ],
+    "tone_curve": [
+      [
+        0,
+        0
+      ],
+      [
+        0.02,
+        0.007
+      ],
+      [
+        0.065,
+        0.038
+      ],
+      [
+        0.18,
+        0.17
+      ],
+      [
+        0.4,
+        0.47
+      ],
+      [
+        0.7,
+        0.87
+      ],
+      [
+        0.92,
+        1
+      ],
+      [
+        1.2,
+        1
+      ]
+    ],
+    "denoise_sigma": 0.32,
+    "sharpen_amount": 0.1,
+    "sharpen_radius": 0.7,
+    "monochrome": true
+  },
+  "reference_sampling": {
+    "width": 1920,
+    "height": 1440
+  }
+}

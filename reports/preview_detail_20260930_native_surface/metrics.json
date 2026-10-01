@@ -1,0 +1,100 @@
+{
+  "purpose": "Noiseless synthetic preview/still detail diagnostic; not a real-camera fidelity measurement",
+  "backend": "Python reference",
+  "model_reference_size": [
+    384,
+    288
+  ],
+  "target_reference_size": [
+    1920,
+    1440
+  ],
+  "model_scale": 0.2,
+  "target_display_short_edge": 1080,
+  "model_display_size_landscape": [
+    288,
+    216
+  ],
+  "target_surface_short_edge": 1080,
+  "model_surface_size_landscape": [
+    288,
+    216
+  ],
+  "noise_enabled": false,
+  "profile_path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/profiles/authoring/toy_harinezumi_2pp_daylight_v0_3.json",
+  "profile_sha256": "996acc04d5c43312584787e44e2156586d4d0f2ea68e85204c715fdab412f181",
+  "host_sha256": "b5d9db913d62c02813119839d74d1b750fa9a82ccc9d3c0fbfe1735b474a0649",
+  "assumptions": [
+    "Camera2 preview input approximated by encoded-sRGB box reduction of the same synthetic source; vendor ISP/3A differences excluded.",
+    "Preview scales with Vulkan four-tap bilinear interpolation, optionally through an intermediate Surface; still uses Lanczos. No extra sharpening or engine modifications.",
+    "Default reduced model preserves stream ratios but its Bayer lattice and chart periods cannot be extrapolated to real-device resolution.",
+    "MTF is diagnostic encoded-sRGB slanted-edge e-SFR without ISO derivative correction; values beyond display Nyquist are not reported.",
+    "Python render seconds are tool runtime only; Android GPU latency, thermal behavior and steady-state FPS require device measurements."
+  ],
+  "reference_still_slanted_edge": {
+    "mtf50_cycles_per_display_pixel": 0.21341242762177737,
+    "edge_slope": 0.11942942134291101,
+    "edge_contrast_encoded_srgb": 0.20617954432964325,
+    "mtf50_above_display_nyquist": false
+  },
+  "reference_python_render_seconds": 0.11662208300549537,
+  "previews": [
+    {
+      "target_stream_size": [
+        640,
+        480
+      ],
+      "model_stream_size": [
+        128,
+        96
+      ],
+      "encoded_rgb_rmse_to_displayed_still": 0.07795969132887189,
+      "high_frequency_region_rmse_to_displayed_still": 0.12184915700191512,
+      "slanted_edge": {
+        "mtf50_cycles_per_display_pixel": 0.08918793775134494,
+        "edge_slope": 0.11533466999004549,
+        "edge_contrast_encoded_srgb": 0.19986881374328103,
+        "mtf50_above_display_nyquist": false
+      },
+      "python_reference_render_seconds": 0.011372040986316279
+    },
+    {
+      "target_stream_size": [
+        1280,
+        960
+      ],
+      "model_stream_size": [
+        256,
+        192
+      ],
+      "encoded_rgb_rmse_to_displayed_still": 0.05165637872932509,
+      "high_frequency_region_rmse_to_displayed_still": 0.08173242549132617,
+      "slanted_edge": {
+        "mtf50_cycles_per_display_pixel": 0.15112206766196384,
+        "edge_slope": 0.11811971178186928,
+        "edge_contrast_encoded_srgb": 0.20470154399108104,
+        "mtf50_above_display_nyquist": false
+      },
+      "python_reference_render_seconds": 0.1022565419843886
+    },
+    {
+      "target_stream_size": [
+        1440,
+        1080
+      ],
+      "model_stream_size": [
+        288,
+        216
+      ],
+      "encoded_rgb_rmse_to_displayed_still": 0.047920583878692254,
+      "high_frequency_region_rmse_to_displayed_still": 0.07626247878431605,
+      "slanted_edge": {
+        "mtf50_cycles_per_display_pixel": 0.17686315509199316,
+        "edge_slope": 0.11822874796048836,
+        "edge_contrast_encoded_srgb": 0.2059941515925125,
+        "mtf50_above_display_nyquist": false
+      },
+      "python_reference_render_seconds": 0.05340375000378117
+    }
+  ]
+}

@@ -38,7 +38,7 @@ float bilinear_source(float x, float y, int channel, int width, int height) {
     return mix(top, bottom, ty);
 }
 
-float warped_at(int output_x, int output_y, int channel, int width, int height) {
+vec3 warped_rgb_at(int output_x, int output_y, int width, int height) {
     output_x = reflect_index(output_x, width);
     output_y = reflect_index(output_y, height);
     float safe_scale = parameters[20];
@@ -50,10 +50,14 @@ float warped_at(int output_x, int output_y, int channel, int width, int height) 
                parameters[5] * (radius2 + 2.0 * xn * xn);
     float yb = yn * radial + parameters[4] * (radius2 + 2.0 * yn * yn) +
                2.0 * parameters[5] * xn * yn;
-    float scale = parameters[6 + channel];
-    float sx = ((xb * scale + 1.0) * 0.5 * float(width)) - 0.5;
-    float sy = ((yb * scale + 1.0) * 0.5 * float(height)) - 0.5;
-    return bilinear_source(sx, sy, channel, width, height);
+    vec3 result;
+    for (int channel = 0; channel < 3; ++channel) {
+        float scale = parameters[6 + channel];
+        float sx = ((xb * scale + 1.0) * 0.5 * float(width)) - 0.5;
+        float sy = ((yb * scale + 1.0) * 0.5 * float(height)) - 0.5;
+        result[channel] = bilinear_source(sx, sy, channel, width, height);
+    }
+    return result;
 }
 
 float coefficient_at(int basis, int channel, int x, int y, int width, int height,
@@ -89,9 +93,7 @@ void populate_warped_tile(int width, int height) {
         int output_x = base_x + tile_x - MAX_PSF_RADIUS;
         int output_y = base_y + tile_y - MAX_PSF_RADIUS;
         warped_tile[index] = vec4(
-            warped_at(output_x, output_y, 0, width, height),
-            warped_at(output_x, output_y, 1, width, height),
-            warped_at(output_x, output_y, 2, width, height),
+            warped_rgb_at(output_x, output_y, width, height),
             0.0);
     }
     barrier();

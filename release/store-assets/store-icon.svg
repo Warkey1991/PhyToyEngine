@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">PhyToy store icon</title>
+  <desc id="desc">Original yellow camera mark with concentric lens rings on a full square charcoal background.</desc>
+  <rect width="512" height="512" fill="#171717"/>
+  <g transform="translate(-20 -31.5) scale(11.5)">
+    <path d="M13,14h7l2,-3h6l2,3h5c2.2,0 4,1.8 4,4v17c0,2.2 -1.8,4 -4,4H13c-2.2,0 -4,-1.8 -4,-4V18c0,-2.2 1.8,-4 4,-4z" fill="#F4B942"/>
+    <circle cx="24" cy="26" r="8" fill="#171717"/>
+    <circle cx="24" cy="26" r="5" fill="#F4B942"/>
+  </g>
+</svg>

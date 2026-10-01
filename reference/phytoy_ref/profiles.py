@@ -73,7 +73,7 @@ def _validate_common(profile: dict, expected_kind: str) -> None:
         if expected_kind == "host"
         else {
             "schema_version", "kind", "id", "version", "capture_medium_family",
-            "optics", "sensor", "isp", "provenance",
+            "optics", "sensor", "isp", "provenance", "reference_sampling",
         },
         "root",
     )
@@ -173,6 +173,13 @@ def validate_host_profile(profile: dict) -> dict:
 def validate_toy_profile(profile: dict) -> dict:
     _validate_common(profile, "toy")
     _validate_provenance(profile, "toy")
+    if "reference_sampling" in profile:
+        sampling = profile["reference_sampling"]
+        _reject_unknown(sampling, {"width", "height"}, "reference_sampling")
+        for key in ("width", "height"):
+            value = _require(profile, f"reference_sampling.{key}")
+            if type(value) is not int or not 16 <= value <= 8192 or value % 2:
+                raise ProfileError("reference_sampling dimensions must be even integers in [16,8192]")
     if profile.get("capture_medium_family") != "digital_sensor_v1":
         raise ProfileError("Alpha supports only digital_sensor_v1")
 
@@ -194,7 +201,7 @@ def validate_toy_profile(profile: dict) -> dict:
         _require(profile, "isp"),
         {
             "white_balance", "sensor_to_rec2020", "tone_curve", "denoise_sigma",
-            "sharpen_amount", "sharpen_radius",
+            "sharpen_amount", "sharpen_radius", "monochrome",
         },
         "isp",
     )
@@ -261,6 +268,8 @@ def validate_toy_profile(profile: dict) -> dict:
     matrix = _finite_array(profile, "isp.sensor_to_rec2020", (3, 3))
     if abs(np.linalg.det(matrix)) < 1e-8:
         raise ProfileError("ISP sensor_to_rec2020 matrix is singular")
+    if not isinstance(profile["isp"].get("monochrome", False), bool):
+        raise ProfileError("isp.monochrome must be a boolean")
     curve = _finite_array(profile, "isp.tone_curve")
     if curve.ndim != 2 or curve.shape[1] != 2 or np.any(np.diff(curve[:, 0]) <= 0.0):
         raise ProfileError("tone curve x coordinates must be strictly increasing")
