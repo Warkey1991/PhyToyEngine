@@ -1,0 +1,1 @@
+UI hierchary dumped to: /sdcard/phytoy_billing_qa_1790862478519572000.xml

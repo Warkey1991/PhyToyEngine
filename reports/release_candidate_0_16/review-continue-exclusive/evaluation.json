@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "scope": "Installed unconfigured RC; no Play checkout or fake purchase success",
+  "checks": [],
+  "styles": [],
+  "artifacts": {
+    "first-review_ui": "first-review-ui.json",
+    "first-review_screenshot": "first-review.png",
+    "gallery-after-back_ui": "gallery-after-back-ui.json",
+    "gallery-after-back_screenshot": "gallery-after-back.png",
+    "second-review_ui": "second-review-ui.json",
+    "second-review_screenshot": "second-review.png",
+    "camera-after-continue_ui": "camera-after-continue-ui.json",
+    "camera-after-continue_screenshot": "camera-after-continue.png"
+  },
+  "touch_targets": {},
+  "media_history": [],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "last_action": "tap review_continue",
+  "phase": "exclusive review return paths"
+}

@@ -1,16 +1,16 @@
-> Task :sample:preBuild UP-TO-DATE
 > Task :sdk:preBuild UP-TO-DATE
 > Task :sdk:preDebugBuild UP-TO-DATE
+> Task :sample:preBuild UP-TO-DATE
 > Task :sample:preDebugBuild UP-TO-DATE
 > Task :sample:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :sdk:processDebugNavigationResources UP-TO-DATE
-> Task :sample:generateDebugResources UP-TO-DATE
 > Task :sdk:generateDebugResources UP-TO-DATE
+> Task :sample:generateDebugResources UP-TO-DATE
 > Task :sample:packageDebugResources UP-TO-DATE
 > Task :sdk:packageDebugResources UP-TO-DATE
 > Task :sdk:parseDebugLocalResources UP-TO-DATE
-> Task :sdk:generateDebugRFile UP-TO-DATE
 > Task :sample:processDebugNavigationResources UP-TO-DATE
+> Task :sdk:generateDebugRFile UP-TO-DATE
 > Task :sample:parseDebugLocalResources UP-TO-DATE
 > Task :sample:generateDebugRFile UP-TO-DATE
 > Task :sample:javaPreCompileDebug UP-TO-DATE
@@ -44,12 +44,60 @@
 > Task :sdk:processDebugManifest UP-TO-DATE
 > Task :sdk:mapDebugSourceSetPaths UP-TO-DATE
 > Task :sdk:compileDebugLibraryResources UP-TO-DATE
+> Task :sample:mergeDebugAssets UP-TO-DATE
+> Task :sample:compressDebugAssets UP-TO-DATE
+> Task :sample:mergeLibDexDebug UP-TO-DATE
+> Task :sample:checkDebugAarMetadata UP-TO-DATE
+> Task :sample:processDebugMainManifest FROM-CACHE
+> Task :sample:processDebugManifest FROM-CACHE
+> Task :sample:processDebugManifestForPackage FROM-CACHE
+> Task :sample:processDebugResources FROM-CACHE
+> Task :sample:generateBenchmarkResources UP-TO-DATE
+> Task :sample:packageBenchmarkResources UP-TO-DATE
+> Task :sample:javaPreCompileBenchmark UP-TO-DATE
+> Task :sample:mapBenchmarkSourceSetPaths UP-TO-DATE
+> Task :sample:createBenchmarkCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksBenchmark UP-TO-DATE
+> Task :sample:extractProguardFiles UP-TO-DATE
+> Task :sample:mergeBenchmarkStartupProfile UP-TO-DATE
+> Task :sample:generateBenchmarkAssets UP-TO-DATE
+> Task :sample:extractBenchmarkVersionControlInfo UP-TO-DATE
+> Task :sample:collectBenchmarkDependencies UP-TO-DATE
+> Task :sample:sdkBenchmarkDependencyData UP-TO-DATE
+> Task :sample:validateSigningBenchmark UP-TO-DATE
+> Task :sample:writeBenchmarkAppMetadata UP-TO-DATE
+> Task :sample:writeBenchmarkSigningConfigVersions UP-TO-DATE
+> Task :sample:preReleaseBuild UP-TO-DATE
+> Task :sample:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :sample:checkReleaseDuplicateClasses UP-TO-DATE
+> Task :sample:generateReleaseResources UP-TO-DATE
+> Task :sample:packageReleaseResources UP-TO-DATE
+> Task :sample:javaPreCompileRelease UP-TO-DATE
+> Task :sample:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :sample:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksRelease UP-TO-DATE
+> Task :sample:mergeReleaseStartupProfile UP-TO-DATE
+> Task :sample:generateReleaseAssets UP-TO-DATE
+> Task :sample:extractReleaseVersionControlInfo UP-TO-DATE
+> Task :sample:collectReleaseDependencies UP-TO-DATE
+> Task :sample:sdkReleaseDependencyData UP-TO-DATE
+> Task :sample:writeReleaseAppMetadata UP-TO-DATE
+> Task :sample:writeReleaseSigningConfigVersions UP-TO-DATE
+> Task :sample:configureReleaseDependencies UP-TO-DATE
+> Task :sample:parseReleaseIntegrityConfig UP-TO-DATE
+
 > Task :sdk:configureCMakeDebug[arm64-v8a]
+[CXX5304] Observed package id 'system-images;android-36;google_apis_playstore_ps16k;arm64-v8a' in inconsistent location '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3' (Expected '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a')
+Add android.sync.suppressAgpWarnings=EXTERNAL_NATIVE_BUILD_CONFIGURATION to the gradle.properties file to suppress this warning.
+[CXX5304] Observed package id 'system-images;android-36;google_apis_playstore_ps16k;arm64-v8a' in inconsistent location '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3' (Expected '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a')
+
 > Task :sdk:buildCMakeDebug[arm64-v8a]
 > Task :sdk:mergeDebugJniLibFolders UP-TO-DATE
 > Task :sdk:mergeDebugNativeLibs UP-TO-DATE
 > Task :sdk:copyDebugJniLibsProjectOnly UP-TO-DATE
 > Task :sdk:preReleaseBuild UP-TO-DATE
+> Task :sample:mergeDebugNativeLibs UP-TO-DATE
+> Task :sample:stripDebugDebugSymbols UP-TO-DATE
 > Task :sdk:configureCMakeRelWithDebInfo[arm64-v8a]
 > Task :sdk:buildCMakeRelWithDebInfo[arm64-v8a]
 > Task :sdk:mergeReleaseJniLibFolders UP-TO-DATE
@@ -57,23 +105,26 @@
 > Task :sdk:copyReleaseJniLibsProjectOnly UP-TO-DATE
 > Task :sdk:generateReleaseResources UP-TO-DATE
 > Task :sdk:packageReleaseResources UP-TO-DATE
+> Task :sample:mergeBenchmarkNativeLibs UP-TO-DATE
 > Task :sdk:processReleaseNavigationResources UP-TO-DATE
+> Task :sample:stripBenchmarkDebugSymbols UP-TO-DATE
 > Task :sdk:parseReleaseLocalResources UP-TO-DATE
+> Task :sample:extractBenchmarkNativeSymbolTables UP-TO-DATE
 > Task :sdk:generateReleaseRFile UP-TO-DATE
-> Task :sample:mergeDebugAssets UP-TO-DATE
+> Task :sample:mergeBenchmarkNativeDebugMetadata UP-TO-DATE
+> Task :sample:processBenchmarkNavigationResources UP-TO-DATE
+> Task :sample:parseBenchmarkLocalResources UP-TO-DATE
+> Task :sample:generateBenchmarkRFile UP-TO-DATE
 > Task :sdk:compileReleaseKotlin UP-TO-DATE
-> Task :sample:compressDebugAssets UP-TO-DATE
-> Task :sample:mergeLibDexDebug UP-TO-DATE
+> Task :sample:compileBenchmarkNavigationResources UP-TO-DATE
 > Task :sdk:javaPreCompileRelease UP-TO-DATE
-> Task :sample:checkDebugAarMetadata UP-TO-DATE
 > Task :sdk:compileReleaseJavaWithJavac NO-SOURCE
 > Task :sdk:mergeReleaseGeneratedProguardFiles UP-TO-DATE
-> Task :sample:processDebugMainManifest UP-TO-DATE
+> Task :sample:mergeBenchmarkResources UP-TO-DATE
 > Task :sdk:exportReleaseConsumerProguardFiles UP-TO-DATE
 > Task :sdk:bundleLibCompileToJarRelease UP-TO-DATE
-> Task :sample:processDebugManifest UP-TO-DATE
+> Task :sample:mergeReleaseNativeLibs UP-TO-DATE
 > Task :sdk:prepareReleaseArtProfile UP-TO-DATE
-> Task :sample:processDebugManifestForPackage UP-TO-DATE
 > Task :sdk:writeReleaseAarMetadata UP-TO-DATE
 > Task :sdk:extractDeepLinksRelease UP-TO-DATE
 > Task :sdk:processReleaseManifest UP-TO-DATE
@@ -84,23 +135,11 @@
 > Task :sdk:generateReleaseAssets UP-TO-DATE
 > Task :sdk:mergeReleaseAssets UP-TO-DATE
 > Task :sdk:createFullJarRelease UP-TO-DATE
-> Task :sample:processDebugResources UP-TO-DATE
 > Task :sdk:extractProguardFiles UP-TO-DATE
-> Task :sample:mergeDebugNativeLibs UP-TO-DATE
-> Task :sample:stripDebugDebugSymbols UP-TO-DATE
-> Task :sample:mergeBenchmarkNativeLibs UP-TO-DATE
-> Task :sample:stripBenchmarkDebugSymbols UP-TO-DATE
-> Task :sample:extractBenchmarkNativeSymbolTables UP-TO-DATE
 > Task :sdk:generateReleaseLintModel UP-TO-DATE
-> Task :sample:mergeBenchmarkNativeDebugMetadata UP-TO-DATE
 > Task :sdk:prepareLintJarForPublish UP-TO-DATE
-> Task :sample:generateBenchmarkResources UP-TO-DATE
 > Task :sdk:checkReleaseAarMetadata UP-TO-DATE
 > Task :sdk:extractDeepLinksForAarRelease UP-TO-DATE
-> Task :sample:packageBenchmarkResources UP-TO-DATE
-> Task :sample:processBenchmarkNavigationResources UP-TO-DATE
-> Task :sample:parseBenchmarkLocalResources UP-TO-DATE
-> Task :sample:generateBenchmarkRFile UP-TO-DATE
 > Task :sdk:extractReleaseAnnotations UP-TO-DATE
 > Task :sdk:mergeReleaseConsumerProguardFiles UP-TO-DATE
 > Task :sdk:mergeReleaseJavaResource UP-TO-DATE
@@ -116,85 +155,36 @@
 > Task :sdk:verifyReleaseResources UP-TO-DATE
 > Task :sdk:assembleRelease UP-TO-DATE
 > Task :sdk:lintAnalyzeRelease UP-TO-DATE
-> Task :sample:javaPreCompileBenchmark UP-TO-DATE
 > Task :sample:mergeBenchmarkArtProfile UP-TO-DATE
 > Task :sample:checkBenchmarkAarMetadata UP-TO-DATE
-> Task :sample:mapBenchmarkSourceSetPaths UP-TO-DATE
-> Task :sample:compileBenchmarkNavigationResources UP-TO-DATE
-> Task :sample:mergeBenchmarkResources UP-TO-DATE
-> Task :sample:createBenchmarkCompatibleScreenManifests UP-TO-DATE
-> Task :sample:extractDeepLinksBenchmark UP-TO-DATE
 > Task :sample:processBenchmarkMainManifest UP-TO-DATE
 > Task :sample:processBenchmarkManifest UP-TO-DATE
 > Task :sample:processBenchmarkManifestForPackage UP-TO-DATE
 > Task :sample:processBenchmarkResources UP-TO-DATE
-> Task :sample:extractProguardFiles UP-TO-DATE
-> Task :sample:mergeBenchmarkStartupProfile UP-TO-DATE
-> Task :sample:generateBenchmarkAssets UP-TO-DATE
 > Task :sample:mergeBenchmarkAssets UP-TO-DATE
 > Task :sample:compressBenchmarkAssets UP-TO-DATE
-> Task :sample:extractBenchmarkVersionControlInfo UP-TO-DATE
-> Task :sample:collectBenchmarkDependencies UP-TO-DATE
-> Task :sample:sdkBenchmarkDependencyData UP-TO-DATE
-> Task :sample:validateSigningBenchmark UP-TO-DATE
-> Task :sample:writeBenchmarkAppMetadata UP-TO-DATE
-> Task :sample:writeBenchmarkSigningConfigVersions UP-TO-DATE
-> Task :sample:preReleaseBuild UP-TO-DATE
-> Task :sample:mergeReleaseJniLibFolders UP-TO-DATE
-> Task :sample:mergeReleaseNativeLibs UP-TO-DATE
 > Task :sample:stripReleaseDebugSymbols UP-TO-DATE
 > Task :sample:extractReleaseNativeDebugMetadata UP-TO-DATE
 > Task :sample:mergeReleaseNativeDebugMetadata UP-TO-DATE
-> Task :sample:checkReleaseDuplicateClasses UP-TO-DATE
-> Task :sample:generateReleaseResources UP-TO-DATE
-> Task :sample:packageReleaseResources UP-TO-DATE
 > Task :sample:processReleaseNavigationResources UP-TO-DATE
 > Task :sample:parseReleaseLocalResources UP-TO-DATE
 > Task :sample:generateReleaseRFile UP-TO-DATE
-> Task :sample:javaPreCompileRelease UP-TO-DATE
 > Task :sample:mergeReleaseArtProfile UP-TO-DATE
 > Task :sample:checkReleaseAarMetadata UP-TO-DATE
-> Task :sample:mapReleaseSourceSetPaths UP-TO-DATE
 > Task :sample:compileReleaseNavigationResources UP-TO-DATE
 > Task :sample:mergeReleaseResources UP-TO-DATE
-> Task :sample:createReleaseCompatibleScreenManifests UP-TO-DATE
-> Task :sample:extractDeepLinksRelease UP-TO-DATE
 > Task :sample:processReleaseMainManifest UP-TO-DATE
 > Task :sample:processReleaseManifest UP-TO-DATE
 > Task :sample:processReleaseManifestForPackage UP-TO-DATE
 > Task :sample:processReleaseResources UP-TO-DATE
-> Task :sample:mergeReleaseStartupProfile UP-TO-DATE
-> Task :sample:generateReleaseAssets UP-TO-DATE
 > Task :sample:mergeReleaseAssets UP-TO-DATE
 > Task :sample:compressReleaseAssets UP-TO-DATE
-> Task :sample:extractReleaseVersionControlInfo UP-TO-DATE
-> Task :sample:collectReleaseDependencies UP-TO-DATE
-> Task :sample:sdkReleaseDependencyData UP-TO-DATE
-> Task :sample:writeReleaseAppMetadata UP-TO-DATE
-> Task :sample:writeReleaseSigningConfigVersions UP-TO-DATE
-> Task :sample:configureReleaseDependencies UP-TO-DATE
-> Task :sample:parseReleaseIntegrityConfig UP-TO-DATE
-
-> Task :sample:compileDebugKotlin
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:111:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:112:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:113:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:114:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:161:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:162:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:232:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:328:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:329:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:330:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:331:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:105:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:273:17 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
 
 > Task :sample:compileReleaseKotlin
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:111:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:112:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:113:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:114:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:115:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:116:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:117:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:118:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
 w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:161:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
 w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:162:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
 w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:232:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
@@ -202,63 +192,75 @@ w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/
 w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:329:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
 w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:330:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
 w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:331:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:105:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:273:17 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
 
-> Task :sample:compileBenchmarkKotlin
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:111:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:112:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:113:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:114:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:161:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:162:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:232:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:328:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:329:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:330:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:331:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:105:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
-w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:273:17 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
-
-> Task :sample:compileDebugJavaWithJavac NO-SOURCE
-> Task :sample:processDebugJavaRes UP-TO-DATE
-> Task :sample:mergeDebugJavaResource UP-TO-DATE
-> Task :sample:dexBuilderDebug
-> Task :sample:compileBenchmarkJavaWithJavac NO-SOURCE
-> Task :sample:expandBenchmarkArtProfileWildcards
-> Task :sample:mergeBenchmarkGeneratedProguardFiles UP-TO-DATE
-> Task :sample:processBenchmarkJavaRes UP-TO-DATE
-> Task :sample:mergeBenchmarkJavaResource UP-TO-DATE
-> Task :sample:generateBenchmarkLintVitalReportModel
-> Task :sample:mergeProjectDexDebug
 > Task :sample:compileReleaseJavaWithJavac NO-SOURCE
-> Task :sample:expandReleaseArtProfileWildcards FROM-CACHE
+> Task :sample:expandReleaseArtProfileWildcards
 > Task :sample:mergeReleaseGeneratedProguardFiles UP-TO-DATE
 > Task :sample:processReleaseJavaRes UP-TO-DATE
 > Task :sample:mergeReleaseJavaResource UP-TO-DATE
 > Task :sample:generateReleaseLintVitalReportModel
 > Task :sample:generateReleaseLintReportModel
+> Task :sample:compileDebugKotlin
+> Task :sample:compileBenchmarkKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:115:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:116:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:117:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:118:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:161:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:162:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:232:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:328:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:329:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:330:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:331:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+
+> Task :sample:compileBenchmarkJavaWithJavac NO-SOURCE
+> Task :sample:expandBenchmarkArtProfileWildcards FROM-CACHE
+
+> Task :sample:compileDebugKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:115:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:116:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:117:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:118:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:161:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:162:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:232:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:328:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:329:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:330:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:331:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+
+> Task :sample:mergeBenchmarkGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processBenchmarkJavaRes UP-TO-DATE
+> Task :sample:mergeBenchmarkJavaResource UP-TO-DATE
+> Task :sample:generateBenchmarkLintVitalReportModel
+> Task :sample:compileDebugJavaWithJavac NO-SOURCE
+> Task :sample:processDebugJavaRes UP-TO-DATE
+> Task :sample:mergeDebugJavaResource UP-TO-DATE
+> Task :sample:dexBuilderDebug
+> Task :sample:mergeProjectDexDebug
+> Task :sample:minifyReleaseWithR8
+> Task :sample:compileReleaseArtProfile
+> Task :sample:convertShrunkResourcesToBinaryRelease UP-TO-DATE
+> Task :sample:optimizeReleaseResources UP-TO-DATE
+> Task :sample:buildReleasePreBundle
 > Task :sample:packageDebug
-> Task :sample:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :sample:createDebugApkListingFileRedirect
 > Task :sample:assembleDebug
-> Task :sample:minifyBenchmarkWithR8
-> Task :sample:compileBenchmarkArtProfile
-> Task :sample:convertShrunkResourcesToBinaryBenchmark
-> Task :sample:optimizeBenchmarkResources
 > Task :sample:lintVitalAnalyzeBenchmark
-> Task :sample:lintVitalReportBenchmark
+> Task :sample:lintVitalReportBenchmark UP-TO-DATE
 > Task :sample:lintVitalBenchmark
 > Task :sample:lintVitalAnalyzeRelease
-> Task :sample:lintVitalReportRelease SKIPPED
-> Task :sample:lintVitalRelease SKIPPED
+> Task :sample:lintAnalyzeRelease
+> Task :sample:minifyBenchmarkWithR8
+> Task :sample:compileBenchmarkArtProfile FROM-CACHE
+> Task :sample:convertShrunkResourcesToBinaryBenchmark UP-TO-DATE
+> Task :sample:optimizeBenchmarkResources UP-TO-DATE
 > Task :sample:packageBenchmark
 > Task :sample:createBenchmarkApkListingFileRedirect UP-TO-DATE
 > Task :sample:assembleBenchmark
-> Task :sample:minifyReleaseWithR8
-> Task :sample:compileReleaseArtProfile FROM-CACHE
-> Task :sample:buildReleasePreBundle
-> Task :sample:convertShrunkResourcesToBinaryRelease
-> Task :sample:optimizeReleaseResources
+> Task :sample:lintVitalReportRelease SKIPPED
+> Task :sample:lintVitalRelease SKIPPED
 > Task :sample:packageRelease
 > Task :sample:createReleaseApkListingFileRedirect UP-TO-DATE
 > Task :sample:assembleRelease
@@ -267,7 +269,6 @@ w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/
 > Task :sample:produceReleaseBundleIdeListingFile
 > Task :sample:createReleaseBundleListingFileRedirect UP-TO-DATE
 > Task :sample:bundleRelease
-> Task :sample:lintAnalyzeRelease
 
 > Task :sample:lintReportRelease
 Wrote HTML report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-release.html
@@ -275,6 +276,6 @@ Wrote SARIF report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEng
 
 > Task :sample:lintRelease
 
-BUILD SUCCESSFUL in 20s
-204 actionable tasks: 34 executed, 2 from cache, 168 up-to-date
+BUILD SUCCESSFUL in 1m 27s
+204 actionable tasks: 30 executed, 6 from cache, 168 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.0/userguide/configuration_cache_enabling.html

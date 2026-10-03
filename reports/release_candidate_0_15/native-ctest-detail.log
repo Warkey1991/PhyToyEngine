@@ -1,0 +1,37 @@
+Start testing: Oct 01 09:54 CST
+----------------------------------------------------------
+1/2 Testing: phytoy_core_tests
+1/2 Test: phytoy_core_tests
+Command: "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build/phytoy_core_tests"
+Directory: /Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build
+"phytoy_core_tests" start time: Oct 01 09:54 CST
+Output:
+----------------------------------------------------------
+PhyToyEngine/0.3.1 ABI/2
+all native core tests passed
+<end of output>
+Test time =   0.29 sec
+----------------------------------------------------------
+Test Passed.
+"phytoy_core_tests" end time: Oct 01 09:54 CST
+"phytoy_core_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: phytoy_python_reference_tests
+2/2 Test: phytoy_python_reference_tests
+Command: "/opt/homebrew/Cellar/cmake/3.24.2/bin/cmake" "-E" "env" "PYTHONPATH=/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/reference" "PHYTOY_CPP_LIBRARY=/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build/libphytoy_core.dylib" "PHYTOY_CPP_PROFILE_DIR=/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build/profiles" "/opt/homebrew/Frameworks/Python.framework/Versions/3.10/bin/python3.10" "-m" "pytest" "-q" "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/reference/tests"
+Directory: /Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/build
+"phytoy_python_reference_tests" start time: Oct 01 09:54 CST
+Output:
+----------------------------------------------------------
+........................................................................ [ 51%]
+...................................................................      [100%]
+<end of output>
+Test time =   4.24 sec
+----------------------------------------------------------
+Test Passed.
+"phytoy_python_reference_tests" end time: Oct 01 09:54 CST
+"phytoy_python_reference_tests" time elapsed: 00:00:04
+----------------------------------------------------------
+
+End testing: Oct 01 09:54 CST

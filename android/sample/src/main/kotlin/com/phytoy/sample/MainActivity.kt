@@ -45,6 +45,7 @@ import android.window.OnBackInvokedDispatcher
 import android.view.MotionEvent
 import android.view.Gravity
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.phytoy.engine.PhyToyCameraSession
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -71,6 +72,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var gallery: PhotoGalleryOverlay
     private lateinit var settingsStore: SettingsStore
     private lateinit var settingsPage: SettingsOverlay
+    private lateinit var billing: PlayBillingController
+    private lateinit var purchasePage: CameraPurchaseOverlay
+    private var previewOnlyStyle: CameraStyle? = null
+    private var billingMessage: String? = null
     private lateinit var cameraSettings: SettingsSnapshot
     private var qualityAtSettingsOpen: PhotoQuality? = null
     private var photoReviewRequest = 0L
@@ -167,6 +172,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         settingsStore = SettingsStore(applicationContext)
         cameraSettings = settingsStore.load()
         selectedStyle = settingsStore.resolveStartupStyle(lastStyle)
+        billing = PlayBillingController(applicationContext,
+            onStateChanged = { updateBillingUi() },
+            onEvent = ::onBillingEvent,
+        )
+        if (!billing.isUnlocked(selectedStyle)) selectedStyle = CameraStyle.HARINEZUMI_2PP
         photoStore = PhotoStore(applicationContext)
         photoLibrary = PhotoLibrary(applicationContext)
         shutterSound = MediaActionSound().also { it.load(MediaActionSound.SHUTTER_CLICK) }
@@ -188,6 +198,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     override fun onResume() {
         super.onResume()
         activityResumed = true
+        billing.onResume()
         if (cameraThread == null) {
             cameraThread = HandlerThread("PhyToyCamera2").also { it.start() }
             cameraHandler = Handler(cameraThread!!.looper)
@@ -222,6 +233,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         if (::review.isInitialized) review.dismiss()
         if (::gallery.isInitialized) gallery.release()
         if (::settingsPage.isInitialized) settingsPage.dismiss()
+        if (::purchasePage.isInitialized) purchasePage.dismiss()
+        if (::billing.isInitialized) billing.close()
         shutterSound.release()
         photoExecutor.shutdown()
         super.onDestroy()
@@ -235,6 +248,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun dismissCurrentPage(): Boolean {
+        if (::purchasePage.isInitialized && purchasePage.dismiss()) return true
         if (::review.isInitialized && review.dismiss()) return true
         if (::settingsPage.isInitialized && settingsPage.dismiss()) return true
         return ::gallery.isInitialized && gallery.dismiss()
@@ -291,6 +305,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             setReady(false)
             setStyle(selectedStyle)
             setOnStyleSelectedListener(::switchStyle)
+            setStyleAvailability(billing::isUnlocked)
             shutter.setOnClickListener { capturePhoto() }
             thumbnail.contentDescription = getString(R.string.camera_gallery_action)
             thumbnail.setOnClickListener { openGallery() }
@@ -326,7 +341,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             val density = resources.displayMetrics.density
             previewArea.layoutParams = (previewArea.layoutParams as FrameLayout.LayoutParams).apply {
                 topMargin = insets.systemWindowInsetTop + (chrome.topChromeDp * density).roundToInt()
-                bottomMargin = insets.systemWindowInsetBottom + (CameraChrome.BOTTOM_CHROME_DP * density).roundToInt()
+                bottomMargin = insets.systemWindowInsetBottom + (chrome.bottomChromeDp * density).roundToInt()
                 leftMargin = insets.systemWindowInsetLeft
                 rightMargin = insets.systemWindowInsetRight
             }
@@ -354,7 +369,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             cameraSettings = settings
             previewViewport.setGridEnabled(settings.gridEnabled)
             chrome.setHapticsEnabled(settings.hapticsEnabled)
-        })
+        }, onRestorePurchases = ::restorePurchases,
+            canUseStyle = billing::isUnlocked,
+            onLockedStyleSelected = ::openPurchase,
+        )
         root.addView(settingsPage, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
         ))
@@ -368,13 +386,38 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 ViewGroup.LayoutParams.MATCH_PARENT,
             ),
         )
+        purchasePage = CameraPurchaseOverlay(this,
+            onDismiss = {
+                Log.i(LOG_TAG, "Camera purchase page dismissed")
+                updateBrowsingState()
+            },
+            onPreview = { style ->
+                settingsPage.dismiss()
+                gallery.dismiss()
+                applyCameraStyle(style, previewOnly = !billing.isUnlocked(style))
+            },
+            onPurchase = { style ->
+                billingMessage = null
+                billing.purchase(this, style)
+            },
+            onRestore = ::restorePurchases,
+            onRetry = {
+                billingMessage = null
+                billing.onResume()
+            },
+        )
+        root.addView(purchasePage, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
+        ))
         setContentView(root)
+        updateBillingUi()
     }
 
     private fun updateBrowsingState() {
         val browsing = (::review.isInitialized && review.isShowing()) ||
             (::gallery.isInitialized && gallery.isShowing()) ||
-            (::settingsPage.isInitialized && settingsPage.isShowing())
+            (::settingsPage.isInitialized && settingsPage.isShowing()) ||
+            (::purchasePage.isInitialized && purchasePage.isShowing())
         reviewVisible = browsing
         lastPreviewProgressMillis = SystemClock.elapsedRealtime()
         val generation = cameraGeneration
@@ -401,6 +444,100 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         qualityAtSettingsOpen = cameraSettings.photoQuality
         settingsPage.show()
         updateBrowsingState()
+    }
+
+    private fun openPurchase(style: CameraStyle) {
+        if (captureInProgress || isDestroyed || review.isShowing()) return
+        Log.i(LOG_TAG, "Camera purchase page opened style=${style.name}")
+        billingMessage = null
+        purchasePage.show(style, purchaseUi(style))
+        updateBrowsingState()
+        billing.onResume()
+    }
+
+    private fun restorePurchases() {
+        billingMessage = null
+        billing.restorePurchases()
+    }
+
+    private fun purchaseUi(style: CameraStyle): CameraPurchaseUi {
+        val state = billing.currentState()
+        val pending = style in state.pendingStyles
+        val loading = state.connection == BillingConnection.CONNECTING || state.busy
+        val available = state.products[style]?.eligible == true
+        val owned = state.isUnlocked(style)
+        val message = when {
+            pending -> getString(R.string.billing_pending)
+            !state.verificationConfigured && !owned -> getString(R.string.billing_not_configured)
+            billingMessage != null -> billingMessage
+            loading -> getString(if (state.connection == BillingConnection.CONNECTING)
+                R.string.billing_loading else R.string.billing_processing)
+            !owned && (!available || state.connection != BillingConnection.READY) -> getString(R.string.billing_unavailable)
+            else -> null
+        }
+        return CameraPurchaseUi(
+            price = state.products[style]?.formattedPrice,
+            owned = owned,
+            pending = pending,
+            loading = loading,
+            canBuy = state.canPurchase(style),
+            status = message,
+            busy = state.busy,
+        )
+    }
+
+    private fun updateBillingUi() {
+        if (isDestroyed || !::billing.isInitialized || !::chrome.isInitialized) return
+        chrome.setStyleAvailability(billing::isUnlocked)
+        if (billing.isUnlocked(selectedStyle)) previewOnlyStyle = null
+        // An authoritative Play query can revoke refunded/cancelled purchases.
+        // Explicit live trials may keep previewing, but capturePhoto always rechecks access.
+        if (!billing.isUnlocked(selectedStyle) && previewOnlyStyle != selectedStyle && !captureInProgress) {
+            applyCameraStyle(CameraStyle.HARINEZUMI_2PP, previewOnly = false)
+        }
+        chrome.setStylePreviewOnly(!billing.isUnlocked(selectedStyle))
+        if (::settingsPage.isInitialized) settingsPage.refreshStyleAccess()
+        if (::purchasePage.isInitialized && purchasePage.isShowing()) {
+            purchasePage.currentStyle?.let { purchasePage.update(purchaseUi(it)) }
+        }
+    }
+
+    private fun onBillingEvent(event: BillingEvent) {
+        if (isDestroyed) return
+        val activatePurchasedStyle = event is BillingEvent.PurchaseCompleted &&
+            ((::purchasePage.isInitialized && purchasePage.currentStyle == event.style) || selectedStyle == event.style)
+        val message = when (event) {
+            is BillingEvent.PurchaseCompleted -> getString(R.string.billing_success, event.style.name(this))
+            is BillingEvent.Pending -> getString(R.string.billing_pending)
+            is BillingEvent.RestoreCompleted -> {
+                val paid = event.unlockedStyles.count { it !in StyleProducts.freeStyles }
+                when {
+                    event.pendingStyles.isNotEmpty() -> getString(R.string.billing_pending)
+                    paid == 0 -> getString(R.string.billing_restore_empty)
+                    else -> getString(R.string.billing_restored, paid)
+                }
+            }
+            is BillingEvent.Revoked -> getString(R.string.billing_access_removed)
+            BillingEvent.Canceled -> getString(R.string.billing_cancelled)
+            is BillingEvent.Error -> getString(when (event.reason) {
+                BillingError.NOT_CONFIGURED -> R.string.billing_not_configured
+                BillingError.VERIFICATION_FAILED, BillingError.ACKNOWLEDGEMENT_FAILED,
+                BillingError.CACHE_WRITE_FAILED -> R.string.billing_verification_failed
+                BillingError.UNAVAILABLE, BillingError.PRODUCT_UNAVAILABLE -> R.string.billing_unavailable
+                BillingError.NETWORK -> R.string.billing_restore_failed
+                BillingError.PURCHASE_FAILED -> R.string.billing_error
+            })
+        }
+        billingMessage = message
+        updateBillingUi()
+        if (event is BillingEvent.PurchaseCompleted && activatePurchasedStyle) {
+            purchasePage.dismiss()
+            settingsPage.dismiss()
+            applyCameraStyle(event.style, previewOnly = false)
+        }
+        if (!::purchasePage.isInitialized || !purchasePage.isShowing()) {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun restoreLastThumbnail() {
@@ -1337,7 +1474,16 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     @Suppress("DEPRECATION")
     private fun capturePhoto() {
-        if (!cameraReady || captureInProgress) return
+        val unlocked = billing.isUnlocked(selectedStyle)
+        Log.i(LOG_TAG, "Capture action style=${selectedStyle.name} unlocked=$unlocked ready=$cameraReady capturing=$captureInProgress browsing=$reviewVisible")
+        if (captureInProgress || reviewVisible) return
+        // Enforce access in the capture entry point, not just in visible controls.
+        // Opening an unlock page does not require an active Camera2 session.
+        if (!unlocked) {
+            openPurchase(selectedStyle)
+            return
+        }
+        if (!cameraReady) return
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P &&
             checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
             PackageManager.PERMISSION_GRANTED
@@ -1439,6 +1585,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                             ), true)
                         }
                     }
+                    updateBillingUi()
                     Log.i(LOG_TAG, "${saved.styleCode} photo saved: ${saved.uri}")
                 }
             } catch (exception: Throwable) {
@@ -1447,6 +1594,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                     if (isDestroyed) return@post
                     chrome.finishCapture()
                     captureInProgress = false
+                    updateBillingUi()
                     chrome.setReady(cameraReady)
                     if (generation != cameraGeneration || !activityResumed) return@post
                     chrome.showMessage(
@@ -1676,12 +1824,25 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun switchStyle(style: CameraStyle) {
-        if (style == selectedStyle || captureInProgress || cameraOpening || review.isShowing()) return
+        if (captureInProgress || cameraOpening || review.isShowing()) return
+        if (!billing.isUnlocked(style)) {
+            openPurchase(style)
+            return
+        }
+        applyCameraStyle(style, previewOnly = false)
+    }
+
+    private fun applyCameraStyle(style: CameraStyle, previewOnly: Boolean) {
+        if (captureInProgress || isDestroyed) return
+        previewOnlyStyle = if (previewOnly) style else null
+        chrome.setStylePreviewOnly(previewOnly)
+        // Trial selections never become the remembered or default paid style.
+        if (!previewOnly) {
+            getSharedPreferences(CAMERA_PREFERENCES, Context.MODE_PRIVATE)
+                .edit().putString(SELECTED_STYLE_PREFERENCE, style.name).apply()
+        }
+        if (style == selectedStyle) return
         selectedStyle = style
-        getSharedPreferences(CAMERA_PREFERENCES, Context.MODE_PRIVATE)
-            .edit()
-            .putString(SELECTED_STYLE_PREFERENCE, style.name)
-            .apply()
         previewViewport.setCaptureAspect(style.portraitAspect)
         chrome.setStyle(style)
         cameraReady = false

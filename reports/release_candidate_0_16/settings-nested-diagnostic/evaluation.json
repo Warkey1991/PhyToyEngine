@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "scope": "Installed unconfigured RC; no Play checkout or fake purchase success",
+  "checks": [],
+  "styles": [],
+  "artifacts": {
+    "purchase_ui": "purchase-ui.json",
+    "purchase_screenshot": "purchase.png",
+    "after-purchase-back_ui": "after-purchase-back-ui.json",
+    "after-purchase-back_screenshot": "after-purchase-back.png",
+    "after-default-read_ui": "after-default-read-ui.json",
+    "after-default-read_screenshot": "after-default-read.png",
+    "restore-visible_ui": "restore-visible-ui.json",
+    "restore-visible_screenshot": "restore-visible.png"
+  },
+  "touch_targets": {},
+  "media_history": [],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "last_action": "swipe vertical 540,1596 to 540,996",
+  "phase": "nested settings scroll",
+  "gestures": [
+    {
+      "phase": "nested settings scroll",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "nested settings scroll",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "nested settings scroll",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1596
+      ],
+      "to": [
+        540,
+        996
+      ]
+    }
+  ]
+}

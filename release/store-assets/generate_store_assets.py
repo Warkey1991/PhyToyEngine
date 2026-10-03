@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild original PhyToy store artwork using Pillow; no downloaded imagery."""
+"""Rebuild original ToviCam store artwork using Pillow; no downloaded imagery."""
 
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def render_icon():
     image = image.resize((512, 512), Image.Resampling.LANCZOS)
     save_png(image, "store-icon.png")
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-  <title id="title">PhyToy store icon</title>
+  <title id="title">ToviCam store icon</title>
   <desc id="desc">Original yellow camera mark with concentric lens rings on a full square charcoal background.</desc>
   <rect width="512" height="512" fill="{ICON_BACKGROUND}"/>
   <g transform="translate({tx} {ty}) scale({size})">
@@ -136,7 +136,7 @@ def render_feature():
     draw.ellipse((610*SCALE, -170*SCALE, 1190*SCALE, 530*SCALE), fill="#263025")
     draw.rectangle((1008*SCALE, 0, 1024*SCALE, 500*SCALE), fill=GOLD)
     draw.rounded_rectangle((80*SCALE, 172*SCALE, 124*SCALE, 178*SCALE), radius=3*SCALE, fill=GOLD)
-    draw_text(draw, "PHYTOY", 80, 125, 47, CREAM, bold=True, spacing=4)
+    draw_text(draw, "ToviCam", 80, 125, 47, CREAM, bold=True, spacing=4)
     draw_text(draw, "A little camera.", 80, 262, 42, GOLD, bold=True)
     draw_text(draw, "A different view.", 80, 320, 42, CREAM, bold=True)
     draw_text(draw, "Color. Monochrome. Character.", 80, 390, 25, "#C8CDBD")
@@ -149,14 +149,14 @@ def render_feature():
     save_png(image, "feature-graphic.png")
     frames = "\n".join(frame_svg(frame) for frame in FRAMES)
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title desc">
-  <title id="title">PhyToy feature graphic</title>
-  <desc id="desc">PhyToy, a little camera, a different view. Original warm color and monochrome geometric postcards.</desc>
+  <title id="title">ToviCam feature graphic</title>
+  <desc id="desc">ToviCam, a little camera, a different view. Original warm color and monochrome geometric postcards.</desc>
   <rect width="1024" height="500" fill="{BACKGROUND}"/>
   <ellipse cx="900" cy="180" rx="290" ry="350" fill="#263025"/>
   <rect x="1008" width="16" height="500" fill="{GOLD}"/>
   <rect x="80" y="172" width="44" height="6" rx="3" fill="{GOLD}"/>
   <g font-family="Arial, Helvetica, sans-serif">
-    <text x="80" y="125" font-size="47" font-weight="700" letter-spacing="4" fill="{CREAM}">PHYTOY</text>
+    <text x="80" y="125" font-size="47" font-weight="700" letter-spacing="4" fill="{CREAM}">ToviCam</text>
     <text x="80" y="262" font-size="42" font-weight="700" fill="{GOLD}">A little camera.</text>
     <text x="80" y="320" font-size="42" font-weight="700" fill="{CREAM}">A different view.</text>
     <text x="80" y="390" font-size="25" fill="#C8CDBD">Color. Monochrome. Character.</text>

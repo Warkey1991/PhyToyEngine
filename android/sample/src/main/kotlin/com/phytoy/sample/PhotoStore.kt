@@ -178,11 +178,11 @@ internal class PhotoStore(private val context: Context) {
                 )
                 setAttribute(
                     ExifInterface.TAG_SOFTWARE,
-                    "PhyToy Camera / ${metadata.styleCode} ${metadata.styleVersion}",
+                    "ToviCam / ${metadata.styleCode} ${metadata.styleVersion}",
                 )
                 setAttribute(
                     ExifInterface.TAG_IMAGE_DESCRIPTION,
-                    "PhyToy ${metadata.styleCode} ${metadata.styleVersion}",
+                    "ToviCam ${metadata.styleCode} ${metadata.styleVersion}",
                 )
                 setAttribute(
                     ExifInterface.TAG_USER_COMMENT,

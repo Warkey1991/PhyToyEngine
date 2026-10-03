@@ -1,0 +1,30 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    },
+    {
+      "name": "offline privacy text is accessible",
+      "passed": true
+    },
+    {
+      "name": "3 background/resume cycles",
+      "passed": true
+    },
+    {
+      "name": "photo list retains captures, opens a photo and supports both return paths",
+      "passed": true
+    },
+    {
+      "name": "settings persist across process restart and review-off captures remain in the gallery",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "six_style_capture_skipped": true,
+  "installed_apk_sha256": "4c892a8b74ad503f6d1d5f06fbb21a00fa83a79023df37bb77c2a12ecd745d8f",
+  "failure": "AssertionError: Timed out waiting for camera_recovery, enabled=True"
+}

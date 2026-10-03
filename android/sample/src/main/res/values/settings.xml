@@ -24,7 +24,7 @@
     <string name="settings_haptics_hint">Use light vibration for camera controls, when enabled in Android settings.</string>
     <string name="settings_review">Review after capture</string>
     <string name="settings_review_hint">Open the photo after saving. Turn off to keep shooting; you can still tap the thumbnail.</string>
-    <string name="settings_about">About PhyToy</string>
+    <string name="settings_about">About ToviCam</string>
     <string name="settings_about_hint">Read the camera guide and app information.</string>
     <string name="settings_privacy">Privacy policy</string>
     <string name="settings_privacy_hint">See how photos, permissions and local preferences are handled.</string>
@@ -36,5 +36,5 @@
     <string name="settings_reset_confirm_body">Restore the preferences on this page, including the startup defaults, balanced resolution and shooting options. Your current camera style and saved photos are kept.</string>
     <string name="settings_reset_done">Preferences reset. Current style and photos kept.</string>
     <string name="settings_cancel">Cancel</string>
-    <string name="settings_local_only">Settings stay on this device. No account or network connection is needed.</string>
+    <string name="settings_local_only">Camera preferences stay on this device. Purchases and restoration use Google Play.</string>
 </resources>

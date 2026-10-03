@@ -1,0 +1,428 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "scope": "Installed unconfigured RC; no Play checkout or fake purchase success",
+  "checks": [
+    {
+      "name": "both free cameras select without trial caption or unlock shutter",
+      "passed": true,
+      "styles": [
+        "style_dh_color",
+        "style_dh_mono"
+      ]
+    },
+    {
+      "name": "locked default opens purchase without writing default; settings restore is reachable",
+      "passed": true,
+      "default_unchanged": true
+    },
+    {
+      "name": "style_digital remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    }
+  ],
+  "styles": [
+    {
+      "id": "style_digital",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    }
+  ],
+  "artifacts": {
+    "initial-camera_ui": "initial-camera-ui.json",
+    "initial-camera_screenshot": "initial-camera.png",
+    "free-style_dh_color_ui": "free-style_dh_color-ui.json",
+    "free-style_dh_color_screenshot": "free-style_dh_color.png",
+    "free-style_dh_mono_ui": "free-style_dh_mono-ui.json",
+    "free-style_dh_mono_screenshot": "free-style_dh_mono.png",
+    "settings-locked-default_ui": "settings-locked-default-ui.json",
+    "settings-locked-default_screenshot": "settings-locked-default.png",
+    "settings-after-purchase-back_ui": "settings-after-purchase-back-ui.json",
+    "settings-after-purchase-back_screenshot": "settings-after-purchase-back.png",
+    "settings-default-unchanged_ui": "settings-default-unchanged-ui.json",
+    "settings-default-unchanged_screenshot": "settings-default-unchanged.png",
+    "settings-restore-error-toast_screenshot": "settings-restore-error-toast.png",
+    "settings-after-restore_ui": "settings-after-restore-ui.json",
+    "settings-after-restore_screenshot": "settings-after-restore.png",
+    "style_digital-purchase_ui": "style_digital-purchase-ui.json",
+    "style_digital-purchase_screenshot": "style_digital-purchase.png",
+    "style_digital-restore-not-configured_ui": "style_digital-restore-not-configured-ui.json",
+    "style_digital-restore-not-configured_screenshot": "style_digital-restore-not-configured.png",
+    "style_digital-trial_ui": "style_digital-trial-ui.json",
+    "style_digital-trial_screenshot": "style_digital-trial.png",
+    "style_digital-blocked-shutter_ui": "style_digital-blocked-shutter-ui.json",
+    "style_digital-blocked-shutter_screenshot": "style_digital-blocked-shutter.png",
+    "failure_screenshot": "failure.png",
+    "failure-current_ui": "failure-current-ui.json",
+    "failure-current_screenshot": "failure-current.png",
+    "restored-camera_ui": "restored-camera-ui.json",
+    "restored-camera_screenshot": "restored-camera.png"
+  },
+  "touch_targets": {
+    "settings/restore": {
+      "id": "settings_restore_purchases",
+      "bounds": [
+        60,
+        2009,
+        1020,
+        2220
+      ],
+      "width_dp": 320.0,
+      "height_dp": 70.33,
+      "label": "恢复购买\n查找当前 Google Play 账号购买的相机。"
+    },
+    "style_digital/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1767,
+        1008,
+        1923
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "style_digital-blocked-shutter",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "style_digital-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "emulator_properties": {
+    "ro.kernel.qemu": "0",
+    "ro.boot.qemu": ""
+  },
+  "physical_device_opt_in": true,
+  "device_model": "SM-S9210",
+  "sdk": 36,
+  "display": {
+    "width_pixels": 1080,
+    "height_pixels": 2340,
+    "density_dpi": 480
+  },
+  "installed_apks": [
+    {
+      "path": "/data/app/~~O2KfTq86bfIGXr5UUwx74w==/com.phytoy.sample-IUulH27nX0brBXDEzETIpw==/base.apk",
+      "sha256": "b4f63198c5e0a9bf23a7afd845c8321749fd3ad0d2d8e621a79b0f099fa80270"
+    }
+  ],
+  "installed_apk_sha256": "b4f63198c5e0a9bf23a7afd845c8321749fd3ad0d2d8e621a79b0f099fa80270",
+  "font_scale_original": "1.0",
+  "phase": "paid trial style_plastic",
+  "initial_visible_style": "style_dh_color",
+  "last_action": "tap style_dh_color",
+  "default_style_before": "默认风格\nDH 2++\n不记住上次风格或首次启动时，使用此风格。",
+  "gestures": [
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1596
+      ],
+      "to": [
+        540,
+        996
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        302,
+        1761
+      ],
+      "to": [
+        777,
+        1761
+      ]
+    }
+  ],
+  "failure": "AssertionError: Camera style rail is missing",
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true
+}

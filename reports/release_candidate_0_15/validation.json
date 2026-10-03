@@ -152,26 +152,29 @@
       "scope": "ISP/output only, conditioned on actual native sensor-stage DN; does not make the independent full-chain comparison pass."
     }
   },
-  "generated_at_utc": "2026-10-01T01:39:05.963248+00:00",
-  "status": "incomplete",
+  "generated_at_utc": "2026-10-01T06:16:33.293847+00:00",
+  "status": "release_candidate_validated_with_open_production_gates",
   "store_ready": false,
   "candidate": {
     "version_name": "0.15.0-rc1",
     "version_code": 16,
-    "engine_version": "PhyToyEngine/0.3.0 ABI/2",
+    "engine_version": "PhyToyEngine/0.3.1 ABI/2",
     "application_id": "com.phytoy.sample"
   },
   "source_state": {
-    "android_app_source_changed_after_recorded_builds_and_product_audits": true,
-    "changes_in_progress": "Gallery/settings UI and review accessibility changes; root agent will rebuild and repeat final app audit.",
-    "final_packaging_rebuild_required": true,
+    "android_app_source_changed_after_recorded_builds_and_product_audits": false,
+    "changes_in_progress": null,
+    "final_packaging_rebuild_required": false,
     "recorded_artifact_hashes_are_final_submission_hashes": false,
-    "hash_refresh_required_after_final_rebuild": true,
-    "engine_host_checks_apply_to_completed_engine_changes": true
+    "hash_refresh_required_after_final_rebuild": false,
+    "engine_host_checks_apply_to_completed_engine_changes": true,
+    "further_android_app_source_changes_planned": false,
+    "android_app_source_tree_sha256": "405182365da61fc0936cd9458f6c5bbe0d5e268e3fb081c4240567801137eb8d",
+    "source_fingerprint_scope": "Sorted relative paths and SHA256 digests of all android/sample/src/main files, separated by NUL; production ID/signing changes require new hashes and acceptance."
   },
   "host": {
     "status": "passed",
-    "pytest_passed": 124,
+    "pytest_passed": 139,
     "ctest_passed": 2,
     "ctest_total": 2,
     "commands": [
@@ -182,11 +185,18 @@
     "logs": [
       {
         "path": "reports/release_candidate_0_15/native-final-build.log",
-        "sha256": "3e9e2a414c1c8328fad66038dc3857218fdc2c1c51bad1fe590e53a307bc8f22"
+        "sha256": "3e9e2a414c1c8328fad66038dc3857218fdc2c1c51bad1fe590e53a307bc8f22",
+        "bytes": 425
       },
       {
         "path": "reports/release_candidate_0_15/native-final-tests.log",
-        "sha256": "4f044f0b660bd4c934b8725effc053b2f9e85360a47a039d3edd676aa6350b28"
+        "sha256": "4f044f0b660bd4c934b8725effc053b2f9e85360a47a039d3edd676aa6350b28",
+        "bytes": 468
+      },
+      {
+        "path": "reports/release_candidate_0_15/native-ctest-detail.log",
+        "sha256": "612e7f3eacb7a4c69dcf69dbe8f8423cc5e43add98816d5d0e7f230dd0db192a",
+        "bytes": 2008
       }
     ],
     "c_abi_exception_review": "Passed for valid pointers and normal lifetime. Covers mutex acquisition, business exceptions, allocation-safe error reporting, cross-thread snapshots and four callback exception types. Real rejecting-allocator failure was injected into error storage; no exhaustive CPU/Vulkan allocation sweep.",
@@ -194,90 +204,228 @@
       "workgroup_memory_bytes": 23196,
       "minimum_supported_budget_bytes": 32768,
       "passed": true
-    }
+    },
+    "adc_half_tie_contract": "All CPU/Python/Vulkan implementations use stable nonnegative half-up rounding. Native 16KB black-input fixture has pre-ADC 64.5 DN and every output is 65 DN."
   },
   "packaging": {
     "status": "passed",
     "scope": "release_candidate_packaging",
-    "report": {
-      "path": "reports/release_candidate_0_15/packaging.json",
-      "sha256": "ccebe7b020bcf5643d132e66b125987eb956b9d3b51707bc3c42b3bc0cef8368"
-    },
     "signed": false,
     "store_ready": false,
-    "application_id": "com.phytoy.sample",
-    "uses_development_application_id": true,
-    "manifest": {
-      "application_id": "com.phytoy.sample",
-      "version_code": 16,
-      "version_name": "0.15.0-rc1",
-      "min_sdk": 26,
-      "target_sdk": 37,
-      "debuggable": false,
-      "test_only": false,
-      "cleartext": false,
-      "features": {
-        "android.hardware.camera.any": {
-          "required": true,
-          "version": 0
-        },
-        "android.hardware.vulkan.level": {
-          "required": true,
-          "version": 1
-        },
-        "android.hardware.vulkan.version": {
-          "required": true,
-          "version": 4198400
-        }
-      }
-    },
+    "minimum_target_sdk": 36,
     "apk": {
       "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/apk/release/sample-release-unsigned.apk",
-      "sha256": "2f5689ccee9048d74ec35203a3c163456baff85a1b01ae109d157005b4ff4fec",
-      "bytes": 1724188,
-      "has_signature": false
+      "sha256": "78485ed7ae60f0f61ecb9183b507739389054aace5c4d2eec7f6186c0df6ea26",
+      "bytes": 1748976,
+      "native_libraries": {
+        "libc++_shared.so": {
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "relro_ranges": [
+            [
+              1243288,
+              1286144
+            ]
+          ],
+          "relro_protection_overlap": false,
+          "sha256": "cd61762848882a16c8244c964a6f396c0caa0b440588a210ce9cc4ab0e6d9f0c",
+          "zip_offset": 114688
+        },
+        "libphytoy_android.so": {
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ],
+          "relro_ranges": [
+            [
+              84832,
+              90112
+            ]
+          ],
+          "relro_protection_overlap": false,
+          "sha256": "ecfe4582ed7e56f581c275ec18c93ecd1f28015ebc9c7688202cd6e47f3c4cf8",
+          "zip_offset": 1376256
+        },
+        "libphytoy_core.so": {
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ],
+          "relro_ranges": [
+            [
+              229808,
+              233472
+            ]
+          ],
+          "relro_protection_overlap": false,
+          "sha256": "cd0b322e3550fe90a107eb9f47d5b0d2a36146ab45b59f4f88940a126948e167",
+          "zip_offset": 1458176
+        }
+      },
+      "profiles": {
+        "host_generic_srgb.ptp": "1aedaee25fbf4b75af030a0ca2bb98649e656c1a72d1a41a3c8caa7a1aef9666",
+        "toy_harinezumi_2pp_daylight_v0_1.ptp": "8ec6298139ebcbd8f6f9a40612e547ac1736b819fbc9e00ffa412cea488b2dad",
+        "toy_harinezumi_2pp_daylight_v0_2.ptp": "af82202560bc3693f0b83f707812af2cfcc41abf48f0002c96b18f27148cc4da",
+        "toy_harinezumi_2pp_daylight_v0_3.ptp": "5d7e3652961889ad2dcd573b42951b4ed42a9c0a5a7c0d193d8ee6b5cad4d3dd",
+        "toy_harinezumi_2pp_daylight_v0_4.ptp": "ec481892227b543e0913877214d160eb8cefc5bcbde5cf921803763876f55ab2",
+        "toy_harinezumi_2pp_mono_v0_1.ptp": "276485c0c0d579c60887561321c02d19833b7128cc76ed7dd684557725b99c4e",
+        "toy_harinezumi_2pp_mono_v0_2.ptp": "4a241e68d078a22ae75317ee0e6f2f7dd767f47808279b2337d7d4a7f2e736bc",
+        "toy_phytoy_digital_01_v1.ptp": "6f0093295c7bf957b4b8478cd03b19ae7ea7939963a269c45163525f4200e81f",
+        "toy_phytoy_digital_01_v1_1.ptp": "5d29e8e4ddbc218b671b872b4ccfa5f8d2308f371fc8fbf92a94e5dc04e78f19",
+        "toy_phytoy_digital_01_v1_2.ptp": "3e36a208e5d1acf2e4a65c170b7afffb632f91740faa90f0b997a2daf5747189",
+        "toy_phytoy_fisheye_05_v1.ptp": "5099a4f6ec25ee873ca7fa12ff0026bdd3532caa1c24f338587f3e70d9101712",
+        "toy_phytoy_plastic_82_v1.ptp": "8f16b51baf69aa4dbc82c0205d66f00fb026406cdb2a2f92fb4e2b513426b073",
+        "toy_phytoy_street_84_v1.ptp": "a0c4d3667e263a2fb12d5e96c08b54e9500b076c3d63ed0e06e2af65c1e357d5"
+      },
+      "has_signature": false,
+      "manifest": {
+        "application_id": "com.phytoy.sample",
+        "version_code": 16,
+        "version_name": "0.15.0-rc1",
+        "min_sdk": 26,
+        "target_sdk": 37,
+        "debuggable": false,
+        "test_only": false,
+        "cleartext": false,
+        "features": {
+          "android.hardware.camera.any": {
+            "required": true,
+            "version": 0
+          },
+          "android.hardware.vulkan.level": {
+            "required": true,
+            "version": 1
+          },
+          "android.hardware.vulkan.version": {
+            "required": true,
+            "version": 4198400
+          }
+        }
+      },
+      "signed": false
     },
     "aab": {
       "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/bundle/release/sample-release.aab",
-      "sha256": "d8b282aa72c6e0c864fd32f16bbf6e722443ba11c9007161da1b51c57df74028",
-      "bytes": 3447281,
-      "has_jar_signature": false,
-      "generated_apk_page_alignment": 16384
+      "sha256": "73646ef2a0fa7323db86ce2a40cd33d4ac78d8fe6d254259e89f713b2600adf4",
+      "bytes": 3486175,
+      "native_libraries": {
+        "libc++_shared.so": {
+          "load_alignments": [
+            16384,
+            16384,
+            16384,
+            16384
+          ],
+          "relro_ranges": [
+            [
+              1243288,
+              1286144
+            ]
+          ],
+          "relro_protection_overlap": false,
+          "sha256": "cd61762848882a16c8244c964a6f396c0caa0b440588a210ce9cc4ab0e6d9f0c"
+        },
+        "libphytoy_android.so": {
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ],
+          "relro_ranges": [
+            [
+              84832,
+              90112
+            ]
+          ],
+          "relro_protection_overlap": false,
+          "sha256": "ecfe4582ed7e56f581c275ec18c93ecd1f28015ebc9c7688202cd6e47f3c4cf8"
+        },
+        "libphytoy_core.so": {
+          "load_alignments": [
+            16384,
+            16384,
+            16384
+          ],
+          "relro_ranges": [
+            [
+              229808,
+              233472
+            ]
+          ],
+          "relro_protection_overlap": false,
+          "sha256": "cd0b322e3550fe90a107eb9f47d5b0d2a36146ab45b59f4f88940a126948e167"
+        }
+      },
+      "profiles": {
+        "host_generic_srgb.ptp": "1aedaee25fbf4b75af030a0ca2bb98649e656c1a72d1a41a3c8caa7a1aef9666",
+        "toy_harinezumi_2pp_daylight_v0_1.ptp": "8ec6298139ebcbd8f6f9a40612e547ac1736b819fbc9e00ffa412cea488b2dad",
+        "toy_harinezumi_2pp_daylight_v0_2.ptp": "af82202560bc3693f0b83f707812af2cfcc41abf48f0002c96b18f27148cc4da",
+        "toy_harinezumi_2pp_daylight_v0_3.ptp": "5d7e3652961889ad2dcd573b42951b4ed42a9c0a5a7c0d193d8ee6b5cad4d3dd",
+        "toy_harinezumi_2pp_daylight_v0_4.ptp": "ec481892227b543e0913877214d160eb8cefc5bcbde5cf921803763876f55ab2",
+        "toy_harinezumi_2pp_mono_v0_1.ptp": "276485c0c0d579c60887561321c02d19833b7128cc76ed7dd684557725b99c4e",
+        "toy_harinezumi_2pp_mono_v0_2.ptp": "4a241e68d078a22ae75317ee0e6f2f7dd767f47808279b2337d7d4a7f2e736bc",
+        "toy_phytoy_digital_01_v1.ptp": "6f0093295c7bf957b4b8478cd03b19ae7ea7939963a269c45163525f4200e81f",
+        "toy_phytoy_digital_01_v1_1.ptp": "5d29e8e4ddbc218b671b872b4ccfa5f8d2308f371fc8fbf92a94e5dc04e78f19",
+        "toy_phytoy_digital_01_v1_2.ptp": "3e36a208e5d1acf2e4a65c170b7afffb632f91740faa90f0b997a2daf5747189",
+        "toy_phytoy_fisheye_05_v1.ptp": "5099a4f6ec25ee873ca7fa12ff0026bdd3532caa1c24f338587f3e70d9101712",
+        "toy_phytoy_plastic_82_v1.ptp": "8f16b51baf69aa4dbc82c0205d66f00fb026406cdb2a2f92fb4e2b513426b073",
+        "toy_phytoy_street_84_v1.ptp": "a0c4d3667e263a2fb12d5e96c08b54e9500b076c3d63ed0e06e2af65c1e357d5"
+      },
+      "manifest": {
+        "application_id": "com.phytoy.sample",
+        "version_code": 16,
+        "version_name": "0.15.0-rc1",
+        "min_sdk": 26,
+        "target_sdk": 37,
+        "debuggable": false,
+        "test_only": false,
+        "cleartext": false,
+        "features": {
+          "android.hardware.camera.any": {
+            "required": true,
+            "version": 0
+          },
+          "android.hardware.vulkan.level": {
+            "required": true,
+            "version": 1
+          },
+          "android.hardware.vulkan.version": {
+            "required": true,
+            "version": 4198400
+          }
+        }
+      },
+      "generated_apk_page_alignment": 16384,
+      "has_jar_signature": false
     },
-    "native_load_alignments_bytes": {
-      "libc++_shared.so": [
-        16384,
-        16384,
-        16384,
-        16384
-      ],
-      "libphytoy_android.so": [
-        16384,
-        16384,
-        16384
-      ],
-      "libphytoy_core.so": [
-        16384,
-        16384,
-        16384
-      ]
+    "device_acceptance": "separate_required_gate",
+    "report": {
+      "path": "reports/release_candidate_0_15/packaging.json",
+      "sha256": "2cbb485c0c28c427905d08a05af346773e4f9594b3b9fab576a0af877fe849b5",
+      "bytes": 7235
     },
-    "relro_overlap_passed": true,
+    "uses_development_application_id": true,
     "limitations": [
-      "Packaging passed for the recorded artifacts; Android source changed after that build.",
-      "Unsigned artifacts and development application ID are not store submission ready.",
-      "Final signed/profile hashes and device acceptance remain separate gates."
+      "Unsigned development-ID artifacts are not store submission ready.",
+      "Device checks use the nondebuggable R8 benchmark with a development signing certificate; the production-signed AAB must be audited separately."
     ]
   },
   "physical_device": {
     "model": "Samsung SM-S9210",
     "serial": "RFCX80BD3XN",
     "product": {
-      "status": "partial_disconnected",
-      "passed": false,
+      "status": "passed",
+      "passed": true,
       "report": {
-        "path": "reports/release_candidate_0_15/product/evaluation.json",
-        "sha256": "31de43b5a758c7fe621fc2b99d33cfdbb91b8f90918bc0f84259112ef70be9a9"
+        "path": "reports/release_candidate_0_15/product-release-final/evaluation.json",
+        "sha256": "787c6840f1536be279ec00fe71f0c58622ec185e1bffe85350c3ff88e223ab14",
+        "bytes": 1614
       },
       "checks": [
         {
@@ -291,12 +439,37 @@
         {
           "name": "5 background/resume cycles",
           "passed": true
+        },
+        {
+          "name": "front and back camera with a saved front photo",
+          "passed": true
+        },
+        {
+          "name": "all six profiles switch, save, review and return to shooting",
+          "passed": true
+        },
+        {
+          "name": "photo list retains captures, opens a photo and supports both return paths",
+          "passed": true
+        },
+        {
+          "name": "settings persist across process restart and review-off captures remain in the gallery",
+          "passed": true
+        },
+        {
+          "name": "denied camera permission has a recovery action and disabled shutter",
+          "passed": true
+        },
+        {
+          "name": "camera recovers after permission is restored",
+          "passed": true
         }
       ],
-      "styles_completed": 0,
-      "failure": "Command '['/Users/songyuanjin/Library/Android/sdk/platform-tools/adb', '-s', 'RFCX80BD3XN', 'shell', 'uiautomator', 'dump', '/sdcard/phytoy_product_qa.xml']' returned non-zero exit status 255.",
-      "interruption_context": "Physical device disconnected during front-camera capture audit; six-style capture and subsequent product checks did not complete.",
-      "latest_app_source_validated": false
+      "styles_completed": 6,
+      "six_style_capture_skipped": false,
+      "installed_apk_sha256": "5881d0ac4f8a579ccf623f35a4ece791aea07e308dc8effa3f15389567fdade3",
+      "latest_app_source_validated": true,
+      "failure": null
     },
     "small_stage_conformance": {
       "status": "passed",
@@ -457,11 +630,33 @@
           },
           "scope": "Recorded physical synthetic-stage conformance; does not measure photographic preview/detail."
         }
-      ]
+      ],
+      "scope": "Historical 0.3.0 tiny-stage reports retained as recorded; final 0.3.1 stage evidence is recorded separately."
     },
     "large_vulkan_stage_conformance": {
-      "status": "not_recorded",
-      "reason": "No successful 270x258 Vulkan f32/AHB run is present in this report directory; physical device disconnected."
+      "status": "full_chain_failed_at_adc_threshold_conditioned_isp_passed",
+      "report": {
+        "path": "reports/release_candidate_0_15/gpu_isp/physical_270x258_summary.json",
+        "sha256": "efd1f895dd577e9975abcd99d0a86717ca7ff59b89f274a67fa1a968b6bdf4cf",
+        "bytes": 21120
+      },
+      "engine": "PhyToyEngine/0.3.1 ABI/2",
+      "runtime_passed": true,
+      "full_chain_passed": false,
+      "conditioned_isp_passed": true,
+      "contract_changed": false,
+      "sensor_dn_matches_historical_cpu": true,
+      "scope": "Synthetic 270x258 native conformance; no Activity was started. Conditioned ISP/output pass is separate from the independent full-chain comparison. Small sampled stage-dump timings do not establish sustained app performance.",
+      "coordinates_xy": [
+        [
+          218,
+          80
+        ],
+        [
+          27,
+          157
+        ]
+      ]
     }
   },
   "emulator_16kb": {
@@ -478,7 +673,8 @@
       "status": "passed",
       "summary": {
         "path": "reports/release_candidate_0_15/emulator16k/summary.json",
-        "sha256": "4885b2e3e99d09e4b169e0dd7cbee69048fe8b4289a45ac2640d1f00d983a16a"
+        "sha256": "76bdf1b6febe367bc153fa81e65392e4e3c159927b093d74f760a2c77c4fc75b",
+        "bytes": 3402
       },
       "dimensions": [
         22,
@@ -502,11 +698,84 @@
         "queue_submission_delta": 3,
         "isp_max_absolute_error": 1.1820034196211027e-08,
         "output_max_absolute_error": 4.3409098679503266e-07
+      },
+      "engine_version": "PhyToyEngine/0.3.1 ABI/2",
+      "adc_half_tie": {
+        "scope": "Exact nonnegative ADC half-tie regression, constant black source, native final binaries on actual 16KB Android",
+        "width": 22,
+        "height": 18,
+        "seed": 1234,
+        "constant_input_u8": 0,
+        "toy_profile": "toy_adc_half_tie_conformance.ptp",
+        "pre_adc_dn": 64.5,
+        "expected_sensor_dn": 65.0,
+        "warmup_frames": 1,
+        "measured_frames": 3,
+        "cpu": {
+          "benchmark_exit_code": 0,
+          "comparison_report": "reports/release_candidate_0_15/emulator16k/adc_cpu_22x18_comparison.json",
+          "runtime_report": "reports/release_candidate_0_15/emulator16k/adc_cpu_22x18_runtime.json",
+          "passed": true,
+          "sensor_dn_all_65": true,
+          "resource_allocation_delta_after_warmup": 0,
+          "queue_submission_delta": 0,
+          "rss_growth_kib": 0
+        },
+        "vulkan": {
+          "benchmark_exit_code": 0,
+          "comparison_report": "reports/release_candidate_0_15/emulator16k/adc_vulkan_22x18_comparison.json",
+          "runtime_report": "reports/release_candidate_0_15/emulator16k/adc_vulkan_22x18_runtime.json",
+          "passed": true,
+          "sensor_dn_all_65": true,
+          "resource_allocation_delta_after_warmup": 0,
+          "queue_submission_delta": 3,
+          "rss_growth_kib": 0
+        }
       }
     },
     "app": {
-      "status": "failed_audit_pending_final_fix_verification",
-      "passed": false,
+      "status": "passed",
+      "passed": true,
+      "report": {
+        "path": "reports/release_candidate_0_15/emulator16k/product-final-layout/evaluation.json",
+        "sha256": "be2d64462c3d3cd5dbfd27befa0d9333a48e856456cfc2c8f1e4e589666e8320",
+        "bytes": 951
+      },
+      "checks": [
+        {
+          "name": "camera opens and shutter becomes ready",
+          "passed": true
+        },
+        {
+          "name": "offline privacy text is accessible",
+          "passed": true
+        },
+        {
+          "name": "3 background/resume cycles",
+          "passed": true
+        },
+        {
+          "name": "photo list retains captures, opens a photo and supports both return paths",
+          "passed": true
+        },
+        {
+          "name": "settings persist across process restart and review-off captures remain in the gallery",
+          "passed": true
+        },
+        {
+          "name": "denied camera permission has a recovery action and disabled shutter",
+          "passed": true
+        },
+        {
+          "name": "camera recovers after permission is restored",
+          "passed": true
+        }
+      ],
+      "styles_completed": 0,
+      "six_style_capture_skipped": true,
+      "installed_apk_sha256": "5881d0ac4f8a579ccf623f35a4ece791aea07e308dc8effa3f15389567fdade3",
+      "latest_app_source_validated": true,
+      "failure": null,
       "attempts": [
         {
           "report": {
@@ -545,16 +814,119 @@
           ],
           "styles_completed": 0,
           "failure": "Review must isolate camera controls from accessibility"
+        },
+        {
+          "report": {
+            "path": "reports/release_candidate_0_15/emulator16k/product-material-final/evaluation.json",
+            "sha256": "122f7bdace2dbb4d92381823eb27bc48b8c49d58141039da9a4ebe4d446d4b58",
+            "bytes": 1197
+          },
+          "passed": false,
+          "checks": [
+            {
+              "name": "camera opens and shutter becomes ready",
+              "passed": true
+            },
+            {
+              "name": "offline privacy text is accessible",
+              "passed": true
+            },
+            {
+              "name": "3 background/resume cycles",
+              "passed": true
+            },
+            {
+              "name": "front and back camera with a saved front photo",
+              "passed": true
+            },
+            {
+              "name": "all six profiles switch, save, review and return to shooting",
+              "passed": true
+            },
+            {
+              "name": "photo list retains captures, opens a photo and supports both return paths",
+              "passed": true
+            }
+          ],
+          "styles_completed": 6,
+          "failure": "AssertionError: Could not scroll to settings_grid",
+          "scope": "Pre-font-caption-fix artifact. Six-profile captures passed; settings scroll automation was corrected using short slow overlapping drags."
+        },
+        {
+          "report": {
+            "path": "reports/release_candidate_0_15/emulator16k/product-material-verified/evaluation.json",
+            "sha256": "122f7bdace2dbb4d92381823eb27bc48b8c49d58141039da9a4ebe4d446d4b58",
+            "bytes": 1197
+          },
+          "passed": false,
+          "checks": [
+            {
+              "name": "camera opens and shutter becomes ready",
+              "passed": true
+            },
+            {
+              "name": "offline privacy text is accessible",
+              "passed": true
+            },
+            {
+              "name": "3 background/resume cycles",
+              "passed": true
+            },
+            {
+              "name": "front and back camera with a saved front photo",
+              "passed": true
+            },
+            {
+              "name": "all six profiles switch, save, review and return to shooting",
+              "passed": true
+            },
+            {
+              "name": "photo list retains captures, opens a photo and supports both return paths",
+              "passed": true
+            }
+          ],
+          "styles_completed": 6,
+          "failure": "AssertionError: Could not scroll to settings_grid",
+          "scope": "Pre-font-caption-fix artifact. Six-profile captures passed; settings scroll automation was corrected using short slow overlapping drags."
         }
       ],
-      "latest_app_source_validated": false,
-      "required_next_action": "Rebuild and repeat final app audit after gallery/settings and review accessibility fixes."
+      "scope": "Final installed benchmark: actual 16KB app startup, privacy, three lifecycle cycles, gallery/review, persistent settings, review-off save and permission restoration. Six-profile capture is skipped in this focused run and covered by the final physical audit; earlier emulator captures remain separate evidence."
     },
     "limitations": [
-      "SwiftShader/emulated-camera results establish actual 16KB loader and small native-stage compatibility.",
-      "Emulator timings do not represent physical-device performance.",
-      "Native f32 smoke does not establish Camera2/AHardwareBuffer or complete app lifecycle correctness."
-    ]
+      "Actual 16KB runtime and loader verified with emulated cameras and software Vulkan.",
+      "Emulator timings do not establish physical-device throughput or thermals.",
+      "The final app-focused emulator run reuses previous photos; six-style capture is covered by the final physical-device run."
+    ],
+    "large_font": {
+      "status": "passed",
+      "passed": true,
+      "report": {
+        "path": "reports/release_candidate_0_15/emulator16k/large-font-final/evaluation.json",
+        "sha256": "f17205c036380a68b106ac14c2cdab898e78b49fbf723470bf0e6878f395bda2",
+        "bytes": 4209
+      },
+      "font_scale": 2.0,
+      "restored_original_font_scale": "1.0",
+      "checks": [
+        {
+          "name": "camera primary actions are visible, labelled and at least 48dp",
+          "passed": true
+        },
+        {
+          "name": "settings scroll reaches privacy and returns to the camera",
+          "passed": true
+        },
+        {
+          "name": "gallery photo review and both page back buttons work at 200% font scale",
+          "passed": true
+        },
+        {
+          "name": "review continue returns directly to the camera without taking a photo",
+          "passed": true
+        }
+      ],
+      "scope": "Four-page navigation, visible labelled 48dp targets and settled modal accessibility trees. Visual inspection confirms caption clipping is corrected; not full TalkBack or camera-detail validation."
+    }
   },
   "preview_photo_consistency": {
     "status": "not_verified_on_same_scene_physical_capture",
@@ -566,18 +938,61 @@
       "reports/preview_detail_20260930_720_surface/metrics.json"
     ],
     "limitations": [
-      "Synthetic MTF/RMSE results are not measured camera improvements.",
-      "Physical high-resolution preview frame-time and sustained thermal budget remain unverified for the latest app source."
+      "Synthetic MTF/RMSE is not a measured camera improvement.",
+      "Final physical startup, switching and capture are verified; high-resolution sustained cadence, thermal budget and paired preview/photo detail remain unmeasured."
     ]
   },
   "remaining_release_gates": [
-    "Rebuild final Android artifacts and refresh packaging hashes after ongoing gallery/settings UI changes.",
-    "Pass final emulator app audit including review accessibility isolation.",
-    "Complete interrupted physical six-style capture/EXIF/return-to-preview, lifecycle and permission audit.",
-    "Finish same-scene physical preview/photo consistency measurements.",
-    "Investigate and retain the 270x258 ADC full-chain failure without silently broadening its contract.",
-    "Record large physical Vulkan f32/AHardwareBuffer stage conformance.",
-    "Complete additional vendor/minimum Android and sustained unplugged device coverage.",
-    "Provide production application ID, upload signing identity, publisher/privacy contacts, final store materials and account testing requirements."
-  ]
+    "Measure paired live preview and saved photos of the same owned static scene on a physical device, with matching lens/style/exposure/crop.",
+    "Resolve the independent 270x258 reference ADC precision-boundary contract failure; preserve its current 0.51-DN threshold and recorded full-chain failures.",
+    "Complete manual TalkBack, storage-full/camera-contention/background-during-capture, large-screen/foldable/minimum-Android and another vendor/GPU acceptance.",
+    "Record an unplugged sustained 30-minute preview/capture and thermal run.",
+    "Provide permanent application ID, upload signing identity, publisher/privacy contact, completed public privacy URL, final owned-scene store screenshots and Console account testing requirements.",
+    "Rebuild and audit actual production-signed artifacts after these inputs, and run acceptance against their exact submission hashes."
+  ],
+  "android_build": {
+    "status": "passed",
+    "log": {
+      "path": "reports/release_candidate_0_15/android-final-build.log",
+      "sha256": "80e41a06ac008e8953fd262570d0ef840ecb2845f2b3622b6b25c46ba03b66cd",
+      "bytes": 19502
+    },
+    "outputs": [
+      "debug APK",
+      "benchmark APK",
+      "unsigned release APK",
+      "unsigned AAB",
+      "release SDK AAR"
+    ],
+    "lint": {
+      "errors": 0,
+      "warnings": 35,
+      "categories": {
+        "UnusedAttribute": 1,
+        "LockedOrientationActivity": 1,
+        "DiscouragedApi": 1,
+        "PluralsCandidate": 4,
+        "ObsoleteSdkInt": 1,
+        "UnusedResources": 18,
+        "MonochromeLauncherIcon": 1,
+        "ViewConstructor": 2,
+        "ClickableViewAccessibility": 2,
+        "AccessibilityFocus": 4
+      },
+      "remaining_scope": "Portrait/large-screen adaptation, unused legacy resources, API-specific ignored attributes and reviewed programmatic accessibility/tooling warnings. Manual TalkBack and large-screen acceptance remain open."
+    },
+    "release_gate_tests": {
+      "passed": 13,
+      "log": {
+        "path": "reports/release_candidate_0_15/release-gate-tests.log",
+        "sha256": "3420c4fa958aec695eb183cf9d0c6854f553cb51cec8f10f432b2fb7f618a7c7",
+        "bytes": 1104
+      }
+    },
+    "benchmark_artifact": {
+      "path": "android/sample/build/outputs/apk/benchmark/sample-benchmark.apk",
+      "sha256": "5881d0ac4f8a579ccf623f35a4ece791aea07e308dc8effa3f15389567fdade3",
+      "bytes": 1753072
+    }
+  }
 }

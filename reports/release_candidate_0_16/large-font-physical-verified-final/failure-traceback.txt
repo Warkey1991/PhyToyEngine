@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_large_font_smoke.py", line 339, in main
+    tap(wait("gallery_back"))
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_large_font_smoke.py", line 120, in wait
+    raise AssertionError(f"Timed out waiting for visible {identifier}, enabled={enabled}")
+AssertionError: Timed out waiting for visible gallery_back, enabled=True

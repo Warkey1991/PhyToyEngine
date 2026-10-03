@@ -1,0 +1,600 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-01T06:03:59.928814+00:00",
+  "device": {
+    "serial": "RFCX80BD3XN",
+    "model": "Samsung SM-S9210",
+    "kind": "physical"
+  },
+  "engine_source_stable": true,
+  "further_engine_source_changes_planned": false,
+  "engine": "PhyToyEngine/0.3.1 ABI/2",
+  "status": "full_chain_failed_at_adc_threshold_conditioned_isp_passed",
+  "scope": "Synthetic 270x258 native conformance; no Activity was started. Conditioned ISP/output pass is separate from the independent full-chain comparison. Small sampled stage-dump timings do not establish sustained app performance.",
+  "dimensions": [
+    270,
+    258
+  ],
+  "seed": 1234,
+  "fixed_seed": true,
+  "warmup_frames": 1,
+  "measured_frames": 3,
+  "source_pattern": "RGB=[x%256,y%256,(x+y)%256]/255; CLI independent reference uses float64 rational values, native input uses float32 or RGBA8 AHardwareBuffer.",
+  "source_binaries": {
+    "phytoy_benchmark": {
+      "path": "build-android-arm64/phytoy_benchmark",
+      "sha256": "73f43da639566b8e0acf27281278af65d445e85adfed722b620ac626fb08dbd1",
+      "bytes": 2349768
+    },
+    "libphytoy_core.so": {
+      "path": "build-android-arm64/libphytoy_core.so",
+      "sha256": "a715f31c542a9fbfdbb19a82c46317f08810b6c207c8481c05a5c38e4de2703d",
+      "bytes": 8775744
+    }
+  },
+  "profiles": {
+    "host_generic_srgb.ptp": {
+      "path": "build/profiles/host_generic_srgb.ptp",
+      "sha256": "1aedaee25fbf4b75af030a0ca2bb98649e656c1a72d1a41a3c8caa7a1aef9666",
+      "bytes": 265
+    },
+    "toy_isp_filter_conformance.ptp": {
+      "path": "build/profiles/toy_isp_filter_conformance.ptp",
+      "sha256": "d38132b087b79c8cb395c9e33c5372c8bf22c014853e0b640dccc2705151b27e",
+      "bytes": 1130
+    }
+  },
+  "contract": {
+    "path": "acceptance/synthetic_alpha_v1.json",
+    "sha256": "3144a28b92e5dadaa7722f1d32ed3a2e58f65d5b48afe3d4f295576f5a8252b0",
+    "bytes": 2159
+  },
+  "contract_changed": false,
+  "cpu_baseline": {
+    "engine": "PhyToyEngine/0.3.0 ABI/2",
+    "historical_recorded_run_not_rerun": true,
+    "runtime_report": {
+      "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258_runtime.json",
+      "sha256": "f48f9d970d189962ce15b2ecfc192cf46ed40262b089ac3be9e0db311069bad7",
+      "bytes": 672
+    },
+    "runtime": {
+      "engine": "PhyToyEngine/0.3.0 ABI/2",
+      "backend": "cpu",
+      "input": "f32",
+      "width": 270,
+      "height": 258,
+      "warmup_frames": 1,
+      "measured_frames": 1,
+      "measured_seed_start": 1234,
+      "fixed_seed": false,
+      "latency_ms_mean": 27.9905,
+      "latency_ms_p50": 27.9905,
+      "latency_ms_p95": 27.9905,
+      "latency_ms_p99": 27.9905,
+      "rss_kib_before": 45140,
+      "rss_kib_after": 45396,
+      "peak_rss_kib": 49988,
+      "vulkan_allocated_bytes": 0,
+      "queue_submission_delta": 0,
+      "resource_allocation_delta_after_warmup": 0,
+      "ahardware_buffer_import_delta": 0,
+      "zero_copy_frame_delta": 0,
+      "thermal_status_before": 0,
+      "thermal_status_after": 0,
+      "thermal_status_max": 0
+    },
+    "source_binary_sha256": null,
+    "source_binary_sha256_status": "Not recorded for the historical CPU run; final GPU source hashes are not attributed to that older CPU run.",
+    "stage_dump_evidence": {
+      "01_scene_linear": {
+        "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/01_scene_linear.pfm",
+        "sha256": "a1411216bdd1d4a933a6ca8e032ab9d5c5d7ff905dbb3d664feed7a7dc96ec2d",
+        "bytes": 835936
+      },
+      "02_target_optics": {
+        "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/02_target_optics.pfm",
+        "sha256": "8c930a45e0b7b71f1e2529d2d4f69bbb8d4709bfe4f228624c58d5f33b71ec06",
+        "bytes": 835936
+      },
+      "03_target_sensor_dn": {
+        "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/03_target_sensor_dn.pfm",
+        "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b",
+        "bytes": 278656
+      },
+      "04_target_isp_linear": {
+        "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/04_target_isp_linear.pfm",
+        "sha256": "0a7adf29aa71f1418cb52e727b8cc963892502d2cd65a48a9fb4cf8520e4d758",
+        "bytes": 835936
+      },
+      "05_output_srgb": {
+        "path": "reports/release_candidate_0_15/gpu_isp/cpu_f32_270x258/05_output_srgb.pfm",
+        "sha256": "a494ecde899eec6881723c709cf1a8b1dce6c2ebe643c582387eec5e798f89d9",
+        "bytes": 835936
+      }
+    }
+  },
+  "gpu_cases": {
+    "f32": {
+      "backend": "vulkan",
+      "input": "f32",
+      "benchmark_argv": [
+        "phytoy_benchmark",
+        "--host",
+        "host_generic_srgb.ptp",
+        "--toy",
+        "toy_isp_filter_conformance.ptp",
+        "--backend",
+        "vulkan",
+        "--input",
+        "f32",
+        "--width",
+        "270",
+        "--height",
+        "258",
+        "--warmup",
+        "1",
+        "--frames",
+        "3",
+        "--seed",
+        "1234",
+        "--fixed-seed",
+        "--dump-stages",
+        "vulkan_f32_270x258"
+      ],
+      "source_binaries": {
+        "phytoy_benchmark": {
+          "path": "build-android-arm64/phytoy_benchmark",
+          "sha256": "73f43da639566b8e0acf27281278af65d445e85adfed722b620ac626fb08dbd1",
+          "bytes": 2349768
+        },
+        "libphytoy_core.so": {
+          "path": "build-android-arm64/libphytoy_core.so",
+          "sha256": "a715f31c542a9fbfdbb19a82c46317f08810b6c207c8481c05a5c38e4de2703d",
+          "bytes": 8775744
+        }
+      },
+      "report_evidence": {
+        "runtime": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258_runtime.json",
+          "sha256": "449e769418f98900a200b3a07f76e18afaa9b2778160d188ea0829e05fa26dc7",
+          "bytes": 680
+        },
+        "full_chain_comparison": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258_comparison.json",
+          "sha256": "5a6610d16aaa2b53a145955849d9b9e3bd4c46a2a767063339b8a3c7b09f96ee",
+          "bytes": 1214
+        },
+        "conditioned_isp_comparison": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258_isp_comparison.json",
+          "sha256": "2c8e748a4d6816e0f9c029741b756bb6aebdde90c931c44eb134c95a602e9e41",
+          "bytes": 783
+        }
+      },
+      "runtime": {
+        "engine": "PhyToyEngine/0.3.1 ABI/2",
+        "backend": "vulkan",
+        "input": "f32",
+        "width": 270,
+        "height": 258,
+        "warmup_frames": 1,
+        "measured_frames": 3,
+        "measured_seed_start": 1234,
+        "fixed_seed": true,
+        "latency_ms_mean": 14.9986,
+        "latency_ms_p50": 15.4073,
+        "latency_ms_p95": 23.2014,
+        "latency_ms_p99": 23.2014,
+        "rss_kib_before": 73456,
+        "rss_kib_after": 73488,
+        "peak_rss_kib": 75860,
+        "vulkan_allocated_bytes": 2786712,
+        "queue_submission_delta": 3,
+        "resource_allocation_delta_after_warmup": 0,
+        "ahardware_buffer_import_delta": 0,
+        "zero_copy_frame_delta": 0,
+        "thermal_status_before": 1,
+        "thermal_status_after": 1,
+        "thermal_status_max": 1
+      },
+      "resource_metrics": {
+        "resource_allocation_delta_after_warmup": 0,
+        "queue_submission_delta": 3,
+        "ahardware_buffer_import_delta": 0,
+        "zero_copy_frame_delta": 0,
+        "vulkan_allocated_bytes": 2786712,
+        "rss_kib_before": 73456,
+        "rss_kib_after": 73488,
+        "peak_rss_kib": 75860,
+        "thermal_status_before": 1,
+        "thermal_status_after": 1,
+        "thermal_status_max": 1,
+        "rss_growth_kib": 32
+      },
+      "resource_assertions": {
+        "benchmark_exit_code": 0,
+        "resources_after_warmup_zero": true,
+        "queue_submissions_equal_measured_frames": true,
+        "zero_copy_frames_equal_measured_frames_if_ahb": true,
+        "no_additional_ahb_imports_after_warmup": true
+      },
+      "full_chain_comparison_exit_code": 1,
+      "full_chain_comparison": {
+        "comparison_scope": "all five stages against independently rendered reference",
+        "height": 258,
+        "native_sensor_input": null,
+        "passed": false,
+        "seed": 1234,
+        "stages": {
+          "01_scene_linear": {
+            "limit": 2e-05,
+            "max_absolute": 2.9503551512988224e-07,
+            "mean_absolute": 4.802311117794026e-08,
+            "passed": true,
+            "rmse": 6.612607343661457e-08
+          },
+          "02_target_optics": {
+            "limit": 8e-05,
+            "max_absolute": 2.0531999581477334e-05,
+            "mean_absolute": 4.9640413606393636e-08,
+            "passed": true,
+            "rmse": 2.1793510131191217e-07
+          },
+          "03_target_sensor_dn": {
+            "limit": 0.51,
+            "max_absolute": 1.0,
+            "mean_absolute": 2.8710881424059718e-05,
+            "passed": false,
+            "rmse": 0.005358253579671245
+          },
+          "04_target_isp_linear": {
+            "limit": 0.002,
+            "max_absolute": 0.0007141613086372178,
+            "mean_absolute": 9.967537076477225e-08,
+            "passed": true,
+            "rmse": 3.9965149279835546e-06
+          },
+          "05_output_srgb": {
+            "limit": 0.003,
+            "max_absolute": 0.0007606276448141047,
+            "mean_absolute": 2.4915656458485324e-06,
+            "passed": true,
+            "rmse": 5.953503659703583e-06
+          }
+        },
+        "width": 270
+      },
+      "conditioned_isp_comparison_exit_code": 0,
+      "conditioned_isp_comparison": {
+        "comparison_scope": "ISP/output conditioned on actual native sensor DN",
+        "height": 258,
+        "native_sensor_input": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258/03_target_sensor_dn.pfm",
+          "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b"
+        },
+        "passed": true,
+        "seed": 1234,
+        "stages": {
+          "04_target_isp_linear": {
+            "limit": 0.002,
+            "max_absolute": 7.499368191998812e-07,
+            "mean_absolute": 5.667464037112752e-08,
+            "passed": true,
+            "rmse": 9.250809905611879e-08
+          },
+          "05_output_srgb": {
+            "limit": 0.003,
+            "max_absolute": 4.09194724777448e-05,
+            "mean_absolute": 2.4339219829046316e-06,
+            "passed": true,
+            "rmse": 4.153082603620202e-06
+          }
+        },
+        "width": 270
+      },
+      "adc_failure": {
+        "limit_dn": 0.51,
+        "max_absolute_dn": 1.0,
+        "pixels_over_limit": 2,
+        "coordinates_and_values": [
+          {
+            "x": 218,
+            "y": 80,
+            "native_dn": 401.0,
+            "independent_reference_dn": 400.0,
+            "difference_dn": 1.0
+          },
+          {
+            "x": 27,
+            "y": 157,
+            "native_dn": 395.0,
+            "independent_reference_dn": 394.0,
+            "difference_dn": 1.0
+          }
+        ]
+      },
+      "sensor_dn_only_vs_recorded_cpu": {
+        "bit_exact": true,
+        "differing_pixels": 0
+      },
+      "all_stage_bit_exact_vs_recorded_cpu": {
+        "01_scene_linear": true,
+        "02_target_optics": false,
+        "03_target_sensor_dn": true,
+        "04_target_isp_linear": false,
+        "05_output_srgb": false
+      },
+      "stage_dump_evidence": {
+        "01_scene_linear": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258/01_scene_linear.pfm",
+          "sha256": "a1411216bdd1d4a933a6ca8e032ab9d5c5d7ff905dbb3d664feed7a7dc96ec2d",
+          "bytes": 835936
+        },
+        "02_target_optics": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258/02_target_optics.pfm",
+          "sha256": "850ebd85723ae8af824c67fe85483b707da26cbc6d3ff74d03f069402d4e2de5",
+          "bytes": 835936
+        },
+        "03_target_sensor_dn": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258/03_target_sensor_dn.pfm",
+          "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b",
+          "bytes": 278656
+        },
+        "04_target_isp_linear": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258/04_target_isp_linear.pfm",
+          "sha256": "3c9970370a77ff62396c4c154df62d56c1ca6647e58bcde28c6b2fa67d453b9c",
+          "bytes": 835936
+        },
+        "05_output_srgb": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258/05_output_srgb.pfm",
+          "sha256": "50cb3b40592c57394afc432c8666f61bb46b3fc1a41ef2d954e30a6f1632b626",
+          "bytes": 835936
+        }
+      }
+    },
+    "ahb": {
+      "backend": "vulkan",
+      "input": "ahb",
+      "benchmark_argv": [
+        "phytoy_benchmark",
+        "--host",
+        "host_generic_srgb.ptp",
+        "--toy",
+        "toy_isp_filter_conformance.ptp",
+        "--backend",
+        "vulkan",
+        "--input",
+        "ahb",
+        "--width",
+        "270",
+        "--height",
+        "258",
+        "--warmup",
+        "1",
+        "--frames",
+        "3",
+        "--seed",
+        "1234",
+        "--fixed-seed",
+        "--dump-stages",
+        "vulkan_ahb_270x258"
+      ],
+      "source_binaries": {
+        "phytoy_benchmark": {
+          "path": "build-android-arm64/phytoy_benchmark",
+          "sha256": "73f43da639566b8e0acf27281278af65d445e85adfed722b620ac626fb08dbd1",
+          "bytes": 2349768
+        },
+        "libphytoy_core.so": {
+          "path": "build-android-arm64/libphytoy_core.so",
+          "sha256": "a715f31c542a9fbfdbb19a82c46317f08810b6c207c8481c05a5c38e4de2703d",
+          "bytes": 8775744
+        }
+      },
+      "report_evidence": {
+        "runtime": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258_runtime.json",
+          "sha256": "9bb273c2c860b54086d87daf66f56069b85b46b32ed113df91d85b29a06be942",
+          "bytes": 679
+        },
+        "full_chain_comparison": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258_comparison.json",
+          "sha256": "77a39f098030313d6fca629039b5ea300f09dc95f5611bba176477792e9dfbd8",
+          "bytes": 1213
+        },
+        "conditioned_isp_comparison": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258_isp_comparison.json",
+          "sha256": "daac220516071a955034bd13ce082ff18f504c28a8eb1033faf73d847bd58426",
+          "bytes": 783
+        }
+      },
+      "runtime": {
+        "engine": "PhyToyEngine/0.3.1 ABI/2",
+        "backend": "vulkan",
+        "input": "ahb",
+        "width": 270,
+        "height": 258,
+        "warmup_frames": 1,
+        "measured_frames": 3,
+        "measured_seed_start": 1234,
+        "fixed_seed": true,
+        "latency_ms_mean": 6.11964,
+        "latency_ms_p50": 5.9076,
+        "latency_ms_p95": 6.58193,
+        "latency_ms_p99": 6.58193,
+        "rss_kib_before": 74360,
+        "rss_kib_after": 74340,
+        "peak_rss_kib": 74360,
+        "vulkan_allocated_bytes": 3622676,
+        "queue_submission_delta": 3,
+        "resource_allocation_delta_after_warmup": 0,
+        "ahardware_buffer_import_delta": 0,
+        "zero_copy_frame_delta": 3,
+        "thermal_status_before": 1,
+        "thermal_status_after": 1,
+        "thermal_status_max": 1
+      },
+      "resource_metrics": {
+        "resource_allocation_delta_after_warmup": 0,
+        "queue_submission_delta": 3,
+        "ahardware_buffer_import_delta": 0,
+        "zero_copy_frame_delta": 3,
+        "vulkan_allocated_bytes": 3622676,
+        "rss_kib_before": 74360,
+        "rss_kib_after": 74340,
+        "peak_rss_kib": 74360,
+        "thermal_status_before": 1,
+        "thermal_status_after": 1,
+        "thermal_status_max": 1,
+        "rss_growth_kib": -20
+      },
+      "resource_assertions": {
+        "benchmark_exit_code": 0,
+        "resources_after_warmup_zero": true,
+        "queue_submissions_equal_measured_frames": true,
+        "zero_copy_frames_equal_measured_frames_if_ahb": true,
+        "no_additional_ahb_imports_after_warmup": true
+      },
+      "full_chain_comparison_exit_code": 1,
+      "full_chain_comparison": {
+        "comparison_scope": "all five stages against independently rendered reference",
+        "height": 258,
+        "native_sensor_input": null,
+        "passed": false,
+        "seed": 1234,
+        "stages": {
+          "01_scene_linear": {
+            "limit": 2e-05,
+            "max_absolute": 2.6265217778487226e-07,
+            "mean_absolute": 4.795092863213431e-08,
+            "passed": true,
+            "rmse": 6.707537675718635e-08
+          },
+          "02_target_optics": {
+            "limit": 8e-05,
+            "max_absolute": 2.0531999581477334e-05,
+            "mean_absolute": 4.959615544628485e-08,
+            "passed": true,
+            "rmse": 2.1798187346333943e-07
+          },
+          "03_target_sensor_dn": {
+            "limit": 0.51,
+            "max_absolute": 1.0,
+            "mean_absolute": 2.8710881424059718e-05,
+            "passed": false,
+            "rmse": 0.005358253579671245
+          },
+          "04_target_isp_linear": {
+            "limit": 0.002,
+            "max_absolute": 0.0007141613086372178,
+            "mean_absolute": 9.967537076477225e-08,
+            "passed": true,
+            "rmse": 3.9965149279835546e-06
+          },
+          "05_output_srgb": {
+            "limit": 0.003,
+            "max_absolute": 0.0007606276448141047,
+            "mean_absolute": 2.4915656458485324e-06,
+            "passed": true,
+            "rmse": 5.953503659703583e-06
+          }
+        },
+        "width": 270
+      },
+      "conditioned_isp_comparison_exit_code": 0,
+      "conditioned_isp_comparison": {
+        "comparison_scope": "ISP/output conditioned on actual native sensor DN",
+        "height": 258,
+        "native_sensor_input": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/03_target_sensor_dn.pfm",
+          "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b"
+        },
+        "passed": true,
+        "seed": 1234,
+        "stages": {
+          "04_target_isp_linear": {
+            "limit": 0.002,
+            "max_absolute": 7.499368191998812e-07,
+            "mean_absolute": 5.667464037112752e-08,
+            "passed": true,
+            "rmse": 9.250809905611879e-08
+          },
+          "05_output_srgb": {
+            "limit": 0.003,
+            "max_absolute": 4.09194724777448e-05,
+            "mean_absolute": 2.4339219829046316e-06,
+            "passed": true,
+            "rmse": 4.153082603620202e-06
+          }
+        },
+        "width": 270
+      },
+      "adc_failure": {
+        "limit_dn": 0.51,
+        "max_absolute_dn": 1.0,
+        "pixels_over_limit": 2,
+        "coordinates_and_values": [
+          {
+            "x": 218,
+            "y": 80,
+            "native_dn": 401.0,
+            "independent_reference_dn": 400.0,
+            "difference_dn": 1.0
+          },
+          {
+            "x": 27,
+            "y": 157,
+            "native_dn": 395.0,
+            "independent_reference_dn": 394.0,
+            "difference_dn": 1.0
+          }
+        ]
+      },
+      "sensor_dn_only_vs_recorded_cpu": {
+        "bit_exact": true,
+        "differing_pixels": 0
+      },
+      "all_stage_bit_exact_vs_recorded_cpu": {
+        "01_scene_linear": false,
+        "02_target_optics": false,
+        "03_target_sensor_dn": true,
+        "04_target_isp_linear": false,
+        "05_output_srgb": false
+      },
+      "stage_dump_evidence": {
+        "01_scene_linear": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/01_scene_linear.pfm",
+          "sha256": "debcfd21ea4133b1f8b7eefdd0af52c274f5ccf26dec16ba6fb1f5898a8650ba",
+          "bytes": 835936
+        },
+        "02_target_optics": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/02_target_optics.pfm",
+          "sha256": "4d06ff1271abf81b9d115470884383be274f1cb1ab383b47d84a972392582341",
+          "bytes": 835936
+        },
+        "03_target_sensor_dn": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/03_target_sensor_dn.pfm",
+          "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b",
+          "bytes": 278656
+        },
+        "04_target_isp_linear": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/04_target_isp_linear.pfm",
+          "sha256": "3c9970370a77ff62396c4c154df62d56c1ca6647e58bcde28c6b2fa67d453b9c",
+          "bytes": 835936
+        },
+        "05_output_srgb": {
+          "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/05_output_srgb.pfm",
+          "sha256": "50cb3b40592c57394afc432c8666f61bb46b3fc1a41ef2d954e30a6f1632b626",
+          "bytes": 835936
+        }
+      }
+    }
+  },
+  "f32_vs_ahb_stage_bit_exact": {
+    "01_scene_linear": false,
+    "02_target_optics": false,
+    "03_target_sensor_dn": true,
+    "04_target_isp_linear": true,
+    "05_output_srgb": true
+  }
+}

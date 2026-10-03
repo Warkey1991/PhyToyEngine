@@ -1,0 +1,74 @@
+{
+  "generated_at_utc": "2026-10-01T06:01:57.886488+00:00",
+  "serial": "RFCX80BD3XN",
+  "model": "Samsung SM-S9210",
+  "engine": "PhyToyEngine/0.3.1 ABI/2",
+  "width": 270,
+  "height": 258,
+  "seed": 1234,
+  "fixed_seed": true,
+  "warmup_frames": 1,
+  "measured_frames": 3,
+  "toy_profile": "toy_isp_filter_conformance.ptp",
+  "noise_enabled": false,
+  "contract": "acceptance/synthetic_alpha_v1.json",
+  "contract_changed": false,
+  "status": "full_chain_failed_at_adc_threshold_conditioned_isp_passed",
+  "scope": "Synthetic native f32/AHardwareBuffer correctness and resource regression; conditioned ISP pass does not make the independent full chain pass. No Activity was started.",
+  "artifacts": {
+    "build-android-arm64/libphytoy_core.so": {
+      "sha256": "a715f31c542a9fbfdbb19a82c46317f08810b6c207c8481c05a5c38e4de2703d",
+      "bytes": 8775744
+    },
+    "build-android-arm64/phytoy_benchmark": {
+      "sha256": "73f43da639566b8e0acf27281278af65d445e85adfed722b620ac626fb08dbd1",
+      "bytes": 2349768
+    },
+    "build/profiles/toy_isp_filter_conformance.ptp": {
+      "sha256": "d38132b087b79c8cb395c9e33c5372c8bf22c014853e0b640dccc2705151b27e",
+      "bytes": 1130
+    }
+  },
+  "cases": {
+    "f32": {
+      "benchmark_exit_code": 0,
+      "full_chain_exit_code": 1,
+      "full_chain_passed": false,
+      "conditioned_isp_exit_code": 0,
+      "conditioned_isp_passed": true,
+      "sensor_max_error_dn": 1.0,
+      "sensor_limit_dn": 0.51,
+      "sensor_differing_pixels": 2,
+      "sensor_dn_matches_recorded_cpu_bit_exact": true,
+      "resource_allocation_delta_after_warmup": 0,
+      "queue_submission_delta": 3,
+      "zero_copy_frame_delta": 0,
+      "ahardware_buffer_import_delta": 0,
+      "reports": {
+        "runtime": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258_runtime.json",
+        "full_chain": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258_comparison.json",
+        "conditioned_isp": "reports/release_candidate_0_15/gpu_isp/vulkan_f32_270x258_isp_comparison.json"
+      }
+    },
+    "ahb": {
+      "benchmark_exit_code": 0,
+      "full_chain_exit_code": 1,
+      "full_chain_passed": false,
+      "conditioned_isp_exit_code": 0,
+      "conditioned_isp_passed": true,
+      "sensor_max_error_dn": 1.0,
+      "sensor_limit_dn": 0.51,
+      "sensor_differing_pixels": 2,
+      "sensor_dn_matches_recorded_cpu_bit_exact": true,
+      "resource_allocation_delta_after_warmup": 0,
+      "queue_submission_delta": 3,
+      "zero_copy_frame_delta": 3,
+      "ahardware_buffer_import_delta": 0,
+      "reports": {
+        "runtime": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258_runtime.json",
+        "full_chain": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258_comparison.json",
+        "conditioned_isp": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258_isp_comparison.json"
+      }
+    }
+  }
+}

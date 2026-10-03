@@ -1,6 +1,6 @@
 # Android release candidate build
 
-The current candidate is **0.15.0-rc1 / versionCode 16**. A passing build and
+The current candidate is **0.16.0-rc1 / versionCode 17**. A passing build and
 packaging audit do not constitute device acceptance or permission to publish.
 The app currently supports Android API 26+, arm64-v8a, and Vulkan 1.1. The two
 Vulkan manifest declarations represent feature level 1 and API version 1.1
@@ -40,12 +40,16 @@ variables:
 | Gradle property | Environment variable | Default |
 | --- | --- | --- |
 | `phytoyApplicationId` | `PHYTOY_APPLICATION_ID` | `com.phytoy.sample` |
-| `phytoyVersionCode` | `PHYTOY_VERSION_CODE` | `16` |
-| `phytoyVersionName` | `PHYTOY_VERSION_NAME` | `0.15.0-rc1` |
+| `phytoyVersionCode` | `PHYTOY_VERSION_CODE` | `17` |
+| `phytoyVersionName` | `PHYTOY_VERSION_NAME` | `0.16.0-rc1` |
 
 For example, supply the actual approved ID using `-PphytoyApplicationId=...` to
 the build; no unapproved production ID is invented by this repository. Every
 published update requires a greater versionCode than the last Play upload.
+
+## Billing configuration
+
+See [PLAY_BILLING.md](PLAY_BILLING.md) for the four non-consumable products and USD 9.99 target pricing. Set the public Play licensing RSA key using `phytoyPlayBillingPublicKey` or `PHYTOY_PLAY_BILLING_PUBLIC_KEY`. Empty configuration leaves paid photography and purchases unavailable while free cameras and trials work. Production signing commands below enforce `phytoyRequireBillingConfigured=true`. This gate is additional to artifact/signing checks; it does not prove the products are activated or real payments tested.
 
 ## Signing an approved candidate
 
@@ -59,7 +63,7 @@ This repository neither generates signing keys nor uploads to a store.
 ```sh
 cd android
 ./gradlew :sample:assembleRelease :sample:bundleRelease :sample:lintRelease \
-  -PphytoyRequireSignedRelease=true
+  -PphytoyRequireSignedRelease=true -PphytoyRequireBillingConfigured=true
 cd ..
 python3 tools/check_android_release.py \
   --apk android/sample/build/outputs/apk/release/sample-release.apk \

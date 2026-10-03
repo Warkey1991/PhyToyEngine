@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [],
+  "styles": [],
+  "six_style_capture_skipped": true,
+  "free_cameras_only": true,
+  "installed_apk_sha256": "c157575ee4ee36e06877499f0599b62914332c9e84d7f098b0f2ca8957478ce8",
+  "failure": "AssertionError: Timed out waiting for shutter, enabled=True"
+}

@@ -3,5 +3,5 @@
     <item name="open_settings" type="id" />
     <string name="camera_settings_action">Camera settings</string>
     <string name="camera_gallery_action">View your photos</string>
-    <string name="camera_header_description">PhyToy Camera. Current style: %1$s</string>
+    <string name="camera_header_description">ToviCam. Current style: %1$s</string>
 </resources>

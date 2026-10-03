@@ -1,0 +1,8 @@
+{
+  "status": "interrupted_by_foreground_change",
+  "camera_crash_in_buffer": false,
+  "styles_completed": 5,
+  "camera_permission_restored": true,
+  "observation": "Failure UI belongs to another application. The cause of foreground switching was not established; the physical audit is partial, not a pass.",
+  "further_ui_actions": "Paused while the device is in another application."
+}

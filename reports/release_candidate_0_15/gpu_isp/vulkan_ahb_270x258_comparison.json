@@ -1,0 +1,45 @@
+{
+  "comparison_scope": "all five stages against independently rendered reference",
+  "height": 258,
+  "native_sensor_input": null,
+  "passed": false,
+  "seed": 1234,
+  "stages": {
+    "01_scene_linear": {
+      "limit": 2e-05,
+      "max_absolute": 2.6265217778487226e-07,
+      "mean_absolute": 4.795092863213431e-08,
+      "passed": true,
+      "rmse": 6.707537675718635e-08
+    },
+    "02_target_optics": {
+      "limit": 8e-05,
+      "max_absolute": 2.0531999581477334e-05,
+      "mean_absolute": 4.959615544628485e-08,
+      "passed": true,
+      "rmse": 2.1798187346333943e-07
+    },
+    "03_target_sensor_dn": {
+      "limit": 0.51,
+      "max_absolute": 1.0,
+      "mean_absolute": 2.8710881424059718e-05,
+      "passed": false,
+      "rmse": 0.005358253579671245
+    },
+    "04_target_isp_linear": {
+      "limit": 0.002,
+      "max_absolute": 0.0007141613086372178,
+      "mean_absolute": 9.967537076477225e-08,
+      "passed": true,
+      "rmse": 3.9965149279835546e-06
+    },
+    "05_output_srgb": {
+      "limit": 0.003,
+      "max_absolute": 0.0007606276448141047,
+      "mean_absolute": 2.4915656458485324e-06,
+      "passed": true,
+      "rmse": 5.953503659703583e-06
+    }
+  },
+  "width": 270
+}

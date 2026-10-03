@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 308, in <module>
+    main()
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 213, in main
+    original_grid = settings_control("settings_grid").get("checked") == "true"
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 120, in settings_control
+    raise AssertionError(f"Could not scroll to {identifier}")
+AssertionError: Could not scroll to settings_grid

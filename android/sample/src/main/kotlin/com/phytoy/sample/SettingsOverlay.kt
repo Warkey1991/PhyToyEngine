@@ -7,6 +7,11 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.TypefaceSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +23,15 @@ import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
 
-/** A native offline settings page. The activity owns camera pause/resume and applying changes. */
+/** A native settings page. The activity owns camera pause/resume and applying changes. */
 internal class SettingsOverlay(
     private val activity: Activity,
     private val store: SettingsStore,
     var onDismiss: () -> Unit = {},
     var onChanged: (SettingsSnapshot) -> Unit = {},
+    var onRestorePurchases: () -> Unit = {},
+    var canUseStyle: (CameraStyle) -> Boolean = { true },
+    var onLockedStyleSelected: (CameraStyle) -> Unit = {},
 ) : FrameLayout(activity) {
     private val body = LinearLayout(activity)
     private val scroll = ScrollView(activity)
@@ -35,6 +43,13 @@ internal class SettingsOverlay(
     private var settings = store.load()
 
     fun isShowing(): Boolean = visibility == VISIBLE
+
+    /** Refresh entitlement text in place without rebuilding controls or moving input focus. */
+    fun refreshStyleAccess() {
+        body.findViewById<Button>(R.id.settings_default_style)?.text = controlText(
+            R.string.settings_default_style, styleLabel(settings.defaultStyle), R.string.settings_default_style_hint,
+        )
+    }
 
     init {
         id = R.id.settings_page
@@ -64,7 +79,7 @@ internal class SettingsOverlay(
         scroll.apply {
             isFillViewport = true
             clipToPadding = false
-            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setPadding(dp(20), dp(12), dp(20), dp(24))
         }
         body.orientation = LinearLayout.VERTICAL
         scroll.addView(body, FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
@@ -129,9 +144,9 @@ internal class SettingsOverlay(
 
     private fun rebuild() {
         body.removeAllViews()
-        body.addView(label(R.string.settings_intro, 14f, MUTED).apply { setPadding(0, 0, 0, dp(24)) })
+        body.addView(label(R.string.settings_intro, 14f, MUTED).apply { setPadding(0, 0, 0, dp(12)) })
         section(R.string.settings_section_camera)
-        choice(R.id.settings_default_style, R.string.settings_default_style, settings.defaultStyle.name(activity),
+        choice(R.id.settings_default_style, R.string.settings_default_style, styleLabel(settings.defaultStyle),
             R.string.settings_default_style_hint) { chooseDefaultStyle() }
         toggle(R.id.settings_remember_style, R.string.settings_remember_style, R.string.settings_remember_style_hint,
             settings.rememberLastStyle) { change(settings.copy(rememberLastStyle = it)) }
@@ -148,6 +163,10 @@ internal class SettingsOverlay(
         toggle(R.id.settings_review, R.string.settings_review, R.string.settings_review_hint,
             settings.reviewAfterCapture) { change(settings.copy(reviewAfterCapture = it)) }
 
+        section(R.string.settings_section_purchases)
+        action(R.id.settings_restore_purchases, R.string.settings_restore_purchases,
+            R.string.settings_restore_purchases_hint) { onRestorePurchases() }
+
         section(R.string.settings_section_information)
         action(R.id.settings_about, R.string.settings_about, R.string.settings_about_hint) {
             ProductInfo.showAbout(activity)
@@ -159,14 +178,14 @@ internal class SettingsOverlay(
             ProductInfo.showLicenses(activity)
         }
         action(R.id.settings_reset, R.string.settings_reset, R.string.settings_reset_hint) { confirmReset() }
-        body.addView(label(R.string.settings_local_only, 13f, MUTED).apply { setPadding(0, dp(20), 0, 0) })
+        body.addView(label(R.string.settings_local_only, 13f, MUTED).apply { setPadding(0, dp(12), 0, 0) })
     }
 
     private fun section(title: Int) {
         body.addView(label(title, 12f, ACCENT).apply {
             typeface = Typeface.create("sans-serif", Typeface.BOLD)
             letterSpacing = 0.08f
-            setPadding(0, dp(12), 0, dp(12))
+            setPadding(0, dp(12), 0, dp(8))
             if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
         })
     }
@@ -174,41 +193,51 @@ internal class SettingsOverlay(
     private fun choice(id: Int, title: Int, value: String, hint: Int, click: () -> Unit) {
         val button = Button(activity).apply {
             this.id = id
-            text = activity.getString(R.string.settings_choice_value, activity.getString(title), value)
+            text = controlText(title, value, hint)
             isAllCaps = false
             gravity = Gravity.START or Gravity.CENTER_VERTICAL
             textSize = 17f
-            minHeight = dp(64)
+            minHeight = dp(48)
+            includeFontPadding = false
+            setSingleLine(false)
+            setLineSpacing(dp(3).toFloat(), 1f)
             setPadding(dp(16), dp(12), dp(16), dp(12))
             setTextColor(FOREGROUND)
             background = touchBackground(CARD, 14)
             setOnClickListener { click() }
         }
-        addControl(button, hint)
+        addControl(button)
     }
 
     private fun action(id: Int, title: Int, hint: Int, click: () -> Unit) {
         val button = Button(activity).apply {
             this.id = id
-            text = activity.getString(title)
+            text = controlText(title, null, hint, if (id == R.id.settings_reset) ACCENT else FOREGROUND)
             isAllCaps = false
             gravity = Gravity.START or Gravity.CENTER_VERTICAL
             textSize = 17f
-            minHeight = dp(56)
+            minHeight = dp(48)
+            includeFontPadding = false
+            setSingleLine(false)
+            setLineSpacing(dp(3).toFloat(), 1f)
             setPadding(dp(16), dp(12), dp(16), dp(12))
-            setTextColor(if (id == R.id.settings_reset) ACCENT else FOREGROUND)
+            setTextColor(FOREGROUND)
             background = touchBackground(CARD, 14)
             setOnClickListener { click() }
         }
-        addControl(button, hint)
+        addControl(button)
     }
 
     private fun toggle(id: Int, title: Int, hint: Int, checked: Boolean, changed: (Boolean) -> Unit) {
         val control = Switch(activity).apply {
             this.id = id
-            text = activity.getString(title)
+            text = controlText(title, null, hint)
             textSize = 17f
-            minHeight = dp(56)
+            minHeight = dp(48)
+            gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            includeFontPadding = false
+            setSingleLine(false)
+            setLineSpacing(dp(3).toFloat(), 1f)
             switchPadding = dp(16)
             setPadding(dp(16), dp(12), dp(16), dp(12))
             setTextColor(FOREGROUND)
@@ -224,21 +253,44 @@ internal class SettingsOverlay(
             isChecked = checked
             setOnCheckedChangeListener { _, value -> changed(value) }
         }
-        addControl(control, hint)
+        addControl(control)
     }
 
-    private fun addControl(control: View, hint: Int) {
+    private fun addControl(control: View) {
         body.addView(control, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT))
-        body.addView(label(hint, 13f, MUTED).apply {
-            setPadding(dp(4), dp(8), dp(4), dp(18))
-        })
+            LinearLayout.LayoutParams.WRAP_CONTENT).apply { bottomMargin = dp(8) })
+    }
+
+    /** Keep one native, accessible control per setting, with text that can grow at large font sizes. */
+    private fun controlText(title: Int, value: String?, hint: Int, titleColor: Int = FOREGROUND): CharSequence {
+        val text = SpannableStringBuilder(activity.getString(title))
+        text.setSpan(TypefaceSpan("sans-serif-medium"), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        text.setSpan(ForegroundColorSpan(titleColor), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        fun appendLine(line: String, size: Float, color: Int) {
+            text.append('\n')
+            val start = text.length
+            text.append(line)
+            text.setSpan(RelativeSizeSpan(size / 17f), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            text.setSpan(ForegroundColorSpan(color), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        value?.let { appendLine(it, 15f, ACCENT) }
+        appendLine(activity.getString(hint), 13f, MUTED)
+        return text
+    }
+
+    private fun styleLabel(style: CameraStyle): String {
+        val name = style.name(activity)
+        return if (canUseStyle(style)) name else activity.getString(R.string.settings_style_locked, name)
     }
 
     private fun chooseDefaultStyle() {
         val styles = CameraStyle.entries
-        showChoice(R.string.settings_default_style, styles.map { it.name(activity) }.toTypedArray(),
-            styles.indexOf(settings.defaultStyle)) { index -> change(settings.copy(defaultStyle = styles[index]), true) }
+        showChoice(R.string.settings_default_style, styles.map(::styleLabel).toTypedArray(),
+            styles.indexOf(settings.defaultStyle)) { index ->
+            val selected = styles[index]
+            if (canUseStyle(selected)) change(settings.copy(defaultStyle = selected), true)
+            else onLockedStyleSelected(selected)
+        }
     }
 
     private fun chooseQuality() {
@@ -252,9 +304,9 @@ internal class SettingsOverlay(
         choiceDialog = AlertDialog.Builder(activity)
             .setTitle(title)
             .setSingleChoiceItems(labels, selected) { dialog, index ->
-                chosen(index)
                 dialog.dismiss()
                 choiceDialog = null
+                chosen(index)
             }
             .setNegativeButton(R.string.settings_cancel, null)
             .show()
@@ -287,6 +339,7 @@ internal class SettingsOverlay(
         val surface = GradientDrawable().apply {
             setColor(color)
             cornerRadius = dp(radius).toFloat()
+            setStroke(dp(1), 0xFF30343B.toInt())
         }
         val mask = GradientDrawable().apply {
             setColor(0xFFFFFFFF.toInt())

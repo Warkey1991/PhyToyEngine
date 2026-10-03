@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
@@ -304,22 +305,28 @@ internal class PhotoGalleryOverlay(
             addView(image, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
             label.apply {
                 setTextColor(Color.WHITE)
-                textSize = 12f
+                textSize = 11f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
                 gravity = Gravity.START or Gravity.CENTER_VERTICAL
                 includeFontPadding = false
-                minimumHeight = dp(28)
-                setPadding(dp(8), dp(6), dp(8), dp(6))
+                minimumHeight = dp(22)
+                setPadding(dp(6), dp(4), dp(6), dp(4))
                 maxLines = 1
                 ellipsize = android.text.TextUtils.TruncateAt.END
-                // A dark scrim keeps the label readable over bright thumbnails.
-                setBackgroundColor(0xDE000000.toInt())
+                // A compact dark badge stays readable without covering the photo edge to edge.
+                background = rounded(0xE6111318.toInt(), dp(6).toFloat())
                 importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
             }
-            addView(label, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM))
+            addView(label, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+                Gravity.BOTTOM or Gravity.END).apply {
+                marginEnd = dp(6)
+                bottomMargin = dp(6)
+            })
             foreground = RippleDrawable(ColorStateList.valueOf(0x35FFFFFF), null, rounded(Color.WHITE, dp(10).toFloat()))
         }
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             val size = MeasureSpec.getSize(widthMeasureSpec)
+            label.maxWidth = (size - dp(12)).coerceAtLeast(0)
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY))
         }
     }

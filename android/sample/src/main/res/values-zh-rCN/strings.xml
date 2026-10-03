@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PhyToy 相机</string>
-    <string name="product_wordmark">PHYTOY</string>
+    <string name="app_name">ToviCam</string>
+    <string name="product_wordmark">ToviCam</string>
     <string name="style_title_format">%1$s  /  %2$s</string>
     <string name="capture_format">%1$s\n%2$.1f MP</string>
     <string name="capture_resolution">%1$.1f MP</string>

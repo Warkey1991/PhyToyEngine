@@ -1,0 +1,79 @@
+ACTIVITY MANAGER LAST ANR (dumpsys activity lastanr)
+  ANR time: Oct 1, 2026 4:39:00 PM
+  Reason: Input dispatching timed out (bc5bff1 com.phytoy.sample/com.phytoy.sample.MainActivity is not responding. Waited 5011ms for FocusEvent(hasFocus=true)).
+
+  * Task{153f125 #8 type=standard A=10213:com.phytoy.sample U=0 visible=true visibleRequested=true mode=fullscreen translucent=false sz=1}
+    mLastNonFullscreenBounds=Rect(106, 210 - 434, 750)
+    isSleeping=false
+    topResumedActivity=ActivityRecord{64744953 u0 com.phytoy.sample/.MainActivity t8}
+
+  mLastHomeActivityStartResult=0
+  mLastStarter:
+    mCurrentUser=0
+    mLastStartReason=startActivityAndWait
+    mLastStartActivityTimeMs=Oct 1, 2026 4:38:47 PM
+    mLastStartActivityResult=0
+    mStartActivity:
+      packageName=com.phytoy.sample processName=com.phytoy.sample
+      launchedFromUid=2000 launchedFromPackage=com.android.shell launchedFromFeature=null userId=0
+      app=ProcessRecord{ed80e38 3488:com.phytoy.sample/u0a213}
+      Intent { flg=0x10000000 xflg=0x5 cmp=com.phytoy.sample/.MainActivity }
+      rootOfTask=true task=Task{153f125 #8 type=standard A=10213:com.phytoy.sample}
+      taskAffinity=10213:com.phytoy.sample
+      mActivityComponent=com.phytoy.sample/.MainActivity
+      baseDir=/data/app/~~H55EZmMhFZ6qDQeG9kA90g==/com.phytoy.sample-dRPpKR7RZcwv63HSKGQmgQ==/base.apk
+      dataDir=/data/user/0/com.phytoy.sample
+      stateNotNeeded=false componentSpecified=true mActivityType=standard
+      compat={240dpi} theme=0x7f0c0000
+      mLastReportedConfigurations:
+        mGlobalConfig={1.0 310mcc260mnc [en_US] ldltr sw360dp w360dp h640dp 240dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 540, 960) mAppBounds=Rect(0, 0 - 540, 960) mMaxBounds=Rect(0, 0 - 540, 960) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.56 fontWeightAdjustment=0}
+        mOverrideConfig={1.0 310mcc260mnc [en_US] ldltr sw360dp w360dp h640dp 240dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 540, 960) mAppBounds=Rect(0, 0 - 540, 960) mMaxBounds=Rect(0, 0 - 540, 960) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.2 fontWeightAdjustment=0}
+      mLastReportedActivityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 540, 960), taskFragmentBounds=Rect(0, 0 - 540, 960)}
+      CurrentConfiguration={1.0 310mcc260mnc [en_US] ldltr sw360dp w360dp h640dp 240dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 540, 960) mAppBounds=Rect(0, 0 - 540, 960) mMaxBounds=Rect(0, 0 - 540, 960) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.2 fontWeightAdjustment=0}
+      RequestedOverrideConfiguration={0.0 ?mcc0mnc ?localeList ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?ldr ?wideColorGamut ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? winConfig={ mBounds=Rect(0, 0 - 0, 0) mAppBounds=null mMaxBounds=Rect(0, 0 - 0, 0) mDisplayRotation=undefined mWindowingMode=undefined mActivityType=standard mAlwaysOnTop=undefined mRotation=undefined} ?fontWeightAdjustment}
+      ResolvedOverrideConfiguration={0.0 ?mcc0mnc ?localeList ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?ldr ?wideColorGamut ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? winConfig={ mBounds=Rect(0, 0 - 0, 0) mAppBounds=null mMaxBounds=Rect(0, 0 - 0, 0) mDisplayRotation=undefined mWindowingMode=undefined mActivityType=undefined mAlwaysOnTop=undefined mRotation=undefined} s.2 ?fontWeightAdjustment}
+      taskDescription: label="null" icon=null iconResource=/0 iconFilename=null primaryColor=ff212121
+        backgroundColor=ff303030 statusBarColor=0 navigationBarColor=ff000000
+       backgroundColorFloating=ff424242
+      launchFailed=false launchCount=1 lastLaunchTime=-11s630ms
+      mHaveState=false mIcicle=null
+      state=RESUMED delayedResume=false finishing=false
+      keysPaused=false inHistory=true idle=true
+      occludesParent=true mNoDisplay=false immersive=false launchMode=0
+      mActivityType=standard
+      windows=[Window{bc5bff1 u0 com.phytoy.sample/com.phytoy.sample.MainActivity}]
+      windowType=2
+      mOccludesParent=true
+      overrideOrientation=SCREEN_ORIENTATION_PORTRAIT
+      requestedOrientation=SCREEN_ORIENTATION_PORTRAIT
+      mVisibleRequested=true mVisible=true mClientVisible=true reportedDrawn=true reportedVisible=true
+      mNumInterestingWindows=1 mNumDrawnWindows=1 allDrawn=true)
+      startingData=null firstWindowDrawn=true
+      nowVisible=true lastVisibleTime=-8s839ms
+      resizeMode=RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION
+      mLastReportedMultiWindowMode=false mLastReportedPictureInPictureMode=false
+      supportsSizeChanges=SIZE_CHANGES_UNSUPPORTED_METADATA
+      configChanges=0x3
+      neverSandboxDisplayApis=false
+      alwaysSandboxDisplayApis=false
+      isTransparentPolicyRunning=false
+      areBoundsLetterboxed=false
+      isLetterboxRunning=false
+    mIntent=Intent { flg=0x10000000 xflg=0x5 cmp=com.phytoy.sample/.MainActivity }
+    mLaunchMode=LAUNCH_MULTIPLE    mLaunchFlags=0x10000000 mDoResume=true mAddingToTask=true mInTaskFragment=null
+
+  ResumedActivity: ActivityRecord{64744953 u0 com.phytoy.sample/.MainActivity t8}
+  LockTaskController:
+    mLockTaskModeState=NONE
+    mLockTaskModeTasks=
+    mLockTaskPackages (userId:packages)=
+
+  KeyguardController:
+    mKeyguardShowing=false
+    mAodShowing=false
+    mKeyguardGoingAway=false
+   KeyguardShowing=false AodShowing=false KeyguardGoingAway=false DismissalRequested=false  Occluded=false DismissingKeyguardActivity=null TurnScreenOnActivity=null at display=0
+    mDismissalRequested=false
+
+-------------------------------------------------------------------------------
+

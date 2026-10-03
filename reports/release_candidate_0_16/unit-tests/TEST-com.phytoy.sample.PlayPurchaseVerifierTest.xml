@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.phytoy.sample.PlayPurchaseVerifierTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-01T12:55:46.853Z" hostname="songyuanjindeMacBook-Pro.local" time="2.093">
+  <properties/>
+  <testcase name="changedSignatureIsRejected" classname="com.phytoy.sample.PlayPurchaseVerifierTest" time="0.513"/>
+  <testcase name="blankOrMalformedSignatureDoesNotThrowOrUnlock" classname="com.phytoy.sample.PlayPurchaseVerifierTest" time="0.576"/>
+  <testcase name="receiptForAnotherSigningKeyIsRejected" classname="com.phytoy.sample.PlayPurchaseVerifierTest" time="0.25"/>
+  <testcase name="missingAndMalformedKeyFailClosed" classname="com.phytoy.sample.PlayPurchaseVerifierTest" time="0.307"/>
+  <testcase name="validSignedProofCanBeVerifiedOnlineAndFromOfflineCache" classname="com.phytoy.sample.PlayPurchaseVerifierTest" time="0.323"/>
+  <testcase name="changedPurchaseJsonIsRejected" classname="com.phytoy.sample.PlayPurchaseVerifierTest" time="0.124"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

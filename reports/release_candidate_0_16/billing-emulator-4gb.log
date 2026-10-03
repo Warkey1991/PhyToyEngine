@@ -1,0 +1,186 @@
+INFO         | Android emulator version 36.2.12.0 (build_id 14214601) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+INFO         | Found systemPath /Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3/
+WARNING      | Please update the emulator to one that supports the feature(s): VulkanVirtualQueue
+INFO         | Guest GLES Driver: Auto (ext controls)
+library_mode swiftshader_indirect gpu mode swiftshader_indirect
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `phytoy_billing_16k` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU compatibility checks are not required
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `phytoy_billing_16k` are met
+INFO         | Storing crashdata in: /tmp/android-songyuanjin/emu-crash-36.2.12.db, detection is enabled for process: 45319
+INFO         | Initializing hardware OpenGLES emulation support
+INFO         | android_startOpenglesRenderer: gpu info
+INFO         | 
+INFO         | HealthMonitor disabled.
+INFO         | initIcdPaths: ICD set to 'swiftshader', using Swiftshader ICD
+INFO         | Setting ICD filenames for the loader = /Users/songyuanjin/Library/Android/sdk/emulator/lib64/vulkan/vk_swiftshader_icd.json
+INFO         | SharedLibrary::open for [/Users/songyuanjin/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib]
+INFO         | SharedLibrary::open for [/Users/songyuanjin/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib]: not found in map, open for the first time
+INFO         | SharedLibrary::open for [/Users/songyuanjin/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib] (posix): begin
+INFO         | SharedLibrary::open for [/Users/songyuanjin/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib] (posix,darwin): call dlopen
+INFO         | SharedLibrary::open succeeded for [/Users/songyuanjin/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib].
+INFO         | Added library: /Users/songyuanjin/Library/Android/sdk/emulator/qemu/darwin-aarch64/lib64/vulkan/libvulkan.dylib
+INFO         | Selecting Vulkan device: SwiftShader Device (LLVM 10.0.0), Version: 1.3.0
+INFO         | Disabling sparse binding feature support
+INFO         | SharedLibrary::open for [libGLESv2.dylib]: not found in map, open for the first time
+INFO         | SharedLibrary::open for [libGLESv2.dylib] (posix): begin
+INFO         | SharedLibrary::open for [libGLESv2.dylib] (posix,darwin): call dlopen
+INFO         | SharedLibrary::open succeeded for [libGLESv2.dylib].
+INFO         | SharedLibrary::open for [libEGL.dylib]: not found in map, open for the first time
+INFO         | SharedLibrary::open for [libEGL.dylib] (posix): begin
+INFO         | SharedLibrary::open for [libEGL.dylib] (posix,darwin): call dlopen
+INFO         | SharedLibrary::open succeeded for [libEGL.dylib].
+INFO         | Initializing VkEmulation features:
+INFO         |     glInteropSupported: false
+INFO         |     useDeferredCommands: true
+INFO         |     createResourceWithRequirements: true
+INFO         |     useVulkanComposition: false
+INFO         |     useVulkanNativeSwapchain: false
+INFO         |     enable guestRenderDoc: false
+INFO         |     ASTC LDR emulation mode: Gpu
+INFO         |     enable ETC2 emulation: true
+INFO         |     enable Ycbcr emulation: false
+INFO         |     guestVulkanOnly: false
+INFO         |     useDedicatedAllocations: false
+INFO         | Graphics Adapter Vendor Google (Google Inc. (Google))
+INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver-5.0.0))
+INFO         | Graphics API Version OpenGL ES 3.0 (OpenGL ES 3.1.0 (ANGLE 2.1.1 git hash: fbf66f49c7cc))
+INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_OVR_multiview2 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 GL_EXT_draw_buffers_indexed GL_EXT_clip_cull_distance 
+INFO         | Graphics Device Extensions N/A
+INFO         | Sending adb public key [QAAAAE2CjL17eQNxk/6lqR5MetYBm/ttOUZqo+ogHm+BVgPHYHLkpFhYgfkxuIprlAfatohUaLPaqULHpkqybnRAD+tlrc1z8PDIedELkkElbdHIIuJ/UeRjJ3MkI85JWdI5bRWxB7rTLQmn/UzVZBQCqyOjgFZ5FQ89RlntdNaZMqnDZPat7qobtHR8nQS3pjssPHdaaXGIguzjbyomdOQUIFRRa7c0fEFSGyJrAKVk9JcEOtHsVePe16iiPsipfBEqdTuKotOB4c2h2qN7hrXD6Kjn2tDn7B7Mr45yIM471zHMp9mmrzcUll9DSR5C468kjeTV8DLrQ5Su46yoesPaevRVzuzPO8gBiBc2ZhO3WthIqaxyvNBlhj1H2gJn7KLASWca+UTaBHCuhTp8V7BSKJi+TXOQASCXd8ONBysoDVzPxI5UlX8jBzDAjnAHOhiZoez+qU9599qVXJGxwACfkcx1itYXG+HehIw9vGyuW8tOToUEJUNIKVNeglILYHts8eG8nNifq84DWHyCs6W268c1u/en6DCylvCBxTLXYB+WrBW/X5QoD79PfehOZGrb5e/keJibbFCqiqRZXqEqezI7rOPyxXhHIDFvri+j0q0KdP/4SAQNKY8DnxRR3sIoiUvoNQhCUOFvK2s/2AOM/KtEejz1v4zKJVWJmeAIPIWk8GOdNQEAAQA= songyuanjin@unknown]
+INFO         | Userspace boot properties:
+INFO         |   androidboot.boot_devices=a003600.virtio_mmio
+INFO         |   androidboot.dalvik.vm.heapsize=576m
+INFO         |   androidboot.debug.hwui.renderer=skiagl
+INFO         |   androidboot.hardware=ranchu
+INFO         |   androidboot.hardware.gltransport=pipe
+INFO         |   androidboot.hardware.vulkan=ranchu
+INFO         |   androidboot.logcat=*:V
+INFO         |   androidboot.opengles.version=196609
+INFO         |   androidboot.qemu=1
+INFO         |   androidboot.qemu.adb.pubkey=QAAAAE2CjL17eQNxk/6lqR5MetYBm/ttOUZqo+ogHm+BVgPHYHLkpFhYgfkxuIprlAfatohUaLPaqULHpkqybnRAD+tlrc1z8PDIedELkkElbdHIIuJ/UeRjJ3MkI85JWdI5bRWxB7rTLQmn/UzVZBQCqyOjgFZ5FQ89RlntdNaZMqnDZPat7qobtHR8nQS3pjssPHdaaXGIguzjbyomdOQUIFRRa7c0fEFSGyJrAKVk9JcEOtHsVePe16iiPsipfBEqdTuKotOB4c2h2qN7hrXD6Kjn2tDn7B7Mr45yIM471zHMp9mmrzcUll9DSR5C468kjeTV8DLrQ5Su46yoesPaevRVzuzPO8gBiBc2ZhO3WthIqaxyvNBlhj1H2gJn7KLASWca+UTaBHCuhTp8V7BSKJi+TXOQASCXd8ONBysoDVzPxI5UlX8jBzDAjnAHOhiZoez+qU9599qVXJGxwACfkcx1itYXG+HehIw9vGyuW8tOToUEJUNIKVNeglILYHts8eG8nNifq84DWHyCs6W268c1u/en6DCylvCBxTLXYB+WrBW/X5QoD79PfehOZGrb5e/keJibbFCqiqRZXqEqezI7rOPyxXhHIDFvri+j0q0KdP/4SAQNKY8DnxRR3sIoiUvoNQhCUOFvK2s/2AOM/KtEejz1v4zKJVWJmeAIPIWk8GOdNQEAAQA= songyuanjin@unknown
+INFO         |   androidboot.qemu.avd_name=phytoy_billing_16k
+INFO         |   androidboot.qemu.camera_hq_edge_processing=0
+INFO         |   androidboot.qemu.camera_protocol_ver=1
+INFO         |   androidboot.qemu.cpuvulkan.version=4202496
+INFO         |   androidboot.qemu.gltransport.drawFlushInterval=800
+INFO         |   androidboot.qemu.gltransport.name=pipe
+INFO         |   androidboot.qemu.hwcodec.avcdec=2
+INFO         |   androidboot.qemu.hwcodec.hevcdec=2
+INFO         |   androidboot.qemu.hwcodec.vpxdec=2
+INFO         |   androidboot.qemu.settings.system.screen_off_timeout=2147483647
+INFO         |   androidboot.qemu.virtiowifi=1
+INFO         |   androidboot.qemu.vsync=60
+INFO         |   androidboot.serialno=EMULATOR36X2X12X0
+INFO         |   androidboot.vbmeta.digest=bda2c3bae8ada715a552ed32e69174a7464c710bc1d2bf0f51b208b34293972b
+INFO         |   androidboot.vbmeta.hash_alg=sha256
+INFO         |   androidboot.vbmeta.size=6720
+INFO         |   androidboot.veritymode=enforcing
+INFO         | Activated packet streamer for uwb emulation
+INFO         | Activated packet streamer for bluetooth emulation
+INFO         | Monitoring duration of emulator setup.
+WARNING      | Requested adb port (5591) is outside the recommended range [5555,5586]. ADB may not function properly for the emulator. See -help-port for details.
+INFO         | Setting display: 0 configuration to: 540x960, dpi: 240x240 
+INFO         | setDisplayActiveConfig 0
+INFO         | Boot completed in 36069 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+INFO         | Created VkInstance:0x12960c600 for application:'PhyToyEngine' engine:'PhyToyEngine'.
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000338000
+../../third_party/SwiftShader/src/Vulkan/VkPhysicalDevice.cpp:649 WARNING: UNSUPPORTED: curExtension->sType: 1000437000
+INFO         | Created VkDevice:0x1398f8010 for application:'PhyToyEngine' instance:0x12960c600. ASTC emulation:off CPU decoding:off.
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system screen_off_timeout 2147483647 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell logcat -G 2M ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell logcat -G 2M ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell logcat -G 2M ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell logcat -G 2M ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell logcat -G 2M ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system accelerometer_rotation 1 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system accelerometer_rotation 1 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system accelerometer_rotation 1 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system accelerometer_rotation 1 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell settings put system accelerometer_rotation 1 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell cmd overlay list ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell cmd overlay list ' failed: 'adb: more than one emulator'
+ERROR        | adb protocol fault (couldn't read status length)
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell cmd overlay list ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell cmd overlay list ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell cmd overlay list ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell am broadcast -a com.android.emulator.multidisplay.START -n com.android.emulator.multidisplay/.MultiDisplayServiceReceiver --user 0 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell am broadcast -a com.android.emulator.multidisplay.START -n com.android.emulator.multidisplay/.MultiDisplayServiceReceiver --user 0 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell am broadcast -a com.android.emulator.multidisplay.START -n com.android.emulator.multidisplay/.MultiDisplayServiceReceiver --user 0 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell am broadcast -a com.android.emulator.multidisplay.START -n com.android.emulator.multidisplay/.MultiDisplayServiceReceiver --user 0 ' failed: 'adb: more than one emulator'
+WARNING      | adb command '/Users/songyuanjin/Library/Android/sdk/platform-tools/adb -e shell am broadcast -a com.android.emulator.multidisplay.START -n com.android.emulator.multidisplay/.MultiDisplayServiceReceiver --user 0 ' failed: 'adb: more than one emulator'
+INFO         | Wait for emulator (pid 45319) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+USER_INFO    | Snapshots have been disabled by the user, save request is ignored.
+INFO         | Saving snapshot 'default_boot' using 0 ms
+WARNING      | Emulator client has not yet been configured.. Call configure me first!
+INFO         | Destroyed VkDevice:0x1398f8010
+INFO         | Destroyed VkInstance:0x12960c600 for application:'PhyToyEngine' engine:'PhyToyEngine'.

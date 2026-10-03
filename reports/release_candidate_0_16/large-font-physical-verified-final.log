@@ -1,0 +1,303 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "activity": "com.phytoy.sample.MainActivity",
+  "allow_physical_device": true,
+  "expected_apk_sha256": "d46288f3204866633064455df64f4e16eb3fc6f0cbe1ca16a4f8a56d1f161501",
+  "font_scale_target": 2.0,
+  "checks": [
+    {
+      "name": "camera primary actions are visible, labelled and at least 48dp",
+      "passed": true
+    },
+    {
+      "name": "settings scroll reaches privacy and returns to the camera",
+      "passed": true
+    }
+  ],
+  "artifacts": {
+    "camera_ui": "camera-ui.json",
+    "camera_screenshot": "camera.png",
+    "settings_ui": "settings-ui.json",
+    "settings_screenshot": "settings.png",
+    "settings-privacy-entry_ui": "settings-privacy-entry-ui.json",
+    "settings-privacy-entry_screenshot": "settings-privacy-entry.png",
+    "privacy_ui": "privacy-ui.json",
+    "privacy_screenshot": "privacy.png",
+    "settings-before-back_ui": "settings-before-back-ui.json",
+    "settings-before-back_screenshot": "settings-before-back.png",
+    "gallery_ui": "gallery-ui.json",
+    "gallery_screenshot": "gallery.png",
+    "review_ui": "review-ui.json",
+    "review_screenshot": "review.png",
+    "failure_ui": "failure-ui.json",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {
+    "camera/shutter": {
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "width_dp": 78.0,
+      "height_dp": 78.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "拍摄照片"
+    },
+    "camera/open_settings": {
+      "bounds": [
+        912,
+        193,
+        1056,
+        337
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "相机设置"
+    },
+    "camera/switch_camera": {
+      "bounds": [
+        858,
+        2091,
+        1008,
+        2241
+      ],
+      "width_dp": 50.0,
+      "height_dp": 50.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "切换到前置相机"
+    },
+    "camera/last_photo": {
+      "bounds": [
+        72,
+        2091,
+        222,
+        2241
+      ],
+      "width_dp": 50.0,
+      "height_dp": 50.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "查看拍摄的照片"
+    },
+    "settings/settings_back": {
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回"
+    },
+    "settings/settings_privacy": {
+      "bounds": [
+        60,
+        1391,
+        1020,
+        1799
+      ],
+      "width_dp": 320.0,
+      "height_dp": 136.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "隐私政策\n了解照片、权限与本机偏好的处理方式。"
+    },
+    "gallery/gallery_back": {
+      "bounds": [
+        36,
+        213,
+        180,
+        357
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回相机"
+    },
+    "gallery/gallery_item": {
+      "bounds": [
+        36,
+        480,
+        364,
+        808
+      ],
+      "width_dp": 109.33,
+      "height_dp": 109.33,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "DH 2++ 黑白 风格照片，2026/10/1 21:12。打开照片。"
+    },
+    "review/review_back": {
+      "bounds": [
+        36,
+        213,
+        180,
+        357
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回"
+    },
+    "review/review_continue": {
+      "bounds": [
+        60,
+        2051,
+        1020,
+        2235
+      ],
+      "width_dp": 320.0,
+      "height_dp": 61.33,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "继续拍摄"
+    }
+  },
+  "phase": "gallery back to camera",
+  "taps": [
+    {
+      "phase": "open settings",
+      "id": "com.phytoy.sample:id/open_settings",
+      "point": [
+        984,
+        265
+      ],
+      "bounds": [
+        912,
+        193,
+        1056,
+        337
+      ],
+      "started_at_ns": 1790860836009431000
+    },
+    {
+      "phase": "open privacy dialog",
+      "id": "com.phytoy.sample:id/settings_privacy",
+      "point": [
+        540,
+        1595
+      ],
+      "bounds": [
+        60,
+        1391,
+        1020,
+        1799
+      ],
+      "started_at_ns": 1790860874946316000
+    },
+    {
+      "phase": "dismiss privacy dialog",
+      "id": "android:id/button1",
+      "point": [
+        859,
+        2148
+      ],
+      "bounds": [
+        749,
+        2061,
+        969,
+        2235
+      ],
+      "started_at_ns": 1790860882465354000
+    },
+    {
+      "phase": "settings back to camera",
+      "id": "com.phytoy.sample:id/settings_back",
+      "point": [
+        108,
+        227
+      ],
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "started_at_ns": 1790860889948851000
+    },
+    {
+      "phase": "gallery to photo review",
+      "id": "com.phytoy.sample:id/last_photo",
+      "point": [
+        147,
+        2166
+      ],
+      "bounds": [
+        72,
+        2091,
+        222,
+        2241
+      ],
+      "started_at_ns": 1790860897139002000
+    },
+    {
+      "phase": "gallery to photo review",
+      "id": "com.phytoy.sample:id/gallery_item",
+      "point": [
+        200,
+        644
+      ],
+      "bounds": [
+        36,
+        480,
+        364,
+        808
+      ],
+      "started_at_ns": 1790860905216119000
+    },
+    {
+      "phase": "review back to gallery",
+      "id": "com.phytoy.sample:id/review_back",
+      "point": [
+        108,
+        285
+      ],
+      "bounds": [
+        36,
+        213,
+        180,
+        357
+      ],
+      "started_at_ns": 1790860917737542000
+    }
+  ],
+  "photos_taken": 0,
+  "app_preferences_changed": false,
+  "permissions_changed": false,
+  "locale_changed": false,
+  "serial": "RFCX80BD3XN",
+  "emulator_properties": {
+    "ro.kernel.qemu": "0",
+    "ro.boot.qemu": ""
+  },
+  "device_kind": "physical",
+  "installed_apks": [
+    {
+      "path": "/data/app/~~_irEE_cY9drKHu8cFjuLqw==/com.phytoy.sample-wwFMYNoSmOzqW9nbiAJCcQ==/base.apk",
+      "sha256": "d46288f3204866633064455df64f4e16eb3fc6f0cbe1ca16a4f8a56d1f161501"
+    }
+  ],
+  "installed_apk_sha256": "d46288f3204866633064455df64f4e16eb3fc6f0cbe1ca16a4f8a56d1f161501",
+  "display": {
+    "width_pixels": 1080,
+    "height_pixels": 2340,
+    "density_dpi": 480
+  },
+  "font_scale_original": "1.0",
+  "font_scale_applied": "2.0",
+  "failure": "AssertionError: Timed out waiting for visible gallery_back, enabled=True",
+  "font_scale_restored": true,
+  "font_scale_after": "1.0"
+}

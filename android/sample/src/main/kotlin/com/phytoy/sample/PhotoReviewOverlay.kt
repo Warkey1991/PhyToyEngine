@@ -73,7 +73,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         val actions = FrameLayout(context).apply {
             setBackgroundColor(PageTopBar.SURFACE)
             minimumHeight = dp(88)
-            setPadding(dp(24), dp(20), dp(24), dp(20))
+            setPadding(dp(20), dp(20), dp(20), dp(20))
         }
 
         continueButton.apply {
@@ -132,8 +132,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         )
         title.text = saved.styleName
         details.text = context.getString(
-            R.string.review_saved_details,
-            saved.styleCode,
+            R.string.review_image_details,
             saved.width,
             saved.height,
         )

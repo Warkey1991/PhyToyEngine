@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="purchase_page" type="id" />
+    <item name="purchase_back" type="id" />
+    <item name="purchase_buy" type="id" />
+    <item name="purchase_preview" type="id" />
+    <item name="purchase_restore" type="id" />
+    <item name="purchase_retry" type="id" />
+    <item name="purchase_status" type="id" />
+    <item name="settings_restore_purchases" type="id" />
+    <string name="purchase_title">Your next camera</string>
+    <string name="purchase_back">Back</string>
+    <string name="purchase_one_time">One-time purchase · no subscription</string>
+    <string name="purchase_details">Unlock photography with this camera style. Photos stay on your device. Your two free cameras remain available.</string>
+    <string name="purchase_scope">Each camera is sold separately. Restore purchases using the same Google Play account after reinstalling or changing devices.</string>
+    <string name="purchase_price_loading">Loading price…</string>
+    <string name="purchase_price_unavailable">Price unavailable</string>
+    <string name="purchase_buy">Unlock for %1$s</string>
+    <string name="purchase_buy_unavailable">Purchase unavailable</string>
+    <string name="purchase_owned">Camera unlocked</string>
+    <string name="purchase_preview">Try live preview</string>
+    <string name="purchase_use_camera">Use this camera</string>
+    <string name="purchase_preview_hint">Preview the look for free. Unlock this camera to take and save photos.</string>
+    <string name="purchase_restore">Restore purchases</string>
+    <string name="purchase_retry">Retry connection</string>
+    <string name="purchase_payment_provider">Payment is handled by Google Play. Your local currency and final price appear in its payment sheet.</string>
+    <string name="billing_preview_only">Preview only · unlock to shoot</string>
+    <string name="billing_unlock_to_shoot">Unlock this camera to take a photo</string>
+    <string name="style_chip_locked_description">%1$s. Preview or unlock this camera.</string>
+    <string name="settings_section_purchases">PURCHASES</string>
+    <string name="settings_restore_purchases">Restore purchases</string>
+    <string name="settings_restore_purchases_hint">Find camera unlocks for your current Google Play account.</string>
+    <string name="settings_style_locked">%1$s · Locked</string>
+    <string name="billing_loading">Connecting to Google Play…</string>
+    <string name="billing_not_configured">Purchases are not available in this build. You can still try the preview and use the two free cameras.</string>
+    <string name="billing_unavailable">Couldn’t load this camera from Google Play. Check your connection and try again. The two free cameras remain available.</string>
+    <string name="billing_pending">Payment is pending. This camera will unlock after Google Play confirms payment.</string>
+    <string name="billing_processing">Confirming your purchase…</string>
+    <string name="billing_cancelled">Purchase cancelled. You haven’t unlocked this camera.</string>
+    <string name="billing_success">%1$s unlocked. Ready to shoot.</string>
+    <string name="billing_restored">Purchases restored: %1$d cameras unlocked.</string>
+    <string name="billing_restore_empty">No camera purchases found for this Google Play account.</string>
+    <string name="billing_restore_failed">Couldn’t restore purchases. Check your Google Play account and connection, then try again.</string>
+    <string name="billing_verification_failed">Couldn’t confirm this purchase. Try restoring purchases. If it persists, contact the app publisher.</string>
+    <string name="billing_error">Google Play couldn’t complete the request. Please try again.</string>
+    <string name="billing_access_removed">A camera unlock is no longer active. Your free cameras remain available.</string>
+</resources>

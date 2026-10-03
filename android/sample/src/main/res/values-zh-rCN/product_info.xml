@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="product_info_title">PhyToy Camera · %1$s</string>
-    <string name="product_info_body">六种相机风格，在手机上完成成像。\n\n轻点取景框对焦，上下滑动调节曝光，双指缩放。照片保存在 Pictures/PhyToy，可轻点缩略图打开照片列表。相机设置可调整照片质量、构图网格、拍照反馈与拍后回看。\n\n预览和照片使用同一成像引擎；由于分辨率、手机相机处理和随机噪声不同，细节可能略有差异。手机温度较高时，预览会自动调整帧率。\n\n所有相机风格均为独立诠释，并非经过认证的真机复刻，也未获得任何相机厂商背书。\n\n引擎与应用采用 MIT 许可证。应用不包含第三方网站的样片。</string>
+    <string name="product_info_title">ToviCam · %1$s</string>
+    <string name="product_info_body">六种相机风格，在手机上完成成像。DH 2++ 彩色和黑白免费，其余四款分别一次性购买；解锁拍摄前可免费试用实时预览。\n\n轻点取景框对焦，上下滑动调节曝光，双指缩放。照片保存在 Pictures/PhyToy，可轻点缩略图打开照片列表。相机设置可调整照片质量、构图网格、拍照反馈与拍后回看。\n\n预览和照片使用同一成像引擎；由于分辨率、手机相机处理和随机噪声不同，细节可能略有差异。手机温度较高时，预览会自动调整帧率。\n\n所有相机风格均为独立诠释，并非经过认证的真机复刻，也未获得任何相机厂商背书。\n\n引擎与应用采用 MIT 许可证。应用不包含第三方网站的样片。</string>
     <string name="product_privacy_title">隐私说明</string>
-    <string name="product_privacy_body">更新日期：2026 年 10 月 1 日\n\n相机权限仅用于相机界面开启期间的实时取景和你主动拍摄的照片。图像在本机处理，会话关闭后释放临时画面。\n\n照片保存在本机 Pictures/PhyToy。JPEG 元数据包含拍摄时间、相机曝光和所选风格；应用不请求或添加位置信息。可通过系统相册删除照片，卸载应用不会删除已保存的照片。\n\n应用在本地私有存储中保存相机偏好、权限请求状态和应用拍摄照片的本地索引。清除应用数据可删除这些设置。\n\n本版本没有联网权限、广告、统计分析、用户账号或服务器上传，不会向我们收集或共享照片和设置。设备日志可能包含本地诊断信息，不会自动上传。\n\n你可以随时在 Android 设置 → 应用 → PhyToy Camera → 权限中撤销相机权限。</string>
+    <string name="product_privacy_body">更新日期：2026 年 10 月 1 日\n\n相机权限仅用于相机界面开启期间的实时取景和你主动拍摄的照片。图像在本机处理，会话关闭后释放临时画面。\n\n照片保存在本机 Pictures/PhyToy。JPEG 元数据包含拍摄时间、相机曝光和所选风格；应用不请求或添加位置信息。可通过系统相册删除照片，卸载应用不会删除已保存的照片。\n\n应用在本地私有存储中保存相机偏好、权限请求状态、照片索引和签名购买凭证。凭证用于恢复购买并缓存离线解锁。清除应用数据可删除本机数据，已购买的相机可用同一 Google Play 账号恢复。\n\n购买、恢复和确认解锁通过 Google Play Billing 进行，需要联网和 Google Play 账号。Google 按其条款与隐私政策处理付款，应用不会收到银行卡信息。本应用没有独立账号、广告、照片上传或自建统计分析服务。Google Play 与其计费 SDK 按 Google 的隐私政策处理支付服务相关信息，照片、相机画面和偏好不会发送给我们。设备日志可能包含本地诊断信息，不会自动上传。\n\n你可以随时在 Android 设置 → 应用 → ToviCam → 权限中撤销相机权限。</string>
     <string name="product_info_close">关闭</string>
     <string name="product_licenses_title">开源许可</string>
     <string name="product_about_title">相机与拍摄指南</string>
     <string name="permission_camera_title">开启相机</string>
-    <string name="permission_camera_body">PhyToy 使用相机提供取景画面，拍摄你主动选择的照片。图像处理在本机完成，照片保存在 Pictures/PhyToy。</string>
+    <string name="permission_camera_body">ToviCam 使用相机提供取景画面，拍摄你主动选择的照片。图像处理在本机完成，照片保存在 Pictures/PhyToy。</string>
     <string name="permission_continue">继续</string>
     <string name="permission_not_now">暂不开启</string>
     <string name="permission_allow_camera">允许使用相机</string>

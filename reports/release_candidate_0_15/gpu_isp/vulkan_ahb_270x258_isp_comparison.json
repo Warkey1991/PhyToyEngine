@@ -1,0 +1,27 @@
+{
+  "comparison_scope": "ISP/output conditioned on actual native sensor DN",
+  "height": 258,
+  "native_sensor_input": {
+    "path": "reports/release_candidate_0_15/gpu_isp/vulkan_ahb_270x258/03_target_sensor_dn.pfm",
+    "sha256": "986c027e39cfe1a48b51f3e1aba953d39c742f82ff88ef9b37f88c188b857f1b"
+  },
+  "passed": true,
+  "seed": 1234,
+  "stages": {
+    "04_target_isp_linear": {
+      "limit": 0.002,
+      "max_absolute": 7.499368191998812e-07,
+      "mean_absolute": 5.667464037112752e-08,
+      "passed": true,
+      "rmse": 9.250809905611879e-08
+    },
+    "05_output_srgb": {
+      "limit": 0.003,
+      "max_absolute": 4.09194724777448e-05,
+      "mean_absolute": 2.4339219829046316e-06,
+      "passed": true,
+      "rmse": 4.153082603620202e-06
+    }
+  },
+  "width": 270
+}

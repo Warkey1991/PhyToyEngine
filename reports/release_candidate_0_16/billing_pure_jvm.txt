@@ -1,0 +1,8 @@
+Isolated Kotlin 2.4 compilation against actual Billing 9.1.0 AAR + Android API37.
+BuildConfig/CameraStyle stubs used; this is not a full application or Play transaction test.
+JUnit version 4.13.2
+...............
+Time: 1.334
+
+OK (15 tests)
+

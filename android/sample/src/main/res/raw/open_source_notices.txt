@@ -1,6 +1,6 @@
-PhyToy Camera open source notices
+ToviCam open source notices
 
-PhyToy engine and application
+ToviCam application and PhyToy engine
 
 MIT License
 

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 317, in <module>
+    main()
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 273, in main
+    wait("camera_recovery", enabled=True)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 64, in wait
+    raise AssertionError(f"Timed out waiting for {identifier}, enabled={enabled}")
+AssertionError: Timed out waiting for camera_recovery, enabled=True

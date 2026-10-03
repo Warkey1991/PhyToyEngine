@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    },
+    {
+      "name": "local privacy text is accessible",
+      "passed": true
+    },
+    {
+      "name": "3 background/resume cycles",
+      "passed": true
+    },
+    {
+      "name": "front and back camera with a saved front photo",
+      "passed": true
+    },
+    {
+      "name": "both free profiles switch, save, review and return to shooting",
+      "passed": true
+    },
+    {
+      "name": "photo list retains captures, opens a photo and supports both return paths",
+      "passed": true
+    },
+    {
+      "name": "settings persist across process restart and review-off captures remain in the gallery",
+      "passed": true
+    },
+    {
+      "name": "denied camera permission has a recovery action and disabled shutter",
+      "passed": true
+    },
+    {
+      "name": "camera recovers after permission is restored",
+      "passed": true
+    }
+  ],
+  "styles": [
+    {
+      "id": "style_dh_color",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_dh_mono",
+      "saved_and_reviewed": true
+    }
+  ],
+  "six_style_capture_skipped": true,
+  "free_cameras_only": true,
+  "installed_apk_sha256": "d46288f3204866633064455df64f4e16eb3fc6f0cbe1ca16a4f8a56d1f161501"
+}

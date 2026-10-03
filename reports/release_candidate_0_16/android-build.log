@@ -1,0 +1,36 @@
+
+> Configure project :sample
+e: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build.gradle.kts:28:65: Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build.gradle.kts:29:10: Unresolved reference 'security'.
+e: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build.gradle.kts:29:69: Unresolved reference 'security'.
+e: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build.gradle.kts:30:14: Unresolved reference 'util'.
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build.gradle.kts' line: 28
+
+* What went wrong:
+Script compilation errors:
+
+  Line 28: val billingKeyConfigured = playBillingPublicKey.isNotBlank() && runCatching {
+                                                                           ^ Cannot infer type for type parameter 'R'. Specify it explicitly.
+
+  Line 29:     java.security.KeyFactory.getInstance("RSA").generatePublic(java.security.spec.X509EncodedKeySpec(
+                    ^ Unresolved reference 'security'.
+
+  Line 29:     java.security.KeyFactory.getInstance("RSA").generatePublic(java.security.spec.X509EncodedKeySpec(
+                                                                               ^ Unresolved reference 'security'.
+
+  Line 30:         java.util.Base64.getDecoder().decode(playBillingPublicKey),
+                        ^ Unresolved reference 'util'.
+
+4 errors
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5s

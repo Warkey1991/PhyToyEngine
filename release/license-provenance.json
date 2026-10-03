@@ -3,5 +3,10 @@
   "androidx_notice_source": "META-INF/androidx/exifinterface/exifinterface/LICENSE.txt in official 1.4.2 AAR",
   "ndk_version": "28.2.13676358",
   "ndk_notice_sha256": "f96f763beb66a7ba7a667647fc64c0226ace875e590c831fdd9579ec1c1d91e1",
-  "bundled_notices_sha256": "cab3b56bea1d66442957ebd0036340b765e0f7b667b39cba30db10fbdb3f7b07"
+  "bundled_notices_sha256": "cab3b56bea1d66442957ebd0036340b765e0f7b667b39cba30db10fbdb3f7b07",
+  "billing_version": "9.1.0",
+  "billing_aar_sha256": "d28286d4e4c18725510980de01211d9b72501e7146d96817fa0c9999af9b0d22",
+  "billing_notices_source": "third_party_licenses.txt/json in official billing:9.1.0 AAR",
+  "billing_notices_sha256": "c3f2bd185ed538fd885940ed40ea18f7caf7202cbc28ecdff2be9b6f123c0e27",
+  "billing_notices_index_sha256": "24cc3013b45a588136eee31a2b2252db279d74d1874c9e728e36d2ecf6f71240"
 }

@@ -1,0 +1,95 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "run_started_at_ns": 1790862478519575000,
+  "scope": "Only camera type heading and purchase restore/retry geometry at 100% and 200% fonts; no checkout or photos",
+  "checks": [
+    {
+      "name": "camera heading contains only current camera type",
+      "passed": true,
+      "font_scale": "1.0",
+      "label": "DH 2++ 黑白"
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "font1.0-camera_ui": "font1.0-camera-ui.json",
+    "font1.0-camera_screenshot": "font1.0-camera.png",
+    "failure_ui": "failure-ui.json",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {},
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 12,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102,
+        1000041106,
+        1000041107,
+        1000041108,
+        1000041109
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 12,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102,
+        1000041106,
+        1000041107,
+        1000041108,
+        1000041109
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "installed_apk_sha256": "4aa8a98d1803aead108bf47b9480cc48b1f2c61179ec2bbe5f21da5f2edd5da6",
+  "font_scale_original": "1.0",
+  "phase": "layout font 1.0",
+  "last_action": "tap style_digital",
+  "taps": [
+    {
+      "phase": "layout font 1.0",
+      "id": "style_digital",
+      "bounds": [
+        602,
+        1689,
+        935,
+        1833
+      ],
+      "point": [
+        768,
+        1761
+      ],
+      "started_at_ns": 1790862486676185000,
+      "completed_at_ns": 1790862486771092000
+    }
+  ],
+  "failure": "AssertionError('Timed out waiting for purchase_back; accessibility dump timed out')",
+  "font_scale_after": "1.0",
+  "font_scale_restored": true,
+  "photos_changed": false
+}

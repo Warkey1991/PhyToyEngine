@@ -1,0 +1,462 @@
+> Task :sdk:preBuild UP-TO-DATE
+> Task :sdk:preReleaseBuild UP-TO-DATE
+> Task :sample:preBuild UP-TO-DATE
+> Task :sample:preBenchmarkBuild UP-TO-DATE
+> Task :sample:mergeBenchmarkJniLibFolders UP-TO-DATE
+
+> Task :sdk:configureCMakeRelWithDebInfo[arm64-v8a]
+[CXX5304] Observed package id 'system-images;android-36;google_apis_playstore_ps16k;arm64-v8a' in inconsistent location '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3' (Expected '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a')
+Add android.sync.suppressAgpWarnings=EXTERNAL_NATIVE_BUILD_CONFIGURATION to the gradle.properties file to suppress this warning.
+[CXX5304] Observed package id 'system-images;android-36;google_apis_playstore_ps16k;arm64-v8a' in inconsistent location '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3' (Expected '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a')
+
+> Task :sdk:buildCMakeRelWithDebInfo[arm64-v8a]
+> Task :sdk:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :sdk:mergeReleaseNativeLibs UP-TO-DATE
+> Task :sdk:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :sdk:generateReleaseResources UP-TO-DATE
+> Task :sdk:packageReleaseResources UP-TO-DATE
+> Task :sdk:processReleaseNavigationResources UP-TO-DATE
+> Task :sample:checkBenchmarkDuplicateClasses
+> Task :sdk:parseReleaseLocalResources UP-TO-DATE
+> Task :sdk:generateReleaseRFile UP-TO-DATE
+> Task :sdk:compileReleaseKotlin UP-TO-DATE
+> Task :sdk:javaPreCompileRelease UP-TO-DATE
+> Task :sdk:compileReleaseJavaWithJavac NO-SOURCE
+> Task :sdk:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :sdk:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :sdk:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :sdk:prepareReleaseArtProfile UP-TO-DATE
+> Task :sdk:writeReleaseAarMetadata UP-TO-DATE
+> Task :sdk:extractDeepLinksRelease UP-TO-DATE
+> Task :sdk:processReleaseManifest UP-TO-DATE
+> Task :sdk:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :sdk:compileReleaseLibraryResources UP-TO-DATE
+> Task :sdk:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :sdk:processReleaseJavaRes UP-TO-DATE
+> Task :sdk:generateReleaseAssets UP-TO-DATE
+> Task :sdk:mergeReleaseAssets UP-TO-DATE
+> Task :sdk:createFullJarRelease UP-TO-DATE
+> Task :sdk:extractProguardFiles UP-TO-DATE
+> Task :sdk:generateReleaseLintModel UP-TO-DATE
+> Task :sdk:prepareLintJarForPublish UP-TO-DATE
+> Task :sdk:checkReleaseAarMetadata UP-TO-DATE
+> Task :sdk:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :sdk:extractReleaseAnnotations UP-TO-DATE
+> Task :sdk:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :sdk:mergeReleaseJavaResource UP-TO-DATE
+> Task :sdk:syncReleaseLibJars UP-TO-DATE
+> Task :sdk:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :sdk:lintVitalAnalyzeRelease FROM-CACHE
+> Task :sdk:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :sdk:generateReleaseLintVitalModel UP-TO-DATE
+> Task :sdk:lintAnalyzeRelease FROM-CACHE
+> Task :sdk:preDebugBuild UP-TO-DATE
+> Task :sdk:processDebugNavigationResources UP-TO-DATE
+> Task :sdk:generateDebugResources UP-TO-DATE
+> Task :sdk:packageDebugResources UP-TO-DATE
+> Task :sdk:parseDebugLocalResources UP-TO-DATE
+> Task :sdk:generateDebugRFile UP-TO-DATE
+> Task :sdk:compileDebugKotlin UP-TO-DATE
+> Task :sdk:javaPreCompileDebug UP-TO-DATE
+> Task :sdk:compileDebugJavaWithJavac NO-SOURCE
+> Task :sdk:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :sdk:writeDebugAarMetadata UP-TO-DATE
+> Task :sdk:extractDeepLinksDebug UP-TO-DATE
+> Task :sdk:processDebugManifest UP-TO-DATE
+> Task :sdk:mapDebugSourceSetPaths UP-TO-DATE
+> Task :sdk:compileDebugLibraryResources UP-TO-DATE
+> Task :sdk:processDebugJavaRes UP-TO-DATE
+> Task :sdk:bundleLibRuntimeToJarDebug
+> Task :sample:mergeBenchmarkNativeLibs UP-TO-DATE
+> Task :sample:stripBenchmarkDebugSymbols UP-TO-DATE
+> Task :sample:extractBenchmarkNativeSymbolTables UP-TO-DATE
+> Task :sample:mergeBenchmarkNativeDebugMetadata UP-TO-DATE
+> Task :sample:generateBenchmarkBuildConfig
+> Task :sample:generateBenchmarkResources
+> Task :sample:packageBenchmarkResources
+> Task :sample:processBenchmarkNavigationResources
+> Task :sample:javaPreCompileBenchmark UP-TO-DATE
+> Task :sample:parseBenchmarkLocalResources
+> Task :sample:mergeBenchmarkArtProfile
+> Task :sample:generateBenchmarkRFile
+> Task :sample:checkBenchmarkAarMetadata
+> Task :sample:mapBenchmarkSourceSetPaths
+> Task :sample:compileBenchmarkNavigationResources UP-TO-DATE
+> Task :sample:createBenchmarkCompatibleScreenManifests
+> Task :sample:extractDeepLinksBenchmark UP-TO-DATE
+> Task :sample:processBenchmarkMainManifest
+> Task :sample:processBenchmarkManifest
+> Task :sample:extractProguardFiles UP-TO-DATE
+> Task :sample:mergeBenchmarkStartupProfile UP-TO-DATE
+> Task :sample:generateBenchmarkAssets UP-TO-DATE
+> Task :sample:mergeBenchmarkAssets UP-TO-DATE
+> Task :sample:compressBenchmarkAssets UP-TO-DATE
+> Task :sample:extractBenchmarkVersionControlInfo UP-TO-DATE
+> Task :sample:collectBenchmarkDependencies
+> Task :sample:sdkBenchmarkDependencyData
+> Task :sample:validateSigningBenchmark UP-TO-DATE
+> Task :sample:writeBenchmarkAppMetadata UP-TO-DATE
+> Task :sample:writeBenchmarkSigningConfigVersions UP-TO-DATE
+> Task :sample:preReleaseBuild UP-TO-DATE
+> Task :sample:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :sample:mergeReleaseNativeLibs UP-TO-DATE
+> Task :sample:stripReleaseDebugSymbols UP-TO-DATE
+> Task :sample:extractReleaseNativeDebugMetadata UP-TO-DATE
+> Task :sample:mergeReleaseNativeDebugMetadata UP-TO-DATE
+> Task :sample:mergeBenchmarkResources
+> Task :sample:checkReleaseDuplicateClasses
+> Task :sample:generateReleaseBuildConfig
+> Task :sample:generateReleaseResources FROM-CACHE
+> Task :sample:packageReleaseResources
+> Task :sample:processReleaseNavigationResources FROM-CACHE
+> Task :sample:parseReleaseLocalResources FROM-CACHE
+> Task :sample:generateReleaseRFile FROM-CACHE
+> Task :sample:javaPreCompileRelease UP-TO-DATE
+> Task :sample:checkReleaseAarMetadata
+> Task :sample:processBenchmarkManifestForPackage
+> Task :sample:mergeReleaseArtProfile
+> Task :sample:mapReleaseSourceSetPaths
+> Task :sample:compileReleaseNavigationResources UP-TO-DATE
+> Task :sample:createReleaseCompatibleScreenManifests
+> Task :sample:extractDeepLinksRelease UP-TO-DATE
+> Task :sample:processReleaseMainManifest FROM-CACHE
+> Task :sample:processReleaseManifest
+> Task :sample:mergeReleaseStartupProfile UP-TO-DATE
+> Task :sample:generateReleaseAssets UP-TO-DATE
+> Task :sample:mergeReleaseAssets UP-TO-DATE
+> Task :sample:compressReleaseAssets UP-TO-DATE
+> Task :sample:extractReleaseVersionControlInfo UP-TO-DATE
+> Task :sample:collectReleaseDependencies
+> Task :sample:sdkReleaseDependencyData
+> Task :sample:writeReleaseAppMetadata UP-TO-DATE
+> Task :sample:writeReleaseSigningConfigVersions UP-TO-DATE
+> Task :sample:configureReleaseDependencies
+> Task :sample:parseReleaseIntegrityConfig UP-TO-DATE
+> Task :sample:preDebugBuild UP-TO-DATE
+> Task :sample:generateDebugBuildConfig
+> Task :sample:generateDebugResources FROM-CACHE
+> Task :sample:processBenchmarkResources
+> Task :sample:packageDebugResources
+> Task :sample:processDebugNavigationResources FROM-CACHE
+> Task :sample:parseDebugLocalResources FROM-CACHE
+> Task :sample:generateDebugRFile FROM-CACHE
+> Task :sample:processReleaseManifestForPackage
+> Task :sample:javaPreCompileDebug UP-TO-DATE
+> Task :sample:checkDebugAarMetadata
+> Task :sample:mapDebugSourceSetPaths
+> Task :sample:compileDebugNavigationResources UP-TO-DATE
+> Task :sample:mergeReleaseResources
+> Task :sample:createDebugCompatibleScreenManifests
+> Task :sample:extractDeepLinksDebug UP-TO-DATE
+> Task :sample:processDebugMainManifest
+> Task :sample:processDebugManifest
+> Task :sample:preDebugUnitTestBuild UP-TO-DATE
+> Task :sample:javaPreCompileDebugUnitTest UP-TO-DATE
+
+> Task :sample:dependencies
+
+------------------------------------------------------------
+Project ':sample'
+------------------------------------------------------------
+
+benchmarkRuntimeClasspath - Runtime classpath of '/benchmark'.
++--- org.jetbrains.kotlin:kotlin-stdlib:2.2.10
+|    +--- org.jetbrains:annotations:13.0
+|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0 (c)
+|    +--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0 (c)
+|    \--- org.jetbrains.kotlin:kotlin-stdlib-common:2.2.10 (c)
++--- project :sdk
+|    \--- org.jetbrains.kotlin:kotlin-stdlib:2.2.10 (*)
++--- androidx.exifinterface:exifinterface:1.4.2
+|    +--- androidx.annotation:annotation:1.8.1
+|    |    \--- androidx.annotation:annotation-jvm:1.8.1
+|    |         \--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10 -> 2.2.10 (*)
+|    \--- org.jspecify:jspecify:1.0.0
+\--- com.android.billingclient:billing:9.1.0
+     +--- androidx.activity:activity:1.2.3
+     |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    +--- androidx.core:core:1.1.0 -> 1.15.0
+     |    |    +--- androidx.annotation:annotation:1.8.1 (*)
+     |    |    +--- androidx.annotation:annotation-experimental:1.4.1
+     |    |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.7.10 -> 2.2.10 (*)
+     |    |    +--- androidx.collection:collection:1.4.2
+     |    |    |    \--- androidx.collection:collection-jvm:1.4.2
+     |    |    |         +--- androidx.annotation:annotation:1.8.1 (*)
+     |    |    |         \--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.2.10 (*)
+     |    |    +--- androidx.concurrent:concurrent-futures:1.0.0 -> 1.1.0
+     |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    \--- com.google.guava:listenablefuture:1.0
+     |    |    +--- androidx.interpolator:interpolator:1.0.0
+     |    |    |    \--- androidx.annotation:annotation:1.0.0 -> 1.8.1 (*)
+     |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2
+     |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    +--- androidx.arch.core:core-common:2.2.0
+     |    |    |    |    \--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    +--- androidx.arch.core:core-runtime:2.2.0
+     |    |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    |    \--- androidx.arch.core:core-common:2.2.0 (*)
+     |    |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2
+     |    |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    |    |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4
+     |    |    |    |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4
+     |    |    |    |    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4
+     |    |    |    |    |    |         +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.4
+     |    |    |    |    |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4 (c)
+     |    |    |    |    |    |         |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4 (c)
+     |    |    |    |    |    |         |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4 (c)
+     |    |    |    |    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21 -> 1.8.0
+     |    |    |    |    |    |         |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.0 -> 2.2.10 (*)
+     |    |    |    |    |    |         |    \--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0
+     |    |    |    |    |    |         |         \--- org.jetbrains.kotlin:kotlin-stdlib:1.8.0 -> 2.2.10 (*)
+     |    |    |    |    |    |         \--- org.jetbrains.kotlin:kotlin-stdlib-common:1.6.21 -> 2.2.10
+     |    |    |    |    |    |              \--- org.jetbrains.kotlin:kotlin-stdlib:2.2.10 (*)
+     |    |    |    |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.6.4 (*)
+     |    |    |    |    |    \--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21 -> 1.8.0 (*)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2 (c)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.2 (c)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2 (c)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2 (c)
+     |    |    |    |    \--- androidx.lifecycle:lifecycle-livedata:2.6.2 (c)
+     |    |    |    +--- androidx.profileinstaller:profileinstaller:1.3.0
+     |    |    |    |    +--- androidx.annotation:annotation:1.2.0 -> 1.8.1 (*)
+     |    |    |    |    +--- androidx.concurrent:concurrent-futures:1.1.0 (*)
+     |    |    |    |    +--- androidx.startup:startup-runtime:1.1.1
+     |    |    |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    |    |    \--- androidx.tracing:tracing:1.0.0 -> 1.2.0
+     |    |    |    |    |         \--- androidx.annotation:annotation:1.2.0 -> 1.8.1 (*)
+     |    |    |    |    \--- com.google.guava:listenablefuture:1.0
+     |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2 (c)
+     |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.2 (c)
+     |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2 (c)
+     |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2 (c)
+     |    |    |    \--- androidx.lifecycle:lifecycle-livedata:2.6.2 (c)
+     |    |    +--- androidx.tracing:tracing:1.2.0 (*)
+     |    |    +--- androidx.versionedparcelable:versionedparcelable:1.1.1
+     |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    \--- androidx.collection:collection:1.0.0 -> 1.4.2 (*)
+     |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.2.10 (*)
+     |    |    \--- androidx.core:core-ktx:1.15.0 (c)
+     |    +--- androidx.lifecycle:lifecycle-runtime:2.3.1 -> 2.6.2 (*)
+     |    +--- androidx.lifecycle:lifecycle-viewmodel:2.3.1 -> 2.6.2
+     |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2 (c)
+     |    |    \--- androidx.lifecycle:lifecycle-livedata:2.6.2 (c)
+     |    +--- androidx.savedstate:savedstate:1.1.0 -> 1.2.1
+     |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)
+     |    |    +--- androidx.lifecycle:lifecycle-common:2.6.1 -> 2.6.2 (*)
+     |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    +--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1 -> 2.6.2
+     |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.8.1 (*)
+     |    |    +--- androidx.core:core-ktx:1.2.0 -> 1.15.0
+     |    |    |    +--- androidx.annotation:annotation:1.8.1 (*)
+     |    |    |    +--- androidx.core:core:1.15.0 (*)
+     |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.22 -> 2.2.10 (*)
+     |    |    |    \--- androidx.core:core:1.15.0 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2
+     |    |    |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)
+     |    |    |    +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)
+     |    |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2 (*)
+     |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2 (c)
+     |    |    |    +--- androidx.lifecycle:lifecycle-livedata:2.6.2 (c)
+     |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2 (c)
+     |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.2 (c)
+     |    |    |    \--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.2 (*)
+     |    |    +--- androidx.savedstate:savedstate:1.2.1 (*)
+     |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    |    +--- org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4 (*)
+     |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2 (c)
+     |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.2 (c)
+     |    |    \--- androidx.lifecycle:lifecycle-livedata:2.6.2 (c)
+     |    +--- androidx.collection:collection:1.0.0 -> 1.4.2 (*)
+     |    \--- androidx.tracing:tracing:1.0.0 -> 1.2.0 (*)
+     +--- androidx.core:core:1.15.0 (*)
+     +--- com.google.android.datatransport:transport-api:3.0.0
+     |    \--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     +--- com.google.android.datatransport:transport-backend-cct:3.1.8
+     |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    +--- com.google.android.datatransport:transport-api:3.0.0 (*)
+     |    +--- com.google.android.datatransport:transport-runtime:3.1.8
+     |    |    +--- androidx.annotation:annotation:1.3.0 -> 1.8.1 (*)
+     |    |    +--- com.google.android.datatransport:transport-api:3.0.0 (*)
+     |    |    +--- com.google.firebase:firebase-encoders:17.0.0
+     |    |    |    \--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    +--- com.google.firebase:firebase-encoders-proto:16.0.0
+     |    |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    |    \--- com.google.firebase:firebase-encoders:17.0.0 (*)
+     |    |    \--- javax.inject:javax.inject:1
+     |    +--- com.google.firebase:firebase-encoders:17.0.0 (*)
+     |    \--- com.google.firebase:firebase-encoders-json:18.0.0
+     |         +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |         \--- com.google.firebase:firebase-encoders:17.0.0 (*)
+     +--- com.google.android.datatransport:transport-runtime:3.1.8 (*)
+     +--- com.google.android.gms:play-services-base:18.5.0
+     |    +--- androidx.collection:collection:1.0.0 -> 1.4.2 (*)
+     |    +--- androidx.core:core:1.2.0 -> 1.15.0 (*)
+     |    +--- androidx.fragment:fragment:1.0.0 -> 1.1.0
+     |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.8.1 (*)
+     |    |    +--- androidx.core:core:1.1.0 -> 1.15.0 (*)
+     |    |    +--- androidx.collection:collection:1.1.0 -> 1.4.2 (*)
+     |    |    +--- androidx.viewpager:viewpager:1.0.0
+     |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.8.1 (*)
+     |    |    |    +--- androidx.core:core:1.0.0 -> 1.15.0 (*)
+     |    |    |    \--- androidx.customview:customview:1.0.0
+     |    |    |         +--- androidx.annotation:annotation:1.0.0 -> 1.8.1 (*)
+     |    |    |         \--- androidx.core:core:1.0.0 -> 1.15.0 (*)
+     |    |    +--- androidx.loader:loader:1.0.0
+     |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.8.1 (*)
+     |    |    |    +--- androidx.core:core:1.0.0 -> 1.15.0 (*)
+     |    |    |    +--- androidx.lifecycle:lifecycle-livedata:2.0.0 -> 2.6.2
+     |    |    |    |    +--- androidx.arch.core:core-common:2.1.0 -> 2.2.0 (*)
+     |    |    |    |    +--- androidx.arch.core:core-runtime:2.1.0 -> 2.2.0 (*)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2 (*)
+     |    |    |    |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.8.10 -> 2.2.10 (*)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-common:2.6.2 (c)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.6.2 (c)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.6.2 (c)
+     |    |    |    |    +--- androidx.lifecycle:lifecycle-viewmodel:2.6.2 (c)
+     |    |    |    |    \--- androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2 (c)
+     |    |    |    \--- androidx.lifecycle:lifecycle-viewmodel:2.0.0 -> 2.6.2 (*)
+     |    |    +--- androidx.activity:activity:1.0.0 -> 1.2.3 (*)
+     |    |    \--- androidx.lifecycle:lifecycle-viewmodel:2.0.0 -> 2.6.2 (*)
+     |    +--- com.google.android.gms:play-services-basement:18.4.0 -> 18.9.0
+     |    |    +--- androidx.collection:collection:1.0.0 -> 1.4.2 (*)
+     |    |    +--- androidx.core:core:1.2.0 -> 1.15.0 (*)
+     |    |    \--- androidx.fragment:fragment:1.1.0 (*)
+     |    \--- com.google.android.gms:play-services-tasks:18.2.0
+     |         \--- com.google.android.gms:play-services-basement:18.4.0 -> 18.9.0 (*)
+     +--- com.google.android.gms:play-services-basement:18.9.0 (*)
+     +--- com.google.android.gms:play-services-location:19.0.0
+     |    +--- com.google.android.gms:play-services-base:18.0.0 -> 18.5.0 (*)
+     |    +--- com.google.android.gms:play-services-basement:18.0.0 -> 18.9.0 (*)
+     |    +--- com.google.android.gms:play-services-places-placereport:17.0.0
+     |    |    \--- com.google.android.gms:play-services-basement:17.0.0 -> 18.9.0 (*)
+     |    \--- com.google.android.gms:play-services-tasks:18.0.0 -> 18.2.0 (*)
+     \--- com.google.android.gms:play-services-tasks:18.2.0 (*)
+
+(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.
+(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+> Task :sample:processDebugManifestForPackage
+> Task :sample:processReleaseResources
+> Task :sample:mergeDebugResources
+> Task :sample:processDebugResources
+
+> Task :sample:compileReleaseKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:117:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:118:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:119:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:120:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraPurchaseOverlay.kt:147:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:166:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:167:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:245:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:343:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:344:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:345:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:346:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:120:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:325:17 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+
+> Task :sample:compileDebugKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:117:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:118:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:119:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:120:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraPurchaseOverlay.kt:147:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:166:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:167:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:245:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:343:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:344:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:345:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:346:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:120:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:325:17 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+
+> Task :sample:compileBenchmarkKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:117:24 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:118:24 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:119:24 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:120:24 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraPurchaseOverlay.kt:147:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:166:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:167:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:245:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:343:36 'val systemWindowInsetTop: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:344:39 'val systemWindowInsetBottom: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:345:37 'val systemWindowInsetLeft: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:346:38 'val systemWindowInsetRight: Int' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:120:9 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:325:17 'fun announceForAccessibility(p0: CharSequence!): Unit' is deprecated. Deprecated in Java.
+
+> Task :sample:compileReleaseJavaWithJavac
+> Task :sample:compileBenchmarkJavaWithJavac
+> Task :sample:mergeBenchmarkGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processBenchmarkJavaRes UP-TO-DATE
+> Task :sample:expandBenchmarkArtProfileWildcards
+> Task :sample:generateBenchmarkLintVitalReportModel
+> Task :sample:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processReleaseJavaRes UP-TO-DATE
+> Task :sample:generateReleaseLintVitalReportModel
+> Task :sample:generateReleaseLintReportModel
+> Task :sample:expandReleaseArtProfileWildcards
+> Task :sample:mergeBenchmarkJavaResource
+> Task :sample:compileDebugJavaWithJavac
+> Task :sample:mergeReleaseJavaResource
+> Task :sample:processDebugJavaRes UP-TO-DATE
+> Task :sample:bundleDebugClassesToCompileJar
+> Task :sample:bundleDebugClassesToRuntimeJar
+> Task :sample:compileDebugUnitTestKotlin
+> Task :sample:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :sample:processDebugUnitTestJavaRes
+> Task :sample:testDebugUnitTest
+> Task :sample:lintVitalAnalyzeBenchmark
+> Task :sample:lintVitalReportBenchmark
+> Task :sample:lintVitalBenchmark
+> Task :sample:lintVitalAnalyzeRelease
+> Task :sample:lintAnalyzeRelease
+> Task :sample:minifyBenchmarkWithR8
+> Task :sample:lintVitalReportRelease SKIPPED
+> Task :sample:lintVitalRelease SKIPPED
+> Task :sample:convertShrunkResourcesToBinaryBenchmark
+> Task :sample:optimizeBenchmarkResources
+> Task :sample:compileBenchmarkArtProfile
+> Task :sample:packageBenchmark
+> Task :sample:createBenchmarkApkListingFileRedirect
+> Task :sample:assembleBenchmark
+
+> Task :sample:lintReportRelease
+Wrote HTML report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-release.html
+Wrote SARIF report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-release.sarif
+
+> Task :sample:lintRelease
+> Task :sample:minifyReleaseWithR8
+> Task :sample:compileReleaseArtProfile FROM-CACHE
+> Task :sample:buildReleasePreBundle
+> Task :sample:convertShrunkResourcesToBinaryRelease
+> Task :sample:optimizeReleaseResources
+> Task :sample:packageRelease
+> Task :sample:createReleaseApkListingFileRedirect
+> Task :sample:assembleRelease
+> Task :sample:packageReleaseBundle
+> Task :sample:signReleaseBundle
+> Task :sample:produceReleaseBundleIdeListingFile
+> Task :sample:createReleaseBundleListingFileRedirect UP-TO-DATE
+> Task :sample:bundleRelease
+
+BUILD SUCCESSFUL in 1m 37s
+188 actionable tasks: 86 executed, 12 from cache, 90 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.0/userguide/configuration_cache_enabling.html

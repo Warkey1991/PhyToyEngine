@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "<stdin>", line 9, in <module>
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 159, in wait
+    return self.find(identifier, self.poll(ready, f"Timed out waiting for {identifier}", timeout=timeout))
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 149, in poll
+    nodes = self.ui(timeout=min(12, max(.1, deadline - time.monotonic())))
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 95, in ui
+    result = self.adb("shell", "uiautomator", "dump", *options, self.dump,
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 65, in adb
+    result = subprocess.run(self.prefix + list(command), capture_output=True,
+  File "/opt/homebrew/Cellar/python@3.10/3.10.7/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 503, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/opt/homebrew/Cellar/python@3.10/3.10.7/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 1152, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/opt/homebrew/Cellar/python@3.10/3.10.7/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 2004, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/opt/homebrew/Cellar/python@3.10/3.10.7/Frameworks/Python.framework/Versions/3.10/lib/python3.10/subprocess.py", line 1196, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/Users/songyuanjin/Library/Android/sdk/platform-tools/adb', '-s', 'RFCX80BD3XN', 'shell', 'uiautomator', 'dump', '--compressed', '/sdcard/phytoy_billing_qa_1790857357026538000.xml']' timed out after 0.4317675839702133 seconds

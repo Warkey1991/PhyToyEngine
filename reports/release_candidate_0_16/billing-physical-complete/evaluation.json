@@ -1,0 +1,1006 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "scope": "Installed unconfigured RC; no Play checkout or fake purchase success",
+  "checks": [
+    {
+      "name": "both free cameras select without trial caption or unlock shutter",
+      "passed": true,
+      "styles": [
+        "style_dh_color",
+        "style_dh_mono"
+      ]
+    },
+    {
+      "name": "locked default opens purchase without writing default; settings restore is reachable",
+      "passed": true,
+      "default_unchanged": true
+    },
+    {
+      "name": "style_digital remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "style_plastic remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "style_street remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "style_fisheye remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "locked settings default remains unchanged after process restart",
+      "passed": true
+    },
+    {
+      "name": "200% purchase page scrolls to four labelled 48dp actions; restore/retry do not unlock and trial cannot save",
+      "passed": true
+    }
+  ],
+  "styles": [
+    {
+      "id": "style_digital",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    },
+    {
+      "id": "style_plastic",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    },
+    {
+      "id": "style_street",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    },
+    {
+      "id": "style_fisheye",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    }
+  ],
+  "artifacts": {
+    "initial-camera_ui": "initial-camera-ui.json",
+    "initial-camera_screenshot": "initial-camera.png",
+    "free-style_dh_color_ui": "free-style_dh_color-ui.json",
+    "free-style_dh_color_screenshot": "free-style_dh_color.png",
+    "free-style_dh_mono_ui": "free-style_dh_mono-ui.json",
+    "free-style_dh_mono_screenshot": "free-style_dh_mono.png",
+    "settings-locked-default_ui": "settings-locked-default-ui.json",
+    "settings-locked-default_screenshot": "settings-locked-default.png",
+    "settings-after-purchase-back_ui": "settings-after-purchase-back-ui.json",
+    "settings-after-purchase-back_screenshot": "settings-after-purchase-back.png",
+    "settings-default-unchanged_ui": "settings-default-unchanged-ui.json",
+    "settings-default-unchanged_screenshot": "settings-default-unchanged.png",
+    "settings-restore-error-toast_screenshot": "settings-restore-error-toast.png",
+    "settings-after-restore_ui": "settings-after-restore-ui.json",
+    "settings-after-restore_screenshot": "settings-after-restore.png",
+    "style_digital-purchase_ui": "style_digital-purchase-ui.json",
+    "style_digital-purchase_screenshot": "style_digital-purchase.png",
+    "style_digital-restore-not-configured_ui": "style_digital-restore-not-configured-ui.json",
+    "style_digital-restore-not-configured_screenshot": "style_digital-restore-not-configured.png",
+    "style_digital-trial_ui": "style_digital-trial-ui.json",
+    "style_digital-trial_screenshot": "style_digital-trial.png",
+    "style_digital-blocked-shutter_ui": "style_digital-blocked-shutter-ui.json",
+    "style_digital-blocked-shutter_screenshot": "style_digital-blocked-shutter.png",
+    "style_plastic-purchase_ui": "style_plastic-purchase-ui.json",
+    "style_plastic-purchase_screenshot": "style_plastic-purchase.png",
+    "style_plastic-restore-not-configured_ui": "style_plastic-restore-not-configured-ui.json",
+    "style_plastic-restore-not-configured_screenshot": "style_plastic-restore-not-configured.png",
+    "style_plastic-trial_ui": "style_plastic-trial-ui.json",
+    "style_plastic-trial_screenshot": "style_plastic-trial.png",
+    "style_plastic-blocked-shutter_ui": "style_plastic-blocked-shutter-ui.json",
+    "style_plastic-blocked-shutter_screenshot": "style_plastic-blocked-shutter.png",
+    "style_street-purchase_ui": "style_street-purchase-ui.json",
+    "style_street-purchase_screenshot": "style_street-purchase.png",
+    "style_street-restore-not-configured_ui": "style_street-restore-not-configured-ui.json",
+    "style_street-restore-not-configured_screenshot": "style_street-restore-not-configured.png",
+    "style_street-trial_ui": "style_street-trial-ui.json",
+    "style_street-trial_screenshot": "style_street-trial.png",
+    "style_street-blocked-shutter_ui": "style_street-blocked-shutter-ui.json",
+    "style_street-blocked-shutter_screenshot": "style_street-blocked-shutter.png",
+    "style_fisheye-purchase_ui": "style_fisheye-purchase-ui.json",
+    "style_fisheye-purchase_screenshot": "style_fisheye-purchase.png",
+    "style_fisheye-restore-not-configured_ui": "style_fisheye-restore-not-configured-ui.json",
+    "style_fisheye-restore-not-configured_screenshot": "style_fisheye-restore-not-configured.png",
+    "style_fisheye-trial_ui": "style_fisheye-trial-ui.json",
+    "style_fisheye-trial_screenshot": "style_fisheye-trial.png",
+    "style_fisheye-blocked-shutter_ui": "style_fisheye-blocked-shutter-ui.json",
+    "style_fisheye-blocked-shutter_screenshot": "style_fisheye-blocked-shutter.png",
+    "large-font-purchase-top_ui": "large-font-purchase-top-ui.json",
+    "large-font-purchase-top_screenshot": "large-font-purchase-top.png",
+    "large-font-purchase_back_ui": "large-font-purchase_back-ui.json",
+    "large-font-purchase_back_screenshot": "large-font-purchase_back.png",
+    "large-font-purchase_preview_ui": "large-font-purchase_preview-ui.json",
+    "large-font-purchase_preview_screenshot": "large-font-purchase_preview.png",
+    "large-font-purchase_restore_ui": "large-font-purchase_restore-ui.json",
+    "large-font-purchase_restore_screenshot": "large-font-purchase_restore.png",
+    "large-font-purchase_retry_ui": "large-font-purchase_retry-ui.json",
+    "large-font-purchase_retry_screenshot": "large-font-purchase_retry.png",
+    "large-font-restore-not-configured_ui": "large-font-restore-not-configured-ui.json",
+    "large-font-restore-not-configured_screenshot": "large-font-restore-not-configured.png",
+    "large-font-retry-unconfigured_ui": "large-font-retry-unconfigured-ui.json",
+    "large-font-retry-unconfigured_screenshot": "large-font-retry-unconfigured.png",
+    "large-font-blocked-shutter_ui": "large-font-blocked-shutter-ui.json",
+    "large-font-blocked-shutter_screenshot": "large-font-blocked-shutter.png",
+    "restored-camera_ui": "restored-camera-ui.json",
+    "restored-camera_screenshot": "restored-camera.png"
+  },
+  "touch_targets": {
+    "settings/restore": {
+      "id": "settings_restore_purchases",
+      "bounds": [
+        60,
+        2002,
+        1020,
+        2213
+      ],
+      "width_dp": 320.0,
+      "height_dp": 70.33,
+      "label": "恢复购买\n查找当前 Google Play 账号购买的相机。"
+    },
+    "style_digital/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1767,
+        1008,
+        1923
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "style_plastic/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1767,
+        1008,
+        1923
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "style_street/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1767,
+        1008,
+        1923
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "style_fisheye/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1767,
+        1008,
+        1923
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "font2/purchase_back": {
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "label": "返回"
+    },
+    "font2/purchase_preview": {
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        2009,
+        1008,
+        2204
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "试试实时预览"
+    },
+    "font2/purchase_restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1769,
+        1008,
+        1964
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "恢复购买"
+    },
+    "font2/purchase_retry": {
+      "id": "purchase_retry",
+      "bounds": [
+        72,
+        1964,
+        1008,
+        2159
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "重新连接"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "style_digital-blocked-shutter",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "style_digital-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "style_plastic-blocked-shutter",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "style_plastic-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "style_street-blocked-shutter",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "style_street-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "style_fisheye-blocked-shutter",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "style_fisheye-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "large-font-blocked-shutter",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "large-font-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 1,
+      "ids": [
+        1000041087
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "emulator_properties": {
+    "ro.kernel.qemu": "0",
+    "ro.boot.qemu": ""
+  },
+  "physical_device_opt_in": true,
+  "device_model": "SM-S9210",
+  "sdk": 36,
+  "display": {
+    "width_pixels": 1080,
+    "height_pixels": 2340,
+    "density_dpi": 480
+  },
+  "installed_apks": [
+    {
+      "path": "/data/app/~~O2KfTq86bfIGXr5UUwx74w==/com.phytoy.sample-IUulH27nX0brBXDEzETIpw==/base.apk",
+      "sha256": "b4f63198c5e0a9bf23a7afd845c8321749fd3ad0d2d8e621a79b0f099fa80270"
+    }
+  ],
+  "installed_apk_sha256": "b4f63198c5e0a9bf23a7afd845c8321749fd3ad0d2d8e621a79b0f099fa80270",
+  "font_scale_original": "1.0",
+  "phase": "200 percent purchase page",
+  "initial_visible_style": "style_dh_color",
+  "last_action": "tap style_dh_color",
+  "default_style_before": "默认风格\nDH 2++\n不记住上次风格或首次启动时，使用此风格。",
+  "gestures": [
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1596
+      ],
+      "to": [
+        540,
+        996
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    }
+  ],
+  "font_scale_after": "1.0",
+  "font_scale_restored": true,
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true
+}

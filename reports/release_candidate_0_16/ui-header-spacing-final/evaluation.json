@@ -1,0 +1,334 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "run_started_at_ns": 1790862015732936000,
+  "scope": "Only camera type heading and purchase restore/retry geometry at 100% and 200% fonts; no checkout or photos",
+  "checks": [
+    {
+      "name": "camera heading contains only current camera type",
+      "passed": true,
+      "font_scale": "1.0",
+      "label": "DH 2++ 黑白"
+    },
+    {
+      "name": "restore and retry have separate nonoverlapping 48dp targets and 12dp gap",
+      "passed": true,
+      "font_scale": "1.0",
+      "gap_dp": 12.0
+    },
+    {
+      "name": "camera heading contains only current camera type",
+      "passed": true,
+      "font_scale": "2.0",
+      "label": "DH 2++ 黑白"
+    },
+    {
+      "name": "restore and retry have separate nonoverlapping 48dp targets and 12dp gap",
+      "passed": true,
+      "font_scale": "2.0",
+      "gap_dp": 12.0
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "font1.0-camera_ui": "font1.0-camera-ui.json",
+    "font1.0-camera_screenshot": "font1.0-camera.png",
+    "font1.0-purchase-buttons_ui": "font1.0-purchase-buttons-ui.json",
+    "font1.0-purchase-buttons_screenshot": "font1.0-purchase-buttons.png",
+    "font2.0-camera_ui": "font2.0-camera-ui.json",
+    "font2.0-camera_screenshot": "font2.0-camera.png",
+    "font2.0-purchase-buttons_ui": "font2.0-purchase-buttons-ui.json",
+    "font2.0-purchase-buttons_screenshot": "font2.0-purchase-buttons.png"
+  },
+  "touch_targets": {
+    "font1.0/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1575,
+        1008,
+        1731
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "font1.0/retry": {
+      "id": "purchase_retry",
+      "bounds": [
+        72,
+        1767,
+        1008,
+        1923
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "重新连接"
+    },
+    "font2.0/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1778,
+        1008,
+        1973
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "恢复购买"
+    },
+    "font2.0/retry": {
+      "id": "purchase_retry",
+      "bounds": [
+        72,
+        2009,
+        1008,
+        2204
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "重新连接"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 12,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102,
+        1000041106,
+        1000041107,
+        1000041108,
+        1000041109
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 12,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102,
+        1000041106,
+        1000041107,
+        1000041108,
+        1000041109
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "installed_apk_sha256": "e90dd94ff4b376b7d3f0609074a8a3ac738d807e986a859dd86d3d7ae6512e26",
+  "font_scale_original": "1.0",
+  "phase": "layout font 2.0",
+  "last_action": "tap purchase_back",
+  "taps": [
+    {
+      "phase": "layout font 1.0",
+      "id": "style_digital",
+      "bounds": [
+        602,
+        1689,
+        935,
+        1833
+      ],
+      "point": [
+        768,
+        1761
+      ],
+      "started_at_ns": 1790862023497753000,
+      "completed_at_ns": 1790862023567949000
+    },
+    {
+      "phase": "layout font 1.0",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790862048487824000,
+      "completed_at_ns": 1790862048581359000
+    },
+    {
+      "phase": "layout font 2.0",
+      "id": "style_digital",
+      "bounds": [
+        793,
+        1662,
+        1080,
+        1806
+      ],
+      "point": [
+        936,
+        1734
+      ],
+      "started_at_ns": 1790862056257762000,
+      "completed_at_ns": 1790862056340316000
+    },
+    {
+      "phase": "layout font 2.0",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "point": [
+        108,
+        227
+      ],
+      "started_at_ns": 1790862085008748000,
+      "completed_at_ns": 1790862085085314000
+    }
+  ],
+  "gestures": [
+    {
+      "phase": "layout font 1.0",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "layout font 1.0",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "layout font 1.0",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "layout font 2.0",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "layout font 2.0",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "layout font 2.0",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "layout font 2.0",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    }
+  ],
+  "font_scale_after": "1.0",
+  "font_scale_restored": true,
+  "photos_changed": false
+}

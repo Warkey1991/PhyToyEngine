@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 400, in main
+    restore = smoke.scroll_to("settings_restore_purchases")
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 230, in scroll_to
+    assert scroll, f"No scroll container while looking for {identifier}"
+AssertionError: No scroll container while looking for settings_restore_purchases

@@ -5,6 +5,7 @@ The PhyToy engine/application source is provided under [MIT](../LICENSE).
 | Component | Role | License | Source |
 | --- | --- | --- | --- |
 | AndroidX ExifInterface 1.4.2 | Safe JPEG metadata read/write across supported Android versions | Apache-2.0 | https://developer.android.com/jetpack/androidx/releases/exifinterface |
+| Google Play Billing Library 9.1.0 and resolved dependencies | Non-consumable camera purchases, localized prices and restore | Android Software Development Kit License; original AAR third-party notices included in the app | https://developer.android.com/studio/terms.html |
 | AndroidX annotation (resolved transitively) | AndroidX API annotations; most have no runtime behavior | Apache-2.0 | https://android.googlesource.com/platform/frameworks/support/ |
 | Kotlin standard library (resolved by Android build plugin) | Kotlin application runtime | Apache-2.0 | https://github.com/JetBrains/kotlin |
 | Android NDK libc++ shared runtime | C++ runtime distributed with the native engine | Apache-2.0 WITH LLVM-exception and applicable LLVM notices | https://github.com/llvm/llvm-project/tree/main/libcxx |

@@ -1,0 +1,198 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "activity": "com.phytoy.sample.MainActivity",
+  "allow_physical_device": true,
+  "expected_apk_sha256": "43577230e43dacbe4ce93f669894c3ed29e8a044138511304954683593dce7bc",
+  "font_scale_target": 2.0,
+  "checks": [
+    {
+      "name": "camera primary actions are visible, labelled and at least 48dp",
+      "passed": true
+    },
+    {
+      "name": "settings scroll reaches privacy and returns to the camera",
+      "passed": true
+    },
+    {
+      "name": "gallery photo review and both page back buttons work at 200% font scale",
+      "passed": true
+    },
+    {
+      "name": "review continue returns directly to the camera without taking a photo",
+      "passed": true
+    }
+  ],
+  "artifacts": {
+    "camera_ui": "camera-ui.json",
+    "camera_screenshot": "camera.png",
+    "settings_ui": "settings-ui.json",
+    "settings_screenshot": "settings.png",
+    "settings-privacy-entry_ui": "settings-privacy-entry-ui.json",
+    "settings-privacy-entry_screenshot": "settings-privacy-entry.png",
+    "privacy_ui": "privacy-ui.json",
+    "privacy_screenshot": "privacy.png",
+    "gallery_ui": "gallery-ui.json",
+    "gallery_screenshot": "gallery.png",
+    "review_ui": "review-ui.json",
+    "review_screenshot": "review.png"
+  },
+  "touch_targets": {
+    "camera/shutter": {
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "width_dp": 78.0,
+      "height_dp": 78.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "拍摄照片"
+    },
+    "camera/open_settings": {
+      "bounds": [
+        912,
+        193,
+        1056,
+        337
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "相机设置"
+    },
+    "camera/switch_camera": {
+      "bounds": [
+        858,
+        2091,
+        1008,
+        2241
+      ],
+      "width_dp": 50.0,
+      "height_dp": 50.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "切换到前置相机"
+    },
+    "camera/last_photo": {
+      "bounds": [
+        72,
+        2091,
+        222,
+        2241
+      ],
+      "width_dp": 50.0,
+      "height_dp": 50.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "查看拍摄的照片"
+    },
+    "settings/settings_back": {
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回"
+    },
+    "settings/settings_privacy": {
+      "bounds": [
+        60,
+        1357,
+        1020,
+        1765
+      ],
+      "width_dp": 320.0,
+      "height_dp": 136.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "隐私政策\n了解照片、权限与本机偏好的处理方式。"
+    },
+    "gallery/gallery_back": {
+      "bounds": [
+        36,
+        213,
+        180,
+        357
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回相机"
+    },
+    "gallery/gallery_item": {
+      "bounds": [
+        36,
+        480,
+        364,
+        808
+      ],
+      "width_dp": 109.33,
+      "height_dp": 109.33,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "DH 2++ 黑白 风格照片，2026/10/1 20:37。打开照片。"
+    },
+    "review/review_back": {
+      "bounds": [
+        36,
+        213,
+        180,
+        357
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回"
+    },
+    "review/review_continue": {
+      "bounds": [
+        60,
+        2051,
+        1020,
+        2235
+      ],
+      "width_dp": 320.0,
+      "height_dp": 61.33,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "继续拍摄"
+    }
+  },
+  "photos_taken": 0,
+  "app_preferences_changed": false,
+  "permissions_changed": false,
+  "locale_changed": false,
+  "serial": "RFCX80BD3XN",
+  "emulator_properties": {
+    "ro.kernel.qemu": "0",
+    "ro.boot.qemu": ""
+  },
+  "device_kind": "physical",
+  "installed_apks": [
+    {
+      "path": "/data/app/~~4Xbomcua-ewz0nSY55xHpg==/com.phytoy.sample-gv-TUOWM05Mb-bgP2Uz67g==/base.apk",
+      "sha256": "43577230e43dacbe4ce93f669894c3ed29e8a044138511304954683593dce7bc"
+    }
+  ],
+  "installed_apk_sha256": "43577230e43dacbe4ce93f669894c3ed29e8a044138511304954683593dce7bc",
+  "display": {
+    "width_pixels": 1080,
+    "height_pixels": 2340,
+    "density_dpi": 480
+  },
+  "font_scale_original": "1.0",
+  "font_scale_applied": "2.0",
+  "font_scale_restored": true,
+  "font_scale_after": "1.0"
+}

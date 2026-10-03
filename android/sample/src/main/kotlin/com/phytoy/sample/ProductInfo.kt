@@ -38,8 +38,9 @@ internal object ProductInfo {
 
     fun showLicenses(activity: Activity) {
         dismiss()
-        val notices = activity.resources.openRawResource(R.raw.open_source_notices)
-            .bufferedReader().use { it.readText() }
+        val notices = listOf(R.raw.open_source_notices, R.raw.play_billing_notices).joinToString("\n\n") { resource ->
+            activity.resources.openRawResource(resource).bufferedReader().use { it.readText() }
+        }
         val text = android.widget.TextView(activity).apply {
             setText(notices)
             setTextIsSelectable(true)

@@ -6,7 +6,7 @@
   "minimum_target_sdk": 36,
   "apk": {
     "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/apk/release/sample-release-unsigned.apk",
-    "sha256": "ad3001574a4334938131a29f3e262e9bb0310cfc8cab36ce4ebddaaad0002c76",
+    "sha256": "78485ed7ae60f0f61ecb9183b507739389054aace5c4d2eec7f6186c0df6ea26",
     "bytes": 1748976,
     "native_libraries": {
       "libc++_shared.so": {
@@ -103,8 +103,8 @@
   },
   "aab": {
     "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/bundle/release/sample-release.aab",
-    "sha256": "855fd583be5c958ca07f59be75bccc7a14068372e161160a2d6b722f6bd7abe7",
-    "bytes": 3485857,
+    "sha256": "73646ef2a0fa7323db86ce2a40cd33d4ac78d8fe6d254259e89f713b2600adf4",
+    "bytes": 3486175,
     "native_libraries": {
       "libc++_shared.so": {
         "load_alignments": [

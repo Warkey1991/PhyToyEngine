@@ -1,0 +1,401 @@
+--------- beginning of crash
+10-01 15:36:39.290 14998 14998 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 14998 (pool-1-temporar), pid 14998 (pool-1-temporar)
+10-01 15:36:39.325 15013 15013 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 15013 (pool-1-temporar), pid 15013 (pool-1-temporar)
+10-01 15:36:41.405 15025 15025 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 15:36:41.405 15025 15025 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 15:36:41.405 15025 15025 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 15:36:41.405 15025 15025 F DEBUG   : Revision: '13'
+10-01 15:36:41.405 15025 15025 F DEBUG   : ABI: 'arm64'
+10-01 15:36:41.405 15025 15025 F DEBUG   : Processor: '5'
+10-01 15:36:41.405 15025 15025 F DEBUG   : Timestamp: 2026-10-01 15:36:39.449229096+0800
+10-01 15:36:41.405 15025 15025 F DEBUG   : Process uptime: 1s
+10-01 15:36:41.405 15025 15025 F DEBUG   : Executable: /system/bin/app_process64
+10-01 15:36:41.405 15025 15025 F DEBUG   : Cmdline: com.apkpure.aegon
+10-01 15:36:41.405 15025 15025 F DEBUG   : pid: 14998, tid: 14998, name: pool-1-temporar  >>> com.apkpure.aegon <<<
+10-01 15:36:41.405 15025 15025 F DEBUG   : uid: 10386
+10-01 15:36:41.405 15025 15025 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 15:36:41.405 15025 15025 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 15:36:41.405 15025 15025 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 15:36:41.405 15025 15025 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 15:36:41.405 15025 15025 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 15:36:41.405 15025 15025 F DEBUG   :     x0  0000000000000000  x1  0000000000003a96  x2  0000000000000006  x3  0000006de4663b20
+10-01 15:36:41.405 15025 15025 F DEBUG   :     x4  33646335772f3c6a  x5  33646335772f3c6a  x6  33646335772f3c6a  x7  7f7f7f7f7f7f7f7f
+10-01 15:36:41.406 15025 15025 F DEBUG   :     x8  00000000000000f0  x9  b65c9ba5d62f08ca  x10 000000ff00000020  x11 000000000012800c
+10-01 15:36:41.406 15025 15025 F DEBUG   :     x12 000000006abe0d87  x13 000000007fffffff  x14 000000000ca33ac2  x15 00000ceb5bbfc66c
+10-01 15:36:41.406 15025 15025 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de3574000  x19 0000000000003a96
+10-01 15:36:41.406 15025 15025 F DEBUG   :     x20 0000000000003a96  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 15:36:41.406 15025 15025 F DEBUG   :     x24 0000006e8ea5b000  x25 b400007020800378  x26 0000000000000000  x27 0000000000000000
+10-01 15:36:41.406 15025 15025 F DEBUG   :     x28 0000000000000013  x29 0000006de4663ba0
+10-01 15:36:41.406 15025 15025 F DEBUG   :     lr  000000719991c644  sp  0000006de4663b20  pc  000000719991c668  pst 0000000000001000
+10-01 15:36:41.406 15025 15025 F DEBUG   :     esr 0000000092000006
+10-01 15:36:41.406 15025 15025 F DEBUG   : 21 total frames
+10-01 15:36:41.406 15025 15025 F DEBUG   : backtrace:
+10-01 15:36:41.406 15025 15025 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 15:36:41.406 15025 15025 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 15:36:41.406 15025 15025 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 15:36:41.406 15025 15025 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 15:36:41.406 15025 15025 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 15:36:41.406 15025 15025 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 15:36:41.406 15025 15025 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:36:42.077 15035 15035 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 15:36:42.077 15035 15035 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 15:36:42.077 15035 15035 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 15:36:42.077 15035 15035 F DEBUG   : Revision: '13'
+10-01 15:36:42.077 15035 15035 F DEBUG   : ABI: 'arm64'
+10-01 15:36:42.077 15035 15035 F DEBUG   : Processor: '4'
+10-01 15:36:42.077 15035 15035 F DEBUG   : Timestamp: 2026-10-01 15:36:41.483134825+0800
+10-01 15:36:42.077 15035 15035 F DEBUG   : Process uptime: 3s
+10-01 15:36:42.077 15035 15035 F DEBUG   : Executable: /system/bin/app_process64
+10-01 15:36:42.077 15035 15035 F DEBUG   : Cmdline: com.apkpure.aegon:beta
+10-01 15:36:42.077 15035 15035 F DEBUG   : pid: 15013, tid: 15013, name: pool-1-temporar  >>> com.apkpure.aegon:beta <<<
+10-01 15:36:42.077 15035 15035 F DEBUG   : uid: 10386
+10-01 15:36:42.077 15035 15035 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 15:36:42.077 15035 15035 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 15:36:42.077 15035 15035 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 15:36:42.077 15035 15035 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 15:36:42.077 15035 15035 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x0  0000000000000000  x1  0000000000003aa5  x2  0000000000000006  x3  0000006de7055b20
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x4  622d6b6873742d60  x5  622d6b6873742d60  x6  622d6b6873742d60  x7  7f7f7f7f7f7f7f7f
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x8  00000000000000f0  x9  17011b679c6d3498  x10 000000ff00000020  x11 000000000012800c
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x12 000000006abe0d87  x13 000000007fffffff  x14 000000000ca33ad4  x15 00000ceb5bca1670
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de6734000  x19 0000000000003aa5
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x20 0000000000003aa5  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x24 0000006e8ea5b000  x25 b400007020805988  x26 0000000000000000  x27 0000000000000000
+10-01 15:36:42.077 15035 15035 F DEBUG   :     x28 0000000000000013  x29 0000006de7055ba0
+10-01 15:36:42.077 15035 15035 F DEBUG   :     lr  000000719991c644  sp  0000006de7055b20  pc  000000719991c668  pst 0000000000001000
+10-01 15:36:42.077 15035 15035 F DEBUG   :     esr 0000000092000006
+10-01 15:36:42.077 15035 15035 F DEBUG   : 21 total frames
+10-01 15:36:42.077 15035 15035 F DEBUG   : backtrace:
+10-01 15:36:42.077 15035 15035 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 15:36:42.077 15035 15035 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 15:36:42.077 15035 15035 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 15:36:42.077 15035 15035 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 15:36:42.077 15035 15035 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 15:36:42.077 15035 15035 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 15:36:42.077 15035 15035 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 15:36:42.078 15035 15035 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:42:40.288 22537 22537 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 22537 (pool-1-temporar), pid 22537 (pool-1-temporar)
+10-01 15:42:40.503 22618 22618 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 22618 (pool-1-temporar), pid 22618 (pool-1-temporar)
+10-01 15:42:40.881 23772 23772 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 15:42:40.881 23772 23772 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 15:42:40.881 23772 23772 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 15:42:40.881 23772 23772 F DEBUG   : Revision: '13'
+10-01 15:42:40.881 23772 23772 F DEBUG   : ABI: 'arm64'
+10-01 15:42:40.881 23772 23772 F DEBUG   : Processor: '0'
+10-01 15:42:40.881 23772 23772 F DEBUG   : Timestamp: 2026-10-01 15:42:40.547213125+0800
+10-01 15:42:40.881 23772 23772 F DEBUG   : Process uptime: 101s
+10-01 15:42:40.881 23772 23772 F DEBUG   : Executable: /system/bin/app_process64
+10-01 15:42:40.881 23772 23772 F DEBUG   : Cmdline: com.apkpure.aegon
+10-01 15:42:40.881 23772 23772 F DEBUG   : pid: 22537, tid: 22537, name: pool-1-temporar  >>> com.apkpure.aegon <<<
+10-01 15:42:40.881 23772 23772 F DEBUG   : uid: 10386
+10-01 15:42:40.881 23772 23772 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 15:42:40.881 23772 23772 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 15:42:40.881 23772 23772 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 15:42:40.881 23772 23772 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 15:42:40.881 23772 23772 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x0  0000000000000000  x1  0000000000005809  x2  0000000000000006  x3  0000006de4248b20
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x4  7160716e6f6c6473  x5  7160716e6f6c6473  x6  7160716e6f6c6473  x7  7f7f7f7f7f7f7f7f
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x8  00000000000000f0  x9  95155698a4606342  x10 000000ff00000020  x11 000000000012800c
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x12 000000006abe0ef0  x13 000000007fffffff  x14 000000000ca5f7c4  x15 00000cecf8e0a4d6
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de3dc8000  x19 0000000000005809
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x20 0000000000005809  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x24 0000006e8ea5b000  x25 b4000070207febd8  x26 0000000000000000  x27 0000000000000000
+10-01 15:42:40.881 23772 23772 F DEBUG   :     x28 0000000000000013  x29 0000006de4248ba0
+10-01 15:42:40.881 23772 23772 F DEBUG   :     lr  000000719991c644  sp  0000006de4248b20  pc  000000719991c668  pst 0000000000001000
+10-01 15:42:40.881 23772 23772 F DEBUG   :     esr 0000000092000006
+10-01 15:42:40.881 23772 23772 F DEBUG   : 21 total frames
+10-01 15:42:40.881 23772 23772 F DEBUG   : backtrace:
+10-01 15:42:40.881 23772 23772 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 15:42:40.881 23772 23772 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 15:42:40.881 23772 23772 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 15:42:40.881 23772 23772 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 15:42:40.881 23772 23772 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 15:42:40.881 23772 23772 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 15:42:40.881 23772 23772 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:42:41.056 23788 23788 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 15:42:41.056 23788 23788 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 15:42:41.056 23788 23788 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 15:42:41.056 23788 23788 F DEBUG   : Revision: '13'
+10-01 15:42:41.056 23788 23788 F DEBUG   : ABI: 'arm64'
+10-01 15:42:41.056 23788 23788 F DEBUG   : Processor: '6'
+10-01 15:42:41.056 23788 23788 F DEBUG   : Timestamp: 2026-10-01 15:42:40.914222188+0800
+10-01 15:42:41.056 23788 23788 F DEBUG   : Process uptime: 101s
+10-01 15:42:41.056 23788 23788 F DEBUG   : Executable: /system/bin/app_process64
+10-01 15:42:41.056 23788 23788 F DEBUG   : Cmdline: com.apkpure.aegon:beta
+10-01 15:42:41.056 23788 23788 F DEBUG   : pid: 22618, tid: 22618, name: pool-1-temporar  >>> com.apkpure.aegon:beta <<<
+10-01 15:42:41.056 23788 23788 F DEBUG   : uid: 10386
+10-01 15:42:41.056 23788 23788 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 15:42:41.056 23788 23788 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 15:42:41.056 23788 23788 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 15:42:41.056 23788 23788 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 15:42:41.056 23788 23788 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x0  0000000000000000  x1  000000000000585a  x2  0000000000000006  x3  0000006de6083b20
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x4  646762721f3e3c64  x5  646762721f3e3c64  x6  646762721f3e3c64  x7  7f7f7f7f7f7f7f7f
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x8  00000000000000f0  x9  a18cb974b36d907b  x10 000000ff00000020  x11 000000000012800c
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x12 000000006abe0ef0  x13 000000007fffffff  x14 000000000ca5f830  x15 00000cecf9201287
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de5778000  x19 000000000000585a
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x20 000000000000585a  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x24 0000006e8ea5b000  x25 b400007020808178  x26 0000000000000000  x27 0000000000000000
+10-01 15:42:41.056 23788 23788 F DEBUG   :     x28 0000000000000013  x29 0000006de6083ba0
+10-01 15:42:41.056 23788 23788 F DEBUG   :     lr  000000719991c644  sp  0000006de6083b20  pc  000000719991c668  pst 0000000000001000
+10-01 15:42:41.056 23788 23788 F DEBUG   :     esr 0000000092000006
+10-01 15:42:41.056 23788 23788 F DEBUG   : 21 total frames
+10-01 15:42:41.056 23788 23788 F DEBUG   : backtrace:
+10-01 15:42:41.056 23788 23788 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 15:42:41.056 23788 23788 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 15:42:41.056 23788 23788 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 15:42:41.056 23788 23788 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 15:42:41.056 23788 23788 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 15:42:41.056 23788 23788 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 15:42:41.056 23788 23788 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 18:20:12.813 10141 10141 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 10141 (pool-1-temporar), pid 10141 (pool-1-temporar)
+10-01 18:45:48.103 21469 21469 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 21469 (pool-1-temporar), pid 21469 (pool-1-temporar)
+10-01 18:45:51.433 22087 22087 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 18:45:51.433 22087 22087 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 18:45:51.433 22087 22087 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 18:45:51.433 22087 22087 F DEBUG   : Revision: '13'
+10-01 18:45:51.433 22087 22087 F DEBUG   : ABI: 'arm64'
+10-01 18:45:51.433 22087 22087 F DEBUG   : Processor: '6'
+10-01 18:45:51.433 22087 22087 F DEBUG   : Timestamp: 2026-10-01 18:45:49.821445562+0800
+10-01 18:45:51.433 22087 22087 F DEBUG   : Process uptime: 3s
+10-01 18:45:51.433 22087 22087 F DEBUG   : Executable: /system/bin/app_process64
+10-01 18:45:51.433 22087 22087 F DEBUG   : Cmdline: com.apkpure.aegon:beta
+10-01 18:45:51.433 22087 22087 F DEBUG   : pid: 21469, tid: 21469, name: pool-1-temporar  >>> com.apkpure.aegon:beta <<<
+10-01 18:45:51.433 22087 22087 F DEBUG   : uid: 10386
+10-01 18:45:51.433 22087 22087 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 18:45:51.433 22087 22087 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 18:45:51.433 22087 22087 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 18:45:51.433 22087 22087 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 18:45:51.433 22087 22087 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x0  0000000000000000  x1  00000000000053dd  x2  0000000000000006  x3  0000006de7180b20
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x4  2d726e2d63686e71  x5  2d726e2d63686e71  x6  2d726e2d63686e71  x7  7f7f7f7f7f7f7f7f
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x8  00000000000000f0  x9  ca1005695452cbbe  x10 000000ff00000020  x11 000000000012800c
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x12 000000006abe39dc  x13 000000007fffffff  x14 000000000cddab70  x15 00000d1e176f6916
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de5a78000  x19 00000000000053dd
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x20 00000000000053dd  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x24 0000006e8ea5b000  x25 b4000070208007f8  x26 0000000000000000  x27 0000000000000000
+10-01 18:45:51.433 22087 22087 F DEBUG   :     x28 0000000000000013  x29 0000006de7180ba0
+10-01 18:45:51.433 22087 22087 F DEBUG   :     lr  000000719991c644  sp  0000006de7180b20  pc  000000719991c668  pst 0000000000001000
+10-01 18:45:51.433 22087 22087 F DEBUG   :     esr 0000000092000006
+10-01 18:45:51.433 22087 22087 F DEBUG   : 21 total frames
+10-01 18:45:51.433 22087 22087 F DEBUG   : backtrace:
+10-01 18:45:51.433 22087 22087 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 18:45:51.433 22087 22087 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 18:45:51.433 22087 22087 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 18:45:51.433 22087 22087 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 18:45:51.433 22087 22087 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 18:45:51.433 22087 22087 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 18:45:51.433 22087 22087 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 18:45:51.433 22087 22087 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:45:51.433 22087 22087 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 18:45:51.433 22087 22087 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 18:45:51.433 22087 22087 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 18:45:51.434 22087 22087 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 18:47:42.421 21032 21032 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 21032 (pool-1-temporar), pid 21032 (pool-1-temporar)
+10-01 18:47:42.855 25563 25563 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 18:47:42.855 25563 25563 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 18:47:42.855 25563 25563 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 18:47:42.855 25563 25563 F DEBUG   : Revision: '13'
+10-01 18:47:42.855 25563 25563 F DEBUG   : ABI: 'arm64'
+10-01 18:47:42.855 25563 25563 F DEBUG   : Processor: '5'
+10-01 18:47:42.855 25563 25563 F DEBUG   : Timestamp: 2026-10-01 18:47:42.589393591+0800
+10-01 18:47:42.855 25563 25563 F DEBUG   : Process uptime: 116s
+10-01 18:47:42.855 25563 25563 F DEBUG   : Executable: /system/bin/app_process64
+10-01 18:47:42.855 25563 25563 F DEBUG   : Cmdline: com.apkpure.aegon
+10-01 18:47:42.855 25563 25563 F DEBUG   : pid: 21032, tid: 21032, name: pool-1-temporar  >>> com.apkpure.aegon <<<
+10-01 18:47:42.855 25563 25563 F DEBUG   : uid: 10386
+10-01 18:47:42.855 25563 25563 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 18:47:42.855 25563 25563 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 18:47:42.855 25563 25563 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 18:47:42.855 25563 25563 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 18:47:42.855 25563 25563 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x0  0000000000000000  x1  0000000000005228  x2  0000000000000006  x3  0000006de3ea4b20
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x4  2d726e2d63686e71  x5  2d726e2d63686e71  x6  2d726e2d63686e71  x7  7f7f7f7f7f7f7f7f
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x8  00000000000000f0  x9  d221fd9c59951870  x10 000000ff00000020  x11 000000000012800c
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x12 000000006abe3a4e  x13 000000007fffffff  x14 000000000cde82da  x15 00000d1e9a432e0b
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de3064000  x19 0000000000005228
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x20 0000000000005228  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x24 0000006e8ea5b000  x25 b400007020801ba8  x26 0000000000000000  x27 0000000000000000
+10-01 18:47:42.855 25563 25563 F DEBUG   :     x28 0000000000000013  x29 0000006de3ea4ba0
+10-01 18:47:42.855 25563 25563 F DEBUG   :     lr  000000719991c644  sp  0000006de3ea4b20  pc  000000719991c668  pst 0000000000001000
+10-01 18:47:42.855 25563 25563 F DEBUG   :     esr 0000000092000006
+10-01 18:47:42.855 25563 25563 F DEBUG   : 21 total frames
+10-01 18:47:42.855 25563 25563 F DEBUG   : backtrace:
+10-01 18:47:42.855 25563 25563 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 18:47:42.855 25563 25563 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 18:47:42.855 25563 25563 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 18:47:42.855 25563 25563 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 18:47:42.855 25563 25563 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 18:47:42.855 25563 25563 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.855 25563 25563 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:42.856 25563 25563 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:42.856 25563 25563 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:42.856 25563 25563 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:42.856 25563 25563 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 18:47:42.856 25563 25563 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 18:47:44.285 26418 26418 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 26418 (pool-1-temporar), pid 26418 (pool-1-temporar)
+10-01 18:47:44.847 26446 26446 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-01 18:47:44.850 26446 26446 F DEBUG   : Build fingerprint: 'samsung/e1qzcx/e1q:16/BP4A.251205.006/S9210ZCS6DZH3:user/release-keys'
+10-01 18:47:44.869 26446 26446 F DEBUG   : Kernel Release: '6.1.145-android14-11-3254743-abS9210ZCS6DZH3'
+10-01 18:47:44.869 26446 26446 F DEBUG   : Revision: '13'
+10-01 18:47:44.869 26446 26446 F DEBUG   : ABI: 'arm64'
+10-01 18:47:44.869 26446 26446 F DEBUG   : Processor: '6'
+10-01 18:47:44.869 26446 26446 F DEBUG   : Timestamp: 2026-10-01 18:47:44.460891612+0800
+10-01 18:47:44.869 26446 26446 F DEBUG   : Process uptime: 1s
+10-01 18:47:44.869 26446 26446 F DEBUG   : Executable: /system/bin/app_process64
+10-01 18:47:44.869 26446 26446 F DEBUG   : Cmdline: com.apkpure.aegon:beta
+10-01 18:47:44.869 26446 26446 F DEBUG   : pid: 26418, tid: 26418, name: pool-1-temporar  >>> com.apkpure.aegon:beta <<<
+10-01 18:47:44.869 26446 26446 F DEBUG   : uid: 10386
+10-01 18:47:44.869 26446 26446 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-01 18:47:44.869 26446 26446 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-01 18:47:44.869 26446 26446 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+10-01 18:47:44.869 26446 26446 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-01 18:47:44.869 26446 26446 F DEBUG   : Abort message: 'libbinder ProcessState can not be used after fork'
+10-01 18:47:44.869 26446 26446 F DEBUG   :     x0  0000000000000000  x1  0000000000006732  x2  0000000000000006  x3  0000006de6754b20
+10-01 18:47:44.869 26446 26446 F DEBUG   :     x4  622d6b6873742d60  x5  622d6b6873742d60  x6  622d6b6873742d60  x7  7f7f7f7f7f7f7f7f
+10-01 18:47:44.869 26446 26446 F DEBUG   :     x8  00000000000000f0  x9  1304e3338cb1a673  x10 000000ff00000020  x11 000000000012800c
+10-01 18:47:44.869 26446 26446 F DEBUG   :     x12 000000006abe3a50  x13 000000007fffffff  x14 000000000cde867c  x15 00000d1e9c64bdb5
+10-01 18:47:44.869 26446 26446 F DEBUG   :     x16 0000007199996138  x17 000000719997b5c0  x18 0000006de5d74000  x19 0000000000006732
+10-01 18:47:44.870 26446 26446 F DEBUG   :     x20 0000000000006732  x21 00000000ffffffff  x22 0000006e8ea5c080  x23 0000000000000001
+10-01 18:47:44.870 26446 26446 F DEBUG   :     x24 0000006e8ea5b000  x25 b400007020807128  x26 0000000000000000  x27 0000000000000000
+10-01 18:47:44.870 26446 26446 F DEBUG   :     x28 0000000000000013  x29 0000006de6754ba0
+10-01 18:47:44.870 26446 26446 F DEBUG   :     lr  000000719991c644  sp  0000006de6754b20  pc  000000719991c668  pst 0000000000001000
+10-01 18:47:44.870 26446 26446 F DEBUG   :     esr 0000000092000006
+10-01 18:47:44.870 26446 26446 F DEBUG   : 21 total frames
+10-01 18:47:44.870 26446 26446 F DEBUG   : backtrace:
+10-01 18:47:44.870 26446 26446 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+10-01 18:47:44.870 26446 26446 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+10-01 18:47:44.870 26446 26446 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+10-01 18:47:44.870 26446 26446 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+10-01 18:47:44.870 26446 26446 F DEBUG   :   NOTE: Unreadable libraries:
+10-01 18:47:44.870 26446 26446 F DEBUG   :   NOTE:   /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #00 pc 0000000000075668  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 1ec1d41f7c9e3e45043ebfef05c0ed3d)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #03 pc 000000000000cce4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: c45665635f54ddb6df2d2aab321a3575)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #04 pc 000000000007f740  /system/lib64/libbinder.so (android::Parcel::flattenBinder(android::sp<android::IBinder> const&)+3264) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #05 pc 000000000007bc18  /system/lib64/libbinder.so (android::os::ServiceWithMetadata::writeToParcel(android::Parcel*) const+52) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #06 pc 0000000000073b80  /system/lib64/libbinder.so (android::os::BnServiceManager::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+376) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #07 pc 000000000005d4d8  /system/lib64/libbinder.so (android::BBinder::transact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+204) (BuildId: 2cd9f9d4c5356fcd35c2770d04d674be)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #08 pc 00000000001fd790  /system/lib64/libandroid_runtime.so (android_os_BinderProxy_transact(_JNIEnv*, _jobject*, int, _jobject*, _jobject*, int)+156) (BuildId: 65c3f4640c141e4100e787d1dade54d6)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #09 pc 00000000008a358c  /system/framework/arm64/boot-framework.oat (art_jni_trampoline+140) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #10 pc 00000000005368fc  /system/framework/arm64/boot-framework.oat (android.os.BinderProxy.transact+2492) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #11 pc 000000000054d68c  /system/framework/arm64/boot-framework.oat (android.os.IServiceManager$Stub$Proxy.checkService2+268) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #12 pc 000000000058615c  /system/framework/arm64/boot-framework.oat (android.os.ServiceManagerProxy.checkService2+60) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.870 26446 26446 F DEBUG   :       #13 pc 000000000032fedc  /system/framework/arm64/boot-framework.oat ([DEDUPED]+44) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #14 pc 0000000000585a48  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.rawGetService+488) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #15 pc 0000000000585360  /system/framework/arm64/boot-framework.oat (android.os.ServiceManager.getService+144) (BuildId: 0407e42e5980d88769ae01c310b9834a14786972)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #16 pc 00000000002ab060  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #17 pc 00000000002a11a0  /apex/com.android.art/lib64/libart.so (_jobject* art::InvokeMethod<(art::PointerSize)8>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jobject*, _jobject*, unsigned long)+552) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #18 pc 00000000005ac718  /apex/com.android.art/lib64/libart.so (art::Method_invoke(_JNIEnv*, _jobject*, _jobject*, _jobjectArray*) (.__uniq.165753521025965369065708152063621506277)+32) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #19 pc 00000000002e2a24  /system/framework/arm64/boot.oat (art_jni_trampoline+116) (BuildId: d6f0847619f0122787c5b74ee59c378621d24e03)
+10-01 18:47:44.872 26446 26446 F DEBUG   :       #20 pc 00000000007b2e7c  /data/data/com.apkpure.aegon/files/shell/0_3201997_86/oat/arm64/base.odex

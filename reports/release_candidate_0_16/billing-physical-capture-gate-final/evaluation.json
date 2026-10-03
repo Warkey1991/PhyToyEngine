@@ -1,0 +1,1447 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "run_started_at_ns": 1790859488717800000,
+  "scope": "Installed unconfigured RC; no Play checkout or fake purchase success",
+  "checks": [
+    {
+      "name": "both free cameras select without trial caption or unlock shutter",
+      "passed": true,
+      "styles": [
+        "style_dh_color",
+        "style_dh_mono"
+      ]
+    },
+    {
+      "name": "locked default opens purchase without writing default; settings restore is reachable",
+      "passed": true,
+      "default_unchanged": true
+    },
+    {
+      "name": "style_digital remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "style_plastic remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "style_street remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "style_fisheye remains locked through preview, restore, shutter, Back and restart",
+      "passed": true
+    },
+    {
+      "name": "locked settings default remains unchanged after process restart",
+      "passed": true
+    },
+    {
+      "name": "200% purchase page scrolls to four labelled 48dp actions; restore/retry do not unlock and trial cannot save",
+      "passed": true
+    }
+  ],
+  "styles": [
+    {
+      "id": "style_digital",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    },
+    {
+      "id": "style_plastic",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    },
+    {
+      "id": "style_street",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    },
+    {
+      "id": "style_fisheye",
+      "buy_disabled": true,
+      "preview_only": true,
+      "restore_did_not_unlock": true,
+      "shutter_blocked": true,
+      "media_unchanged": true,
+      "back_kept_trial": true,
+      "restart_free": true
+    }
+  ],
+  "artifacts": {
+    "initial-camera_ui": "initial-camera-ui.json",
+    "initial-camera_screenshot": "initial-camera.png",
+    "free-style_dh_color_ui": "free-style_dh_color-ui.json",
+    "free-style_dh_color_screenshot": "free-style_dh_color.png",
+    "free-style_dh_mono_ui": "free-style_dh_mono-ui.json",
+    "free-style_dh_mono_screenshot": "free-style_dh_mono.png",
+    "settings-locked-default_ui": "settings-locked-default-ui.json",
+    "settings-locked-default_screenshot": "settings-locked-default.png",
+    "settings-after-purchase-back_ui": "settings-after-purchase-back-ui.json",
+    "settings-after-purchase-back_screenshot": "settings-after-purchase-back.png",
+    "settings-default-unchanged_ui": "settings-default-unchanged-ui.json",
+    "settings-default-unchanged_screenshot": "settings-default-unchanged.png",
+    "settings-restore-error-toast_screenshot": "settings-restore-error-toast.png",
+    "settings-after-restore_ui": "settings-after-restore-ui.json",
+    "settings-after-restore_screenshot": "settings-after-restore.png",
+    "style_digital-purchase_ui": "style_digital-purchase-ui.json",
+    "style_digital-purchase_screenshot": "style_digital-purchase.png",
+    "style_digital-restore-not-configured_ui": "style_digital-restore-not-configured-ui.json",
+    "style_digital-restore-not-configured_screenshot": "style_digital-restore-not-configured.png",
+    "style_digital-trial_ui": "style_digital-trial-ui.json",
+    "style_digital-trial_screenshot": "style_digital-trial.png",
+    "style_digital-blocked-shutter_ui": "style_digital-blocked-shutter-ui.json",
+    "style_digital-blocked-shutter_screenshot": "style_digital-blocked-shutter.png",
+    "style_plastic-purchase_ui": "style_plastic-purchase-ui.json",
+    "style_plastic-purchase_screenshot": "style_plastic-purchase.png",
+    "style_plastic-restore-not-configured_ui": "style_plastic-restore-not-configured-ui.json",
+    "style_plastic-restore-not-configured_screenshot": "style_plastic-restore-not-configured.png",
+    "style_plastic-trial_ui": "style_plastic-trial-ui.json",
+    "style_plastic-trial_screenshot": "style_plastic-trial.png",
+    "style_plastic-blocked-shutter_ui": "style_plastic-blocked-shutter-ui.json",
+    "style_plastic-blocked-shutter_screenshot": "style_plastic-blocked-shutter.png",
+    "style_street-purchase_ui": "style_street-purchase-ui.json",
+    "style_street-purchase_screenshot": "style_street-purchase.png",
+    "style_street-restore-not-configured_ui": "style_street-restore-not-configured-ui.json",
+    "style_street-restore-not-configured_screenshot": "style_street-restore-not-configured.png",
+    "style_street-trial_ui": "style_street-trial-ui.json",
+    "style_street-trial_screenshot": "style_street-trial.png",
+    "style_street-blocked-shutter_ui": "style_street-blocked-shutter-ui.json",
+    "style_street-blocked-shutter_screenshot": "style_street-blocked-shutter.png",
+    "style_fisheye-purchase_ui": "style_fisheye-purchase-ui.json",
+    "style_fisheye-purchase_screenshot": "style_fisheye-purchase.png",
+    "style_fisheye-restore-not-configured_ui": "style_fisheye-restore-not-configured-ui.json",
+    "style_fisheye-restore-not-configured_screenshot": "style_fisheye-restore-not-configured.png",
+    "style_fisheye-trial_ui": "style_fisheye-trial-ui.json",
+    "style_fisheye-trial_screenshot": "style_fisheye-trial.png",
+    "style_fisheye-blocked-shutter_ui": "style_fisheye-blocked-shutter-ui.json",
+    "style_fisheye-blocked-shutter_screenshot": "style_fisheye-blocked-shutter.png",
+    "large-font-purchase-top_ui": "large-font-purchase-top-ui.json",
+    "large-font-purchase-top_screenshot": "large-font-purchase-top.png",
+    "large-font-purchase_back_ui": "large-font-purchase_back-ui.json",
+    "large-font-purchase_back_screenshot": "large-font-purchase_back.png",
+    "large-font-purchase_preview_ui": "large-font-purchase_preview-ui.json",
+    "large-font-purchase_preview_screenshot": "large-font-purchase_preview.png",
+    "large-font-purchase_restore_ui": "large-font-purchase_restore-ui.json",
+    "large-font-purchase_restore_screenshot": "large-font-purchase_restore.png",
+    "large-font-purchase_retry_ui": "large-font-purchase_retry-ui.json",
+    "large-font-purchase_retry_screenshot": "large-font-purchase_retry.png",
+    "large-font-restore-not-configured_ui": "large-font-restore-not-configured-ui.json",
+    "large-font-restore-not-configured_screenshot": "large-font-restore-not-configured.png",
+    "large-font-retry-unconfigured_ui": "large-font-retry-unconfigured-ui.json",
+    "large-font-retry-unconfigured_screenshot": "large-font-retry-unconfigured.png",
+    "large-font-blocked-shutter_ui": "large-font-blocked-shutter-ui.json",
+    "large-font-blocked-shutter_screenshot": "large-font-blocked-shutter.png",
+    "app_navigation_log": "app-navigation-log.txt",
+    "restored-camera_ui": "restored-camera-ui.json",
+    "restored-camera_screenshot": "restored-camera.png"
+  },
+  "touch_targets": {
+    "settings/restore": {
+      "id": "settings_restore_purchases",
+      "bounds": [
+        60,
+        2009,
+        1020,
+        2220
+      ],
+      "width_dp": 320.0,
+      "height_dp": 70.33,
+      "label": "恢复购买\n查找当前 Google Play 账号购买的相机。"
+    },
+    "style_digital/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "style_plastic/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "style_street/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "style_fisheye/restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "恢复购买"
+    },
+    "font2/purchase_back": {
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "label": "返回"
+    },
+    "font2/purchase_preview": {
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        2008,
+        1008,
+        2203
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "试试实时预览"
+    },
+    "font2/purchase_restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1107,
+        1008,
+        1302
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "恢复购买"
+    },
+    "font2/purchase_retry": {
+      "id": "purchase_retry",
+      "bounds": [
+        72,
+        1302,
+        1008,
+        1497
+      ],
+      "width_dp": 312.0,
+      "height_dp": 65.0,
+      "label": "重新连接"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "style_digital-blocked-shutter",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "style_digital-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "style_plastic-blocked-shutter",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "style_plastic-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "style_street-blocked-shutter",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "style_street-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "style_fisheye-blocked-shutter",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "style_fisheye-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "large-font-blocked-shutter",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "large-font-blocked-shutter-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 8,
+      "ids": [
+        1000041087,
+        1000041094,
+        1000041095,
+        1000041096,
+        1000041099,
+        1000041100,
+        1000041101,
+        1000041102
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "emulator_properties": {
+    "ro.kernel.qemu": "0",
+    "ro.boot.qemu": ""
+  },
+  "physical_device_opt_in": true,
+  "device_model": "SM-S9210",
+  "sdk": 36,
+  "display": {
+    "width_pixels": 1080,
+    "height_pixels": 2340,
+    "density_dpi": 480
+  },
+  "installed_apks": [
+    {
+      "path": "/data/app/~~_irEE_cY9drKHu8cFjuLqw==/com.phytoy.sample-wwFMYNoSmOzqW9nbiAJCcQ==/base.apk",
+      "sha256": "d46288f3204866633064455df64f4e16eb3fc6f0cbe1ca16a4f8a56d1f161501"
+    }
+  ],
+  "installed_apk_sha256": "d46288f3204866633064455df64f4e16eb3fc6f0cbe1ca16a4f8a56d1f161501",
+  "font_scale_original": "1.0",
+  "phase": "200 percent purchase page",
+  "initial_visible_style": "style_dh_mono",
+  "last_action": "tap style_dh_mono",
+  "taps": [
+    {
+      "phase": "free cameras",
+      "id": "style_dh_color",
+      "bounds": [
+        36,
+        1689,
+        300,
+        1833
+      ],
+      "point": [
+        168,
+        1761
+      ],
+      "started_at_ns": 1790859497892479000,
+      "completed_at_ns": 1790859497963243000
+    },
+    {
+      "phase": "free cameras",
+      "id": "style_dh_mono",
+      "bounds": [
+        312,
+        1689,
+        590,
+        1833
+      ],
+      "point": [
+        451,
+        1761
+      ],
+      "started_at_ns": 1790859505233259000,
+      "completed_at_ns": 1790859505340229000
+    },
+    {
+      "phase": "settings locked default and restore",
+      "id": "open_settings",
+      "bounds": [
+        912,
+        127,
+        1056,
+        271
+      ],
+      "point": [
+        984,
+        199
+      ],
+      "started_at_ns": 1790859511586251000,
+      "completed_at_ns": 1790859511678397000
+    },
+    {
+      "phase": "settings locked default and restore",
+      "id": "settings_default_style",
+      "bounds": [
+        60,
+        545,
+        1020,
+        824
+      ],
+      "point": [
+        540,
+        684
+      ],
+      "started_at_ns": 1790859516532918000,
+      "completed_at_ns": 1790859516635626000
+    },
+    {
+      "phase": "settings locked default and restore",
+      "id": "text1",
+      "bounds": [
+        75,
+        1045,
+        1005,
+        1189
+      ],
+      "point": [
+        540,
+        1117
+      ],
+      "started_at_ns": 1790859519044584000,
+      "completed_at_ns": 1790859519150421000
+    },
+    {
+      "phase": "settings locked default and restore",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859534022058000,
+      "completed_at_ns": 1790859534109978000
+    },
+    {
+      "phase": "settings locked default and restore",
+      "id": "settings_restore_purchases",
+      "bounds": [
+        60,
+        2009,
+        1020,
+        2220
+      ],
+      "point": [
+        540,
+        2114
+      ],
+      "started_at_ns": 1790859561427008000,
+      "completed_at_ns": 1790859561528215000
+    },
+    {
+      "phase": "settings locked default and restore",
+      "id": "settings_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859567464116000,
+      "completed_at_ns": 1790859567561885000
+    },
+    {
+      "phase": "paid trial style_digital",
+      "id": "style_digital",
+      "bounds": [
+        602,
+        1689,
+        935,
+        1833
+      ],
+      "point": [
+        768,
+        1761
+      ],
+      "started_at_ns": 1790859572336939000,
+      "completed_at_ns": 1790859572417794000
+    },
+    {
+      "phase": "paid trial style_digital",
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "point": [
+        540,
+        1689
+      ],
+      "started_at_ns": 1790859601394105000,
+      "completed_at_ns": 1790859601485422000
+    },
+    {
+      "phase": "paid trial style_digital",
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        1327,
+        1008,
+        1483
+      ],
+      "point": [
+        540,
+        1405
+      ],
+      "started_at_ns": 1790859616111707000,
+      "completed_at_ns": 1790859616203050000
+    },
+    {
+      "phase": "paid trial style_digital",
+      "id": "shutter",
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "point": [
+        540,
+        2166
+      ],
+      "started_at_ns": 1790859623835564000,
+      "completed_at_ns": 1790859623927053000
+    },
+    {
+      "phase": "paid trial style_digital",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859639701447000,
+      "completed_at_ns": 1790859639774652000
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "id": "style_plastic",
+      "bounds": [
+        393,
+        1689,
+        739,
+        1833
+      ],
+      "point": [
+        566,
+        1761
+      ],
+      "started_at_ns": 1790859650544672000,
+      "completed_at_ns": 1790859650639393000
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "point": [
+        540,
+        1689
+      ],
+      "started_at_ns": 1790859679525647000,
+      "completed_at_ns": 1790859679622477000
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        1327,
+        1008,
+        1483
+      ],
+      "point": [
+        540,
+        1405
+      ],
+      "started_at_ns": 1790859694363673000,
+      "completed_at_ns": 1790859694465977000
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "id": "shutter",
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "point": [
+        540,
+        2166
+      ],
+      "started_at_ns": 1790859701578073000,
+      "completed_at_ns": 1790859701664802000
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859718577008000,
+      "completed_at_ns": 1790859718674190000
+    },
+    {
+      "phase": "paid trial style_street",
+      "id": "style_street",
+      "bounds": [
+        738,
+        1689,
+        1067,
+        1833
+      ],
+      "point": [
+        902,
+        1761
+      ],
+      "started_at_ns": 1790859730311018000,
+      "completed_at_ns": 1790859730406409000
+    },
+    {
+      "phase": "paid trial style_street",
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "point": [
+        540,
+        1689
+      ],
+      "started_at_ns": 1790859759520581000,
+      "completed_at_ns": 1790859759619200000
+    },
+    {
+      "phase": "paid trial style_street",
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        1327,
+        1008,
+        1483
+      ],
+      "point": [
+        540,
+        1405
+      ],
+      "started_at_ns": 1790859774250964000,
+      "completed_at_ns": 1790859774337150000
+    },
+    {
+      "phase": "paid trial style_street",
+      "id": "shutter",
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "point": [
+        540,
+        2166
+      ],
+      "started_at_ns": 1790859781258575000,
+      "completed_at_ns": 1790859781352497000
+    },
+    {
+      "phase": "paid trial style_street",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859797226927000,
+      "completed_at_ns": 1790859797328745000
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "id": "style_fisheye",
+      "bounds": [
+        691,
+        1689,
+        1032,
+        1833
+      ],
+      "point": [
+        861,
+        1761
+      ],
+      "started_at_ns": 1790859811809538000,
+      "completed_at_ns": 1790859811894772000
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1611,
+        1008,
+        1767
+      ],
+      "point": [
+        540,
+        1689
+      ],
+      "started_at_ns": 1790859840705708000,
+      "completed_at_ns": 1790859840802285000
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        1327,
+        1008,
+        1483
+      ],
+      "point": [
+        540,
+        1405
+      ],
+      "started_at_ns": 1790859855264426000,
+      "completed_at_ns": 1790859855367392000
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "id": "shutter",
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "point": [
+        540,
+        2166
+      ],
+      "started_at_ns": 1790859862311720000,
+      "completed_at_ns": 1790859862385360000
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859880094615000,
+      "completed_at_ns": 1790859880175712000
+    },
+    {
+      "phase": "persisted default verification",
+      "id": "open_settings",
+      "bounds": [
+        912,
+        127,
+        1056,
+        271
+      ],
+      "point": [
+        984,
+        199
+      ],
+      "started_at_ns": 1790859888225106000,
+      "completed_at_ns": 1790859888315966000
+    },
+    {
+      "phase": "persisted default verification",
+      "id": "settings_back",
+      "bounds": [
+        36,
+        127,
+        180,
+        271
+      ],
+      "point": [
+        108,
+        199
+      ],
+      "started_at_ns": 1790859892914963000,
+      "completed_at_ns": 1790859893001513000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "style_digital",
+      "bounds": [
+        793,
+        1662,
+        1080,
+        1806
+      ],
+      "point": [
+        936,
+        1734
+      ],
+      "started_at_ns": 1790859901498419000,
+      "completed_at_ns": 1790859901577473000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "purchase_restore",
+      "bounds": [
+        72,
+        1107,
+        1008,
+        1302
+      ],
+      "point": [
+        540,
+        1204
+      ],
+      "started_at_ns": 1790859951889311000,
+      "completed_at_ns": 1790859951965638000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "purchase_retry",
+      "bounds": [
+        72,
+        1302,
+        1008,
+        1497
+      ],
+      "point": [
+        540,
+        1399
+      ],
+      "started_at_ns": 1790859966383560000,
+      "completed_at_ns": 1790859966462234000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "purchase_preview",
+      "bounds": [
+        72,
+        622,
+        1008,
+        817
+      ],
+      "point": [
+        540,
+        719
+      ],
+      "started_at_ns": 1790859980737676000,
+      "completed_at_ns": 1790859980822304000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "shutter",
+      "bounds": [
+        423,
+        2049,
+        657,
+        2283
+      ],
+      "point": [
+        540,
+        2166
+      ],
+      "started_at_ns": 1790859986455144000,
+      "completed_at_ns": 1790859986541408000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "purchase_back",
+      "bounds": [
+        36,
+        155,
+        180,
+        299
+      ],
+      "point": [
+        108,
+        227
+      ],
+      "started_at_ns": 1790860015910461000,
+      "completed_at_ns": 1790860016007176000
+    },
+    {
+      "phase": "200 percent purchase page",
+      "id": "style_dh_mono",
+      "bounds": [
+        312,
+        1689,
+        590,
+        1833
+      ],
+      "point": [
+        451,
+        1761
+      ],
+      "started_at_ns": 1790860024375046000,
+      "completed_at_ns": 1790860024449185000
+    }
+  ],
+  "default_style_before": "默认风格\nDH 2++\n不记住上次风格或首次启动时，使用此风格。",
+  "gestures": [
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "settings locked default and restore",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1596
+      ],
+      "to": [
+        540,
+        996
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_digital",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_plastic",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_street",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        1689,
+        1080,
+        1833
+      ],
+      "from": [
+        777,
+        1761
+      ],
+      "to": [
+        302,
+        1761
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        995
+      ],
+      "to": [
+        540,
+        1595
+      ]
+    },
+    {
+      "phase": "paid trial style_fisheye",
+      "container_bounds": [
+        0,
+        295,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1595
+      ],
+      "to": [
+        540,
+        995
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1031
+      ],
+      "to": [
+        540,
+        1614
+      ]
+    },
+    {
+      "phase": "200 percent purchase page",
+      "container_bounds": [
+        0,
+        351,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1614
+      ],
+      "to": [
+        540,
+        1031
+      ]
+    }
+  ],
+  "font_scale_after": "1.0",
+  "font_scale_restored": true,
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true
+}

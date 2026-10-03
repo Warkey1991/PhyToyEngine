@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "camera heading contains only current camera type",
+      "passed": true,
+      "font_scale": "1.0",
+      "label": "DH 2++ 黑白"
+    },
+    {
+      "name": "restore and retry have separate nonoverlapping 48dp targets and 12dp gap",
+      "passed": true,
+      "font_scale": "1.0",
+      "gap_dp": 12.0
+    },
+    {
+      "name": "camera heading contains only current camera type",
+      "passed": true,
+      "font_scale": "2.0",
+      "label": "DH 2++ 黑白"
+    },
+    {
+      "name": "restore and retry have separate nonoverlapping 48dp targets and 12dp gap",
+      "passed": true,
+      "font_scale": "2.0",
+      "gap_dp": 12.0
+    }
+  ],
+  "failure": null,
+  "font_scale_restored": true,
+  "photos_changed": false
+}

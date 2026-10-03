@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 421, in main
+    smoke.target("purchase_restore", restore, record=identifier + "/restore")
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 132, in target
+    assert node.get("enabled") == "true" and (node.get("clickable") == "true" or list_item), (
+AssertionError: purchase_restore is not enabled and clickable

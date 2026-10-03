@@ -1,0 +1,40 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "checks": [
+    {
+      "name": "camera opens and shutter becomes ready",
+      "passed": true
+    },
+    {
+      "name": "local privacy text is accessible",
+      "passed": true
+    },
+    {
+      "name": "3 background/resume cycles",
+      "passed": true
+    },
+    {
+      "name": "front and back camera with a saved front photo",
+      "passed": true
+    },
+    {
+      "name": "both free profiles switch, save, review and return to shooting",
+      "passed": true
+    }
+  ],
+  "styles": [
+    {
+      "id": "style_dh_color",
+      "saved_and_reviewed": true
+    },
+    {
+      "id": "style_dh_mono",
+      "saved_and_reviewed": true
+    }
+  ],
+  "six_style_capture_skipped": true,
+  "free_cameras_only": true,
+  "installed_apk_sha256": "b4f63198c5e0a9bf23a7afd845c8321749fd3ad0d2d8e621a79b0f099fa80270",
+  "failure": "AssertionError: Timed out waiting for shutter, enabled=True"
+}

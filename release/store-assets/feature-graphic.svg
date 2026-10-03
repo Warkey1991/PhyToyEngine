@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500" role="img" aria-labelledby="title desc">
-  <title id="title">PhyToy feature graphic</title>
-  <desc id="desc">PhyToy, a little camera, a different view. Original warm color and monochrome geometric postcards.</desc>
+  <title id="title">ToviCam feature graphic</title>
+  <desc id="desc">ToviCam, a little camera, a different view. Original warm color and monochrome geometric postcards.</desc>
   <rect width="1024" height="500" fill="#172019"/>
   <ellipse cx="900" cy="180" rx="290" ry="350" fill="#263025"/>
   <rect x="1008" width="16" height="500" fill="#F4B942"/>
   <rect x="80" y="172" width="44" height="6" rx="3" fill="#F4B942"/>
   <g font-family="Arial, Helvetica, sans-serif">
-    <text x="80" y="125" font-size="47" font-weight="700" letter-spacing="4" fill="#F4EEDC">PHYTOY</text>
+    <text x="80" y="125" font-size="47" font-weight="700" letter-spacing="4" fill="#F4EEDC">ToviCam</text>
     <text x="80" y="262" font-size="42" font-weight="700" fill="#F4B942">A little camera.</text>
     <text x="80" y="320" font-size="42" font-weight="700" fill="#F4EEDC">A different view.</text>
     <text x="80" y="390" font-size="25" fill="#C8CDBD">Color. Monochrome. Character.</text>

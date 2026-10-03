@@ -1,0 +1,14 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "name": "camera heading contains only current camera type",
+      "passed": true,
+      "font_scale": "1.0",
+      "label": "DH 2++ 黑白"
+    }
+  ],
+  "failure": "AssertionError('Timed out waiting for purchase_back; accessibility dump timed out')",
+  "font_scale_restored": true,
+  "photos_changed": false
+}

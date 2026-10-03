@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 331, in <module>
+    main()
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 216, in main
+    wait("shutter", enabled=True)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_product_smoke.py", line 67, in wait
+    raise AssertionError(f"Timed out waiting for {identifier}, enabled={enabled}")
+AssertionError: Timed out waiting for shutter, enabled=True

@@ -1,0 +1,188 @@
+{
+  "passed": true,
+  "package": "com.phytoy.sample",
+  "activity": "com.phytoy.sample.MainActivity",
+  "font_scale_target": 2.0,
+  "checks": [
+    {
+      "name": "camera primary actions are visible, labelled and at least 48dp",
+      "passed": true
+    },
+    {
+      "name": "settings scroll reaches privacy and returns to the camera",
+      "passed": true
+    },
+    {
+      "name": "gallery photo review and both page back buttons work at 200% font scale",
+      "passed": true
+    },
+    {
+      "name": "review continue returns directly to the camera without taking a photo",
+      "passed": true
+    }
+  ],
+  "artifacts": {
+    "camera_ui": "camera-ui.json",
+    "camera_screenshot": "camera.png",
+    "settings_ui": "settings-ui.json",
+    "settings_screenshot": "settings.png",
+    "settings-privacy-entry_ui": "settings-privacy-entry-ui.json",
+    "settings-privacy-entry_screenshot": "settings-privacy-entry.png",
+    "privacy_ui": "privacy-ui.json",
+    "privacy_screenshot": "privacy.png",
+    "gallery_ui": "gallery-ui.json",
+    "gallery_screenshot": "gallery.png",
+    "review_ui": "review-ui.json",
+    "review_screenshot": "review.png"
+  },
+  "touch_targets": {
+    "camera/shutter": {
+      "bounds": [
+        211,
+        801,
+        328,
+        918
+      ],
+      "width_dp": 78.0,
+      "height_dp": 78.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "拍摄照片"
+    },
+    "camera/open_settings": {
+      "bounds": [
+        456,
+        173,
+        528,
+        245
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "相机设置"
+    },
+    "camera/switch_camera": {
+      "bounds": [
+        429,
+        822,
+        504,
+        897
+      ],
+      "width_dp": 50.0,
+      "height_dp": 50.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "切换到前置相机"
+    },
+    "camera/last_photo": {
+      "bounds": [
+        36,
+        822,
+        111,
+        897
+      ],
+      "width_dp": 50.0,
+      "height_dp": 50.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "查看拍摄的照片"
+    },
+    "settings/settings_back": {
+      "bounds": [
+        18,
+        153,
+        90,
+        225
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回"
+    },
+    "settings/settings_privacy": {
+      "bounds": [
+        30,
+        843,
+        510,
+        924
+      ],
+      "width_dp": 320.0,
+      "height_dp": 54.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "隐私政策"
+    },
+    "gallery/gallery_back": {
+      "bounds": [
+        18,
+        182,
+        90,
+        254
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回相机"
+    },
+    "gallery/gallery_item": {
+      "bounds": [
+        18,
+        315,
+        182,
+        479
+      ],
+      "width_dp": 109.33,
+      "height_dp": 109.33,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "FISHEYE 05 风格照片，2026/10/1 13:54。打开照片。"
+    },
+    "review/review_back": {
+      "bounds": [
+        18,
+        202,
+        90,
+        274
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "返回"
+    },
+    "review/review_continue": {
+      "bounds": [
+        36,
+        802,
+        504,
+        894
+      ],
+      "width_dp": 312.0,
+      "height_dp": 61.33,
+      "clickable": true,
+      "enabled": true,
+      "accessible_label": "继续拍摄"
+    }
+  },
+  "photos_taken": 0,
+  "app_preferences_changed": false,
+  "permissions_changed": false,
+  "locale_changed": false,
+  "serial": "emulator-5580",
+  "emulator_properties": {
+    "ro.kernel.qemu": "1",
+    "ro.boot.qemu": "1"
+  },
+  "display": {
+    "width_pixels": 540,
+    "height_pixels": 960,
+    "density_dpi": 240
+  },
+  "font_scale_original": "1.0",
+  "font_scale_applied": "2.0",
+  "font_scale_restored": true,
+  "font_scale_after": "1.0"
+}

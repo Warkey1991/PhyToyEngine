@@ -1,0 +1,77 @@
+{
+  "passed": false,
+  "package": "com.phytoy.sample",
+  "serial": "RFCX80BD3XN",
+  "scope": "Installed unconfigured RC; no Play checkout or fake purchase success",
+  "checks": [],
+  "styles": [],
+  "artifacts": {
+    "settings-start_ui": "settings-start-ui.json",
+    "settings-start_screenshot": "settings-start.png",
+    "settings-restore-visible_ui": "settings-restore-visible-ui.json",
+    "settings-restore-visible_screenshot": "settings-restore-visible.png"
+  },
+  "touch_targets": {},
+  "media_history": [],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "last_action": "swipe vertical 540,1596 to 540,996",
+  "phase": "isolated settings scroll",
+  "gestures": [
+    {
+      "phase": "isolated settings scroll",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "isolated settings scroll",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        996
+      ],
+      "to": [
+        540,
+        1596
+      ]
+    },
+    {
+      "phase": "isolated settings scroll",
+      "container_bounds": [
+        0,
+        298,
+        1080,
+        2295
+      ],
+      "from": [
+        540,
+        1596
+      ],
+      "to": [
+        540,
+        996
+      ]
+    }
+  ]
+}
