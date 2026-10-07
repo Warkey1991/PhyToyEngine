@@ -54,6 +54,13 @@ internal class PhotoLibrary(context: Context) {
 
     fun list(): List<PhotoStore.SavedPhoto> = entries().map { it.photo }
 
+    /** Remove the private index only after MediaStore deletion succeeds. */
+    fun remove(uri: Uri): Boolean = synchronized(LOCK) {
+        try {
+            writeEntries(readEntries().filterNot { it.photo.uri == uri }, missingUris() + uri.toString())
+        } catch (_: Exception) { false }
+    }
+
     /** Call off the UI thread. Discovery is restricted to Pictures/PhyToy and PT_ files. */
     fun entries(): List<Entry> {
         if (!preferences.getBoolean("last_photo_migrated", false)) {

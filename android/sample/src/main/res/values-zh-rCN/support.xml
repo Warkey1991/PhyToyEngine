@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="support_title">联系支持</string>
+    <string name="support_hint">通过邮件联系发布者，咨询应用或购买问题。</string>
+    <string name="support_publisher">发布者：%1$s</string>
+    <string name="support_contact_email">支持与隐私联系邮箱：%1$s</string>
+    <string name="support_online_policy">打开在线政策</string>
+    <string name="settings_options_help">了解这些选项</string>
+    <string name="settings_camera_help">首次启动或关闭“记住上次风格”时，使用默认风格。照片分辨率是上限，实际尺寸还取决于手机相机和所选风格；DH 2++ 最高为 320 万像素。修改分辨率后，返回相机时生效。</string>
+    <string name="settings_remember_short">启动时恢复最近使用的相机。</string>
+    <string name="settings_grid_short">显示三分法构图参考线。</string>
+    <string name="settings_sound_short">实际拍摄照片时播放声音。</string>
+    <string name="settings_haptics_short">遵循系统的振动设置。</string>
+    <string name="settings_review_short">每次拍摄后打开已保存的照片。</string>
+    <string name="privacy_channel_body">更新日期：2026 年 10 月 6 日\n\n相机权限用于前台取景和你主动拍摄的照片。图像在本机处理，会话关闭后释放临时画面。应用不请求定位或麦克风权限。\n\n照片保存在 Pictures/PhyToy。JPEG 元数据包含拍摄时间、曝光和相机风格，不添加定位信息。可在应用内或系统相册删除照片；卸载应用不会删除已保存的照片。分享仅将你选择的照片交给你选定的应用。\n\n相机偏好、权限状态、照片索引和受保护的购买凭证保存在本机私有存储。清除应用数据可删除这些本地数据。购买可在原购买商店通过同一%2$s恢复，不同商店的购买不会自动互通。\n\n购买和恢复通过 %1$s 进行，需要联网。商店按其条款和隐私政策处理付款，ToviCam 不会收到银行卡信息。Galaxy Store 版本还会向三星发送购买标识以核验购买。应用没有独立账号、广告、照片上传或发布者统计分析服务；支付 SDK 可能处理自身服务诊断数据。应用不会自动上传本地诊断日志。\n\n可在 Android 设置 → 应用 → ToviCam → 权限中撤销相机权限。仅当你主动联系支持时，信息才会通过你选择的邮件应用发送。</string>
+</resources>

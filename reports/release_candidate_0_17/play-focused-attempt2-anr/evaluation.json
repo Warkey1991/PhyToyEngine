@@ -1,0 +1,556 @@
+{
+  "passed": false,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791337722264653000,
+  "scope": "0.17 store-specific unconfigured UI: trial, fixed actions, provider, restore and privacy",
+  "checks": [
+    {
+      "name": "Trial does not unlock photography; fixed actions visible; checkout disabled without store configuration",
+      "passed": true
+    },
+    {
+      "name": "Restore preserves the visible unconfigured result",
+      "passed": true
+    },
+    {
+      "name": "Payment provider and purchase scope exactly match this store's localized resources",
+      "passed": true
+    },
+    {
+      "name": "Offline privacy names the correct store and account",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "purchase-fixed-actions_ui": "purchase-fixed-actions-ui.json",
+    "purchase-fixed-actions_screenshot": "purchase-fixed-actions.png",
+    "unconfigured-purchase_ui": "unconfigured-purchase-ui.json",
+    "unconfigured-purchase_screenshot": "unconfigured-purchase.png",
+    "store-provider-and-scope_ui": "store-provider-and-scope-ui.json",
+    "store-provider-and-scope_screenshot": "store-provider-and-scope.png",
+    "offline-privacy_ui": "offline-privacy-ui.json",
+    "offline-privacy_screenshot": "offline-privacy.png",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {},
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "configured checkout",
+    "real purchase or restoration",
+    "physical devices",
+    "photo capture",
+    "successful deletion/system consent",
+    "pinch/multitouch",
+    "other font scales"
+  ],
+  "installed_apk_sha256": "d61d647adff6ba705f06eca33d75289693beb86635a9c3b8bfd4432f347b7446",
+  "phase": "fixed actions at 200% font scale",
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "style_digital",
+      "bounds": [
+        306,
+        672,
+        471,
+        744
+      ],
+      "point": [
+        388,
+        708
+      ],
+      "started_at_ns": 1791337732155358000,
+      "completed_at_ns": 1791337732219122000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "point": [
+        445,
+        780
+      ],
+      "started_at_ns": 1791337740750855000,
+      "completed_at_ns": 1791337741259394000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        688,
+        504,
+        766
+      ],
+      "point": [
+        270,
+        727
+      ],
+      "started_at_ns": 1791337798887075000,
+      "completed_at_ns": 1791337798916601000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        66,
+        90,
+        138
+      ],
+      "point": [
+        54,
+        102
+      ],
+      "started_at_ns": 1791337809018969000,
+      "completed_at_ns": 1791337809056922000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791337818710662000,
+      "completed_at_ns": 1791337818773450000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "open_settings",
+      "bounds": [
+        456,
+        72,
+        528,
+        144
+      ],
+      "point": [
+        492,
+        108
+      ],
+      "started_at_ns": 1791337829062537000,
+      "completed_at_ns": 1791337829114276000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "settings_privacy",
+      "bounds": [
+        30,
+        828,
+        510,
+        924
+      ],
+      "point": [
+        270,
+        876
+      ],
+      "started_at_ns": 1791337853652932000,
+      "completed_at_ns": 1791337853705591000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "button1",
+      "bounds": [
+        385,
+        822,
+        484,
+        894
+      ],
+      "point": [
+        434,
+        858
+      ],
+      "started_at_ns": 1791337859312145000,
+      "completed_at_ns": 1791337859353371000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "settings_back",
+      "bounds": [
+        18,
+        66,
+        90,
+        138
+      ],
+      "point": [
+        54,
+        102
+      ],
+      "started_at_ns": 1791337861827276000,
+      "completed_at_ns": 1791337861865588000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "style_digital",
+      "bounds": [
+        445,
+        672,
+        540,
+        744
+      ],
+      "point": [
+        492,
+        708
+      ],
+      "started_at_ns": 1791337886084868000,
+      "completed_at_ns": 1791337886173071000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791337956925946000,
+      "completed_at_ns": 1791337957006521000
+    }
+  ],
+  "hierarchy_collection_retries": [
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    }
+  ],
+  "gestures": [
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        421
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        421
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        653
+      ],
+      "to": [
+        270,
+        421
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        653
+      ],
+      "to": [
+        270,
+        421
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        653
+      ],
+      "to": [
+        270,
+        421
+      ]
+    }
+  ],
+  "failure": "AssertionError: Camera did not reach style=style_digital, trial=True; last visible IDs=aerr_close,aerr_wait,alertTitle",
+  "font_scale_restored": true,
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true,
+  "font_scale_unchanged": true
+}

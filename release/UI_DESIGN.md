@@ -1,57 +1,31 @@
-# UI design and verification
+# UI design and verification — 0.17
 
-The camera, photo list, photo review and settings follow Material Design navigation and Android accessibility principles. The implementation uses native Views and a shared `PageTopBar`; it does not claim Google certification or depend on a Compose migration.
+Native Views share PageTopBar, a dark surface and warm gold actions. The selected camera remains the main heading. Privacy, licenses and support live in settings.
 
-## Structure
+## Flows
 
-- Camera: app name/current style on the left; flash and settings on the right. Privacy and license information are only in settings. Camera controls remain outside the saved-image boundary.
-- Photo list: newest first, photo count, three-column virtualized grid, explicit loading/empty/retry states. A photo opens review; Back returns to the list, while Continue shooting returns to the camera.
-- Review: shared back/title/details bar, image fitted without changing its saved crop, one primary Continue shooting action.
-- Settings: shared back/title bar, grouped camera/shooting/information preferences, independent About/Privacy/License entries, explicit reset confirmation. Dialogs keep the page's scroll position; reopening settings starts at the top.
+- Camera: tap EV/zoom pills to adjust supported hardware values or reset. Keep grid/tap-focus/pinch controls. During capture, a stable control snapshot drives preview/3A/still; conflicting actions stay disabled until complete.
+- Camera lifecycle: a shared single-worker queue orders native create/close, Camera2 configuration and resource retirement across Activity recreation. Main cancels and detaches immediately without joining. Generation, resource and engine identity checks reject late callbacks; ordinary Pause retains the Texture, while destruction releases it after native shutdown.
+- Style rail: free cameras shoot immediately. Locked cameras open free live trials directly; explicit Unlock or locked shutter opens introduction/price. Trial styles are not persisted. No automatic capture or checkout follows entry.
+- Purchase: compact camera art, description, matching original/processed illustrations, store-supplied price, explicit purchase, preview, restore/retry and store scope. Purchase/preview actions stay visible at the bottom while details scroll. Below 600 dp with font scale at least 150%, actions stack to avoid splitting words; normal/wide layouts use equally tall buttons in a row. Illustrations use an artificial scene and shipped reference profiles; actual photos depend on device/light. No fallback fake price.
+- Gallery: cached thumbnails and newest-first local photos, bounded background scans, 3–6 responsive columns, loading/empty/retry. Deletion cancels stale scans and removes the photo/index.
+- Review: bounded pinch/double-tap zoom up to 4×, reset, previous/next, share/delete and primary Continue shooting. Back returns to gallery. Delete first confirms, then requests system consent when required; failures retain the photo. Sharing grants temporary read access only to the selected content URI.
+- Settings: short hints, separate detailed help, persistent purchase/restore result, reset confirmation and configured publisher contact/public policy.
 
-## Tokens and behavior
+## Layout and accessibility
 
-| Token | Value / behavior |
-| --- | --- |
-| Surface | `#111318` |
-| Primary | `#F2B84B` |
-| On surface | `#F1F1F1` |
-| Secondary text | `#C4C7C5` |
-| Page title / subtitle | 22 sp / 12 sp |
-| Body / main action | at least 12 sp / 14 sp; gallery corner metadata uses 11 sp with a complete accessibility label |
-| Interactive target | at least 48 dp |
-| App bar | 64 dp minimum; subtitle bars start at 88 dp; height grows with text |
-| Camera style caption | 12 sp; height is at least 24 dp and otherwise the rounded-up actual `Paint.fontSpacing` converted to dp, plus 4 dp |
-| Camera footer | `178 dp + styleCaptionHeightDp`; preview bottom inset uses that same calculated footer height |
-| Review action footer | 88 dp minimum; button is at least 48 dp and its wrapping text/padding can increase the footer height |
+Controls have at least 48 dp targets, accessible labels and state. Text uses sp and grows/wraps; purchase/settings scroll. Portrait uses a bottom camera rail; landscape uses a side toolbar with a bottom style rail. Review separates navigation from Share/Delete at large fonts; its narrow side action region can scroll while Continue shooting stays fixed when space permits. In a landscape window below 420 dp high at 150% or larger fonts, the entire action column scrolls so that the primary action cannot squeeze the tools below a complete touch target. Large-font Share/Delete each occupy a full row in a narrow side region. The first review zoom hint hides after three seconds or zooming. Insets avoid system bars/cutouts. Preview/saved crop follows the selected aspect and orientation; review fits the image initially and bounds pan when zoomed.
 
-Active text and icons use accessible contrast. Checked switches have a native checked state; selected styles also have a selection marker. Flash has an icon variation and an accessible mode description. Decorative graphics are excluded from the accessibility tree. Full-screen pages hide background controls and restore focus on exit. All image loading is bounded and performed off the UI thread.
+Background controls are removed from the accessibility tree while a modal page is shown. Pages use pane/window-change announcements and restore ordinary keyboard focus without forcing screen-reader focus. The photo exposes accessible zoom actions so gestures are not the only route. Camera/review state survives rotation, with decoding cancelled/restarted safely.
 
-Insets keep actions clear of system bars and cutouts. The shared back arrow and margins follow layout direction. Text uses sp and page content scrolls or measures naturally at large font sizes. The camera frame remains controlled by the selected photograph aspect.
+## Validation
 
-The camera caption height follows the current display's scaled 12 sp font metrics. The caption and footer grow together, and `MainActivity` reserves the matching bottom space for the preview. This keeps the style caption above the controls and prevents the footer from covering the photograph viewport at large font sizes. Gallery and review use a wrapping app bar followed by content that fills the remaining height; review's primary action also grows with its text.
+Use tools/run_android_017_ui_smoke.py on an isolated emulator with explicit serial, package and installed APK SHA-256. It requires permission and app-owned seed photos. Checks cover EV/zoom, direct trials/explicit unlock, 100/200% fonts, privacy, photo double tap/reset, neighboring photos, share chooser + Back, delete confirmation + Cancel, 48 dp targets and unchanged MediaStore IDs/permission/locale with font restoration. It never captures, pays, sends a share or confirms deletion.
 
-## Verification scope
+The channel smoke verifies store-specific provider/scope/privacy and disabled checkout, optionally EV/zoom, fixed actions and existing-photo review at 200% fonts. The capture smoke checks 640×360/320 dp landscape camera targets at 200%, Home/Resume in the same process and front/back switching when available, creates one disposable mono photo and checks review rotation. It validates the initial photos' non-mono EXIF, the new mono EXIF and the new ID's fresh save-log URI before confirming deletion; settings and initial photo IDs must be restored. These tests operate only on an explicit hash-verified task-owned emulator. Reports retain screenshots, failures and exact hashes in reports/release_candidate_0_17. Visually inspect screenshots: bounds alone cannot certify every glyph.
 
-`tools/run_android_product_smoke.py --check-library-settings` checks navigation, the accessible modal tree, capture/gallery retention, preference persistence and review-off capture. Compressed UIAutomator dumps are intentional: uncompressed dumps request views excluded from accessibility. Test swipes stay away from system back-gesture edges.
+Five JVM lifecycle tests cover nonblocking submission during blocked work, close-before-create ordering, cancellation before install, cancellation before UI publication, and one-time release during fallback/retirement. Retain the earlier ANR diagnostics separately from final regression evidence; drawing/system pressure in that stack does not prove a native deadlock.
 
-`tools/run_android_large_font_smoke.py` checks the installed app at system `font_scale=2.0`. It defaults to an emulator; an authorized physical test phone requires `--serial` and `--allow-physical-device`. `--expected-apk-sha256` pins the candidate before changing font scale. It requires camera permission to be granted and an existing gallery photo; it takes no new photos and does not change app preferences, permissions or locale. It restores the original font scale in `finally`. It verifies visible, labelled, enabled/clickable 48 dp targets for the four primary camera actions, settings Back/Privacy, gallery Back/item and review Back/Continue. It also exercises settings scrolling and the privacy dialog, gallery-to-review navigation, both Back paths, Continue shooting, and settled modal trees with background controls excluded. Screenshots and compressed node dumps accompany these checks.
+Real physical capture quality, pinch/multitouch, successful system consent, complete manual TalkBack, foldables, sustained thermal behavior and store checkout require final device/store tests. Earlier 0.15/0.16 UI reports refer to different builds/flows.
 
-The historical 0.15 large-font run is recorded in [`reports/release_candidate_0_15/emulator16k/large-font-final/evaluation.json`](../reports/release_candidate_0_15/emulator16k/large-font-final/evaluation.json): `passed=true` on emulator `emulator-5580`, a 540 × 960 px display at 240 dpi, with font scale applied at 2.0 and confirmed restored to 1.0. The run covers camera, settings, gallery and review; it recorded zero new photos. The camera screenshot was also visually checked for an unobscured style caption. Target bounds and labels are automated checks; screenshots require visual review and do not prove that every glyph is free of clipping.
-
-Final reports under `reports/release_candidate_0_15/` distinguish physical and emulator results. The large-font run does not test capture quality or every camera profile at 200% text size. Manual TalkBack interaction and reading order, additional devices, display-size settings, landscape and large-screen/foldable behavior remain production acceptance work. These results are not Google certification or a complete TalkBack/accessibility pass.
-
-## Primary references
-
-- [Android accessibility](https://developer.android.com/design/ui/mobile/guides/foundations/accessibility): scalable text, body sizing, contrast, 48 dp touch targets, semantics and alternatives to gestures.
-- [Android app bars](https://developer.android.com/develop/ui/views/components/appbar): consistent navigation, title and action structure.
-- [Material app bars](https://m3.material.io/components/app-bars/overview).
-
-
-## Visual refinement and camera purchases (0.16)
-
-EV and zoom share the same 48 dp pill geometry; resolution is secondary metadata. The style rail fades only at edges with off-screen content. Settings keep title, current value and help inside one native control. Gallery images have compact corner badges, and review subtitles contain only size and saved state.
-
-Four paid cameras have visible locks. Tapping opens a scrollable camera introduction with original illustrated artwork, an exact Play price (when available), a one-time purchase explanation, preview, restore and retry. A free live trial replaces the camera caption with “Preview only · unlock to shoot”. The shutter opens the introduction while access is locked; the capture entry point independently enforces it. Trial styles are not stored as startup choices. Only explicit purchase starts a Play sheet; no photo is taken automatically after payment. Header/back, all actions and help grow with font scale. Background accessibility is isolated and restored across nested Settings → Purchase navigation.
-
-Client and emulator validation for 0.16 is recorded separately under `reports/release_candidate_0_16`; earlier 0.15 screenshots do not certify these changed screens. Real Play payment states need license-tester verification listed in PLAY_BILLING.md.
+[Android accessibility](https://developer.android.com/design/ui/mobile/guides/foundations/accessibility), [Android adaptive layouts](https://developer.android.com/about/versions/16/behavior-changes-16#adaptive-layouts).

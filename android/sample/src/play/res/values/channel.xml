@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="billing_store_name">Google Play</string>
+  <string name="billing_account_name">Google Play account</string>
+  <string name="settings_local_only">Camera preferences stay on this device. Purchases and restoration use Google Play.</string>
+  <string name="purchase_scope">Each camera is sold separately. Restore in Google Play with the Google Play account used to buy it. Purchases from another store do not transfer automatically.</string>
+  <string name="settings_restore_purchases_hint">Restore camera purchases for your current Google Play account in Google Play.</string>
+</resources>

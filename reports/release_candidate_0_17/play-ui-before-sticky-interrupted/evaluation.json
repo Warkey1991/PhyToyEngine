@@ -1,0 +1,1320 @@
+{
+  "passed": false,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791335359375942000,
+  "scope": "0.17 emulator UI: adjustments, trial-first unlock, 200% fonts, privacy, existing photos",
+  "checks": [
+    {
+      "name": "font 1.0: exposure_value opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 1.0: zoom_ratio opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 1.0: locked style previews directly; explicit unlock opens a dismissible purchase page",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: exposure_value opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: zoom_ratio opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: locked style previews directly; explicit unlock opens a dismissible purchase page",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "font1.0-exposure_value-panel_ui": "font1.0-exposure_value-panel-ui.json",
+    "font1.0-exposure_value-panel_screenshot": "font1.0-exposure_value-panel.png",
+    "font1.0-zoom_ratio-panel_ui": "font1.0-zoom_ratio-panel-ui.json",
+    "font1.0-zoom_ratio-panel_screenshot": "font1.0-zoom_ratio-panel.png",
+    "font1.0-trial_ui": "font1.0-trial-ui.json",
+    "font1.0-trial_screenshot": "font1.0-trial.png",
+    "font1.0-purchase_ui": "font1.0-purchase-ui.json",
+    "font1.0-purchase_screenshot": "font1.0-purchase.png",
+    "font2.0-exposure_value-panel_ui": "font2.0-exposure_value-panel-ui.json",
+    "font2.0-exposure_value-panel_screenshot": "font2.0-exposure_value-panel.png",
+    "font2.0-zoom_ratio-panel_ui": "font2.0-zoom_ratio-panel-ui.json",
+    "font2.0-zoom_ratio-panel_screenshot": "font2.0-zoom_ratio-panel.png",
+    "font2.0-trial_ui": "font2.0-trial-ui.json",
+    "font2.0-trial_screenshot": "font2.0-trial.png",
+    "font2.0-purchase_ui": "font2.0-purchase-ui.json",
+    "font2.0-purchase_screenshot": "font2.0-purchase.png",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {
+    "font1.0/exposure_value": {
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "EV +0.0"
+    },
+    "font1.0/zoom_ratio": {
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        744,
+        337,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "1.0×"
+    },
+    "font1.0/unlock": {
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "Unlock to shoot"
+    },
+    "font1.0/purchase_back": {
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        66,
+        90,
+        138
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "label": "Back"
+    },
+    "font1.0/purchase_preview": {
+      "id": "purchase_preview",
+      "bounds": [
+        36,
+        786,
+        504,
+        864
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "Try live preview"
+    },
+    "font1.0/purchase_restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        780,
+        504,
+        858
+      ],
+      "width_dp": 312.0,
+      "height_dp": 52.0,
+      "label": "Restore purchases"
+    },
+    "font2.0/exposure_value": {
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "EV +0.0"
+    },
+    "font2.0/zoom_ratio": {
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        744,
+        337,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "1.0×"
+    },
+    "font2.0/unlock": {
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "Unlock to shoot"
+    },
+    "font2.0/purchase_back": {
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        104,
+        90,
+        176
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "label": "Back"
+    },
+    "font2.0/purchase_preview": {
+      "id": "purchase_preview",
+      "bounds": [
+        36,
+        802,
+        504,
+        895
+      ],
+      "width_dp": 312.0,
+      "height_dp": 62.0,
+      "label": "Try live preview"
+    },
+    "font2.0/purchase_restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        667,
+        504,
+        760
+      ],
+      "width_dp": 312.0,
+      "height_dp": 62.0,
+      "label": "Restore purchases"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "checkout or purchase success",
+    "successful photo deletion or system delete consent",
+    "pinch/multitouch",
+    "visual pixel correctness",
+    "physical devices"
+  ],
+  "emulator_properties": {
+    "ro.kernel.qemu": "1",
+    "ro.boot.qemu": "1"
+  },
+  "sdk": 36,
+  "installed_apks": [
+    {
+      "path": "/data/app/~~n_d9eIEEIKvHSp8ifnKrvA==/com.ycolor.team.phytoy.camera.android.gpapp-E07sc6-yKU6wd9hDnMYEeA==/base.apk",
+      "sha256": "36c213160166128414a1cbb75e5c57ca24d4179eb55b38585b185949780252eb"
+    }
+  ],
+  "installed_apk_sha256": "36c213160166128414a1cbb75e5c57ca24d4179eb55b38585b185949780252eb",
+  "font_scale_original": "1.0",
+  "phase": "four unconfigured paid cameras",
+  "initial_visible_style": "style_dh_color",
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "font 1.0",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "point": [
+        94,
+        780
+      ],
+      "started_at_ns": 1791335380321515000,
+      "completed_at_ns": 1791335380395882000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "adjustment_reset",
+      "bounds": [
+        48,
+        570,
+        270,
+        642
+      ],
+      "point": [
+        159,
+        606
+      ],
+      "started_at_ns": 1791335395346913000,
+      "completed_at_ns": 1791335395401592000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "adjustment_done",
+      "bounds": [
+        270,
+        570,
+        492,
+        642
+      ],
+      "point": [
+        381,
+        606
+      ],
+      "started_at_ns": 1791335400513302000,
+      "completed_at_ns": 1791335400595191000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        744,
+        337,
+        816
+      ],
+      "point": [
+        269,
+        780
+      ],
+      "started_at_ns": 1791335405463152000,
+      "completed_at_ns": 1791335405501912000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "",
+      "bounds": [
+        48,
+        570,
+        159,
+        642
+      ],
+      "point": [
+        103,
+        606
+      ],
+      "started_at_ns": 1791335420467430000,
+      "completed_at_ns": 1791335420553394000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "adjustment_done",
+      "bounds": [
+        381,
+        570,
+        492,
+        642
+      ],
+      "point": [
+        436,
+        606
+      ],
+      "started_at_ns": 1791335425609130000,
+      "completed_at_ns": 1791335425812255000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "style_digital",
+      "bounds": [
+        306,
+        672,
+        471,
+        744
+      ],
+      "point": [
+        388,
+        708
+      ],
+      "started_at_ns": 1791335430970637000,
+      "completed_at_ns": 1791335431035417000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "point": [
+        445,
+        780
+      ],
+      "started_at_ns": 1791335442029135000,
+      "completed_at_ns": 1791335442161033000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        66,
+        90,
+        138
+      ],
+      "point": [
+        54,
+        102
+      ],
+      "started_at_ns": 1791335490499783000,
+      "completed_at_ns": 1791335490543150000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791335502035764000,
+      "completed_at_ns": 1791335502126377000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "point": [
+        94,
+        780
+      ],
+      "started_at_ns": 1791335523553676000,
+      "completed_at_ns": 1791335523695366000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "adjustment_reset",
+      "bounds": [
+        48,
+        569,
+        270,
+        642
+      ],
+      "point": [
+        159,
+        605
+      ],
+      "started_at_ns": 1791335539705822000,
+      "completed_at_ns": 1791335539930921000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "adjustment_done",
+      "bounds": [
+        270,
+        569,
+        492,
+        642
+      ],
+      "point": [
+        381,
+        605
+      ],
+      "started_at_ns": 1791335545434382000,
+      "completed_at_ns": 1791335545621860000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        744,
+        337,
+        816
+      ],
+      "point": [
+        269,
+        780
+      ],
+      "started_at_ns": 1791335551741400000,
+      "completed_at_ns": 1791335551819556000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "",
+      "bounds": [
+        48,
+        496,
+        270,
+        569
+      ],
+      "point": [
+        159,
+        532
+      ],
+      "started_at_ns": 1791335567545686000,
+      "completed_at_ns": 1791335567587660000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "adjustment_done",
+      "bounds": [
+        270,
+        569,
+        492,
+        642
+      ],
+      "point": [
+        381,
+        605
+      ],
+      "started_at_ns": 1791335573245576000,
+      "completed_at_ns": 1791335573358180000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "style_digital",
+      "bounds": [
+        445,
+        672,
+        540,
+        744
+      ],
+      "point": [
+        492,
+        708
+      ],
+      "started_at_ns": 1791335578194325000,
+      "completed_at_ns": 1791335578300831000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "point": [
+        445,
+        780
+      ],
+      "started_at_ns": 1791335591739070000,
+      "completed_at_ns": 1791335591782732000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        104,
+        90,
+        176
+      ],
+      "point": [
+        54,
+        140
+      ],
+      "started_at_ns": 1791335669622350000,
+      "completed_at_ns": 1791335669665570000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        179,
+        744
+      ],
+      "point": [
+        98,
+        708
+      ],
+      "started_at_ns": 1791335684997050000,
+      "completed_at_ns": 1791335685275480000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_digital",
+      "bounds": [
+        445,
+        672,
+        540,
+        744
+      ],
+      "point": [
+        492,
+        708
+      ],
+      "started_at_ns": 1791335696770188000,
+      "completed_at_ns": 1791335696998834000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "point": [
+        445,
+        780
+      ],
+      "started_at_ns": 1791335704573404000,
+      "completed_at_ns": 1791335705014610000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791335740992584000,
+      "completed_at_ns": 1791335741201871000
+    }
+  ],
+  "gestures": [
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        48,
+        498,
+        492,
+        570
+      ],
+      "from": [
+        367,
+        534
+      ],
+      "to": [
+        172,
+        534
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        48,
+        498,
+        492,
+        570
+      ],
+      "from": [
+        367,
+        534
+      ],
+      "to": [
+        172,
+        534
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        420
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        420
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        653
+      ],
+      "to": [
+        270,
+        420
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        420
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        420
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        420
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        420
+      ],
+      "to": [
+        270,
+        653
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        653
+      ],
+      "to": [
+        270,
+        420
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        653
+      ],
+      "to": [
+        270,
+        420
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        48,
+        497,
+        492,
+        569
+      ],
+      "from": [
+        367,
+        533
+      ],
+      "to": [
+        172,
+        533
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        48,
+        424,
+        492,
+        496
+      ],
+      "from": [
+        367,
+        460
+      ],
+      "to": [
+        172,
+        460
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        470
+      ],
+      "to": [
+        270,
+        679
+      ]
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "container_bounds": [
+        0,
+        226,
+        540,
+        924
+      ],
+      "from": [
+        270,
+        679
+      ],
+      "to": [
+        270,
+        470
+      ]
+    }
+  ],
+  "hierarchy_collection_retries": [
+    {
+      "phase": "font 1.0",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    },
+    {
+      "phase": "font 1.0",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    },
+    {
+      "phase": "font 2.0",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    },
+    {
+      "phase": "font 2.0",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    }
+  ],
+  "failure": "KeyboardInterrupt: ",
+  "font_scale_restored": true,
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true
+}

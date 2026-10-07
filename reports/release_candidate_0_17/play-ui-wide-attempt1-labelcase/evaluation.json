@@ -1,0 +1,1165 @@
+{
+  "passed": false,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791349857424727000,
+  "scope": "0.17 emulator UI: adjustments, trial-first unlock, 200% fonts, privacy, existing photos",
+  "checks": [
+    {
+      "name": "font 1.0: exposure_value opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 1.0: zoom_ratio opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 1.0: locked style previews directly; explicit unlock opens a dismissible purchase page",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: exposure_value opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: zoom_ratio opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: locked style previews directly; explicit unlock opens a dismissible purchase page",
+      "passed": true
+    },
+    {
+      "name": "Unconfigured style_digital: free preview, locked capture and disabled checkout",
+      "passed": true
+    },
+    {
+      "name": "Unconfigured style_plastic: free preview, locked capture and disabled checkout",
+      "passed": true
+    },
+    {
+      "name": "Unconfigured style_street: free preview, locked capture and disabled checkout",
+      "passed": true
+    },
+    {
+      "name": "Unconfigured style_fisheye: free preview, locked capture and disabled checkout",
+      "passed": true
+    },
+    {
+      "name": "200%: settings privacy title and policy body are accessible",
+      "passed": true
+    },
+    {
+      "name": "200%: photo double tap zoom and fit/reset work",
+      "passed": true
+    },
+    {
+      "name": "200%: a neighboring existing photo opens",
+      "passed": true,
+      "direction": "review_next",
+      "previous_description": "Saved photo in DH 2++ style, 1392 by 1856 pixels. Pinch or double tap the photo to see details."
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "font1.0-exposure_value-panel_ui": "font1.0-exposure_value-panel-ui.json",
+    "font1.0-exposure_value-panel_screenshot": "font1.0-exposure_value-panel.png",
+    "font1.0-zoom_ratio-panel_ui": "font1.0-zoom_ratio-panel-ui.json",
+    "font1.0-zoom_ratio-panel_screenshot": "font1.0-zoom_ratio-panel.png",
+    "font1.0-trial_ui": "font1.0-trial-ui.json",
+    "font1.0-trial_screenshot": "font1.0-trial.png",
+    "font1.0-purchase_ui": "font1.0-purchase-ui.json",
+    "font1.0-purchase_screenshot": "font1.0-purchase.png",
+    "font2.0-exposure_value-panel_ui": "font2.0-exposure_value-panel-ui.json",
+    "font2.0-exposure_value-panel_screenshot": "font2.0-exposure_value-panel.png",
+    "font2.0-zoom_ratio-panel_ui": "font2.0-zoom_ratio-panel-ui.json",
+    "font2.0-zoom_ratio-panel_screenshot": "font2.0-zoom_ratio-panel.png",
+    "font2.0-trial_ui": "font2.0-trial-ui.json",
+    "font2.0-trial_screenshot": "font2.0-trial.png",
+    "font2.0-purchase_ui": "font2.0-purchase-ui.json",
+    "font2.0-purchase_screenshot": "font2.0-purchase.png",
+    "unconfigured-style_digital_ui": "unconfigured-style_digital-ui.json",
+    "unconfigured-style_digital_screenshot": "unconfigured-style_digital.png",
+    "unconfigured-style_plastic_ui": "unconfigured-style_plastic-ui.json",
+    "unconfigured-style_plastic_screenshot": "unconfigured-style_plastic.png",
+    "unconfigured-style_street_ui": "unconfigured-style_street-ui.json",
+    "unconfigured-style_street_screenshot": "unconfigured-style_street.png",
+    "unconfigured-style_fisheye_ui": "unconfigured-style_fisheye-ui.json",
+    "unconfigured-style_fisheye_screenshot": "unconfigured-style_fisheye.png",
+    "font2-privacy_ui": "font2-privacy-ui.json",
+    "font2-privacy_screenshot": "font2-privacy.png",
+    "font2-gallery_ui": "font2-gallery-ui.json",
+    "font2-gallery_screenshot": "font2-gallery.png",
+    "font2-review_ui": "font2-review-ui.json",
+    "font2-review_screenshot": "font2-review.png",
+    "font2-review-zoom_ui": "font2-review-zoom-ui.json",
+    "font2-review-zoom_screenshot": "font2-review-zoom.png",
+    "font2-review-neighbor_ui": "font2-review-neighbor-ui.json",
+    "font2-review-neighbor_screenshot": "font2-review-neighbor.png",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {
+    "font1.0/exposure_value": {
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        2169,
+        162,
+        2241
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "EV +0.0"
+    },
+    "font1.0/zoom_ratio": {
+      "id": "zoom_ratio",
+      "bounds": [
+        472,
+        2169,
+        607,
+        2241
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "1.0×"
+    },
+    "font1.0/unlock": {
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2169,
+        1053,
+        2241
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "Unlock to shoot"
+    },
+    "font1.0/purchase_back": {
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        148,
+        90,
+        220
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "label": "Back"
+    },
+    "font1.0/purchase_preview": {
+      "id": "purchase_preview",
+      "bounds": [
+        546,
+        2268,
+        1056,
+        2346
+      ],
+      "width_dp": 340.0,
+      "height_dp": 52.0,
+      "label": "Try live preview"
+    },
+    "font1.0/purchase_restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        1020,
+        1044,
+        1098
+      ],
+      "width_dp": 672.0,
+      "height_dp": 52.0,
+      "label": "Restore purchases"
+    },
+    "font2.0/exposure_value": {
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        2157,
+        162,
+        2229
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "EV +0.0"
+    },
+    "font2.0/zoom_ratio": {
+      "id": "zoom_ratio",
+      "bounds": [
+        472,
+        2157,
+        607,
+        2229
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "1.0×"
+    },
+    "font2.0/unlock": {
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2157,
+        1053,
+        2229
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "Unlock to shoot"
+    },
+    "font2.0/purchase_back": {
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "width_dp": 48.0,
+      "height_dp": 48.0,
+      "label": "Back"
+    },
+    "font2.0/purchase_preview": {
+      "id": "purchase_preview",
+      "bounds": [
+        546,
+        2241,
+        1056,
+        2334
+      ],
+      "width_dp": 340.0,
+      "height_dp": 62.0,
+      "label": "Try live preview"
+    },
+    "font2.0/purchase_restore": {
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        1422,
+        1044,
+        1515
+      ],
+      "width_dp": 672.0,
+      "height_dp": 62.0,
+      "label": "Restore purchases"
+    },
+    "font2/review_next": {
+      "id": "review_next",
+      "bounds": [
+        804,
+        2138,
+        1056,
+        2231
+      ],
+      "width_dp": 168.0,
+      "height_dp": 62.0,
+      "label": "›"
+    },
+    "font2/review_share": {
+      "id": "review_share",
+      "bounds": [
+        284,
+        2138,
+        535,
+        2231
+      ],
+      "width_dp": 167.33,
+      "height_dp": 62.0,
+      "label": "Share"
+    },
+    "font2/review_delete": {
+      "id": "review_delete",
+      "bounds": [
+        544,
+        2138,
+        795,
+        2231
+      ],
+      "width_dp": 167.33,
+      "height_dp": 62.0,
+      "label": "Delete"
+    },
+    "font2/review_continue": {
+      "id": "review_continue",
+      "bounds": [
+        24,
+        2246,
+        1056,
+        2328
+      ],
+      "width_dp": 688.0,
+      "height_dp": 54.67,
+      "label": "Keep shooting"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "checkout or purchase success",
+    "successful photo deletion or system delete consent",
+    "pinch/multitouch",
+    "visual pixel correctness",
+    "physical devices"
+  ],
+  "emulator_properties": {
+    "ro.kernel.qemu": "1",
+    "ro.boot.qemu": "1"
+  },
+  "sdk": 36,
+  "installed_apks": [
+    {
+      "path": "/data/app/~~ZWpPxoqHrmvN61n44ZkmGA==/com.ycolor.team.phytoy.camera.android.gpapp-LLNn4v_dmVu6r46PgZq3Ng==/base.apk",
+      "sha256": "4f92e2b73abeeb25449ec71ed38cfd9e93f8ef464f1168a6f399490468dbdd1b"
+    }
+  ],
+  "installed_apk_sha256": "4f92e2b73abeeb25449ec71ed38cfd9e93f8ef464f1168a6f399490468dbdd1b",
+  "font_scale_original": "1.0",
+  "phase": "four unconfigured paid cameras",
+  "initial_visible_style": "style_dh_color",
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "font 1.0",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        2169,
+        162,
+        2241
+      ],
+      "point": [
+        94,
+        2205
+      ],
+      "started_at_ns": 1791349875224431000,
+      "completed_at_ns": 1791349875449809000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "adjustment_reset",
+      "bounds": [
+        204,
+        1965,
+        540,
+        2037
+      ],
+      "point": [
+        372,
+        2001
+      ],
+      "started_at_ns": 1791349895122605000,
+      "completed_at_ns": 1791349895778311000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "adjustment_done",
+      "bounds": [
+        540,
+        1965,
+        876,
+        2037
+      ],
+      "point": [
+        708,
+        2001
+      ],
+      "started_at_ns": 1791349901426703000,
+      "completed_at_ns": 1791349901548382000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "zoom_ratio",
+      "bounds": [
+        472,
+        2169,
+        607,
+        2241
+      ],
+      "point": [
+        539,
+        2205
+      ],
+      "started_at_ns": 1791349906852957000,
+      "completed_at_ns": 1791349906922901000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "",
+      "bounds": [
+        204,
+        1965,
+        372,
+        2037
+      ],
+      "point": [
+        288,
+        2001
+      ],
+      "started_at_ns": 1791349923669200000,
+      "completed_at_ns": 1791349923793687000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "adjustment_done",
+      "bounds": [
+        708,
+        1965,
+        876,
+        2037
+      ],
+      "point": [
+        792,
+        2001
+      ],
+      "started_at_ns": 1791349928702997000,
+      "completed_at_ns": 1791349928896626000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "style_digital",
+      "bounds": [
+        306,
+        2061,
+        471,
+        2133
+      ],
+      "point": [
+        388,
+        2097
+      ],
+      "started_at_ns": 1791349934034238000,
+      "completed_at_ns": 1791349934111863000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2169,
+        1053,
+        2241
+      ],
+      "point": [
+        985,
+        2205
+      ],
+      "started_at_ns": 1791349947050504000,
+      "completed_at_ns": 1791349947089301000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        148,
+        90,
+        220
+      ],
+      "point": [
+        54,
+        184
+      ],
+      "started_at_ns": 1791349963479996000,
+      "completed_at_ns": 1791349964030500000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        2061,
+        150,
+        2133
+      ],
+      "point": [
+        84,
+        2097
+      ],
+      "started_at_ns": 1791349971156625000,
+      "completed_at_ns": 1791349971371894000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        2157,
+        162,
+        2229
+      ],
+      "point": [
+        94,
+        2193
+      ],
+      "started_at_ns": 1791349986188930000,
+      "completed_at_ns": 1791349986242264000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "adjustment_reset",
+      "bounds": [
+        204,
+        1939,
+        540,
+        2012
+      ],
+      "point": [
+        372,
+        1975
+      ],
+      "started_at_ns": 1791350004217178000,
+      "completed_at_ns": 1791350004364781000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "adjustment_done",
+      "bounds": [
+        540,
+        1939,
+        876,
+        2012
+      ],
+      "point": [
+        708,
+        1975
+      ],
+      "started_at_ns": 1791350009920805000,
+      "completed_at_ns": 1791350010269924000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "zoom_ratio",
+      "bounds": [
+        472,
+        2157,
+        607,
+        2229
+      ],
+      "point": [
+        539,
+        2193
+      ],
+      "started_at_ns": 1791350016200099000,
+      "completed_at_ns": 1791350016280807000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "",
+      "bounds": [
+        204,
+        1939,
+        372,
+        2012
+      ],
+      "point": [
+        288,
+        1975
+      ],
+      "started_at_ns": 1791350034205106000,
+      "completed_at_ns": 1791350034294646000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "adjustment_done",
+      "bounds": [
+        708,
+        1939,
+        876,
+        2012
+      ],
+      "point": [
+        792,
+        1975
+      ],
+      "started_at_ns": 1791350039948550000,
+      "completed_at_ns": 1791350039986526000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "style_digital",
+      "bounds": [
+        445,
+        2036,
+        709,
+        2108
+      ],
+      "point": [
+        577,
+        2072
+      ],
+      "started_at_ns": 1791350045171420000,
+      "completed_at_ns": 1791350045220525000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2157,
+        1053,
+        2229
+      ],
+      "point": [
+        985,
+        2193
+      ],
+      "started_at_ns": 1791350058463718000,
+      "completed_at_ns": 1791350058523637000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "point": [
+        54,
+        191
+      ],
+      "started_at_ns": 1791350072124706000,
+      "completed_at_ns": 1791350072154149000
+    },
+    {
+      "phase": "font 2.0",
+      "id": "style_dh_color",
+      "bounds": [
+        0,
+        2036,
+        142,
+        2108
+      ],
+      "point": [
+        71,
+        2072
+      ],
+      "started_at_ns": 1791350077390178000,
+      "completed_at_ns": 1791350077634759000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_digital",
+      "bounds": [
+        445,
+        2036,
+        709,
+        2108
+      ],
+      "point": [
+        577,
+        2072
+      ],
+      "started_at_ns": 1791350089880502000,
+      "completed_at_ns": 1791350089942477000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2157,
+        1053,
+        2229
+      ],
+      "point": [
+        985,
+        2193
+      ],
+      "started_at_ns": 1791350096505769000,
+      "completed_at_ns": 1791350096562438000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "point": [
+        54,
+        191
+      ],
+      "started_at_ns": 1791350110087876000,
+      "completed_at_ns": 1791350110117961000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_plastic",
+      "bounds": [
+        678,
+        2036,
+        955,
+        2108
+      ],
+      "point": [
+        816,
+        2072
+      ],
+      "started_at_ns": 1791350115884957000,
+      "completed_at_ns": 1791350115989907000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2157,
+        1053,
+        2229
+      ],
+      "point": [
+        985,
+        2193
+      ],
+      "started_at_ns": 1791350122477443000,
+      "completed_at_ns": 1791350122631299000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "point": [
+        54,
+        191
+      ],
+      "started_at_ns": 1791350136160809000,
+      "completed_at_ns": 1791350136190586000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_street",
+      "bounds": [
+        684,
+        2036,
+        944,
+        2108
+      ],
+      "point": [
+        814,
+        2072
+      ],
+      "started_at_ns": 1791350141930725000,
+      "completed_at_ns": 1791350142104342000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2157,
+        1053,
+        2229
+      ],
+      "point": [
+        985,
+        2193
+      ],
+      "started_at_ns": 1791350149330388000,
+      "completed_at_ns": 1791350149534129000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "point": [
+        54,
+        191
+      ],
+      "started_at_ns": 1791350162960954000,
+      "completed_at_ns": 1791350162988509000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_fisheye",
+      "bounds": [
+        784,
+        2036,
+        1056,
+        2108
+      ],
+      "point": [
+        920,
+        2072
+      ],
+      "started_at_ns": 1791350168125963000,
+      "completed_at_ns": 1791350168286143000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "camera_unlock_style",
+      "bounds": [
+        918,
+        2157,
+        1053,
+        2229
+      ],
+      "point": [
+        985,
+        2193
+      ],
+      "started_at_ns": 1791350175554851000,
+      "completed_at_ns": 1791350175869271000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "point": [
+        54,
+        191
+      ],
+      "started_at_ns": 1791350188885060000,
+      "completed_at_ns": 1791350188917602000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        2036,
+        179,
+        2108
+      ],
+      "point": [
+        98,
+        2072
+      ],
+      "started_at_ns": 1791350201574077000,
+      "completed_at_ns": 1791350201669164000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "open_settings",
+      "bounds": [
+        996,
+        193,
+        1068,
+        265
+      ],
+      "point": [
+        1032,
+        229
+      ],
+      "started_at_ns": 1791350213771081000,
+      "completed_at_ns": 1791350213833381000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "settings_privacy",
+      "bounds": [
+        30,
+        2059,
+        1050,
+        2183
+      ],
+      "point": [
+        540,
+        2121
+      ],
+      "started_at_ns": 1791350216714931000,
+      "completed_at_ns": 1791350216752008000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "button1",
+      "bounds": [
+        780,
+        2241,
+        933,
+        2322
+      ],
+      "point": [
+        856,
+        2281
+      ],
+      "started_at_ns": 1791350221503214000,
+      "completed_at_ns": 1791350221529533000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "settings_back",
+      "bounds": [
+        18,
+        155,
+        90,
+        227
+      ],
+      "point": [
+        54,
+        191
+      ],
+      "started_at_ns": 1791350223835927000,
+      "completed_at_ns": 1791350223860999000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "last_photo",
+      "bounds": [
+        36,
+        2250,
+        111,
+        2325
+      ],
+      "point": [
+        73,
+        2287
+      ],
+      "started_at_ns": 1791350229129772000,
+      "completed_at_ns": 1791350229214487000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "gallery_item",
+      "bounds": [
+        18,
+        300,
+        187,
+        469
+      ],
+      "point": [
+        102,
+        384
+      ],
+      "started_at_ns": 1791350234792894000,
+      "completed_at_ns": 1791350234823163000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "review_zoom_reset",
+      "bounds": [
+        892,
+        312,
+        1062,
+        386
+      ],
+      "point": [
+        977,
+        349
+      ],
+      "started_at_ns": 1791350246714444000,
+      "completed_at_ns": 1791350246743532000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "review_next",
+      "bounds": [
+        804,
+        2138,
+        1056,
+        2231
+      ],
+      "point": [
+        930,
+        2184
+      ],
+      "started_at_ns": 1791350255087752000,
+      "completed_at_ns": 1791350255113969000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "review_previous",
+      "bounds": [
+        24,
+        2138,
+        275,
+        2231
+      ],
+      "point": [
+        149,
+        2184
+      ],
+      "started_at_ns": 1791350263911835000,
+      "completed_at_ns": 1791350263940959000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "review_delete",
+      "bounds": [
+        544,
+        2138,
+        795,
+        2231
+      ],
+      "point": [
+        669,
+        2184
+      ],
+      "started_at_ns": 1791350268204055000,
+      "completed_at_ns": 1791350268238864000
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        2049,
+        150,
+        2121
+      ],
+      "point": [
+        84,
+        2085
+      ],
+      "started_at_ns": 1791350278696212000,
+      "completed_at_ns": 1791350278814012000
+    }
+  ],
+  "gestures": [
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        204,
+        1893,
+        876,
+        1965
+      ],
+      "from": [
+        687,
+        1929
+      ],
+      "to": [
+        392,
+        1929
+      ]
+    },
+    {
+      "phase": "font 1.0",
+      "container_bounds": [
+        204,
+        1893,
+        876,
+        1965
+      ],
+      "from": [
+        687,
+        1929
+      ],
+      "to": [
+        392,
+        1929
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        204,
+        1867,
+        876,
+        1939
+      ],
+      "from": [
+        687,
+        1903
+      ],
+      "to": [
+        392,
+        1903
+      ]
+    },
+    {
+      "phase": "font 2.0",
+      "container_bounds": [
+        204,
+        1867,
+        876,
+        1939
+      ],
+      "from": [
+        687,
+        1903
+      ],
+      "to": [
+        392,
+        1903
+      ]
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "container_bounds": [
+        0,
+        2036,
+        1080,
+        2108
+      ],
+      "from": [
+        302,
+        2072
+      ],
+      "to": [
+        777,
+        2072
+      ]
+    },
+    {
+      "phase": "four unconfigured paid cameras",
+      "container_bounds": [
+        0,
+        2036,
+        1080,
+        2108
+      ],
+      "from": [
+        302,
+        2072
+      ],
+      "to": [
+        777,
+        2072
+      ]
+    }
+  ],
+  "double_tap_dispatch_seconds": 0.167,
+  "failure": "AssertionError: Delete dialog cancel is not identified",
+  "font_scale_restored": true,
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true
+}

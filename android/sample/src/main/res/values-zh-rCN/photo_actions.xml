@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_previous">上一张</string>
+    <string name="photo_next">下一张</string>
+    <string name="photo_share">分享</string>
+    <string name="photo_delete">删除</string>
+    <string name="photo_share_title">分享照片</string>
+    <string name="photo_share_failed">暂时无法分享这张照片，请重试或在系统相册中打开。</string>
+    <string name="photo_delete_title">删除这张照片？</string>
+    <string name="photo_delete_body">照片将从本机永久删除，系统相册中的照片也会删除。</string>
+    <string name="photo_delete_confirm">删除照片</string>
+    <string name="photo_delete_cancel">保留照片</string>
+    <string name="photo_deleted">照片已删除。</string>
+    <string name="photo_delete_failed">暂时无法删除这张照片，请重试或在系统相册中删除。</string>
+    <string name="photo_delete_cancelled">已取消删除，照片已保留。</string>
+    <string name="photo_loading">正在打开照片…</string>
+    <string name="photo_retry">重试</string>
+    <string name="photo_zoom_in">放大照片</string>
+    <string name="photo_zoom_out">缩小照片</string>
+    <string name="photo_zoom_reset">适合屏幕</string>
+    <string name="photo_zoom_state">照片放大 %1$.1f 倍</string>
+    <string name="photo_zoom_hint">双指缩放或双击照片，查看细节。</string>
+</resources>

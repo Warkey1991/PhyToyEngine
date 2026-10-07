@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 289, in main
+    smoke.photos()
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 178, in photos
+    assert self.label_matches(cancel.get("text", ""), "photo_delete_cancel"), "Delete dialog cancel is not identified"
+AssertionError: Delete dialog cancel is not identified

@@ -1,0 +1,244 @@
+{
+  "passed": true,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791351401718885000,
+  "scope": "Delete only the uniquely verified disposable photo from the retained capture attempt; no new capture",
+  "checks": [
+    {
+      "name": "Each review action can be brought fully into view at >=48dp",
+      "passed": true,
+      "display_px": [
+        540,
+        960
+      ]
+    },
+    {
+      "name": "Only verified disposable ID removed; original photo ID set restored",
+      "passed": true,
+      "removed_id": 36
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "initial-recheck_22_exif": "initial-recheck-22-exif.json",
+    "initial-recheck_24_exif": "initial-recheck-24-exif.json",
+    "new-recheck_36_exif": "new-recheck-36-exif.json",
+    "verified-disposable-mono_ui": "verified-disposable-mono-ui.json",
+    "verified-disposable-mono_screenshot": "verified-disposable-mono.png",
+    "verified-disposable-confirmation_ui": "verified-disposable-confirmation-ui.json",
+    "verified-disposable-confirmation_screenshot": "verified-disposable-confirmation.png"
+  },
+  "touch_targets": {
+    "review-540x960/review_previous": {
+      "bounds": [
+        24,
+        735,
+        140,
+        813
+      ]
+    },
+    "review-540x960/review_next": {
+      "bounds": [
+        399,
+        735,
+        516,
+        813
+      ]
+    },
+    "review-540x960/review_share": {
+      "bounds": [
+        149,
+        735,
+        265,
+        813
+      ]
+    },
+    "review-540x960/review_delete": {
+      "bounds": [
+        274,
+        735,
+        390,
+        813
+      ]
+    },
+    "review-540x960/review_continue": {
+      "bounds": [
+        24,
+        828,
+        516,
+        900
+      ]
+    }
+  },
+  "media_history": [
+    {
+      "stage": "before-recovery",
+      "count": 3,
+      "ids": [
+        22,
+        24,
+        36
+      ],
+      "artifact": "before-recovery-mediastore.txt"
+    },
+    {
+      "stage": "before-delete",
+      "count": 3,
+      "ids": [
+        22,
+        24,
+        36
+      ],
+      "artifact": "before-delete-mediastore.txt"
+    },
+    {
+      "stage": "after-recovery-delete",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "after-recovery-delete-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 1,
+  "shares_sent": 0,
+  "not_covered": [
+    "physical devices",
+    "purchases",
+    "system delete consent",
+    "sharing or sending",
+    "pixel quality",
+    "pinch/multitouch"
+  ],
+  "allow_disposable_photo": true,
+  "expected_apk_sha256": "4f92e2b73abeeb25449ec71ed38cfd9e93f8ef464f1168a6f399490468dbdd1b",
+  "capture_taps": 0,
+  "delete_confirm_taps": 1,
+  "installed_apk_sha256": "4f92e2b73abeeb25449ec71ed38cfd9e93f8ef464f1168a6f399490468dbdd1b",
+  "phase": "prerequisites",
+  "new_photo_exif": {
+    "media_id": 36,
+    "uri": "content://media/external/images/media/36",
+    "jpeg_bytes": 174925,
+    "jpeg_sha256": "74bfa74894124c457a0bf8467c63f160a5eee1473d6ba3d3f2e0c81d2782d67a",
+    "style_code": "DH/M",
+    "image_description": "ToviCam DH/M 0.2.0",
+    "software": "ToviCam / DH/M 0.2.0",
+    "user_comment": "Lens=BACK; Style=DH/M; StyleVersion=0.2.0; Zoom=1.00x; EV=+0.00; Flash=OFF"
+  },
+  "unique_mono_identity_verified": true,
+  "saved_log_evidence": {
+    "epoch": "1791350843.847",
+    "pid": 14038,
+    "style_code": "DH/M",
+    "uri": "content://media/external/images/media/36",
+    "media_id": 36,
+    "line": "         1791350843.847 14038 14038 I PhyToySample: DH/M photo saved: content://media/external/images/media/36"
+  },
+  "recovery_source": "reports/release_candidate_0_17/play-capture-attempt1-short-review/evaluation.json",
+  "new_photo_id": 36,
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "prerequisites",
+      "id": "last_photo",
+      "bounds": [
+        36,
+        831,
+        111,
+        906
+      ],
+      "point": [
+        73,
+        868
+      ],
+      "started_at_ns": 1791351422388303000,
+      "completed_at_ns": 1791351422545169000
+    },
+    {
+      "phase": "prerequisites",
+      "id": "gallery_item",
+      "bounds": [
+        18,
+        192,
+        182,
+        356
+      ],
+      "point": [
+        100,
+        274
+      ],
+      "started_at_ns": 1791351428913725000,
+      "completed_at_ns": 1791351428946985000
+    },
+    {
+      "phase": "prerequisites",
+      "id": "review_delete",
+      "bounds": [
+        274,
+        735,
+        390,
+        813
+      ],
+      "point": [
+        332,
+        774
+      ],
+      "started_at_ns": 1791351448694206000,
+      "completed_at_ns": 1791351448724643000
+    },
+    {
+      "phase": "prerequisites",
+      "id": "button1",
+      "disposable_action": "delete",
+      "new_photo_id": 36,
+      "bounds": [
+        300,
+        537,
+        484,
+        609
+      ],
+      "started_at_ns": 1791351456528164000
+    },
+    {
+      "phase": "prerequisites",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791351473719717000,
+      "completed_at_ns": 1791351474129679000
+    }
+  ],
+  "direct_new_photo_review_verified": true,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true,
+  "font_scale_unchanged": true,
+  "final_photo_ids_match_initial": true
+}

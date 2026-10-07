@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="purchase_scope">Each camera is sold separately. Restore in Galaxy Store with the Samsung account used to buy it. Purchases from another store do not transfer automatically.</string>
+  <string name="purchase_payment_provider">Payment is handled by Galaxy Store. Your local currency and final price appear in its payment sheet.</string>
+  <string name="settings_restore_purchases_hint">Restore camera purchases for your current Samsung account in Galaxy Store.</string>
+  <string name="billing_loading">Connecting to Galaxy Store…</string>
+  <string name="billing_unavailable">Couldn’t load this camera from Galaxy Store. Check your connection and try again. The two free cameras remain available.</string>
+  <string name="billing_pending">Payment is pending. This camera will unlock after Galaxy Store confirms payment.</string>
+  <string name="billing_restore_empty">No camera purchases found for this Samsung account.</string>
+  <string name="billing_restore_failed">Couldn’t restore purchases. Check your Samsung account and connection, then try again.</string>
+  <string name="billing_error">Galaxy Store couldn’t complete the request. Please try again.</string>
+  <string name="billing_store_name">Galaxy Store</string>
+  <string name="billing_account_name">Samsung account</string>
+  <string name="settings_local_only">Camera preferences stay on this device. Purchases and restoration use Galaxy Store.</string>
+</resources>

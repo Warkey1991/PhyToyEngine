@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 234, in main
+    smoke.adjustment("exposure_value", font)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 59, in adjustment
+    panel = self.wait("adjustment_panel", enabled=False)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 171, in wait
+    return self.find(identifier, self.poll(ready, f"Timed out waiting for {identifier}", timeout=timeout))
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 165, in poll
+    raise AssertionError(message + "; last visible IDs=" + ",".join(exposed))
+AssertionError: Timed out waiting for adjustment_panel; last visible IDs=adjustment_done,adjustment_reset,adjustment_slider,exposure_value,flash_mode,last_photo,open_settings,shutter,style_dh_color,style_dh_mono,style_digital,style_plastic,switch_camera,zoom_ratio

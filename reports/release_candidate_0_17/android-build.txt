@@ -1,0 +1,386 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :sdk:preBuild UP-TO-DATE
+> Task :sample:preBuild UP-TO-DATE
+> Task :sdk:preReleaseBuild UP-TO-DATE
+> Task :sample:prePlayBenchmarkBuild
+> Task :sample:mergePlayBenchmarkJniLibFolders UP-TO-DATE
+> Task :sample:checkPlayBenchmarkDuplicateClasses UP-TO-DATE
+> Task :sample:generatePlayBenchmarkBuildConfig UP-TO-DATE
+> Task :sample:generatePlayBenchmarkResources UP-TO-DATE
+> Task :sample:packagePlayBenchmarkResources UP-TO-DATE
+> Task :sample:javaPreCompilePlayBenchmark UP-TO-DATE
+> Task :sample:mapPlayBenchmarkSourceSetPaths UP-TO-DATE
+> Task :sample:createPlayBenchmarkCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksPlayBenchmark UP-TO-DATE
+> Task :sample:extractProguardFiles UP-TO-DATE
+> Task :sample:mergePlayBenchmarkStartupProfile UP-TO-DATE
+> Task :sample:generatePlayBenchmarkAssets UP-TO-DATE
+> Task :sample:extractPlayBenchmarkVersionControlInfo UP-TO-DATE
+> Task :sample:collectPlayBenchmarkDependencies UP-TO-DATE
+> Task :sample:sdkPlayBenchmarkDependencyData UP-TO-DATE
+> Task :sample:validateSigningPlayBenchmark UP-TO-DATE
+> Task :sample:writePlayBenchmarkAppMetadata UP-TO-DATE
+> Task :sample:writePlayBenchmarkSigningConfigVersions UP-TO-DATE
+> Task :sample:preGalaxyBenchmarkBuild
+> Task :sample:mergeGalaxyBenchmarkJniLibFolders UP-TO-DATE
+> Task :sample:checkGalaxyBenchmarkDuplicateClasses UP-TO-DATE
+> Task :sample:generateGalaxyBenchmarkBuildConfig UP-TO-DATE
+> Task :sample:generateGalaxyBenchmarkResources UP-TO-DATE
+> Task :sample:packageGalaxyBenchmarkResources UP-TO-DATE
+> Task :sample:javaPreCompileGalaxyBenchmark UP-TO-DATE
+> Task :sample:mapGalaxyBenchmarkSourceSetPaths UP-TO-DATE
+> Task :sample:createGalaxyBenchmarkCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksGalaxyBenchmark UP-TO-DATE
+> Task :sample:mergeGalaxyBenchmarkStartupProfile UP-TO-DATE
+> Task :sample:generateGalaxyBenchmarkAssets UP-TO-DATE
+> Task :sample:extractGalaxyBenchmarkVersionControlInfo UP-TO-DATE
+> Task :sample:collectGalaxyBenchmarkDependencies UP-TO-DATE
+> Task :sample:sdkGalaxyBenchmarkDependencyData UP-TO-DATE
+> Task :sample:validateSigningGalaxyBenchmark UP-TO-DATE
+> Task :sample:writeGalaxyBenchmarkAppMetadata UP-TO-DATE
+> Task :sample:writeGalaxyBenchmarkSigningConfigVersions UP-TO-DATE
+> Task :sample:prePlayDebugBuild UP-TO-DATE
+> Task :sample:generatePlayDebugBuildConfig UP-TO-DATE
+> Task :sample:generatePlayDebugResources UP-TO-DATE
+> Task :sample:packagePlayDebugResources UP-TO-DATE
+> Task :sample:javaPreCompilePlayDebug UP-TO-DATE
+> Task :sample:mapPlayDebugSourceSetPaths UP-TO-DATE
+> Task :sample:createPlayDebugCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksPlayDebug UP-TO-DATE
+> Task :sample:prePlayDebugUnitTestBuild UP-TO-DATE
+> Task :sample:javaPreCompilePlayDebugUnitTest UP-TO-DATE
+> Task :sample:preGalaxyDebugBuild UP-TO-DATE
+> Task :sample:generateGalaxyDebugBuildConfig UP-TO-DATE
+> Task :sample:generateGalaxyDebugResources UP-TO-DATE
+> Task :sample:packageGalaxyDebugResources UP-TO-DATE
+> Task :sample:javaPreCompileGalaxyDebug UP-TO-DATE
+> Task :sample:mapGalaxyDebugSourceSetPaths UP-TO-DATE
+> Task :sample:createGalaxyDebugCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksGalaxyDebug UP-TO-DATE
+> Task :sample:preGalaxyDebugUnitTestBuild UP-TO-DATE
+> Task :sample:javaPreCompileGalaxyDebugUnitTest UP-TO-DATE
+> Task :sample:prePlayReleaseBuild
+> Task :sample:mergePlayReleaseJniLibFolders UP-TO-DATE
+> Task :sample:checkPlayReleaseDuplicateClasses UP-TO-DATE
+> Task :sample:generatePlayReleaseBuildConfig UP-TO-DATE
+> Task :sample:generatePlayReleaseResources UP-TO-DATE
+> Task :sample:packagePlayReleaseResources UP-TO-DATE
+> Task :sample:javaPreCompilePlayRelease UP-TO-DATE
+> Task :sample:mapPlayReleaseSourceSetPaths UP-TO-DATE
+> Task :sample:createPlayReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksPlayRelease UP-TO-DATE
+> Task :sample:mergePlayReleaseStartupProfile UP-TO-DATE
+> Task :sample:generatePlayReleaseAssets UP-TO-DATE
+> Task :sample:extractPlayReleaseVersionControlInfo UP-TO-DATE
+> Task :sample:collectPlayReleaseDependencies UP-TO-DATE
+> Task :sample:sdkPlayReleaseDependencyData UP-TO-DATE
+> Task :sample:writePlayReleaseAppMetadata UP-TO-DATE
+> Task :sample:writePlayReleaseSigningConfigVersions UP-TO-DATE
+> Task :sample:configurePlayReleaseDependencies UP-TO-DATE
+> Task :sample:parsePlayReleaseIntegrityConfig UP-TO-DATE
+> Task :sample:preGalaxyReleaseBuild
+> Task :sample:mergeGalaxyReleaseJniLibFolders UP-TO-DATE
+> Task :sample:checkGalaxyReleaseDuplicateClasses UP-TO-DATE
+> Task :sample:generateGalaxyReleaseBuildConfig UP-TO-DATE
+> Task :sample:generateGalaxyReleaseResources UP-TO-DATE
+> Task :sample:packageGalaxyReleaseResources UP-TO-DATE
+> Task :sample:javaPreCompileGalaxyRelease UP-TO-DATE
+> Task :sample:mapGalaxyReleaseSourceSetPaths UP-TO-DATE
+> Task :sample:createGalaxyReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :sample:extractDeepLinksGalaxyRelease UP-TO-DATE
+> Task :sample:mergeGalaxyReleaseStartupProfile UP-TO-DATE
+> Task :sample:generateGalaxyReleaseAssets UP-TO-DATE
+> Task :sample:extractGalaxyReleaseVersionControlInfo UP-TO-DATE
+> Task :sample:collectGalaxyReleaseDependencies UP-TO-DATE
+> Task :sample:sdkGalaxyReleaseDependencyData UP-TO-DATE
+> Task :sample:writeGalaxyReleaseAppMetadata UP-TO-DATE
+> Task :sample:writeGalaxyReleaseSigningConfigVersions UP-TO-DATE
+> Task :sample:configureGalaxyReleaseDependencies UP-TO-DATE
+> Task :sample:parseGalaxyReleaseIntegrityConfig UP-TO-DATE
+
+> Task :sdk:configureCMakeRelWithDebInfo[arm64-v8a]
+[CXX5304] Observed package id 'system-images;android-36;google_apis_playstore_ps16k;arm64-v8a' in inconsistent location '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3' (Expected '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a')
+Add android.sync.suppressAgpWarnings=EXTERNAL_NATIVE_BUILD_CONFIGURATION to the gradle.properties file to suppress this warning.
+[CXX5304] Observed package id 'system-images;android-36;google_apis_playstore_ps16k;arm64-v8a' in inconsistent location '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a-3' (Expected '/Users/songyuanjin/Library/Android/sdk/system-images/android-36/google_apis_playstore_ps16k/arm64-v8a')
+
+> Task :sdk:buildCMakeRelWithDebInfo[arm64-v8a]
+> Task :sdk:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :sdk:mergeReleaseNativeLibs UP-TO-DATE
+> Task :sdk:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :sdk:generateReleaseResources UP-TO-DATE
+> Task :sdk:packageReleaseResources UP-TO-DATE
+> Task :sdk:processReleaseNavigationResources UP-TO-DATE
+> Task :sdk:parseReleaseLocalResources UP-TO-DATE
+> Task :sdk:generateReleaseRFile UP-TO-DATE
+> Task :sdk:compileReleaseKotlin UP-TO-DATE
+> Task :sdk:javaPreCompileRelease UP-TO-DATE
+> Task :sdk:compileReleaseJavaWithJavac NO-SOURCE
+> Task :sdk:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :sdk:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :sdk:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :sdk:prepareReleaseArtProfile UP-TO-DATE
+> Task :sdk:writeReleaseAarMetadata UP-TO-DATE
+> Task :sdk:extractDeepLinksRelease UP-TO-DATE
+> Task :sdk:processReleaseManifest UP-TO-DATE
+> Task :sdk:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :sdk:compileReleaseLibraryResources UP-TO-DATE
+> Task :sdk:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :sdk:processReleaseJavaRes UP-TO-DATE
+> Task :sdk:generateReleaseAssets UP-TO-DATE
+> Task :sdk:mergeReleaseAssets UP-TO-DATE
+> Task :sdk:createFullJarRelease UP-TO-DATE
+> Task :sdk:extractProguardFiles UP-TO-DATE
+> Task :sdk:generateReleaseLintModel UP-TO-DATE
+> Task :sdk:prepareLintJarForPublish UP-TO-DATE
+> Task :sdk:checkReleaseAarMetadata UP-TO-DATE
+> Task :sdk:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :sample:mergePlayBenchmarkNativeLibs UP-TO-DATE
+> Task :sample:stripPlayBenchmarkDebugSymbols UP-TO-DATE
+> Task :sample:extractPlayBenchmarkNativeSymbolTables UP-TO-DATE
+> Task :sample:mergePlayBenchmarkNativeDebugMetadata UP-TO-DATE
+> Task :sdk:extractReleaseAnnotations UP-TO-DATE
+> Task :sdk:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :sdk:mergeReleaseJavaResource UP-TO-DATE
+> Task :sdk:syncReleaseLibJars UP-TO-DATE
+> Task :sdk:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :sdk:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :sdk:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :sdk:generateReleaseLintVitalModel UP-TO-DATE
+> Task :sdk:preDebugBuild UP-TO-DATE
+> Task :sdk:processDebugNavigationResources UP-TO-DATE
+> Task :sample:processPlayBenchmarkNavigationResources UP-TO-DATE
+> Task :sdk:generateDebugResources UP-TO-DATE
+> Task :sample:parsePlayBenchmarkLocalResources UP-TO-DATE
+> Task :sdk:packageDebugResources UP-TO-DATE
+> Task :sdk:parseDebugLocalResources UP-TO-DATE
+> Task :sample:generatePlayBenchmarkRFile UP-TO-DATE
+> Task :sdk:generateDebugRFile UP-TO-DATE
+> Task :sdk:compileDebugKotlin UP-TO-DATE
+> Task :sdk:javaPreCompileDebug UP-TO-DATE
+> Task :sdk:compileDebugJavaWithJavac NO-SOURCE
+> Task :sdk:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :sdk:writeDebugAarMetadata UP-TO-DATE
+> Task :sdk:extractDeepLinksDebug UP-TO-DATE
+> Task :sdk:processDebugManifest UP-TO-DATE
+> Task :sdk:mapDebugSourceSetPaths UP-TO-DATE
+> Task :sdk:compileDebugLibraryResources UP-TO-DATE
+> Task :sdk:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :sdk:processDebugJavaRes UP-TO-DATE
+> Task :sdk:lintAnalyzeRelease UP-TO-DATE
+> Task :sample:mergePlayBenchmarkArtProfile UP-TO-DATE
+> Task :sample:checkPlayBenchmarkAarMetadata UP-TO-DATE
+> Task :sample:compilePlayBenchmarkNavigationResources UP-TO-DATE
+> Task :sample:mergePlayBenchmarkResources UP-TO-DATE
+> Task :sample:processPlayBenchmarkMainManifest UP-TO-DATE
+> Task :sample:processPlayBenchmarkManifest UP-TO-DATE
+> Task :sample:processPlayBenchmarkManifestForPackage UP-TO-DATE
+> Task :sample:processPlayBenchmarkResources UP-TO-DATE
+> Task :sample:mergePlayBenchmarkAssets UP-TO-DATE
+> Task :sample:compressPlayBenchmarkAssets UP-TO-DATE
+> Task :sample:mergeGalaxyBenchmarkNativeLibs UP-TO-DATE
+> Task :sample:stripGalaxyBenchmarkDebugSymbols UP-TO-DATE
+> Task :sample:extractGalaxyBenchmarkNativeSymbolTables UP-TO-DATE
+> Task :sample:mergeGalaxyBenchmarkNativeDebugMetadata UP-TO-DATE
+> Task :sample:processGalaxyBenchmarkNavigationResources UP-TO-DATE
+> Task :sample:parseGalaxyBenchmarkLocalResources UP-TO-DATE
+> Task :sample:generateGalaxyBenchmarkRFile UP-TO-DATE
+
+> Task :sample:compilePlayBenchmarkKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:323:44 'static fun obtain(p0: Int): AccessibilityEvent!' is deprecated. Deprecated in Java.
+
+> Task :sample:compileGalaxyBenchmarkKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:323:44 'static fun obtain(p0: Int): AccessibilityEvent!' is deprecated. Deprecated in Java.
+
+> Task :sample:compilePlayBenchmarkJavaWithJavac UP-TO-DATE
+> Task :sample:mergePlayBenchmarkGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processPlayBenchmarkJavaRes UP-TO-DATE
+> Task :sample:mergePlayBenchmarkJavaResource UP-TO-DATE
+> Task :sample:expandPlayBenchmarkArtProfileWildcards
+> Task :sample:generatePlayBenchmarkLintVitalReportModel
+> Task :sample:minifyPlayBenchmarkWithR8
+> Task :sample:lintVitalAnalyzePlayBenchmark
+> Task :sample:compilePlayBenchmarkArtProfile
+> Task :sample:convertShrunkResourcesToBinaryPlayBenchmark UP-TO-DATE
+> Task :sample:optimizePlayBenchmarkResources UP-TO-DATE
+> Task :sample:compileGalaxyBenchmarkJavaWithJavac UP-TO-DATE
+> Task :sample:mergeGalaxyBenchmarkArtProfile UP-TO-DATE
+> Task :sample:checkGalaxyBenchmarkAarMetadata UP-TO-DATE
+> Task :sample:compileGalaxyBenchmarkNavigationResources UP-TO-DATE
+> Task :sample:mergeGalaxyBenchmarkResources UP-TO-DATE
+> Task :sample:processGalaxyBenchmarkMainManifest UP-TO-DATE
+> Task :sample:processGalaxyBenchmarkManifest UP-TO-DATE
+> Task :sample:processGalaxyBenchmarkManifestForPackage UP-TO-DATE
+> Task :sample:processGalaxyBenchmarkResources UP-TO-DATE
+> Task :sample:expandGalaxyBenchmarkArtProfileWildcards
+> Task :sample:mergeGalaxyBenchmarkGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processGalaxyBenchmarkJavaRes UP-TO-DATE
+> Task :sample:mergeGalaxyBenchmarkJavaResource UP-TO-DATE
+> Task :sample:minifyGalaxyBenchmarkWithR8
+> Task :sample:compileGalaxyBenchmarkArtProfile
+> Task :sample:mergeGalaxyBenchmarkAssets UP-TO-DATE
+> Task :sample:compressGalaxyBenchmarkAssets UP-TO-DATE
+> Task :sample:generateGalaxyBenchmarkLintVitalReportModel
+> Task :sample:lintVitalReportPlayBenchmark UP-TO-DATE
+> Task :sample:lintVitalPlayBenchmark
+> Task :sample:packagePlayBenchmark
+> Task :sample:createPlayBenchmarkApkListingFileRedirect UP-TO-DATE
+> Task :sample:assemblePlayBenchmark
+> Task :sample:convertShrunkResourcesToBinaryGalaxyBenchmark UP-TO-DATE
+> Task :sample:optimizeGalaxyBenchmarkResources UP-TO-DATE
+> Task :sample:processPlayDebugNavigationResources UP-TO-DATE
+> Task :sample:parsePlayDebugLocalResources UP-TO-DATE
+> Task :sample:generatePlayDebugRFile UP-TO-DATE
+
+> Task :sample:compilePlayDebugKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:323:44 'static fun obtain(p0: Int): AccessibilityEvent!' is deprecated. Deprecated in Java.
+
+> Task :sample:compilePlayDebugJavaWithJavac UP-TO-DATE
+> Task :sample:checkPlayDebugAarMetadata UP-TO-DATE
+> Task :sample:compilePlayDebugNavigationResources UP-TO-DATE
+> Task :sample:mergePlayDebugResources UP-TO-DATE
+> Task :sample:processPlayDebugMainManifest UP-TO-DATE
+> Task :sample:processPlayDebugManifest UP-TO-DATE
+> Task :sample:processPlayDebugManifestForPackage UP-TO-DATE
+> Task :sample:processPlayDebugResources UP-TO-DATE
+> Task :sample:bundlePlayDebugClassesToRuntimeJar
+> Task :sample:bundlePlayDebugClassesToCompileJar
+> Task :sample:compilePlayDebugUnitTestKotlin
+> Task :sample:compilePlayDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :sample:processPlayDebugJavaRes UP-TO-DATE
+> Task :sample:processPlayDebugUnitTestJavaRes UP-TO-DATE
+> Task :sample:testPlayDebugUnitTest
+> Task :sample:processGalaxyDebugNavigationResources UP-TO-DATE
+> Task :sample:parseGalaxyDebugLocalResources UP-TO-DATE
+> Task :sample:generateGalaxyDebugRFile UP-TO-DATE
+
+> Task :sample:compileGalaxyDebugKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:323:44 'static fun obtain(p0: Int): AccessibilityEvent!' is deprecated. Deprecated in Java.
+
+> Task :sample:compileGalaxyDebugJavaWithJavac UP-TO-DATE
+> Task :sample:checkGalaxyDebugAarMetadata UP-TO-DATE
+> Task :sample:compileGalaxyDebugNavigationResources UP-TO-DATE
+> Task :sample:mergeGalaxyDebugResources UP-TO-DATE
+> Task :sample:processGalaxyDebugMainManifest UP-TO-DATE
+> Task :sample:processGalaxyDebugManifest UP-TO-DATE
+> Task :sample:processGalaxyDebugManifestForPackage UP-TO-DATE
+> Task :sample:processGalaxyDebugResources UP-TO-DATE
+> Task :sample:bundleGalaxyDebugClassesToRuntimeJar
+> Task :sample:bundleGalaxyDebugClassesToCompileJar
+> Task :sample:compileGalaxyDebugUnitTestKotlin
+> Task :sample:compileGalaxyDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :sample:processGalaxyDebugJavaRes UP-TO-DATE
+> Task :sample:processGalaxyDebugUnitTestJavaRes UP-TO-DATE
+> Task :sample:testGalaxyDebugUnitTest
+> Task :sample:mergePlayReleaseNativeLibs UP-TO-DATE
+> Task :sample:stripPlayReleaseDebugSymbols UP-TO-DATE
+> Task :sample:extractPlayReleaseNativeDebugMetadata UP-TO-DATE
+> Task :sample:mergePlayReleaseNativeDebugMetadata UP-TO-DATE
+> Task :sample:processPlayReleaseNavigationResources UP-TO-DATE
+> Task :sample:parsePlayReleaseLocalResources UP-TO-DATE
+> Task :sample:generatePlayReleaseRFile UP-TO-DATE
+> Task :sample:lintVitalAnalyzeGalaxyBenchmark
+> Task :sample:lintVitalReportGalaxyBenchmark UP-TO-DATE
+> Task :sample:lintVitalGalaxyBenchmark
+> Task :sample:packageGalaxyBenchmark
+> Task :sample:createGalaxyBenchmarkApkListingFileRedirect UP-TO-DATE
+> Task :sample:assembleGalaxyBenchmark
+> Task :sample:mergePlayReleaseArtProfile UP-TO-DATE
+> Task :sample:checkPlayReleaseAarMetadata UP-TO-DATE
+> Task :sample:compilePlayReleaseNavigationResources UP-TO-DATE
+> Task :sample:mergePlayReleaseResources UP-TO-DATE
+> Task :sample:processPlayReleaseMainManifest UP-TO-DATE
+> Task :sample:processPlayReleaseManifest UP-TO-DATE
+> Task :sample:processPlayReleaseManifestForPackage UP-TO-DATE
+> Task :sample:processPlayReleaseResources UP-TO-DATE
+> Task :sample:mergePlayReleaseAssets UP-TO-DATE
+> Task :sample:compressPlayReleaseAssets UP-TO-DATE
+> Task :sample:mergeGalaxyReleaseNativeLibs UP-TO-DATE
+> Task :sample:stripGalaxyReleaseDebugSymbols UP-TO-DATE
+> Task :sample:extractGalaxyReleaseNativeDebugMetadata UP-TO-DATE
+> Task :sample:mergeGalaxyReleaseNativeDebugMetadata UP-TO-DATE
+> Task :sample:processGalaxyReleaseNavigationResources UP-TO-DATE
+> Task :sample:parseGalaxyReleaseLocalResources UP-TO-DATE
+> Task :sample:generateGalaxyReleaseRFile UP-TO-DATE
+
+> Task :sample:compilePlayReleaseKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:323:44 'static fun obtain(p0: Int): AccessibilityEvent!' is deprecated. Deprecated in Java.
+
+> Task :sample:compilePlayReleaseJavaWithJavac UP-TO-DATE
+> Task :sample:expandPlayReleaseArtProfileWildcards
+> Task :sample:mergePlayReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processPlayReleaseJavaRes UP-TO-DATE
+> Task :sample:mergePlayReleaseJavaResource UP-TO-DATE
+
+> Task :sample:compileGalaxyReleaseKotlin
+w: file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:323:44 'static fun obtain(p0: Int): AccessibilityEvent!' is deprecated. Deprecated in Java.
+
+> Task :sample:generatePlayReleaseLintVitalReportModel
+> Task :sample:minifyPlayReleaseWithR8
+> Task :sample:compilePlayReleaseArtProfile FROM-CACHE
+> Task :sample:convertShrunkResourcesToBinaryPlayRelease UP-TO-DATE
+> Task :sample:optimizePlayReleaseResources UP-TO-DATE
+> Task :sample:buildPlayReleasePreBundle
+> Task :sample:compileGalaxyReleaseJavaWithJavac UP-TO-DATE
+> Task :sample:mergeGalaxyReleaseArtProfile UP-TO-DATE
+> Task :sample:checkGalaxyReleaseAarMetadata UP-TO-DATE
+> Task :sample:compileGalaxyReleaseNavigationResources UP-TO-DATE
+> Task :sample:mergeGalaxyReleaseResources UP-TO-DATE
+> Task :sample:processGalaxyReleaseMainManifest UP-TO-DATE
+> Task :sample:processGalaxyReleaseManifest UP-TO-DATE
+> Task :sample:processGalaxyReleaseManifestForPackage UP-TO-DATE
+> Task :sample:processGalaxyReleaseResources UP-TO-DATE
+> Task :sample:expandGalaxyReleaseArtProfileWildcards
+> Task :sample:mergeGalaxyReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :sample:processGalaxyReleaseJavaRes UP-TO-DATE
+> Task :sample:mergeGalaxyReleaseJavaResource UP-TO-DATE
+> Task :sample:minifyGalaxyReleaseWithR8
+> Task :sample:compileGalaxyReleaseArtProfile FROM-CACHE
+> Task :sample:mergeGalaxyReleaseAssets UP-TO-DATE
+> Task :sample:compressGalaxyReleaseAssets UP-TO-DATE
+> Task :sample:generateGalaxyReleaseLintVitalReportModel
+> Task :sample:lintVitalAnalyzePlayRelease
+> Task :sample:lintVitalReportPlayRelease SKIPPED
+> Task :sample:lintVitalPlayRelease SKIPPED
+> Task :sample:packagePlayRelease
+> Task :sample:createPlayReleaseApkListingFileRedirect UP-TO-DATE
+> Task :sample:assemblePlayRelease
+> Task :sample:packagePlayReleaseBundle
+> Task :sample:signPlayReleaseBundle
+> Task :sample:producePlayReleaseBundleIdeListingFile
+> Task :sample:createPlayReleaseBundleListingFileRedirect UP-TO-DATE
+> Task :sample:bundlePlayRelease
+> Task :sample:convertShrunkResourcesToBinaryGalaxyRelease UP-TO-DATE
+> Task :sample:optimizeGalaxyReleaseResources UP-TO-DATE
+> Task :sample:buildGalaxyReleasePreBundle
+> Task :sample:generatePlayReleaseLintReportModel
+> Task :sample:lintVitalAnalyzeGalaxyRelease
+> Task :sample:lintVitalReportGalaxyRelease SKIPPED
+> Task :sample:lintVitalGalaxyRelease SKIPPED
+> Task :sample:packageGalaxyRelease
+> Task :sample:createGalaxyReleaseApkListingFileRedirect UP-TO-DATE
+> Task :sample:assembleGalaxyRelease
+> Task :sample:packageGalaxyReleaseBundle
+> Task :sample:signGalaxyReleaseBundle
+> Task :sample:produceGalaxyReleaseBundleIdeListingFile
+> Task :sample:createGalaxyReleaseBundleListingFileRedirect UP-TO-DATE
+> Task :sample:bundleGalaxyRelease
+> Task :sample:generateGalaxyReleaseLintReportModel
+> Task :sample:lintAnalyzePlayRelease
+
+> Task :sample:lintReportPlayRelease
+Wrote HTML report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-playRelease.html
+Wrote SARIF report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-playRelease.sarif
+
+> Task :sample:lintPlayRelease
+> Task :sample:lintAnalyzeGalaxyRelease
+
+> Task :sample:lintReportGalaxyRelease
+Wrote HTML report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-galaxyRelease.html
+Wrote SARIF report to file:///Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/reports/lint-results-galaxyRelease.sarif
+
+> Task :sample:lintGalaxyRelease
+
+BUILD SUCCESSFUL in 3m 1s
+323 actionable tasks: 60 executed, 2 from cache, 261 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.0/userguide/configuration_cache_enabling.html

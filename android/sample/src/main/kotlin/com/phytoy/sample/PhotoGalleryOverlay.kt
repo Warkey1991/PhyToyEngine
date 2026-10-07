@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +17,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.AbsListView
@@ -152,6 +154,21 @@ internal class PhotoGalleryOverlay(
     fun setOnGalleryVisibilityChangedListener(listener: (Boolean) -> Unit) { visibilityListener = listener }
     fun isShowing(): Boolean = visibility == VISIBLE
 
+    /** Stable navigation snapshot in the same newest-first order as the grid. */
+    fun photos(): List<PhotoStore.SavedPhoto> = entries.map { it.photo }
+
+    fun removePhoto(uri: Uri) {
+        // A scan started before the delete must not publish a stale entry afterward.
+        cancelPending()
+        val key = uri.toString()
+        cache.remove(key)
+        failedThumbnails.remove(key)
+        entries = entries.filterNot { it.photo.uri == uri }
+        subtitle.text = resources.getQuantityString(R.plurals.gallery_photo_count, entries.size, entries.size)
+        adapter.notifyDataSetChanged()
+        if (entries.isEmpty()) showState(R.string.gallery_empty, loading = false)
+    }
+
     fun show() {
         if (released) return
         val wasShowing = isShowing()
@@ -164,9 +181,15 @@ internal class PhotoGalleryOverlay(
         visibility = VISIBLE
         requestApplyInsets()
         if (!wasShowing) visibilityListener?.invoke(true)
-        back.requestFocus()
-        if (isTouchExplorationEnabled()) back.post {
-            if (isShowing()) back.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
+        if (!wasShowing) {
+            back.requestFocus()
+            // API 28+ announces the accessibility pane when it appears. Older
+            // platforms need a window event, not an app-selected TalkBack focus.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+                event.text.add(context.getString(R.string.gallery_title))
+                sendAccessibilityEventUnchecked(event)
+            }
         }
         refresh()
     }
@@ -175,13 +198,15 @@ internal class PhotoGalleryOverlay(
         if (released || !isShowing()) return
         cancelPending()
         val token = generation
-        cache.evictAll()
         failedThumbnails.clear()
-        entries = emptyList()
-        adapter.notifyDataSetChanged()
-        showState(R.string.gallery_loading, loading = true)
+        // Retain bounded thumbnails and the visible grid while rescanning the album.
+        // Returning to the list should not flash a blank loading screen every time.
+        if (entries.isEmpty()) showState(R.string.gallery_loading, loading = true)
         listing = executor.submit {
-            val result = runCatching { library.entries(); library.prune(); library.entries() }
+            val result = runCatching {
+                val found = library.entries()
+                if (library.prune() > 0) library.entries() else found
+            }
             mainHandler.post {
                 if (released || !isShowing() || token != generation) return@post
                 listing = null
@@ -194,7 +219,10 @@ internal class PhotoGalleryOverlay(
                         grid.visibility = VISIBLE
                         adapter.notifyDataSetChanged()
                     }
-                }.onFailure { showState(R.string.gallery_load_failed, loading = false, canRetry = true) }
+                }.onFailure {
+                    if (entries.isEmpty()) showState(R.string.gallery_load_failed, loading = false, canRetry = true)
+                    else showMessage(context.getString(R.string.gallery_load_failed))
+                }
             }
         }
     }
@@ -213,12 +241,15 @@ internal class PhotoGalleryOverlay(
         mainHandler.removeCallbacks(hideNotice)
         notice.visibility = GONE
         restoreBackgroundAccessibility()
-        previousInputFocus?.takeIf { it.isAttachedToWindow && it.isShown && it.isEnabled }?.requestFocus()
-        if (isTouchExplorationEnabled()) previousAccessibilityFocus?.let { previous -> previous.post {
-            if (previous.isAttachedToWindow && previous.isShown) {
-                previous.performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null)
-            }
-        } }
+        // Restore keyboard/input navigation. The pane-disappeared event lets
+        // the accessibility service decide where its own focus should return.
+        val candidates = if (isTouchExplorationEnabled()) listOf(previousAccessibilityFocus, previousInputFocus)
+            else listOf(previousInputFocus)
+        val restored = candidates.firstOrNull { it != null && it.isAttachedToWindow && it.isShown && it.isEnabled && it.isFocusable }
+        restored?.requestFocus()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            restored?.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+        }
         previousInputFocus = null
         previousAccessibilityFocus = null
         visibilityListener?.invoke(false)
@@ -386,6 +417,12 @@ internal class PhotoGalleryOverlay(
         retry.visibility = if (canRetry) VISIBLE else GONE
         stateText.setText(textRes)
         subtitle.text = context.getString(R.string.gallery_newest_first)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        val available = (w - paddingLeft - paddingRight - dp(24)).coerceAtLeast(0)
+        grid.numColumns = (available / dp(112).coerceAtLeast(1)).coerceIn(3, 6)
     }
 
     private fun isolateAccessibility() {

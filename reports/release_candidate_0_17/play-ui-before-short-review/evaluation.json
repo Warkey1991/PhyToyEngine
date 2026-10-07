@@ -1,0 +1,1239 @@
+{
+  "passed": true,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791350349352363000,
+  "scope": "0.17 store-specific unconfigured UI: trial, fixed actions, provider, restore and privacy",
+  "checks": [
+    {
+      "name": "font 1.0: exposure_value opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 1.0: zoom_ratio opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "Trial does not unlock photography; fixed actions visible; checkout disabled without store configuration",
+      "passed": true
+    },
+    {
+      "name": "Restore preserves the visible unconfigured result",
+      "passed": true
+    },
+    {
+      "name": "Payment provider and purchase scope exactly match this store's localized resources",
+      "passed": true
+    },
+    {
+      "name": "Offline privacy names the correct store and account",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: exposure_value opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "font 2.0: zoom_ratio opens slider and restores default",
+      "passed": true
+    },
+    {
+      "name": "200%: fixed actions remain visible, >=48dp, stack on narrow screens; preview returns to the trial",
+      "passed": true
+    },
+    {
+      "name": "200%: photo double tap zoom and fit/reset work",
+      "passed": true
+    },
+    {
+      "name": "200%: a neighboring existing photo opens",
+      "passed": true,
+      "direction": "review_next",
+      "previous_description": "Saved photo in DH 2++ style, 1392 by 1856 pixels. Pinch or double tap the photo to see details."
+    },
+    {
+      "name": "200%: delete confirmation can be canceled without deletion",
+      "passed": true
+    },
+    {
+      "name": "200%: share opens the system chooser and Back returns without sending",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "font1.0-exposure_value-panel_ui": "font1.0-exposure_value-panel-ui.json",
+    "font1.0-exposure_value-panel_screenshot": "font1.0-exposure_value-panel.png",
+    "font1.0-zoom_ratio-panel_ui": "font1.0-zoom_ratio-panel-ui.json",
+    "font1.0-zoom_ratio-panel_screenshot": "font1.0-zoom_ratio-panel.png",
+    "purchase-fixed-actions_ui": "purchase-fixed-actions-ui.json",
+    "purchase-fixed-actions_screenshot": "purchase-fixed-actions.png",
+    "unconfigured-purchase_ui": "unconfigured-purchase-ui.json",
+    "unconfigured-purchase_screenshot": "unconfigured-purchase.png",
+    "store-provider-and-scope_ui": "store-provider-and-scope-ui.json",
+    "store-provider-and-scope_screenshot": "store-provider-and-scope.png",
+    "offline-privacy_ui": "offline-privacy-ui.json",
+    "offline-privacy_screenshot": "offline-privacy.png",
+    "font2.0-exposure_value-panel_ui": "font2.0-exposure_value-panel-ui.json",
+    "font2.0-exposure_value-panel_screenshot": "font2.0-exposure_value-panel.png",
+    "font2.0-zoom_ratio-panel_ui": "font2.0-zoom_ratio-panel-ui.json",
+    "font2.0-zoom_ratio-panel_screenshot": "font2.0-zoom_ratio-panel.png",
+    "font2-purchase-fixed-actions_ui": "font2-purchase-fixed-actions-ui.json",
+    "font2-purchase-fixed-actions_screenshot": "font2-purchase-fixed-actions.png",
+    "font2-gallery_ui": "font2-gallery-ui.json",
+    "font2-gallery_screenshot": "font2-gallery.png",
+    "font2-review_ui": "font2-review-ui.json",
+    "font2-review_screenshot": "font2-review.png",
+    "font2-review-zoom_ui": "font2-review-zoom-ui.json",
+    "font2-review-zoom_screenshot": "font2-review-zoom.png",
+    "font2-review-neighbor_ui": "font2-review-neighbor-ui.json",
+    "font2-review-neighbor_screenshot": "font2-review-neighbor.png",
+    "font2-delete-confirmation_ui": "font2-delete-confirmation-ui.json",
+    "font2-delete-confirmation_screenshot": "font2-delete-confirmation.png",
+    "font2-share-chooser_ui": "font2-share-chooser-ui.json",
+    "font2-share-chooser_screenshot": "font2-share-chooser.png"
+  },
+  "touch_targets": {
+    "font1.0/exposure_value": {
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        732,
+        162,
+        804
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "EV +0.0"
+    },
+    "font1.0/zoom_ratio": {
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        732,
+        337,
+        804
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "1.0×"
+    },
+    "font2.0/exposure_value": {
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "EV +0.0"
+    },
+    "font2.0/zoom_ratio": {
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        744,
+        337,
+        816
+      ],
+      "width_dp": 90.0,
+      "height_dp": 48.0,
+      "label": "1.0×"
+    },
+    "font2/purchase_buy": {
+      "bounds": [
+        24,
+        708,
+        516,
+        801
+      ]
+    },
+    "font2/purchase_preview": {
+      "bounds": [
+        24,
+        813,
+        516,
+        906
+      ]
+    },
+    "font2/review_next": {
+      "id": "review_next",
+      "bounds": [
+        274,
+        634,
+        516,
+        717
+      ],
+      "width_dp": 161.33,
+      "height_dp": 55.33,
+      "label": "›"
+    },
+    "font2/review_share": {
+      "id": "review_share",
+      "bounds": [
+        24,
+        729,
+        265,
+        803
+      ],
+      "width_dp": 160.67,
+      "height_dp": 49.33,
+      "label": "Share"
+    },
+    "font2/review_delete": {
+      "id": "review_delete",
+      "bounds": [
+        274,
+        729,
+        516,
+        803
+      ],
+      "width_dp": 161.33,
+      "height_dp": 49.33,
+      "label": "Delete"
+    },
+    "font2/review_continue": {
+      "id": "review_continue",
+      "bounds": [
+        24,
+        818,
+        516,
+        900
+      ],
+      "width_dp": 328.0,
+      "height_dp": 54.67,
+      "label": "Keep shooting"
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "configured checkout",
+    "real purchase or restoration",
+    "physical devices",
+    "photo capture",
+    "successful deletion/system consent",
+    "pinch/multitouch",
+    "other font scales"
+  ],
+  "display": {
+    "width_px": 540,
+    "height_px": 960,
+    "density_dpi": 240,
+    "width_dp": 360.0,
+    "height_dp": 640.0
+  },
+  "installed_apk_sha256": "4f92e2b73abeeb25449ec71ed38cfd9e93f8ef464f1168a6f399490468dbdd1b",
+  "phase": "existing-photo review at 200% font scale",
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "EV/zoom at original font scale",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        732,
+        162,
+        804
+      ],
+      "point": [
+        94,
+        768
+      ],
+      "started_at_ns": 1791350359181871000,
+      "completed_at_ns": 1791350359315579000
+    },
+    {
+      "phase": "EV/zoom at original font scale",
+      "id": "adjustment_reset",
+      "bounds": [
+        48,
+        558,
+        270,
+        630
+      ],
+      "point": [
+        159,
+        594
+      ],
+      "started_at_ns": 1791350375425280000,
+      "completed_at_ns": 1791350375749130000
+    },
+    {
+      "phase": "EV/zoom at original font scale",
+      "id": "adjustment_done",
+      "bounds": [
+        270,
+        558,
+        492,
+        630
+      ],
+      "point": [
+        381,
+        594
+      ],
+      "started_at_ns": 1791350381047198000,
+      "completed_at_ns": 1791350381092991000
+    },
+    {
+      "phase": "EV/zoom at original font scale",
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        732,
+        337,
+        804
+      ],
+      "point": [
+        269,
+        768
+      ],
+      "started_at_ns": 1791350385886951000,
+      "completed_at_ns": 1791350385971919000
+    },
+    {
+      "phase": "EV/zoom at original font scale",
+      "id": "",
+      "bounds": [
+        48,
+        558,
+        159,
+        630
+      ],
+      "point": [
+        103,
+        594
+      ],
+      "started_at_ns": 1791350401766986000,
+      "completed_at_ns": 1791350401826706000
+    },
+    {
+      "phase": "EV/zoom at original font scale",
+      "id": "adjustment_done",
+      "bounds": [
+        381,
+        558,
+        492,
+        630
+      ],
+      "point": [
+        436,
+        594
+      ],
+      "started_at_ns": 1791350407049467000,
+      "completed_at_ns": 1791350407100626000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "style_digital",
+      "bounds": [
+        306,
+        660,
+        471,
+        732
+      ],
+      "point": [
+        388,
+        696
+      ],
+      "started_at_ns": 1791350411704033000,
+      "completed_at_ns": 1791350411907752000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        732,
+        513,
+        804
+      ],
+      "point": [
+        445,
+        768
+      ],
+      "started_at_ns": 1791350418430226000,
+      "completed_at_ns": 1791350418475057000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        539,
+        504,
+        617
+      ],
+      "point": [
+        270,
+        578
+      ],
+      "started_at_ns": 1791350482315699000,
+      "completed_at_ns": 1791350482350877000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "purchase_back",
+      "bounds": [
+        18,
+        66,
+        90,
+        138
+      ],
+      "point": [
+        54,
+        102
+      ],
+      "started_at_ns": 1791350492224379000,
+      "completed_at_ns": 1791350492257104000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        660,
+        150,
+        732
+      ],
+      "point": [
+        84,
+        696
+      ],
+      "started_at_ns": 1791350503989163000,
+      "completed_at_ns": 1791350504173730000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "open_settings",
+      "bounds": [
+        456,
+        72,
+        528,
+        144
+      ],
+      "point": [
+        492,
+        108
+      ],
+      "started_at_ns": 1791350515231433000,
+      "completed_at_ns": 1791350515347727000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "settings_privacy",
+      "bounds": [
+        30,
+        615,
+        510,
+        729
+      ],
+      "point": [
+        270,
+        672
+      ],
+      "started_at_ns": 1791350542032383000,
+      "completed_at_ns": 1791350542060937000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "button1",
+      "bounds": [
+        385,
+        810,
+        484,
+        882
+      ],
+      "point": [
+        434,
+        846
+      ],
+      "started_at_ns": 1791350546863551000,
+      "completed_at_ns": 1791350546891204000
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "id": "settings_back",
+      "bounds": [
+        18,
+        66,
+        90,
+        138
+      ],
+      "point": [
+        54,
+        102
+      ],
+      "started_at_ns": 1791350549087385000,
+      "completed_at_ns": 1791350549119956000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "point": [
+        94,
+        780
+      ],
+      "started_at_ns": 1791350558924169000,
+      "completed_at_ns": 1791350559004770000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "adjustment_reset",
+      "bounds": [
+        48,
+        569,
+        270,
+        642
+      ],
+      "point": [
+        159,
+        605
+      ],
+      "started_at_ns": 1791350579704129000,
+      "completed_at_ns": 1791350579791527000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "adjustment_done",
+      "bounds": [
+        270,
+        569,
+        492,
+        642
+      ],
+      "point": [
+        381,
+        605
+      ],
+      "started_at_ns": 1791350585610501000,
+      "completed_at_ns": 1791350585677034000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "zoom_ratio",
+      "bounds": [
+        202,
+        744,
+        337,
+        816
+      ],
+      "point": [
+        269,
+        780
+      ],
+      "started_at_ns": 1791350591301963000,
+      "completed_at_ns": 1791350591440971000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "",
+      "bounds": [
+        48,
+        496,
+        270,
+        569
+      ],
+      "point": [
+        159,
+        532
+      ],
+      "started_at_ns": 1791350607806295000,
+      "completed_at_ns": 1791350607954475000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "adjustment_done",
+      "bounds": [
+        270,
+        569,
+        492,
+        642
+      ],
+      "point": [
+        381,
+        605
+      ],
+      "started_at_ns": 1791350616528401000,
+      "completed_at_ns": 1791350616627664000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "style_digital",
+      "bounds": [
+        445,
+        672,
+        540,
+        744
+      ],
+      "point": [
+        492,
+        708
+      ],
+      "started_at_ns": 1791350624643742000,
+      "completed_at_ns": 1791350624702366000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "point": [
+        445,
+        780
+      ],
+      "started_at_ns": 1791350633005630000,
+      "completed_at_ns": 1791350633241039000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "purchase_preview",
+      "bounds": [
+        24,
+        813,
+        516,
+        906
+      ],
+      "point": [
+        270,
+        859
+      ],
+      "started_at_ns": 1791350637957928000,
+      "completed_at_ns": 1791350637988159000
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        179,
+        744
+      ],
+      "point": [
+        98,
+        708
+      ],
+      "started_at_ns": 1791350662679220000,
+      "completed_at_ns": 1791350662877736000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "last_photo",
+      "bounds": [
+        36,
+        831,
+        111,
+        906
+      ],
+      "point": [
+        73,
+        868
+      ],
+      "started_at_ns": 1791350670746243000,
+      "completed_at_ns": 1791350671043352000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "gallery_item",
+      "bounds": [
+        18,
+        218,
+        182,
+        382
+      ],
+      "point": [
+        100,
+        300
+      ],
+      "started_at_ns": 1791350676724255000,
+      "completed_at_ns": 1791350676754878000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "review_zoom_reset",
+      "bounds": [
+        352,
+        230,
+        522,
+        304
+      ],
+      "point": [
+        437,
+        267
+      ],
+      "started_at_ns": 1791350693878120000,
+      "completed_at_ns": 1791350694380653000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "review_next",
+      "bounds": [
+        274,
+        634,
+        516,
+        717
+      ],
+      "point": [
+        395,
+        675
+      ],
+      "started_at_ns": 1791350703284636000,
+      "completed_at_ns": 1791350703318215000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "review_previous",
+      "bounds": [
+        24,
+        634,
+        265,
+        717
+      ],
+      "point": [
+        144,
+        675
+      ],
+      "started_at_ns": 1791350712058560000,
+      "completed_at_ns": 1791350712098996000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "review_delete",
+      "bounds": [
+        274,
+        729,
+        516,
+        803
+      ],
+      "point": [
+        395,
+        766
+      ],
+      "started_at_ns": 1791350716554210000,
+      "completed_at_ns": 1791350716582968000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "button2",
+      "bounds": [
+        216,
+        665,
+        484,
+        746
+      ],
+      "point": [
+        350,
+        705
+      ],
+      "started_at_ns": 1791350721213611000,
+      "completed_at_ns": 1791350721249665000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "review_share",
+      "bounds": [
+        24,
+        729,
+        265,
+        803
+      ],
+      "point": [
+        144,
+        766
+      ],
+      "started_at_ns": 1791350725872178000,
+      "completed_at_ns": 1791350725906572000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "review_continue",
+      "bounds": [
+        24,
+        818,
+        516,
+        900
+      ],
+      "point": [
+        270,
+        859
+      ],
+      "started_at_ns": 1791350734622924000,
+      "completed_at_ns": 1791350734651539000
+    },
+    {
+      "phase": "existing-photo review at 200% font scale",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791350748263091000,
+      "completed_at_ns": 1791350748322427000
+    }
+  ],
+  "gestures": [
+    {
+      "phase": "EV/zoom at original font scale",
+      "container_bounds": [
+        48,
+        486,
+        492,
+        558
+      ],
+      "from": [
+        367,
+        522
+      ],
+      "to": [
+        172,
+        522
+      ]
+    },
+    {
+      "phase": "EV/zoom at original font scale",
+      "container_bounds": [
+        48,
+        486,
+        492,
+        558
+      ],
+      "from": [
+        367,
+        522
+      ],
+      "to": [
+        172,
+        522
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        370
+      ],
+      "to": [
+        270,
+        560
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        370
+      ],
+      "to": [
+        270,
+        560
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        560
+      ],
+      "to": [
+        270,
+        370
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        370
+      ],
+      "to": [
+        270,
+        560
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        370
+      ],
+      "to": [
+        270,
+        560
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        370
+      ],
+      "to": [
+        270,
+        560
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        560
+      ],
+      "to": [
+        270,
+        370
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        560
+      ],
+      "to": [
+        270,
+        370
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        560
+      ],
+      "to": [
+        270,
+        370
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        781
+      ],
+      "from": [
+        270,
+        560
+      ],
+      "to": [
+        270,
+        370
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        660,
+        540,
+        732
+      ],
+      "from": [
+        151,
+        696
+      ],
+      "to": [
+        388,
+        696
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        912
+      ],
+      "from": [
+        270,
+        417
+      ],
+      "to": [
+        270,
+        645
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        912
+      ],
+      "from": [
+        270,
+        417
+      ],
+      "to": [
+        270,
+        645
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        912
+      ],
+      "from": [
+        270,
+        645
+      ],
+      "to": [
+        270,
+        417
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        912
+      ],
+      "from": [
+        270,
+        645
+      ],
+      "to": [
+        270,
+        417
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        912
+      ],
+      "from": [
+        270,
+        645
+      ],
+      "to": [
+        270,
+        417
+      ]
+    },
+    {
+      "phase": "store-specific offline privacy",
+      "container_bounds": [
+        0,
+        151,
+        540,
+        912
+      ],
+      "from": [
+        270,
+        645
+      ],
+      "to": [
+        270,
+        417
+      ]
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "container_bounds": [
+        48,
+        497,
+        492,
+        569
+      ],
+      "from": [
+        367,
+        533
+      ],
+      "to": [
+        172,
+        533
+      ]
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "container_bounds": [
+        48,
+        424,
+        492,
+        496
+      ],
+      "from": [
+        367,
+        460
+      ],
+      "to": [
+        172,
+        460
+      ]
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    },
+    {
+      "phase": "fixed actions at 200% font scale",
+      "container_bounds": [
+        0,
+        672,
+        540,
+        744
+      ],
+      "from": [
+        151,
+        708
+      ],
+      "to": [
+        388,
+        708
+      ]
+    }
+  ],
+  "double_tap_dispatch_seconds": 0.176,
+  "share_foreground_activity": "    topResumedActivity=ActivityRecord{22592533 u0 com.android.intentresolver/.ChooserActivityLauncher t38}",
+  "font_scale_restored": true,
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true,
+  "font_scale_unchanged": true
+}

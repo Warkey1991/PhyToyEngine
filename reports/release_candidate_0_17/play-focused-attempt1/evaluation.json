@@ -1,0 +1,302 @@
+{
+  "passed": false,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791337520389575000,
+  "scope": "0.17 store-specific unconfigured UI: trial, fixed actions, provider, restore and privacy",
+  "checks": [
+    {
+      "name": "Trial does not unlock photography; fixed actions visible; checkout disabled without store configuration",
+      "passed": true
+    },
+    {
+      "name": "Restore preserves the visible unconfigured result",
+      "passed": true
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "purchase-fixed-actions_ui": "purchase-fixed-actions-ui.json",
+    "purchase-fixed-actions_screenshot": "purchase-fixed-actions.png",
+    "unconfigured-purchase_ui": "unconfigured-purchase-ui.json",
+    "unconfigured-purchase_screenshot": "unconfigured-purchase.png",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {},
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "configured checkout",
+    "real purchase or restoration",
+    "physical devices",
+    "photo capture",
+    "successful deletion/system consent",
+    "pinch/multitouch",
+    "other font scales"
+  ],
+  "installed_apk_sha256": "d61d647adff6ba705f06eca33d75289693beb86635a9c3b8bfd4432f347b7446",
+  "phase": "store-specific trial and unconfigured purchase",
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "style_digital",
+      "bounds": [
+        306,
+        672,
+        471,
+        744
+      ],
+      "point": [
+        388,
+        708
+      ],
+      "started_at_ns": 1791337533418758000,
+      "completed_at_ns": 1791337533679623000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "camera_unlock_style",
+      "bounds": [
+        378,
+        744,
+        513,
+        816
+      ],
+      "point": [
+        445,
+        780
+      ],
+      "started_at_ns": 1791337543841516000,
+      "completed_at_ns": 1791337543883530000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "purchase_restore",
+      "bounds": [
+        36,
+        694,
+        504,
+        772
+      ],
+      "point": [
+        270,
+        733
+      ],
+      "started_at_ns": 1791337595961279000,
+      "completed_at_ns": 1791337595985098000
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791337609106539000,
+      "completed_at_ns": 1791337609162386000
+    }
+  ],
+  "hierarchy_collection_retries": [
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "attempt": 1,
+      "failure": "UIAutomator did not write a fresh hierarchy: "
+    }
+  ],
+  "gestures": [
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        375
+      ],
+      "to": [
+        270,
+        567
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    },
+    {
+      "phase": "store-specific trial and unconfigured purchase",
+      "container_bounds": [
+        0,
+        150,
+        540,
+        793
+      ],
+      "from": [
+        270,
+        567
+      ],
+      "to": [
+        270,
+        375
+      ]
+    }
+  ],
+  "failure": "KeyError: 'purchase_payment_provider'",
+  "initial_visible_style_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true,
+  "font_scale_unchanged": true
+}

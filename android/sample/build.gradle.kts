@@ -1,4 +1,5 @@
 import java.security.KeyFactory
+import java.net.URI
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
 
@@ -6,18 +7,22 @@ plugins {
     id("com.android.application")
 }
 
-// Publish with a permanent ID chosen before the first store release. The default keeps
-// installed development builds upgradeable and is rejected by the store release gate.
-val releaseApplicationId = providers.gradleProperty("phytoyApplicationId")
+// Separate permanent IDs keep store-specific purchases and updates in their own channel.
+val playApplicationId = providers.gradleProperty("phytoyApplicationId")
     .orElse(providers.environmentVariable("PHYTOY_APPLICATION_ID"))
-    .getOrElse("com.phytoy.sample")
+    .getOrElse("com.ycolor.team.phytoy.camera.android.gpapp")
+val galaxyApplicationId = providers.gradleProperty("phytoyGalaxyApplicationId")
+    .orElse(providers.environmentVariable("PHYTOY_GALAXY_APPLICATION_ID"))
+    .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyapp")
 val releaseVersionCode = providers.gradleProperty("phytoyVersionCode")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_CODE"))
-    .getOrElse("17").toInt()
+    .getOrElse("18").toInt()
 val releaseVersionName = providers.gradleProperty("phytoyVersionName")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_NAME"))
-    .getOrElse("0.16.0-rc1")
-require(releaseApplicationId.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+"))) {
+    .getOrElse("0.17.0")
+require(listOf(playApplicationId, galaxyApplicationId).all {
+    it.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+"))
+}) {
     "phytoyApplicationId must be a valid permanent Android application ID"
 }
 require(releaseVersionCode in 1..2100000000) { "phytoyVersionCode must be a positive Play-compatible integer" }
@@ -37,10 +42,24 @@ val billingKeyConfigured = playBillingPublicKey.isNotBlank() && runCatching {
 require(playBillingPublicKey.isBlank() || billingKeyConfigured) {
     "The Play licensing public key is not a valid base64 X509 RSA public key"
 }
-require(!providers.gradleProperty("phytoyRequireBillingConfigured").getOrElse("false").toBoolean() ||
-    billingKeyConfigured) {
-    "A configured billing release was requested, but the Play licensing public key is absent"
-}
+val galaxyBillingConfigured = providers.gradleProperty("phytoyGalaxyBillingConfigured")
+    .orElse(providers.environmentVariable("PHYTOY_GALAXY_BILLING_CONFIGURED"))
+    .getOrElse("false").toBoolean()
+val requireBilling = providers.gradleProperty("phytoyRequireBillingConfigured").getOrElse("false").toBoolean()
+fun publicValue(property: String, environment: String) = providers.gradleProperty(property)
+    .orElse(providers.environmentVariable(environment)).getOrElse("").trim()
+val publisherName = publicValue("phytoyPublisherName", "PHYTOY_PUBLISHER_NAME")
+val supportEmail = publicValue("phytoySupportEmail", "PHYTOY_SUPPORT_EMAIL")
+val privacyPolicyUrl = publicValue("phytoyPrivacyPolicyUrl", "PHYTOY_PRIVACY_POLICY_URL")
+val publisherConfigured = publisherName.isNotBlank() &&
+    supportEmail.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+")) && runCatching {
+        val uri = URI(privacyPolicyUrl)
+        uri.scheme == "https" && !uri.host.isNullOrBlank() && uri.userInfo == null
+    }.getOrDefault(false)
+require(!providers.gradleProperty("phytoyRequirePublisherConfigured").getOrElse("false").toBoolean() ||
+    publisherConfigured) { "A publisher name, valid support email and public HTTPS privacy policy URL are required" }
+fun quoted(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"")
+    .replace("\n", "\\n").replace("\r", "\\r") + "\""
 
 // Secrets come only from the build environment, never a checked-in properties file.
 // Missing credentials intentionally produce unsigned APK/AAB candidates.
@@ -59,15 +78,34 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = releaseApplicationId
+        applicationId = playApplicationId
         minSdk = 26
         targetSdk = 37
         versionCode = releaseVersionCode
         versionName = releaseVersionName
-        buildConfigField("String", "PLAY_BILLING_PUBLIC_KEY", "\"$playBillingPublicKey\"")
+        buildConfigField("String", "PUBLISHER_NAME", quoted(publisherName))
+        buildConfigField("String", "SUPPORT_EMAIL", quoted(supportEmail))
+        buildConfigField("String", "PRIVACY_POLICY_URL", quoted(privacyPolicyUrl))
     }
 
     buildFeatures { buildConfig = true }
+
+    flavorDimensions += "store"
+    productFlavors {
+        create("play") {
+            dimension = "store"
+            applicationId = playApplicationId
+            buildConfigField("String", "STORE_CHANNEL", "\"play\"")
+            buildConfigField("String", "PLAY_BILLING_PUBLIC_KEY", quoted(playBillingPublicKey))
+        }
+        create("galaxy") {
+            dimension = "store"
+            applicationId = galaxyApplicationId
+            buildConfigField("String", "STORE_CHANNEL", "\"galaxy\"")
+            // Enable only after the four permanent Item products are configured in Seller Portal.
+            buildConfigField("boolean", "GALAXY_BILLING_CONFIGURED", galaxyBillingConfigured.toString())
+        }
+    }
 
     if (hasSigning) {
         signingConfigs {
@@ -115,6 +153,16 @@ android {
 dependencies {
     implementation(project(":sdk"))
     implementation("androidx.exifinterface:exifinterface:1.4.2")
-    implementation("com.android.billingclient:billing:9.1.0")
+    "playImplementation"("com.android.billingclient:billing:9.1.0")
+    "galaxyImplementation"("com.samsung.developer:iap:6.5.2")
     testImplementation("junit:junit:4.13.2")
+}
+
+// Require only the configuration for the channel actually being built.
+tasks.configureEach {
+    if (name.matches(Regex("pre(Play|Galaxy)(Release|Benchmark)Build"))) doFirst {
+        if (requireBilling) require(if (name.contains("Play")) billingKeyConfigured else galaxyBillingConfigured) {
+            "Billing configuration for this store channel is absent"
+        }
+    }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="adjustment_panel" type="id" />
+    <item name="adjustment_slider" type="id" />
+    <item name="adjustment_reset" type="id" />
+    <item name="adjustment_done" type="id" />
+    <item name="camera_unlock_style" type="id" />
+    <string name="camera_adjust_exposure_value">Exposure EV %1$+.2f</string>
+    <string name="camera_adjust_zoom_value">Zoom %1$.2f×</string>
+    <string name="camera_adjust_reset">Reset</string>
+    <string name="camera_adjust_done">Done</string>
+    <string name="camera_adjust_exposure_open">Adjust exposure, EV %1$+.2f</string>
+    <string name="camera_adjust_zoom_open">Adjust zoom, %1$.2f×</string>
+    <string name="camera_unlock_style">Unlock to shoot</string>
+    <string name="camera_preview_style">Free live preview · Unlock to save photos</string>
+    <string name="camera_first_use_hint">Tap the viewfinder to focus. Swipe up or down to adjust brightness. Tap EV or zoom for precise controls.</string>
+    <string name="camera_first_use_done">Got it</string>
+    <string name="camera_saved_short">Photo saved</string>
+</resources>

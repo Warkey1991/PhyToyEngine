@@ -1,0 +1,79 @@
+ACTIVITY MANAGER LAST ANR (dumpsys activity lastanr)
+  ANR time: Oct 7, 2026 9:50:56 AM
+  Reason: Input dispatching timed out (cbb8050 com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity is not responding. Waited 5000ms for FocusEvent(hasFocus=true)).
+
+  * Task{48496e2 #23 type=standard A=10214:com.ycolor.team.phytoy.camera.android.gpapp U=0 visible=true visibleRequested=true mode=fullscreen translucent=false sz=1}
+    mLastNonFullscreenBounds=Rect(103, 219 - 438, 759)
+    isSleeping=false
+    topResumedActivity=ActivityRecord{197068996 u0 com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity t23}
+
+  mLastHomeActivityStartResult=2
+  mLastStarter:
+    mCurrentUser=0
+    mLastStartReason=startActivityAndWait
+    mLastStartActivityTimeMs=Oct 7, 2026 9:50:48 AM
+    mLastStartActivityResult=0
+    mStartActivity:
+      packageName=com.ycolor.team.phytoy.camera.android.gpapp processName=com.ycolor.team.phytoy.camera.android.gpapp
+      launchedFromUid=2000 launchedFromPackage=com.android.shell launchedFromFeature=null userId=0
+      app=ProcessRecord{bc47c92 21367:com.ycolor.team.phytoy.camera.android.gpapp/u0a214}
+      Intent { flg=0x10000000 xflg=0x5 cmp=com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity }
+      rootOfTask=true task=Task{48496e2 #23 type=standard A=10214:com.ycolor.team.phytoy.camera.android.gpapp}
+      taskAffinity=10214:com.ycolor.team.phytoy.camera.android.gpapp
+      mActivityComponent=com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity
+      baseDir=/data/app/~~6hpEWhUTiGeEJllJ3bOmqw==/com.ycolor.team.phytoy.camera.android.gpapp-vj2Yi38BOCKLE2IcygApZQ==/base.apk
+      dataDir=/data/user/0/com.ycolor.team.phytoy.camera.android.gpapp
+      stateNotNeeded=false componentSpecified=true mActivityType=standard
+      compat={240dpi} theme=0x7f0c0000
+      mLastReportedConfigurations:
+        mGlobalConfig={2.0 310mcc260mnc [en_US] ldltr sw360dp w360dp h640dp 240dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 540, 960) mAppBounds=Rect(0, 0 - 540, 960) mMaxBounds=Rect(0, 0 - 540, 960) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.3 s.540 fontWeightAdjustment=0}
+        mOverrideConfig={2.0 310mcc260mnc [en_US] ldltr sw360dp w360dp h640dp 240dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 540, 960) mAppBounds=Rect(0, 0 - 540, 960) mMaxBounds=Rect(0, 0 - 540, 960) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} as.3 s.2 fontWeightAdjustment=0}
+      mLastReportedActivityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 540, 960), taskFragmentBounds=Rect(0, 0 - 540, 960)}
+      CurrentConfiguration={2.0 310mcc260mnc [en_US] ldltr sw360dp w360dp h640dp 240dpi nrml long port finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 540, 960) mAppBounds=Rect(0, 0 - 540, 960) mMaxBounds=Rect(0, 0 - 540, 960) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} as.3 s.2 fontWeightAdjustment=0}
+      RequestedOverrideConfiguration={0.0 ?mcc0mnc ?localeList ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?ldr ?wideColorGamut ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? winConfig={ mBounds=Rect(0, 0 - 0, 0) mAppBounds=null mMaxBounds=Rect(0, 0 - 0, 0) mDisplayRotation=undefined mWindowingMode=undefined mActivityType=standard mAlwaysOnTop=undefined mRotation=undefined} ?fontWeightAdjustment}
+      ResolvedOverrideConfiguration={0.0 ?mcc0mnc ?localeList ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?ldr ?wideColorGamut ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? winConfig={ mBounds=Rect(0, 0 - 0, 0) mAppBounds=null mMaxBounds=Rect(0, 0 - 0, 0) mDisplayRotation=undefined mWindowingMode=undefined mActivityType=undefined mAlwaysOnTop=undefined mRotation=undefined} s.2 ?fontWeightAdjustment}
+      taskDescription: label="null" icon=null iconResource=/0 iconFilename=null primaryColor=ff212121
+        backgroundColor=ff303030 statusBarColor=0 navigationBarColor=ff000000
+       backgroundColorFloating=ff424242
+      launchFailed=false launchCount=1 lastLaunchTime=-7s781ms
+      mHaveState=false mIcicle=null
+      state=RESUMED delayedResume=false finishing=false
+      keysPaused=false inHistory=true idle=false
+      occludesParent=true mNoDisplay=false immersive=false launchMode=0
+      mActivityType=standard
+      windows=[Window{cbb8050 u0 com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity}]
+      windowType=2
+      mOccludesParent=true
+      overrideOrientation=SCREEN_ORIENTATION_UNSPECIFIED
+      requestedOrientation=SCREEN_ORIENTATION_UNSPECIFIED
+      mVisibleRequested=true mVisible=true mClientVisible=true reportedDrawn=true reportedVisible=true
+      mNumInterestingWindows=1 mNumDrawnWindows=1 allDrawn=true)
+      startingData=null firstWindowDrawn=true
+      nowVisible=true lastVisibleTime=-5s860ms
+      resizeMode=RESIZE_MODE_RESIZEABLE
+      mLastReportedMultiWindowMode=false mLastReportedPictureInPictureMode=false
+      supportsSizeChanges=SIZE_CHANGES_UNSUPPORTED_METADATA
+      configChanges=0x3
+      neverSandboxDisplayApis=false
+      alwaysSandboxDisplayApis=false
+      isTransparentPolicyRunning=false
+      areBoundsLetterboxed=false
+      isLetterboxRunning=false
+    mIntent=Intent { flg=0x10000000 xflg=0x5 cmp=com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity }
+    mLaunchMode=LAUNCH_MULTIPLE    mLaunchFlags=0x10000000 mDoResume=true mAddingToTask=true mInTaskFragment=null
+
+  ResumedActivity: ActivityRecord{197068996 u0 com.ycolor.team.phytoy.camera.android.gpapp/com.phytoy.sample.MainActivity t23}
+  LockTaskController:
+    mLockTaskModeState=NONE
+    mLockTaskModeTasks=
+    mLockTaskPackages (userId:packages)=
+
+  KeyguardController:
+    mKeyguardShowing=false
+    mAodShowing=false
+    mKeyguardGoingAway=false
+   KeyguardShowing=false AodShowing=false KeyguardGoingAway=false DismissalRequested=false  Occluded=false DismissingKeyguardActivity=null TurnScreenOnActivity=null at display=0
+    mDismissalRequested=false
+
+-------------------------------------------------------------------------------
+

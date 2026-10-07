@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="purchase_sample_source">Original generated scene</string>
+    <string name="purchase_sample_style">%1$s style illustration</string>
+    <string name="purchase_sample_caption">Original → %1$s. AI scene processed for illustration; actual photographs depend on your device and lighting.</string>
+</resources>

@@ -1,0 +1,286 @@
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/AndroidManifest.xml:19: Warning: Attribute localeConfig is only used in API level 33 and higher (current min is 26) [UnusedAttribute]
+        android:localeConfig="@xml/locales_config"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedAttribute":
+   This check finds attributes set in XML files that were introduced in a
+   version newer than the oldest version targeted by your application (with
+   the minSdkVersion attribute).
+
+   This is not an error; the application will simply ignore the attribute.
+   However, if the attribute is important to the appearance or functionality
+   of your application, you should consider finding an alternative way to
+   achieve the same result with only available attributes, and then you can
+   optionally create a copy of the layout in a layout-vNN folder which will be
+   used on API NN or higher where you can take advantage of the newer
+   attribute.
+
+   Note: This check does not only apply to attributes. For example, some tags
+   can be unused too, such as the new <tag> element in layouts introduced in
+   API 21.
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/billing.xml:41: Warning: Formatting %d followed by words ("cameras"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="billing_restored">Purchases restored: %1$d cameras unlocked.</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:58: Warning: Formatting %d followed by words ("saved"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="photo_saved">%1$s · %2$d×%3$d saved to Photos</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:65: Warning: Formatting %d followed by words ("pixels"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="review_photo_description">Saved photo in %1$s style, %2$d by %3$d pixels</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:76: Warning: Formatting %d followed by words ("ready"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="status_active_high_res">%1$s · %2$d×%3$d ready</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:81: Warning: Formatting %d followed by words ("for"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="status_stream_fallback">Photo stream reduced to %1$d×%2$d for this device</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "PluralsCandidate":
+   This lint check looks for potential errors in internationalization where
+   you have translated a message which involves a quantity and it looks like
+   other parts of the string may need grammatical changes.
+
+   For example, rather than something like this:
+     <string name="try_again">Try again in %d seconds.</string>
+   you should be using a plural:
+      <plurals name="try_again">
+           <item quantity="one">Try again in %d second</item>
+           <item quantity="other">Try again in %d seconds</item>
+       </plurals>
+   This will ensure that in other languages the right set of translations are
+   provided for the different quantity classes.
+
+   (This check depends on some heuristics, so it may not accurately determine
+   whether a string really should be a quantity. You can use tools:ignore to
+   filter out false positives.
+
+   https://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/mipmap-anydpi-v26: Warning: This folder configuration (v26) is unnecessary; minSdkVersion is 26. Merge all the resources in this folder into mipmap-anydpi. [ObsoleteSdkInt]
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/billing.xml:27: Warning: The resource R.string.billing_preview_only appears to be unused [UnusedResources]
+    <string name="billing_preview_only">Preview only · unlock to shoot</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/drawable/ic_launcher.xml:2: Warning: The resource R.drawable.ic_launcher appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/navigation.xml:6: Warning: The resource R.string.camera_header_description appears to be unused [UnusedResources]
+    <string name="camera_header_description">ToviCam. Current style: %1$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/product_info.xml:6: Warning: The resource R.string.product_privacy_body appears to be unused [UnusedResources]
+    <string name="product_privacy_body">Updated 1 October 2026\n\nCamera access is used only while the camera screen is active, for a live viewfinder and photos you take. Frames are processed locally and released when the session closes.\n\nPhotos are saved on your device in Pictures/PhyToy. JPEG metadata includes the capture time, camera exposure and selected style; no location is requested or added. Delete photos with your system gallery. Uninstalling this app does not delete saved photos.\n\nThe app stores camera preferences, permission-request state, a local photo index and signed purchase receipts in private local storage. Receipts are used to restore and cache camera unlocks for offline use. Clearing app storage removes this local data; Google Play purchases can be restored with the same Google Play account.\n\nPurchasing, restoring and confirming camera unlocks use Google Play Billing and require a network connection and Google Play account. Google handles payments under its own terms and privacy policy. We do not receive your card details. This app has no separate account, advertising or photo-upload service. We have not added a custom analytics service. Google Play and its Billing SDK process payment-service information under Google’s privacy policy. Photos, frames and camera preferences are not sent to us. Device logs may contain local diagnostic information; they are not uploaded automatically.\n\nYou can revoke camera access at any time in Android Settings → Apps → ToviCam → Permissions.</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/product_info.xml:9: Warning: The resource R.string.product_about_title appears to be unused [UnusedResources]
+    <string name="product_about_title">Camera and shooting guide</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/review.xml:5: Warning: The resource R.string.review_saved_details appears to be unused [UnusedResources]
+    <string name="review_saved_details">%1$s · %2$d × %3$d · Saved</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/settings.xml:9: Warning: The resource R.string.settings_choice_value appears to be unused [UnusedResources]
+    <string name="settings_choice_value">%1$s\n%2$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:4: Warning: The resource R.string.product_wordmark appears to be unused [UnusedResources]
+    <string name="product_wordmark">ToviCam</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:5: Warning: The resource R.string.style_title_format appears to be unused [UnusedResources]
+    <string name="style_title_format">%1$s  /  %2$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:6: Warning: The resource R.string.capture_format appears to be unused [UnusedResources]
+    <string name="capture_format">%1$s\n%2$.1f MP</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:20: Warning: The resource R.string.style_selected_description appears to be unused [UnusedResources]
+    <string name="style_selected_description">Current style: %1$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:23: Warning: The resource R.string.live_badge appears to be unused [UnusedResources]
+    <string name="live_badge">● LIVE</string>
+            ~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:24: Warning: The resource R.string.warming_badge appears to be unused [UnusedResources]
+    <string name="warming_badge">WARMING</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:31: Warning: The resource R.string.debug_toggle_description appears to be unused [UnusedResources]
+    <string name="debug_toggle_description">Current camera style; long press for engine diagnostics</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:32: Warning: The resource R.string.about_and_privacy appears to be unused [UnusedResources]
+    <string name="about_and_privacy">About &amp; privacy</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:33: Warning: The resource R.string.about_action_description appears to be unused [UnusedResources]
+    <string name="about_action_description">About this camera and privacy. Current style: %1$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:34: Warning: The resource R.string.action_retry appears to be unused [UnusedResources]
+    <string name="action_retry">Retry</string>
+            ~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:35: Warning: The resource R.string.action_open_settings appears to be unused [UnusedResources]
+    <string name="action_open_settings">Open settings</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:45: Warning: The resource R.string.exposure_value_description appears to be unused [UnusedResources]
+    <string name="exposure_value_description">Exposure %1$+.1f EV. Use the accessibility actions to make the image brighter or darker.</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:51: Warning: The resource R.string.zoom_value_description appears to be unused [UnusedResources]
+    <string name="zoom_value_description">Zoom %1$.1f times. Use the accessibility actions to zoom in or out.</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:60: Warning: The resource R.string.no_photo_yet appears to be unused [UnusedResources]
+    <string name="no_photo_yet">Your first photo will appear here after you take it</string>
+            ~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:61: Warning: The resource R.string.review_back_description appears to be unused [UnusedResources]
+    <string name="review_back_description">Back to camera</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:62: Warning: The resource R.string.review_continue appears to be unused [UnusedResources]
+    <string name="review_continue">KEEP SHOOTING</string>
+            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:64: Warning: The resource R.string.review_details appears to be unused [UnusedResources]
+    <string name="review_details">%1$s  ·  %2$d × %3$d  ·  SAVED</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:75: Warning: The resource R.string.status_active appears to be unused [UnusedResources]
+    <string name="status_active">Camera is ready</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:80: Warning: The resource R.string.status_stream_rejected appears to be unused [UnusedResources]
+    <string name="status_stream_rejected">Couldn’t start this camera mode. Please try again.</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:82: Warning: The resource R.string.status_engine_error appears to be unused [UnusedResources]
+    <string name="status_engine_error">Engine error: %1$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/values/strings.xml:83: Warning: The resource R.string.status_failure appears to be unused [UnusedResources]
+    <string name="status_failure">%1$s: %2$s</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests=true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests=true.
+
+   Available options:
+
+   **skip-libraries** (default is true):
+   Whether the unused resource check should skip reporting unused resources in libraries.
+
+   Many libraries will declare resources that are part of the library surface; other modules depending on the library will also reference the resources. To avoid reporting all these resources as unused (in the context of a library), the unused resource check normally skips reporting unused resources in libraries. Instead, run the unused resource check on the consuming app module (along with `checkDependencies=true`).
+
+   However, there are cases where you want to check that all the resources declared in a library are used; in that case, you can disable the skip option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UnusedResources">
+           <option name="skip-libraries" value="true" />
+       </issue>
+   </lint>
+   ```
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/drawable-nodpi/style_source_digital.webp: Warning: The following unrelated icon files have identical contents: style_source_dh_color.webp, style_source_dh_mono.webp, style_source_digital.webp [IconDuplicates]
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/res/drawable-nodpi/style_source_plastic.webp: Warning: The following unrelated icon files have identical contents: style_source_fisheye.webp, style_source_plastic.webp [IconDuplicates]
+
+   Explanation for issues of type "IconDuplicates":
+   If an icon is repeated under different names, you can consolidate and just
+   use one of the icons and delete the others to make your application
+   smaller. However, duplicated icons usually are not intentional and can
+   sometimes point to icons that were accidentally overwritten or accidentally
+   not updated.
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraPurchaseOverlay.kt:34: Warning: Custom view CameraPurchaseOverlay is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
+internal class CameraPurchaseOverlay(
+               ~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoGalleryOverlay.kt:42: Warning: Custom view PhotoGalleryOverlay is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
+internal class PhotoGalleryOverlay(
+               ~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt:27: Warning: Custom view SettingsOverlay is missing constructor used by tools: (Context) or (Context,AttributeSet) or (Context,AttributeSet,int) [ViewConstructor]
+internal class SettingsOverlay(
+               ~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ViewConstructor":
+   Some layout tools (such as the Android layout editor) need to find a
+   constructor with one of the following signatures:
+   * View(Context context)
+   * View(Context context, AttributeSet attrs)
+   * View(Context context, AttributeSet attrs, int defStyle)
+
+   If your custom view needs to perform initialization which does not apply
+   when used in a layout editor, you can surround the given code with a check
+   to see if View#isInEditMode() is false, since that method will return false
+   at runtime but true within a user interface editor.
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:382: Warning: Custom view `TextureView` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+        preview.setOnTouchListener { _, event -> handlePreviewTouch(event) }
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt:382: Warning: onTouch lambda should call View#performClick when a click is detected [ClickableViewAccessibility]
+        preview.setOnTouchListener { _, event -> handlePreviewTouch(event) }
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/ZoomablePhotoView.kt:133: Warning: ZoomablePhotoView#onTouchEvent should call ZoomablePhotoView#performClick when a click is detected [ClickableViewAccessibility]
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+                 ~~~~~~~~~~~~
+
+   Explanation for issues of type "ClickableViewAccessibility":
+   If a View that overrides onTouchEvent or uses an OnTouchListener does not
+   also implement performClick and call it when clicks are detected, the View
+   may not handle accessibility actions properly. Logic handling the click
+   actions should ideally be placed in View#performClick as some accessibility
+   services invoke performClick when a click action should occur.
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoGalleryOverlay.kt:251: Warning: Manually populating or sending TYPE_WINDOW_STATE_CHANGED events should be avoided. They may be ignored on certain versions of Android. Prefer setting UI metadata using View.onInitializeAccessibilityNodeInfo, Activity.setTitle, ViewCompat.setAccessibilityPaneTitle, etc. to inform users of crucial changes to the UI. [AccessibilityWindowStateChangedEvent]
+            restored?.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt:351: Warning: Manually populating or sending TYPE_WINDOW_STATE_CHANGED events should be avoided. They may be ignored on certain versions of Android. Prefer setting UI metadata using View.onInitializeAccessibilityNodeInfo, Activity.setTitle, ViewCompat.setAccessibilityPaneTitle, etc. to inform users of crucial changes to the UI. [AccessibilityWindowStateChangedEvent]
+            restored?.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AccessibilityWindowStateChangedEvent":
+   Sending or populating TYPE_WINDOW_STATE_CHANGED events in your code is
+   strongly discouraged. Instead, prefer to use or extend system-provided
+   widgets that are as far down Android's class hierarchy as possible.
+   System-provided widgets that are far down the hierarchy already have most
+   of the accessibility capabilities your app needs. If you must extend View
+   or Canvas directly, then still prefer to: set UI metadata by calling
+   Activity.setTitle, ViewCompat.setAccessibilityPaneTitle, or
+   ViewCompat.setAccessibilityLiveRegion; implement
+   View.onInitializeAccessibilityNodeInfo; and (for very specialized custom
+   controls) implement View.getAccessibilityNodeProvider to provide a virtual
+   view hierarchy. These approaches allow accessibility services to inspect
+   the view hierarchy, rather than relying on incomplete information provided
+   by events. Events like TYPE_WINDOW_STATE_CHANGED will be sent automatically
+   when updating this metadata, and so trying to manually send this event will
+   result in duplicate events, or the event may be ignored entirely.
+
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:622: Warning: Use "Gravity.START" instead of "Gravity.LEFT" to ensure correct behavior in right-to-left locales [RtlHardcoded]
+        styleStrip.addView(leftFade, LayoutParams(fadeWidth, LayoutParams.MATCH_PARENT, Gravity.LEFT))
+                                                                                                ~~~~
+/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt:623: Warning: Use "Gravity.END" instead of "Gravity.RIGHT" to ensure correct behavior in right-to-left locales [RtlHardcoded]
+        styleStrip.addView(rightFade, LayoutParams(fadeWidth, LayoutParams.MATCH_PARENT, Gravity.RIGHT))
+                                                                                                 ~~~~~
+
+   Explanation for issues of type "RtlHardcoded":
+   Using Gravity#LEFT and Gravity#RIGHT can lead to problems when a layout is
+   rendered in locales where text flows from right to left. Use Gravity#START
+   and Gravity#END instead. Similarly, in XML gravity and layout_gravity
+   attributes, use start rather than left.
+
+   For XML attributes such as paddingLeft and layout_marginLeft, use
+   paddingStart and layout_marginStart. NOTE: If your minSdkVersion is less
+   than 17, you should add both the older left/right attributes as well as the
+   new start/end attributes. On older platforms, where RTL is not supported
+   and the start/end attributes are unknown and therefore ignored, you need
+   the older left/right attributes. There is a separate lint check which
+   catches that type of error.
+
+   (Note: For Gravity#LEFT and Gravity#START, you can use these constants even
+   when targeting older platforms, because the start bitmask is a superset of
+   the left bitmask. Therefore, you can use gravity="start" rather than
+   gravity="left|start".)
+
+0 errors, 47 warnings

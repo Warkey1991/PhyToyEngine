@@ -1,133 +1,75 @@
-# Android release candidate build
+# Android 0.17 build and release
 
-The current candidate is **0.16.0-rc1 / versionCode 17**. A passing build and
-packaging audit do not constitute device acceptance or permission to publish.
-The app currently supports Android API 26+, arm64-v8a, and Vulkan 1.1. The two
-Vulkan manifest declarations represent feature level 1 and API version 1.1
-separately, so Play can filter devices correctly.
+Version **0.17.0 / 18**, API 26+, arm64-v8a, Vulkan 1.1, compile/target SDK 37. Use JDK 21, platform android-37.0, build-tools 36.0.0, NDK 28.2.13676358, CMake 3.22.1, Gradle 9.5.0, AGP 9.3.1. Configure ANDROID_SDK_ROOT or ignored android/local.properties. Samsung IAP is declared as `com.samsung.developer:iap:6.5.2`; dependency repositories are Google and Maven Central in android/settings.gradle.kts.
 
-## Build without signing credentials
-
-Use JDK 21, Android platform `android-37.0`, build-tools 36.0.0, NDK
-28.2.13676358, and CMake 3.22.1. Set `ANDROID_SDK_ROOT` or configure the ignored
-`android/local.properties`; no user-specific paths are committed. The wrapper
-uses Gradle 9.5.0 with the official distribution SHA-256 pinned. AGP is 9.3.1.
+## Unsigned candidates
 
 ```sh
 cd android
-./gradlew :sample:assembleRelease :sample:bundleRelease :sample:lintRelease :sdk:assembleRelease
+./gradlew :sample:assemblePlayBenchmark :sample:assembleGalaxyBenchmark \
+  :sample:testPlayDebugUnitTest :sample:testGalaxyDebugUnitTest \
+  :sample:assemblePlayRelease :sample:bundlePlayRelease :sample:lintPlayRelease \
+  :sample:assembleGalaxyRelease :sample:bundleGalaxyRelease :sample:lintGalaxyRelease
 cd ..
-python3 tools/check_android_release.py \
-  --apk android/sample/build/outputs/apk/release/sample-release-unsigned.apk \
-  --aab android/sample/build/outputs/bundle/release/sample-release.aab \
-  --allow-unsigned --output reports/release/packaging.json
+python3 tools/check_android_release.py --channel play \
+  --apk android/sample/build/outputs/apk/play/release/sample-play-release-unsigned.apk \
+  --aab android/sample/build/outputs/bundle/playRelease/sample-play-release.aab \
+  --expected-application-id com.ycolor.team.phytoy.camera.android.gpapp \
+  --allow-unsigned --output reports/release_candidate_0_17/play-packaging.json
+python3 tools/check_android_release.py --channel galaxy \
+  --apk android/sample/build/outputs/apk/galaxy/release/sample-galaxy-release-unsigned.apk \
+  --aab android/sample/build/outputs/bundle/galaxyRelease/sample-galaxy-release.aab \
+  --expected-application-id com.ycolor.team.phytoy.camera.android.galaxyapp \
+  --allow-unsigned --output reports/release_candidate_0_17/galaxy-packaging.json
 ```
 
-No signing credentials means an explicitly unsigned APK and AAB, including when
-Gradle displays a task named `signReleaseBundle`. The audit reads the files to
-verify the actual signing state. Unsigned files cannot be installed or submitted
-to Google Play. Debug builds and the optimized benchmark build use Android's
-development certificate and must never be submitted as release builds.
+Without signing credentials both release files are unsigned. Gradle's sign…Bundle task name does not prove signing. Benchmark builds inherit release optimization but use a development certificate; never upload them.
 
-## Permanent application ID and version
+## Public inputs
 
-The default `com.phytoy.sample` preserves development-install upgrades. The store
-packaging gate rejects it. Choose and record the final application ID before the
-first Play release; **changing it after first publication creates a different
-app**, rather than an update. Gradle properties take precedence over environment
-variables:
+Properties override environment variables. Published IDs remain permanent; updates increase versionCode.
 
-| Gradle property | Environment variable | Default |
+| Property | Environment variable | Default |
 | --- | --- | --- |
-| `phytoyApplicationId` | `PHYTOY_APPLICATION_ID` | `com.phytoy.sample` |
-| `phytoyVersionCode` | `PHYTOY_VERSION_CODE` | `17` |
-| `phytoyVersionName` | `PHYTOY_VERSION_NAME` | `0.16.0-rc1` |
+| phytoyApplicationId | PHYTOY_APPLICATION_ID | com.ycolor.team.phytoy.camera.android.gpapp |
+| phytoyGalaxyApplicationId | PHYTOY_GALAXY_APPLICATION_ID | com.ycolor.team.phytoy.camera.android.galaxyapp |
+| phytoyVersionCode | PHYTOY_VERSION_CODE | 18 |
+| phytoyVersionName | PHYTOY_VERSION_NAME | 0.17.0 |
+| phytoyPlayBillingPublicKey | PHYTOY_PLAY_BILLING_PUBLIC_KEY | empty |
+| phytoyGalaxyBillingConfigured | PHYTOY_GALAXY_BILLING_CONFIGURED | false |
+| phytoyPublisherName | PHYTOY_PUBLISHER_NAME | empty |
+| phytoySupportEmail | PHYTOY_SUPPORT_EMAIL | empty |
+| phytoyPrivacyPolicyUrl | PHYTOY_PRIVACY_POLICY_URL | empty |
 
-For example, supply the actual approved ID using `-PphytoyApplicationId=...` to
-the build; no unapproved production ID is invented by this repository. Every
-published update requires a greater versionCode than the last Play upload.
+The Play licensing key is public X509/base64 RSA data, not a private key. Configure the four Play products and four Samsung permanent Item products before enabling sales. The publisher gate checks identity/email/HTTPS syntax; independently verify public hosting and policy accuracy.
 
-## Billing configuration
+## Production signing
 
-See [PLAY_BILLING.md](PLAY_BILLING.md) for the four non-consumable products and USD 9.99 target pricing. Set the public Play licensing RSA key using `phytoyPlayBillingPublicKey` or `PHYTOY_PLAY_BILLING_PUBLIC_KEY`. Empty configuration leaves paid photography and purchases unavailable while free cameras and trials work. Production signing commands below enforce `phytoyRequireBillingConfigured=true`. This gate is additional to artifact/signing checks; it does not prove the products are activated or real payments tested.
+Set all four secrets in a secure environment: PHYTOY_KEYSTORE, PHYTOY_STORE_PASSWORD, PHYTOY_KEY_ALIAS, PHYTOY_KEY_PASSWORD. Partial credentials fail. Do not pass passwords on command lines, enable shell tracing or commit credentials.
 
-## Signing an approved candidate
-
-Supply all four environment variables through your local secure environment or
-a protected release runner: `PHYTOY_KEYSTORE`, `PHYTOY_STORE_PASSWORD`,
-`PHYTOY_KEY_ALIAS`, and `PHYTOY_KEY_PASSWORD`. The keystore must already exist.
-The build fails if credentials are partially configured. Do not put passwords on
-the command line, enable shell tracing, or commit a keystore or credentials file.
-This repository neither generates signing keys nor uploads to a store.
+With public inputs, store products and the licensing key configured:
 
 ```sh
 cd android
-./gradlew :sample:assembleRelease :sample:bundleRelease :sample:lintRelease \
-  -PphytoyRequireSignedRelease=true -PphytoyRequireBillingConfigured=true
-cd ..
-python3 tools/check_android_release.py \
-  --apk android/sample/build/outputs/apk/release/sample-release.apk \
-  --aab android/sample/build/outputs/bundle/release/sample-release.aab \
-  --store-ready --expected-application-id "$PHYTOY_APPLICATION_ID" \
-  --expected-cert-sha256 "$PHYTOY_UPLOAD_CERT_SHA256" \
-  --output reports/release/packaging.json
+./gradlew :sample:assemblePlayRelease :sample:bundlePlayRelease :sample:lintPlayRelease \
+  -PphytoyRequireSignedRelease=true -PphytoyRequireBillingConfigured=true \
+  -PphytoyRequirePublisherConfigured=true
 ```
 
-`PHYTOY_UPLOAD_CERT_SHA256` is the expected public certificate fingerprint,
-independently checked against the intended upload key. The APK/AAB certificate
-must match, verify cryptographically, and differ from an Android debug
-certificate. With Play App Signing, the upload certificate differs from the key
-Play uses to sign delivered APKs; separately record both in release management.
+For Galaxy, use its signing environment in a separate command:
 
-## What the gate verifies
+```sh
+./gradlew :sample:assembleGalaxyRelease :sample:bundleGalaxyRelease :sample:lintGalaxyRelease \
+  -PphytoyGalaxyBillingConfigured=true -PphytoyRequireSignedRelease=true \
+  -PphytoyRequireBillingConfigured=true -PphytoyRequirePublisherConfigured=true
+```
 
-- APK and AAB versions, application ID, minimum and target API levels agree.
-- Release is not debuggable or test-only, and cleartext traffic is disabled.
-- Only the supported arm64 runtime is packaged; each native library's ELF LOAD
-  segments support 16 KB pages and do not permit writable executable segments.
-- GNU_RELRO protection rounded to 16 KB pages does not overlap non-RELRO writable
-  memory. A harmless partially filled RELRO end page is permitted when the linker
-  leaves sufficient space before writable data, as Android's Bionic loader does.
-- Uncompressed APK native entries are 16 KB ZIP aligned; AAB configuration asks
-  bundletool for `PAGE_ALIGNMENT_16K` or better.
-- APK/AAB native files agree, and packaged profile hashes match source assets.
-- Signing state and, for a signed store candidate, the expected certificate match.
+Audit each signed pair with --store-ready, --channel play|galaxy, the actual --expected-application-id and independently recorded --expected-cert-sha256. Signed APK filenames omit -unsigned. Upload the Play AAB and Seller Portal's accepted Galaxy format. Retain each store's certificate identity. Play App Signing's upload certificate and delivered-app certificate are separate.
 
-The JSON report records SHA-256 hashes and public metadata only. Rebuild after
-every source/resource change, then rerun the audit on those final files. Keep
-`outputs/mapping/release/mapping.txt` and
-`outputs/native-debug-symbols/release/native-debug-symbols.zip` alongside each
-candidate for crash retracing. `benchmark` inherits release R8/resource
-optimization and retains diagnostic logs so Camera2 smoke checks can exercise the
-optimized app; it remains signed with the development key.
+## Artifact audit scope
 
-## CI and remaining release gates
+The checker verifies matching APK/AAB IDs/versions, isolated store billing permissions, release flags, disabled cleartext, arm64, 16 KB ELF/ZIP alignment, GNU_RELRO, native/profile hashes and signing/certificate metadata. Its store_ready field covers artifacts, not live commerce, privacy hosting, device acceptance or store approval.
 
-`.github/workflows/release-checks.yml` runs native/reference tests, failure-focused
-packaging tests, release/benchmark builds, release lint, and unsigned packaging
-audit. Official action commits and Android tool package versions are fixed. CI
-does not receive signing credentials and retains candidates, mapping, symbols,
-lint, and the audit report for 14 days. A workflow added locally must still be
-committed and run on the repository's CI host before claiming CI passed.
+Retain outputs/mapping/playRelease and galaxyRelease and matching outputs/native-debug-symbols directories with hashes. Rebuild/audit after every code/resource/public-input/signing change. CI builds both unsigned channels; local workflow changes do not prove a CI-host run.
 
-Real camera capture, preview/still consistency, permission denial/recovery,
-background/foreground behavior, thermal behavior, and save/EXIF checks remain
-device gates. Test on a real 16 KB runtime (`adb shell getconf PAGE_SIZE` must
-report `16384`) and Vulkan-compatible devices across the supported API range.
-Static alignment checks cannot establish runtime compatibility alone. Consult the
-other files in `release/` for the remaining Play listing, privacy, Data safety,
-identity, and account requirements.
-
-## Official requirements checked
-
-As checked on 2026-09-30, new apps and updates submitted after 2026-08-31 need
-target API 36 or higher; the current target 37 meets that packaging requirement.
-The current 16 KB guidance requires compatibility for API 35+ apps and notes a
-2027-02-01 update block. The candidate is built and checked for 16 KB now.
-
-- [Play target API requirements](https://developer.android.com/google/play/requirements/target-sdk)
-- [16 KB page size support](https://developer.android.com/guide/practices/page-sizes)
-- [Release building and signing](https://developer.android.com/build/build-for-release)
-- [R8 release optimization](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization)
-- [Bionic ELF/RELRO loading](https://android.googlesource.com/platform/bionic/+/refs/heads/main/linker/linker_phdr.cpp)
-- [BundleConfig schema](https://github.com/google/bundletool/blob/master/src/main/proto/config.proto)
+See [release gates](README.md), [Play billing](PLAY_BILLING.md), [Galaxy billing](GALAXY_BILLING.md), [privacy worksheet](data-safety.md). Static alignment cannot replace real 16 KB runtime and physical camera tests.

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_adjust_exposure_value">曝光 EV %1$+.2f</string>
+    <string name="camera_adjust_zoom_value">倍率 %1$.2f×</string>
+    <string name="camera_adjust_reset">重置</string>
+    <string name="camera_adjust_done">完成</string>
+    <string name="camera_adjust_exposure_open">调节曝光，EV %1$+.2f</string>
+    <string name="camera_adjust_zoom_open">调节倍率，%1$.2f×</string>
+    <string name="camera_unlock_style">解锁拍摄</string>
+    <string name="camera_preview_style">免费实时预览 · 解锁后可保存照片</string>
+    <string name="camera_first_use_hint">轻点取景画面对焦，上下滑动调节亮度。点击 EV 或倍率可精确调节。</string>
+    <string name="camera_first_use_done">知道了</string>
+    <string name="camera_saved_short">照片已保存</string>
+</resources>

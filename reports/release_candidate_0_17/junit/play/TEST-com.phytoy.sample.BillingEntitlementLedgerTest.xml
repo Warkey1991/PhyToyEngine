@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.phytoy.sample.BillingEntitlementLedgerTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-07T05:40:19.268Z" hostname="songyuanjindeMacBook-Pro.local" time="0.032">
+  <properties/>
+  <testcase name="completionClearsPendingAndRepeatedDeliveryIsIdempotent" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.025"/>
+  <testcase name="permanentPurchasesAreIndependent" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.001"/>
+  <testcase name="invalidSignatureCannotUnlock" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.0"/>
+  <testcase name="replacementPendingPaymentDoesNotKeepAnOldGrant" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.0"/>
+  <testcase name="acknowledgementFailureCannotUnlock" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.0"/>
+  <testcase name="unknownProductAndBlankTokensAreRejected" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.0"/>
+  <testcase name="pendingPaymentNeverUnlocks" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.0"/>
+  <testcase name="successfulOwnershipQueryRemovesRefundedPurchaseOnly" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.0"/>
+  <testcase name="explicitVerificationRevocationLeavesOtherStyleUsable" classname="com.phytoy.sample.BillingEntitlementLedgerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

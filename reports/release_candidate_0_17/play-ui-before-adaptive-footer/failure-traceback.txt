@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 286, in main
+    smoke.photos()
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 151, in photos
+    self.wait("review_zoom_reset")
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 171, in wait
+    return self.find(identifier, self.poll(ready, f"Timed out waiting for {identifier}", timeout=timeout))
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 165, in poll
+    raise AssertionError(message + "; last visible IDs=" + ",".join(exposed))
+AssertionError: Timed out waiting for review_zoom_reset; last visible IDs=review_back,review_continue,review_delete,review_next,review_photo,review_previous,review_share

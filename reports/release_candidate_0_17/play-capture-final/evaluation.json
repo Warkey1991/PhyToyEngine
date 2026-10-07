@@ -1,0 +1,452 @@
+{
+  "passed": false,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791351851631393000,
+  "scope": "0.17 emulator: 200% landscape camera geometry, one disposable DH mono capture, rotation, delete",
+  "checks": [
+    {
+      "name": "Every initial JPEG has a recognized non-mono EXIF camera style",
+      "passed": true
+    },
+    {
+      "name": "640x360dp/200%: seven camera targets >=48dp, no overlap",
+      "passed": true
+    },
+    {
+      "name": "640x320dp/200%: seven camera targets >=48dp, no overlap",
+      "passed": true
+    },
+    {
+      "name": "Home/Resume reopens the mono camera in the same process",
+      "passed": true
+    },
+    {
+      "name": "Front/back switching returns to a ready mono camera",
+      "passed": true,
+      "lens_actions": [
+        "Switch to back camera",
+        "Switch to front camera"
+      ]
+    }
+  ],
+  "styles": [],
+  "artifacts": {
+    "initial_22_exif": "initial-22-exif.json",
+    "initial_24_exif": "initial-24-exif.json",
+    "camera-640x360_display": "camera-640x360-display.png",
+    "camera-640x360-font2_ui": "camera-640x360-font2-ui.json",
+    "camera-640x360-font2_screenshot": "camera-640x360-font2.png",
+    "camera-640x320_display": "camera-640x320-display.png",
+    "camera-640x320-font2_ui": "camera-640x320-font2-ui.json",
+    "camera-640x320-font2_screenshot": "camera-640x320-font2.png",
+    "camera-after-home-resume_ui": "camera-after-home-resume-ui.json",
+    "camera-after-home-resume_screenshot": "camera-after-home-resume.png",
+    "camera-after-front-back-switch_ui": "camera-after-front-back-switch-ui.json",
+    "camera-after-front-back-switch_screenshot": "camera-after-front-back-switch.png",
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {
+    "640x360/shutter": {
+      "bounds": [
+        1632,
+        480,
+        1824,
+        672
+      ],
+      "enabled": "true",
+      "width_dp": 64.0,
+      "height_dp": 64.0
+    },
+    "640x360/open_settings": {
+      "bounds": [
+        1752,
+        120,
+        1896,
+        264
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x360/flash_mode": {
+      "bounds": [
+        1596,
+        120,
+        1740,
+        264
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x360/last_photo": {
+      "bounds": [
+        1560,
+        324,
+        1704,
+        468
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x360/switch_camera": {
+      "bounds": [
+        1740,
+        324,
+        1884,
+        468
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x360/exposure_value": {
+      "bounds": [
+        1578,
+        684,
+        1878,
+        828
+      ],
+      "enabled": "true",
+      "width_dp": 100.0,
+      "height_dp": 48.0
+    },
+    "640x360/zoom_ratio": {
+      "bounds": [
+        1578,
+        840,
+        1878,
+        984
+      ],
+      "enabled": "true",
+      "width_dp": 100.0,
+      "height_dp": 48.0
+    },
+    "640x320/shutter": {
+      "bounds": [
+        1656,
+        450,
+        1800,
+        594
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x320/open_settings": {
+      "bounds": [
+        1752,
+        120,
+        1896,
+        264
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x320/flash_mode": {
+      "bounds": [
+        1596,
+        120,
+        1740,
+        264
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x320/last_photo": {
+      "bounds": [
+        1560,
+        306,
+        1704,
+        450
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x320/switch_camera": {
+      "bounds": [
+        1740,
+        306,
+        1884,
+        450
+      ],
+      "enabled": "true",
+      "width_dp": 48.0,
+      "height_dp": 48.0
+    },
+    "640x320/exposure_value": {
+      "bounds": [
+        1578,
+        594,
+        1878,
+        738
+      ],
+      "enabled": "true",
+      "width_dp": 100.0,
+      "height_dp": 48.0
+    },
+    "640x320/zoom_ratio": {
+      "bounds": [
+        1578,
+        738,
+        1878,
+        882
+      ],
+      "enabled": "true",
+      "width_dp": 100.0,
+      "height_dp": 48.0
+    }
+  },
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "store_channel": "play",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "physical devices",
+    "purchases",
+    "system delete consent",
+    "sharing or sending",
+    "pixel quality",
+    "pinch/multitouch"
+  ],
+  "allow_disposable_photo": true,
+  "expected_apk_sha256": "44bce566914edb59fceac32e9cd2747edbfba5a5b259a3f10b6143c0654f9ac6",
+  "capture_taps": 0,
+  "delete_confirm_taps": 0,
+  "emulator_properties": {
+    "ro.kernel.qemu": "1",
+    "ro.boot.qemu": "1"
+  },
+  "installed_apks": [
+    {
+      "path": "/data/app/~~-RLNbePOLOwHYXb9P8pLZA==/com.ycolor.team.phytoy.camera.android.gpapp-89bgRTe1-HJpESG8Ge0HUw==/base.apk",
+      "sha256": "44bce566914edb59fceac32e9cd2747edbfba5a5b259a3f10b6143c0654f9ac6"
+    }
+  ],
+  "installed_apk_sha256": "44bce566914edb59fceac32e9cd2747edbfba5a5b259a3f10b6143c0654f9ac6",
+  "original_system_state": {
+    "font_scale": "1.0",
+    "accelerometer_rotation": "1",
+    "user_rotation": "0",
+    "wm_size": "540x960",
+    "wm_density": "240"
+  },
+  "phase": "one disposable mono capture",
+  "initial_photo_exif": [
+    {
+      "media_id": 22,
+      "uri": "content://media/external/images/media/22",
+      "jpeg_bytes": 258848,
+      "jpeg_sha256": "5a127569c6d2630ec253285502a8c96efd056c6d1c99da7b63c8765e38b780d6",
+      "style_code": "DH2",
+      "image_description": "ToviCam DH2 0.4.0",
+      "software": "ToviCam / DH2 0.4.0",
+      "user_comment": "Lens=BACK; Style=DH2; StyleVersion=0.4.0; Zoom=1.00x; EV=+0.00; Flash=OFF"
+    },
+    {
+      "media_id": 24,
+      "uri": "content://media/external/images/media/24",
+      "jpeg_bytes": 262993,
+      "jpeg_sha256": "de19cdc0a29cca35751fa32a4397d749e9dcd981d7944d1230537bd80b727deb",
+      "style_code": "DH2",
+      "image_description": "ToviCam DH2 0.4.0",
+      "software": "ToviCam / DH2 0.4.0",
+      "user_comment": "Lens=BACK; Style=DH2; StyleVersion=0.4.0; Zoom=1.00x; EV=+0.00; Flash=OFF"
+    }
+  ],
+  "last_action": "tap switch_camera",
+  "taps": [
+    {
+      "phase": "prerequisites",
+      "id": "style_dh_mono",
+      "bounds": [
+        477,
+        852,
+        981,
+        996
+      ],
+      "point": [
+        729,
+        924
+      ],
+      "started_at_ns": 1791354624724524000,
+      "completed_at_ns": 1791354624837878000
+    },
+    {
+      "phase": "camera lifecycle after Home and lens changes",
+      "id": "switch_camera",
+      "bounds": [
+        1740,
+        306,
+        1884,
+        450
+      ],
+      "point": [
+        1812,
+        378
+      ],
+      "started_at_ns": 1791357601723692000,
+      "completed_at_ns": 1791357601765035000
+    },
+    {
+      "phase": "camera lifecycle after Home and lens changes",
+      "id": "switch_camera",
+      "bounds": [
+        1740,
+        306,
+        1884,
+        450
+      ],
+      "point": [
+        1812,
+        378
+      ],
+      "started_at_ns": 1791357612094256000,
+      "completed_at_ns": 1791357612181998000
+    }
+  ],
+  "geometry": [
+    {
+      "size_dp": [
+        640,
+        360
+      ],
+      "bounds": {
+        "shutter": [
+          1632,
+          480,
+          1824,
+          672
+        ],
+        "open_settings": [
+          1752,
+          120,
+          1896,
+          264
+        ],
+        "flash_mode": [
+          1596,
+          120,
+          1740,
+          264
+        ],
+        "last_photo": [
+          1560,
+          324,
+          1704,
+          468
+        ],
+        "switch_camera": [
+          1740,
+          324,
+          1884,
+          468
+        ],
+        "exposure_value": [
+          1578,
+          684,
+          1878,
+          828
+        ],
+        "zoom_ratio": [
+          1578,
+          840,
+          1878,
+          984
+        ]
+      },
+      "overlaps": []
+    },
+    {
+      "size_dp": [
+        640,
+        320
+      ],
+      "bounds": {
+        "shutter": [
+          1656,
+          450,
+          1800,
+          594
+        ],
+        "open_settings": [
+          1752,
+          120,
+          1896,
+          264
+        ],
+        "flash_mode": [
+          1596,
+          120,
+          1740,
+          264
+        ],
+        "last_photo": [
+          1560,
+          306,
+          1704,
+          450
+        ],
+        "switch_camera": [
+          1740,
+          306,
+          1884,
+          450
+        ],
+        "exposure_value": [
+          1578,
+          594,
+          1878,
+          738
+        ],
+        "zoom_ratio": [
+          1578,
+          738,
+          1878,
+          882
+        ]
+      },
+      "overlaps": []
+    }
+  ],
+  "failure": "AssertionError: Camera did not reach style=style_dh_mono, trial=False; last visible IDs=",
+  "final_photo_ids_match_initial": true,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true,
+  "cleanup_errors": [
+    "restore style: Camera style rail is missing"
+  ],
+  "system_state_mutated": true,
+  "system_state_restored": false
+}

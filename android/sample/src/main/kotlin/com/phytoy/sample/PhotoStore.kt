@@ -1,7 +1,11 @@
 package com.phytoy.sample
 
+import android.app.RecoverableSecurityException
+import android.content.ClipData
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -9,6 +13,7 @@ import androidx.exifinterface.media.ExifInterface
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
+import android.os.CancellationSignal
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Size
@@ -35,6 +40,12 @@ internal class PhotoStore(private val context: Context) {
         val thumbnail: Bitmap,
         val review: Bitmap,
     )
+
+    sealed class DeleteResult {
+        data object Deleted : DeleteResult()
+        data class ConsentRequired(val intentSender: IntentSender) : DeleteResult()
+        data object Failed : DeleteResult()
+    }
 
     private val resolver = context.contentResolver
     private val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -229,6 +240,47 @@ internal class PhotoStore(private val context: Context) {
         preferences.edit().clear().apply()
     }
 
+    /** A temporary read grant for this MediaStore item; no broad storage permission. */
+    fun createShareIntent(photo: SavedPhoto): Intent {
+        require(isPhotoUri(photo.uri)) { "Only saved MediaStore photos can be shared" }
+        val share = Intent(Intent.ACTION_SEND).apply {
+            type = JPEG_MIME_TYPE
+            putExtra(Intent.EXTRA_STREAM, photo.uri)
+            clipData = ClipData.newRawUri(photo.displayName, photo.uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        return share
+    }
+
+    /** Call off the UI thread, after app confirmation. Platform consent is returned to the activity. */
+    fun delete(photo: SavedPhoto): DeleteResult {
+        if (!isPhotoUri(photo.uri)) return DeleteResult.Failed
+        return try {
+            // Zero rows also means success: a confirmed Android 11+ delete request has
+            // already removed the item, and repeated completion must be idempotent.
+            if (resolver.delete(photo.uri, null, null) < 0) DeleteResult.Failed
+            else {
+                if (lastPhoto()?.uri == photo.uri) forgetLastPhoto()
+                DeleteResult.Deleted
+            }
+        } catch (exception: SecurityException) {
+            try {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> DeleteResult.ConsentRequired(
+                        MediaStore.createDeleteRequest(resolver, listOf(photo.uri)).intentSender,
+                    )
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && exception is RecoverableSecurityException ->
+                        DeleteResult.ConsentRequired(exception.userAction.actionIntent.intentSender)
+                    else -> DeleteResult.Failed
+                }
+            } catch (_: Exception) { DeleteResult.Failed }
+        } catch (_: Exception) { DeleteResult.Failed }
+    }
+
+    private fun isPhotoUri(uri: Uri): Boolean = uri.scheme == "content" && uri.authority == MediaStore.AUTHORITY &&
+        uri.pathSegments.let { parts -> parts.size == 4 && parts[1] == "images" && parts[2] == "media" &&
+            parts[3].toLongOrNull() != null }
+
     fun loadThumbnail(uri: Uri): Bitmap? = try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             resolver.loadThumbnail(uri, Size(THUMBNAIL_SIZE, THUMBNAIL_SIZE), null)
@@ -248,32 +300,35 @@ internal class PhotoStore(private val context: Context) {
         null
     }
 
-    fun loadReview(uri: Uri, maximumWidth: Int, maximumHeight: Int): Bitmap? = try {
-        val width = maximumWidth.coerceAtLeast(1)
-        val height = maximumHeight.coerceAtLeast(1)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            resolver.loadThumbnail(uri, Size(width, height), null)
-        } else {
-            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            resolver.openInputStream(uri).use { stream ->
-                BitmapFactory.decodeStream(stream, null, bounds)
+    fun loadReview(uri: Uri, maximumWidth: Int, maximumHeight: Int,
+                   cancellationSignal: CancellationSignal? = null): Bitmap? {
+        return try {
+            cancellationSignal?.throwIfCanceled()
+            if (Thread.currentThread().isInterrupted) return null
+            val width = maximumWidth.coerceAtLeast(1)
+            val height = maximumHeight.coerceAtLeast(1)
+            val decoded = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                resolver.loadThumbnail(uri, Size(width, height), cancellationSignal)
+            } else {
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                resolver.openInputStream(uri).use { stream -> BitmapFactory.decodeStream(stream, null, bounds) }
+                cancellationSignal?.throwIfCanceled()
+                if (Thread.currentThread().isInterrupted) return null
+                var sample = 1
+                while (bounds.outWidth / (sample * 2) >= width && bounds.outHeight / (sample * 2) >= height) {
+                    sample *= 2
+                }
+                resolver.openInputStream(uri).use { stream ->
+                    BitmapFactory.decodeStream(stream, null, BitmapFactory.Options().apply { inSampleSize = sample })
+                }
             }
-            var sample = 1
-            while (bounds.outWidth / (sample * 2) >= width &&
-                bounds.outHeight / (sample * 2) >= height
-            ) {
-                sample *= 2
-            }
-            resolver.openInputStream(uri).use { stream ->
-                BitmapFactory.decodeStream(
-                    stream,
-                    null,
-                    BitmapFactory.Options().apply { inSampleSize = sample },
-                )
-            }
+            if (cancellationSignal?.isCanceled == true || Thread.currentThread().isInterrupted) {
+                decoded?.recycle()
+                null
+            } else decoded
+        } catch (_: Throwable) {
+            null
         }
-    } catch (_: Throwable) {
-        null
     }
 
     private fun PhyToyCameraSession.CapturedFrame.toOrientedBitmap(): Bitmap {

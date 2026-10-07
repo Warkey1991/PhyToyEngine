@@ -22,8 +22,10 @@ internal object ProductInfo {
         dismiss()
         dialog = AlertDialog.Builder(activity)
             .setTitle(activity.getString(R.string.product_info_title, version))
-            .setMessage(R.string.product_info_body)
+            .setMessage(listOf(activity.getString(R.string.product_info_body),
+                SupportInfo.contactText(activity)).filter(String::isNotBlank).joinToString("\n\n"))
             .setPositiveButton(R.string.product_info_close, null)
+            .apply { if (SupportInfo.hasEmail) setNeutralButton(R.string.support_title) { _, _ -> SupportInfo.email(activity) } }
             .show()
     }
 
@@ -31,14 +33,17 @@ internal object ProductInfo {
         dismiss()
         dialog = AlertDialog.Builder(activity)
             .setTitle(R.string.product_privacy_title)
-            .setMessage(R.string.product_privacy_body)
+            .setMessage(listOf(activity.getString(R.string.privacy_channel_body,
+                activity.getString(R.string.billing_store_name), activity.getString(R.string.billing_account_name)),
+                SupportInfo.contactText(activity)).filter(String::isNotBlank).joinToString("\n\n"))
             .setPositiveButton(R.string.product_info_close, null)
+            .apply { if (SupportInfo.hasPolicyUrl) setNeutralButton(R.string.support_online_policy) { _, _ -> SupportInfo.openPolicy(activity) } }
             .show()
     }
 
     fun showLicenses(activity: Activity) {
         dismiss()
-        val notices = listOf(R.raw.open_source_notices, R.raw.play_billing_notices).joinToString("\n\n") { resource ->
+        val notices = listOf(R.raw.open_source_notices, R.raw.channel_billing_notices).joinToString("\n\n") { resource ->
             activity.resources.openRawResource(resource).bufferedReader().use { it.readText() }
         }
         val text = android.widget.TextView(activity).apply {

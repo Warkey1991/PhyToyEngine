@@ -1,0 +1,10 @@
+{
+  "media_id": 22,
+  "uri": "content://media/external/images/media/22",
+  "jpeg_bytes": 258848,
+  "jpeg_sha256": "5a127569c6d2630ec253285502a8c96efd056c6d1c99da7b63c8765e38b780d6",
+  "style_code": "DH2",
+  "image_description": "ToviCam DH2 0.4.0",
+  "software": "ToviCam / DH2 0.4.0",
+  "user_comment": "Lens=BACK; Style=DH2; StyleVersion=0.4.0; Zoom=1.00x; EV=+0.00; Flash=OFF"
+}

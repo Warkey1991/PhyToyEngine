@@ -34,6 +34,28 @@ def elf(alignment=16384, relro_end=16384, load_flags=5, stack_flags=6):
 
 
 class ReleaseGateTest(unittest.TestCase):
+    def test_channel_rejects_cross_store_permission(self):
+        metadata = {"store_channel": "galaxy", "permissions": list(release.BILLING_PERMISSIONS.values())}
+        with self.assertRaisesRegex(release.ReleaseError, "mixes"):
+            release.audit_channel(metadata, "galaxy", False)
+
+    def test_channel_rejects_wrong_or_missing_channel(self):
+        metadata = {"store_channel": "play", "permissions": [release.BILLING_PERMISSIONS["play"]]}
+        self.assertEqual(release.audit_channel(metadata, "play", True), "play")
+        with self.assertRaisesRegex(release.ReleaseError, "does not match"):
+            release.audit_channel(metadata, "galaxy", False)
+        with self.assertRaisesRegex(release.ReleaseError, "missing"):
+            release.audit_channel({"permissions": []}, None, True)
+
+    def test_apk_extracts_channel_and_billing_permission(self):
+        badging = "package: name='com.example.camera' versionCode='18' versionName='0.17.0'\nsdkVersion:'26'\ntargetSdkVersion:'37'\n"
+        tree = ('  E: uses-permission (line=2)\n    A: android:name(0x01)="com.android.vending.BILLING"\n'
+                '  E: application (line=3)\n    E: meta-data (line=4)\n'
+                '      A: android:name(0x01)="phytoy.store_channel"\n      A: android:value(0x02)="play"\n')
+        data = release.parse_apk_manifest(badging, tree)
+        self.assertEqual(data["store_channel"], "play")
+        self.assertEqual(data["permissions"], [release.BILLING_PERMISSIONS["play"]])
+
     def test_elf_valid_16kb(self):
         self.assertEqual(release.elf_audit(elf())["load_alignments"], [16384])
 

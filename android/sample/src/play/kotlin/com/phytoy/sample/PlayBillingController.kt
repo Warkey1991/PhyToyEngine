@@ -28,7 +28,7 @@ internal class PlayBillingController(
     private val verifier: PlayPurchaseVerifier = RsaPlayPurchaseVerifier(BuildConfig.PLAY_BILLING_PUBLIC_KEY),
     var onStateChanged: (BillingSnapshot) -> Unit = {},
     var onEvent: (BillingEvent) -> Unit = {},
-) {
+) : CameraBillingController {
     private val appContext = context.applicationContext
     private val mainHandler = Handler(Looper.getMainLooper())
     private val worker = Executors.newSingleThreadExecutor()
@@ -84,11 +84,11 @@ internal class PlayBillingController(
         state = buildSnapshot()
     }
 
-    fun currentState(): BillingSnapshot = state
-    fun isUnlocked(style: CameraStyle): Boolean = state.isUnlocked(style)
-    fun canPurchase(style: CameraStyle): Boolean = state.canPurchase(style)
+    override fun currentState(): BillingSnapshot = state
+    override fun isUnlocked(style: CameraStyle): Boolean = state.isUnlocked(style)
+    override fun canPurchase(style: CameraStyle): Boolean = state.canPurchase(style)
 
-    fun onResume() {
+    override fun onResume() {
         checkMainThread()
         if (closed) return
         if (flowLaunched) {
@@ -100,7 +100,7 @@ internal class PlayBillingController(
         connectOrRefresh()
     }
 
-    fun restorePurchases() {
+    override fun restorePurchases() {
         checkMainThread()
         if (closed) return
         if (!verifier.configured) {
@@ -112,7 +112,7 @@ internal class PlayBillingController(
         connectOrRefresh()
     }
 
-    fun purchase(activity: Activity, style: CameraStyle) {
+    override fun purchase(activity: Activity, style: CameraStyle) {
         checkMainThread()
         if (closed) return
         if (isUnlocked(style)) {
@@ -175,7 +175,7 @@ internal class PlayBillingController(
         }
     }
 
-    fun close() {
+    override fun close() {
         checkMainThread()
         if (closed) return
         // A running write may contain an older receipt set. Queue the latest desired

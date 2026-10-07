@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="settings_support" type="id" />
+    <item name="settings_purchase_result" type="id" />
+    <string name="support_title">Contact support</string>
+    <string name="support_hint">Email the publisher about the app or a purchase.</string>
+    <string name="support_publisher">Publisher: %1$s</string>
+    <string name="support_contact_email">Support and privacy: %1$s</string>
+    <string name="support_online_policy">Open online policy</string>
+    <string name="settings_options_help">About these options</string>
+    <string name="settings_camera_help">Default style is used on your first launch or when Remember last style is off. Photo resolution is an upper limit: your camera and the selected style may use a smaller size. DH 2++ is limited to 3.2 MP. Changing resolution takes effect when you return to the camera.</string>
+    <string name="settings_remember_short">Open with your most recently used camera.</string>
+    <string name="settings_grid_short">Show the rule-of-thirds guide.</string>
+    <string name="settings_sound_short">Play a sound when the photo is captured.</string>
+    <string name="settings_haptics_short">Follow your system vibration preference.</string>
+    <string name="settings_review_short">Open the saved photo after each shot.</string>
+    <string name="privacy_channel_body">Updated: October 6, 2026\n\nCamera access is used for the foreground viewfinder and photos you choose to take. Images are processed on your device. Temporary frames are released when the session closes. The app does not request location or microphone access.\n\nPhotos are stored in Pictures/PhyToy. JPEG metadata includes capture time, exposure and camera style, without added location data. Delete photos in the app or your system gallery; uninstalling does not remove saved photographs. Sharing sends only the photo you select to the destination app you choose.\n\nCamera preferences, permission state, the photo index and protected purchase receipts are stored privately on your device. Clearing app storage removes this local data. Purchases can be restored through the original store using the same %2$s. Purchases from different stores do not automatically transfer.\n\nPurchases and restoration use %1$s and require a network connection. The store processes payments under its own terms and privacy policy; ToviCam does not receive bank card details. In the Galaxy Store edition, purchase verification also sends the purchase identifier to Samsung. The app has no independent account, advertisements, photo uploads or publisher analytics service. Payment SDKs may process their own service diagnostics. Local diagnostics are not automatically uploaded by the app.\n\nCamera permissions can be revoked in Android Settings → Apps → ToviCam → Permissions. Support messages are sent only when you choose to contact us, through your email app.</string>
+</resources>

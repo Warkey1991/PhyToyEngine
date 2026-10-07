@@ -1,0 +1,218 @@
+{
+  "status": "passed",
+  "scope": "release_candidate_packaging",
+  "signed": false,
+  "store_ready": false,
+  "minimum_target_sdk": 36,
+  "apk": {
+    "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/apk/play/release/sample-play-release-unsigned.apk",
+    "sha256": "0729b04265d12478cb0823a1e50ed4306fcc740bb2e1e47c78913df672c68e2c",
+    "bytes": 2801093,
+    "native_libraries": {
+      "libc++_shared.so": {
+        "load_alignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ],
+        "relro_ranges": [
+          [
+            1243288,
+            1286144
+          ]
+        ],
+        "relro_protection_overlap": false,
+        "sha256": "cd61762848882a16c8244c964a6f396c0caa0b440588a210ce9cc4ab0e6d9f0c",
+        "zip_offset": 360448
+      },
+      "libphytoy_android.so": {
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "relro_ranges": [
+          [
+            84832,
+            90112
+          ]
+        ],
+        "relro_protection_overlap": false,
+        "sha256": "ecfe4582ed7e56f581c275ec18c93ecd1f28015ebc9c7688202cd6e47f3c4cf8",
+        "zip_offset": 1622016
+      },
+      "libphytoy_core.so": {
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "relro_ranges": [
+          [
+            229808,
+            233472
+          ]
+        ],
+        "relro_protection_overlap": false,
+        "sha256": "cd0b322e3550fe90a107eb9f47d5b0d2a36146ab45b59f4f88940a126948e167",
+        "zip_offset": 1703936
+      }
+    },
+    "profiles": {
+      "host_generic_srgb.ptp": "1aedaee25fbf4b75af030a0ca2bb98649e656c1a72d1a41a3c8caa7a1aef9666",
+      "toy_harinezumi_2pp_daylight_v0_1.ptp": "8ec6298139ebcbd8f6f9a40612e547ac1736b819fbc9e00ffa412cea488b2dad",
+      "toy_harinezumi_2pp_daylight_v0_2.ptp": "af82202560bc3693f0b83f707812af2cfcc41abf48f0002c96b18f27148cc4da",
+      "toy_harinezumi_2pp_daylight_v0_3.ptp": "5d7e3652961889ad2dcd573b42951b4ed42a9c0a5a7c0d193d8ee6b5cad4d3dd",
+      "toy_harinezumi_2pp_daylight_v0_4.ptp": "ec481892227b543e0913877214d160eb8cefc5bcbde5cf921803763876f55ab2",
+      "toy_harinezumi_2pp_mono_v0_1.ptp": "276485c0c0d579c60887561321c02d19833b7128cc76ed7dd684557725b99c4e",
+      "toy_harinezumi_2pp_mono_v0_2.ptp": "4a241e68d078a22ae75317ee0e6f2f7dd767f47808279b2337d7d4a7f2e736bc",
+      "toy_phytoy_digital_01_v1.ptp": "6f0093295c7bf957b4b8478cd03b19ae7ea7939963a269c45163525f4200e81f",
+      "toy_phytoy_digital_01_v1_1.ptp": "5d29e8e4ddbc218b671b872b4ccfa5f8d2308f371fc8fbf92a94e5dc04e78f19",
+      "toy_phytoy_digital_01_v1_2.ptp": "3e36a208e5d1acf2e4a65c170b7afffb632f91740faa90f0b997a2daf5747189",
+      "toy_phytoy_fisheye_05_v1.ptp": "5099a4f6ec25ee873ca7fa12ff0026bdd3532caa1c24f338587f3e70d9101712",
+      "toy_phytoy_plastic_82_v1.ptp": "8f16b51baf69aa4dbc82c0205d66f00fb026406cdb2a2f92fb4e2b513426b073",
+      "toy_phytoy_street_84_v1.ptp": "a0c4d3667e263a2fb12d5e96c08b54e9500b076c3d63ed0e06e2af65c1e357d5"
+    },
+    "has_signature": false,
+    "manifest": {
+      "application_id": "com.ycolor.team.phytoy.camera.android.gpapp",
+      "version_code": 18,
+      "version_name": "0.17.0",
+      "min_sdk": 26,
+      "target_sdk": 37,
+      "debuggable": false,
+      "test_only": false,
+      "cleartext": false,
+      "features": {
+        "android.hardware.camera.any": {
+          "required": true,
+          "version": 0
+        },
+        "android.hardware.vulkan.level": {
+          "required": true,
+          "version": 1
+        },
+        "android.hardware.vulkan.version": {
+          "required": true,
+          "version": 4198400
+        }
+      },
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "com.android.vending.BILLING",
+        "com.ycolor.team.phytoy.camera.android.gpapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "store_channel": "play"
+    },
+    "signed": false
+  },
+  "aab": {
+    "path": "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/android/sample/build/outputs/bundle/playRelease/sample-play-release.aab",
+    "sha256": "937b75a9c63a8c81c0cff2bbe37341bd7d288ec791fac596b1d3989d33a8949c",
+    "bytes": 4733969,
+    "native_libraries": {
+      "libc++_shared.so": {
+        "load_alignments": [
+          16384,
+          16384,
+          16384,
+          16384
+        ],
+        "relro_ranges": [
+          [
+            1243288,
+            1286144
+          ]
+        ],
+        "relro_protection_overlap": false,
+        "sha256": "cd61762848882a16c8244c964a6f396c0caa0b440588a210ce9cc4ab0e6d9f0c"
+      },
+      "libphytoy_android.so": {
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "relro_ranges": [
+          [
+            84832,
+            90112
+          ]
+        ],
+        "relro_protection_overlap": false,
+        "sha256": "ecfe4582ed7e56f581c275ec18c93ecd1f28015ebc9c7688202cd6e47f3c4cf8"
+      },
+      "libphytoy_core.so": {
+        "load_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "relro_ranges": [
+          [
+            229808,
+            233472
+          ]
+        ],
+        "relro_protection_overlap": false,
+        "sha256": "cd0b322e3550fe90a107eb9f47d5b0d2a36146ab45b59f4f88940a126948e167"
+      }
+    },
+    "profiles": {
+      "host_generic_srgb.ptp": "1aedaee25fbf4b75af030a0ca2bb98649e656c1a72d1a41a3c8caa7a1aef9666",
+      "toy_harinezumi_2pp_daylight_v0_1.ptp": "8ec6298139ebcbd8f6f9a40612e547ac1736b819fbc9e00ffa412cea488b2dad",
+      "toy_harinezumi_2pp_daylight_v0_2.ptp": "af82202560bc3693f0b83f707812af2cfcc41abf48f0002c96b18f27148cc4da",
+      "toy_harinezumi_2pp_daylight_v0_3.ptp": "5d7e3652961889ad2dcd573b42951b4ed42a9c0a5a7c0d193d8ee6b5cad4d3dd",
+      "toy_harinezumi_2pp_daylight_v0_4.ptp": "ec481892227b543e0913877214d160eb8cefc5bcbde5cf921803763876f55ab2",
+      "toy_harinezumi_2pp_mono_v0_1.ptp": "276485c0c0d579c60887561321c02d19833b7128cc76ed7dd684557725b99c4e",
+      "toy_harinezumi_2pp_mono_v0_2.ptp": "4a241e68d078a22ae75317ee0e6f2f7dd767f47808279b2337d7d4a7f2e736bc",
+      "toy_phytoy_digital_01_v1.ptp": "6f0093295c7bf957b4b8478cd03b19ae7ea7939963a269c45163525f4200e81f",
+      "toy_phytoy_digital_01_v1_1.ptp": "5d29e8e4ddbc218b671b872b4ccfa5f8d2308f371fc8fbf92a94e5dc04e78f19",
+      "toy_phytoy_digital_01_v1_2.ptp": "3e36a208e5d1acf2e4a65c170b7afffb632f91740faa90f0b997a2daf5747189",
+      "toy_phytoy_fisheye_05_v1.ptp": "5099a4f6ec25ee873ca7fa12ff0026bdd3532caa1c24f338587f3e70d9101712",
+      "toy_phytoy_plastic_82_v1.ptp": "8f16b51baf69aa4dbc82c0205d66f00fb026406cdb2a2f92fb4e2b513426b073",
+      "toy_phytoy_street_84_v1.ptp": "a0c4d3667e263a2fb12d5e96c08b54e9500b076c3d63ed0e06e2af65c1e357d5"
+    },
+    "manifest": {
+      "application_id": "com.ycolor.team.phytoy.camera.android.gpapp",
+      "version_code": 18,
+      "version_name": "0.17.0",
+      "min_sdk": 26,
+      "target_sdk": 37,
+      "debuggable": false,
+      "test_only": false,
+      "cleartext": false,
+      "features": {
+        "android.hardware.camera.any": {
+          "required": true,
+          "version": 0
+        },
+        "android.hardware.vulkan.level": {
+          "required": true,
+          "version": 1
+        },
+        "android.hardware.vulkan.version": {
+          "required": true,
+          "version": 4198400
+        }
+      },
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "com.android.vending.BILLING",
+        "com.ycolor.team.phytoy.camera.android.gpapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "store_channel": "play"
+    },
+    "generated_apk_page_alignment": 16384,
+    "has_jar_signature": false
+  },
+  "store_channel": "play",
+  "device_acceptance": "separate_required_gate"
+}

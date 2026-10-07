@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_channel_smoke.py", line 130, in main
+    smoke.camera(PAID[0], trial=True)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 74, in camera
+    return self.poll(ready, f"Camera did not reach style={style}, trial={trial}", timeout=60)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 165, in poll
+    raise AssertionError(message + "; last visible IDs=" + ",".join(exposed))
+AssertionError: Camera did not reach style=style_digital, trial=True; last visible IDs=aerr_close,aerr_wait,alertTitle

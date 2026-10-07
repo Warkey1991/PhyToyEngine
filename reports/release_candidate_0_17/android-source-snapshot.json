@@ -1,0 +1,502 @@
+{
+  "scope": "Non-ignored Android source/config; generated build outputs and local.properties excluded. Artifact audits separately pin native/profile hashes.",
+  "aggregate_sha256": "a6fa3f52df92426a3a06221aaaca8e53d56b8b2f386d51bfac6b7c3ffccb2dcf",
+  "files": [
+    {
+      "path": "android/README.md",
+      "sha256": "6ad78522601d68840b0f49bff640534100faf254e94bf97425a16b4402e7f99b"
+    },
+    {
+      "path": "android/build.gradle.kts",
+      "sha256": "dda5b75beae24cb3faec5af4b49c1b18d339901cd11239f78d1ee3be5b8e1951"
+    },
+    {
+      "path": "android/gradle.properties",
+      "sha256": "cf61bfeae0c9d76f1e698ed3dc6f7efc11a181ff77a965ed3134411a35f39236"
+    },
+    {
+      "path": "android/gradle/gradle-daemon-jvm.properties",
+      "sha256": "231649d2f8e8dc24310f18c921e3ae33fd2715b7f48a7ddcaf27a85003e0729a"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "sha256": "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "c4b9669284de8eb1bbf2801c8e705b278651a0d48693a829fc39c1d2739249cb"
+    },
+    {
+      "path": "android/gradlew",
+      "sha256": "ab5c0cad16305af2e619c159c1f58dd68d07fab9c11e36701e109c0277407f7a"
+    },
+    {
+      "path": "android/gradlew.bat",
+      "sha256": "475c4f08cd57cf2faa819e7f36d72aa93f0ad646ea23a8f7fa3ef54dee1cbc52"
+    },
+    {
+      "path": "android/sample/build.gradle.kts",
+      "sha256": "95bb0fa589891bc65524fbc8c45837e5488c98421cc0107a7bccb4a5ef2586da"
+    },
+    {
+      "path": "android/sample/src/galaxy/AndroidManifest.xml",
+      "sha256": "ae6e10a93cafa714361e1602f472a7e6cba4a3b619ce459a4438787f5c585558"
+    },
+    {
+      "path": "android/sample/src/galaxy/kotlin/com/phytoy/sample/BillingFactory.kt",
+      "sha256": "e27ba54cf3c170488e2ca14401bad741837c739f8747dc2573506753e4e2b2f4"
+    },
+    {
+      "path": "android/sample/src/galaxy/kotlin/com/phytoy/sample/GalaxyBillingController.kt",
+      "sha256": "5cbf2172f8a8c00843e6367bb7e674603f7a55eebdd6b48a8aa3ddf00e844336"
+    },
+    {
+      "path": "android/sample/src/galaxy/kotlin/com/phytoy/sample/GalaxyPurchaseCache.kt",
+      "sha256": "8d477372187d709b21ec358bdec0ef23bd45600089e0778d860fb0a6649633ac"
+    },
+    {
+      "path": "android/sample/src/galaxy/kotlin/com/phytoy/sample/GalaxyReceiptPolicy.kt",
+      "sha256": "0e3e6c1a205c43f0ac8e9f7f52145bf4b089a5113d6ae0be23568750232693a2"
+    },
+    {
+      "path": "android/sample/src/galaxy/kotlin/com/phytoy/sample/GalaxyReceiptVerifier.kt",
+      "sha256": "68985120e00e168d6e53a3fbcfac8af4134e91d60a4858bbd2767562aa34ff5e"
+    },
+    {
+      "path": "android/sample/src/galaxy/res/raw/channel_billing_notices.txt",
+      "sha256": "a886c12eebe1ce0d35959e5d92547338348afb639aa10067a0f265ecd534c5cf"
+    },
+    {
+      "path": "android/sample/src/galaxy/res/values-zh-rCN/channel.xml",
+      "sha256": "be780c442b84796300910be77d52d98ec9bee9acd0013560eb5ffced83cb4c52"
+    },
+    {
+      "path": "android/sample/src/galaxy/res/values/channel.xml",
+      "sha256": "07254541b1369ea59e2d30fd79ff594b9efd0150c8ed67aa2103b7240ecdc242"
+    },
+    {
+      "path": "android/sample/src/main/AndroidManifest.xml",
+      "sha256": "cb38cf4eb7889d8f81357093e6c72fa61b6767dfd407d6e429eb355453698f74"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/BillingEntitlementLedger.kt",
+      "sha256": "8852205ce0f3edeb208df24b4cae150a0b06223e809107e93cf34a8ff63814c8"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/BillingModels.kt",
+      "sha256": "7e1f23991c715321242023cfffcff8705e7c0bf1cd1aa1d9fa1a2e0a1576a68d"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/Camera3AController.kt",
+      "sha256": "3371378da106d845cdd11cae493f07fcd7e6367cc6be457271276862db0f6c30"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CameraAdjustmentPanel.kt",
+      "sha256": "de24a1cac676e7a91bbee88b5daec30d3dce5c8996e3e311238a9b9124f87f4f"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CameraBillingController.kt",
+      "sha256": "d43273a0c9c830580d790cdb3900b03447cd9a2a0f779d5bf31df355893be51a"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CameraChrome.kt",
+      "sha256": "0a96873b8b376507c5977ae6a76076a65a3ca753e93646dd6dcd1e9ae1997d4e"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CameraLifecycleQueue.kt",
+      "sha256": "6c7e666a13be9a960107bdafaf89575a43b8b8e80d1bc1090b6bf057a17f44a6"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CameraPurchaseOverlay.kt",
+      "sha256": "7a0129ff8be202c65af7d9a126a1f0c463616cf3a92ddc1014de431c21be22ed"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CameraStyle.kt",
+      "sha256": "8cac3c04ca9651f3380fc93d88b8d211b0e788e15fadc9e4fb011c652cba73f7"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CaptureMetadata.kt",
+      "sha256": "07ecffaf5dbaf74522f5e7f1d7dc5505a879c39992c8e92fc977aa20fe6d0eee"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/CaptureViewport.kt",
+      "sha256": "0d4cae2a309df041ef6e1246b4818fa59af5ef7942a9fa8586cddbf56804eb0b"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/MainActivity.kt",
+      "sha256": "b3326bedbed499b1cc416aee03939880cb16d77ef9c6bd28512a9683e0ac316f"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/PageTopBar.kt",
+      "sha256": "c2a0a4f3a517cd496703a366aceb6665623e678e6e7ee6a6c8f77278ecc7d5c7"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/PhotoGalleryOverlay.kt",
+      "sha256": "a3966cc1ba4d66d7e52ff8bcadba052ef7ed6f46fb1db4ec799586c5b5f62234"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/PhotoLibrary.kt",
+      "sha256": "e446f45c5f6de92c36d045921c7ddb8b6c0cf74beb06913de4ae376d3c5dcc02"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/PhotoReviewOverlay.kt",
+      "sha256": "4c024d10d8a6d6b818dac63d414fd3c36261528f63f09e1320fe89c7163b219d"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/PhotoStore.kt",
+      "sha256": "411418616075d7d262b2325ab588309924d7482a11cd5c11bafd13ceeb60e3c4"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/ProductInfo.kt",
+      "sha256": "f016d83d60796deb20ceb288301ee014d0f46a4873253f7609dcee6e9df17191"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/SettingsOverlay.kt",
+      "sha256": "15549e7aeef283b63e86c20e9c57a86da377ecb20eb9079f3ba6addaa16d33ed"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/SettingsStore.kt",
+      "sha256": "ede03fa7d1936dd069c0f90822df70b075678bd58732d35700c75152e3f462eb"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/StyleProducts.kt",
+      "sha256": "1bb271eb3b73ed87fb544b0dd2a98bebc41655f952ffab8ef8f2fcd690a10cee"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/SupportInfo.kt",
+      "sha256": "4cae55fc402c3599229068e034260d75180ce8c080bf32112ecf9545c3d5875b"
+    },
+    {
+      "path": "android/sample/src/main/kotlin/com/phytoy/sample/ZoomablePhotoView.kt",
+      "sha256": "43b9bf5c29ed771b4d018844918367ae8d0a425de0c2d69a8cde7dc93717792e"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_sample_dh_color.webp",
+      "sha256": "e099fe652e84cea145d806faefbf6983973262079510744c008f69423db846e3"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_sample_dh_mono.webp",
+      "sha256": "22a4cbfdf5fb37e62c39deb6ce8af2825dbf7407642654e5bd7ad922864519cc"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_sample_digital.webp",
+      "sha256": "ce51d7b802c5683ef0553956cce18f2d4781e970df2c5b3a2fb9d21e9692fc68"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_sample_fisheye.webp",
+      "sha256": "4a724a87c2b3e60dcf83dbdc15a10cd481024ceea24497b297e53d6fe053fa2b"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_sample_plastic.webp",
+      "sha256": "ba4c74b5b666500637b3d38aacc45f9e843eec3fda8385964267b9375692c8bb"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_sample_street.webp",
+      "sha256": "52dbb714f3c22ae1e51c7474a16f991d279d1a825c1b8351d032b73d1fefa4db"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_source_dh_color.webp",
+      "sha256": "6d7d5ce4668605b5e07f85637adbda051442b472fc3a3935ccd80eb42124bf2d"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_source_dh_mono.webp",
+      "sha256": "6d7d5ce4668605b5e07f85637adbda051442b472fc3a3935ccd80eb42124bf2d"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_source_digital.webp",
+      "sha256": "6d7d5ce4668605b5e07f85637adbda051442b472fc3a3935ccd80eb42124bf2d"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_source_fisheye.webp",
+      "sha256": "3166bf6ae3e2f33062c04f612f9c39cae62c3fbed2c984445b655bee372c5836"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_source_plastic.webp",
+      "sha256": "3166bf6ae3e2f33062c04f612f9c39cae62c3fbed2c984445b655bee372c5836"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable-nodpi/style_source_street.webp",
+      "sha256": "1caa494d7824f3434f297f4866b65245c5c9ba87f317bf36d1e87db22e379169"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable/ic_gallery_placeholder.xml",
+      "sha256": "7650f6eaf854fa5beddf5748a4677de2dd6a44a0b72361998e0d7223ad23196b"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable/ic_launcher.xml",
+      "sha256": "82a00220c129cd64849a34617d556eb95bebc3e7a1e655797e4644580eb248e0"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable/ic_launcher_foreground.xml",
+      "sha256": "c4f4b776a7778efdfc7287b9e01159b1bc6aa85c8dff23a45f08bb48ae0668d3"
+    },
+    {
+      "path": "android/sample/src/main/res/drawable/ic_launcher_monochrome.xml",
+      "sha256": "e4162b8a491535dfb33d8b0aadae1e9d43f72b566b3ab7b54c2b9028d372d35b"
+    },
+    {
+      "path": "android/sample/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "sha256": "d0b7050d918713b6bd1598265d44b6553aecc667db9be269c11c75b61521ca75"
+    },
+    {
+      "path": "android/sample/src/main/res/mipmap-anydpi-v33/ic_launcher.xml",
+      "sha256": "a9476ffa50e6412caac2a41c3dbc2df366c90e27dccdc9ce9b6346dd90be998c"
+    },
+    {
+      "path": "android/sample/src/main/res/raw/open_source_notices.txt",
+      "sha256": "44283c8c64e54eb18b32ff08e423dbb8a37ad1183295c7a14e14ccb3aafd3db0"
+    },
+    {
+      "path": "android/sample/src/main/res/values-v27/styles.xml",
+      "sha256": "354c1e09e54cbe4922feb6edb7299210d27bbbb526057397814f1d4a749d7757"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/billing.xml",
+      "sha256": "4537bfb05efba0cdddb90c83d9891989c5b3dea7cff274e16198a8bfbc988d5a"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/gallery.xml",
+      "sha256": "c00c13aade7891b3c4d04f694e56c35a9e65af2589c85e53bac4addde495351a"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/navigation.xml",
+      "sha256": "cd06fb8cf19661571d2dfeb2fc063dca59818b42672ca929f827b6d6de88b600"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/photo_actions.xml",
+      "sha256": "f4cddaddde0c8bc1858f64cfe0a82e0e7b44e0f3c75202a18137303d84481dfb"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/product_info.xml",
+      "sha256": "72eb69b42e4a95e744ac6a66f7cc2477f8726d971e52f42e013f7b3266ed42aa"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/purchase_samples.xml",
+      "sha256": "7949edca3498e15645085ab1434e589e632f342c3cf435767fede623bec33bfa"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/review.xml",
+      "sha256": "61e8f6d58c6787aeeedbfd2a8ce7bdbd322e7c45b2950ce3dec94c04ba434c2e"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/settings.xml",
+      "sha256": "08973f98610f264ef9eb09641882d1d0ed46dbce173845fb795f51ce0e2b87d6"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/strings.xml",
+      "sha256": "2d2e720a45110658b6d91d4234e27c0624186b839ff28079ebe050cc5ab2ffb5"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh-rCN/support.xml",
+      "sha256": "d9ada879c98f8d4496224f0a232e8410cdff5a25d521364c5c6ec03d47149800"
+    },
+    {
+      "path": "android/sample/src/main/res/values-zh/camera_controls.xml",
+      "sha256": "e7565d23c08bf3eb57e4fb9f79b59c65ee139655800f40cdd789c5470ad659ac"
+    },
+    {
+      "path": "android/sample/src/main/res/values/billing.xml",
+      "sha256": "6cb8b21a0078bf48f4d6a95f8110770f9e0a0a12508585689e96c0ee540c122f"
+    },
+    {
+      "path": "android/sample/src/main/res/values/camera_controls.xml",
+      "sha256": "059e888c8f8f3a2e681a54935536d95025478db6d3ab38b6c7706910daf6bb79"
+    },
+    {
+      "path": "android/sample/src/main/res/values/colors.xml",
+      "sha256": "2b96a2e3fa96083a88fee850e02399e636b6f9c4e23d40aafb7ecb25ea70bb2e"
+    },
+    {
+      "path": "android/sample/src/main/res/values/gallery.xml",
+      "sha256": "731ff2bfd5db125e0b9cd63e950dbb6ebaf609774fd01c4a8e9fd7788332857f"
+    },
+    {
+      "path": "android/sample/src/main/res/values/gallery_ids.xml",
+      "sha256": "e8b98c576adae08a246962f46eedf1fd01b3a39049e16e9b67b9593c59147cda"
+    },
+    {
+      "path": "android/sample/src/main/res/values/ids.xml",
+      "sha256": "7ae3bd48ed125e23e8b9198cdbaed48bbf8b135a8b97ed72ad47060db5b3bd0c"
+    },
+    {
+      "path": "android/sample/src/main/res/values/navigation.xml",
+      "sha256": "59e2ae1dc1b4f29fff910d75d7e7375d0a89e87590e98ba4f209bad67276e190"
+    },
+    {
+      "path": "android/sample/src/main/res/values/photo_actions.xml",
+      "sha256": "e7e893e11131da7df5b5e1564ee9fe7dc62eaaa660323426c42550d571af1851"
+    },
+    {
+      "path": "android/sample/src/main/res/values/product_info.xml",
+      "sha256": "7a85d591ebb9444aaab215007b5116e326a677e37ad97e848d5ce9bc5f434885"
+    },
+    {
+      "path": "android/sample/src/main/res/values/purchase_samples.xml",
+      "sha256": "6f5b114c2fc831f437e7a89a8858dee3161ca44fce0f8445efbd2076bc536677"
+    },
+    {
+      "path": "android/sample/src/main/res/values/review.xml",
+      "sha256": "cf9469e636efa7b666d990bb94e38e818a1c317719a12beb4e5fe0ecbb2dc4fa"
+    },
+    {
+      "path": "android/sample/src/main/res/values/settings.xml",
+      "sha256": "bd8d3115900f5406b35ce0a56e5205e92314dd15bb275d3a13be6769d804ea7f"
+    },
+    {
+      "path": "android/sample/src/main/res/values/settings_ids.xml",
+      "sha256": "027a2d98d6265634e2ab521fc4db2e83c42d3c11da995a9bb03f3ebaa3ef4d05"
+    },
+    {
+      "path": "android/sample/src/main/res/values/strings.xml",
+      "sha256": "b41d217e1239c48028d18a14d803135a05cfb568f813cfc1a26e55069f01a14d"
+    },
+    {
+      "path": "android/sample/src/main/res/values/styles.xml",
+      "sha256": "19ecada879b78abc285c41ce67767ac0b02f2a5ab3fef2f87b6bb74ea128d28c"
+    },
+    {
+      "path": "android/sample/src/main/res/values/support.xml",
+      "sha256": "081549664739c7c920063ece2ae4979a0a7ea559241543620fe535c490b2d71c"
+    },
+    {
+      "path": "android/sample/src/main/res/xml/data_extraction_rules.xml",
+      "sha256": "9ccf53e8c648736adbf95a27d70ace297c7e3b56d6e48e878194f98c51b36b21"
+    },
+    {
+      "path": "android/sample/src/main/res/xml/locales_config.xml",
+      "sha256": "8936b7f9048be7656565b6b0023e2456d94dc424e134b918825db2a73edc5164"
+    },
+    {
+      "path": "android/sample/src/play/AndroidManifest.xml",
+      "sha256": "28fd16e59fae210f55a30a8815bc737a3e732b8b72139c7ac634522a521ed3e2"
+    },
+    {
+      "path": "android/sample/src/play/kotlin/com/phytoy/sample/BillingFactory.kt",
+      "sha256": "efd9436bb14a225be45fa953ee0a53035737d41a746c392bdc2d9b80920cc6bf"
+    },
+    {
+      "path": "android/sample/src/play/kotlin/com/phytoy/sample/PlayBillingController.kt",
+      "sha256": "01ef9cdb6c6a04ab6159e014d74250511a67c6205d02f0a35ac7952621564af5"
+    },
+    {
+      "path": "android/sample/src/play/kotlin/com/phytoy/sample/PlayPurchaseCache.kt",
+      "sha256": "204cdf3e85f8158c488050a44e4f5aae37f6739d22aeb78e944b2451c8438dac"
+    },
+    {
+      "path": "android/sample/src/play/kotlin/com/phytoy/sample/PlayPurchaseVerifier.kt",
+      "sha256": "324ec85985b9c81331e1411a97ede97c1db99767ef82a83714bf007b4d3e7f84"
+    },
+    {
+      "path": "android/sample/src/play/res/raw/channel_billing_notices.txt",
+      "sha256": "c3f2bd185ed538fd885940ed40ea18f7caf7202cbc28ecdff2be9b6f123c0e27"
+    },
+    {
+      "path": "android/sample/src/play/res/values-zh-rCN/channel.xml",
+      "sha256": "bef30e5c2e1ef0bd36192789e694f1b3f19ef81d1cd029da994f2b5b435133c8"
+    },
+    {
+      "path": "android/sample/src/play/res/values/channel.xml",
+      "sha256": "b893344733a0fd72154eff00ec6d359d7c3826e6cc21d96eea58fa2aeba473cb"
+    },
+    {
+      "path": "android/sample/src/test/kotlin/com/phytoy/sample/BillingEntitlementLedgerTest.kt",
+      "sha256": "4d8afe78b878267bbdf3703b61a4cb089572738437950def8aa262ff7a22075f"
+    },
+    {
+      "path": "android/sample/src/test/kotlin/com/phytoy/sample/CameraLifecycleQueueTest.kt",
+      "sha256": "3a075583a0ec83b82cfb479671c791f475e5802fe86d1fe67b707cdebad622e5"
+    },
+    {
+      "path": "android/sample/src/testGalaxy/kotlin/com/phytoy/sample/GalaxyReceiptPolicyTest.kt",
+      "sha256": "d1f8ec546723c0d483fad385ce4f237bc0d2deca81e2ed8eb9242a5b0cfda0b9"
+    },
+    {
+      "path": "android/sample/src/testPlay/kotlin/com/phytoy/sample/PlayPurchaseVerifierTest.kt",
+      "sha256": "1639fe4c4fb681afe7135b259b1cebfadb13f2d4d9e8ecc62d8c5b6705dfc7d6"
+    },
+    {
+      "path": "android/sdk/build.gradle.kts",
+      "sha256": "5a61dca984f686b11253fab4b43c4fb6b4a335f799389e2c83ac3a0d49fa951f"
+    },
+    {
+      "path": "android/sdk/consumer-rules.pro",
+      "sha256": "663a2c27d123a71da6a675f1c49e647ff590bf6cd76f151129d33b337b06e666"
+    },
+    {
+      "path": "android/sdk/src/main/AndroidManifest.xml",
+      "sha256": "c8fe08b06e479efc7e3d00476fffe693a3e943e2b874b3c6a1ba5156fc180751"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/README.txt",
+      "sha256": "09798f252cc23df602132ed4cb544182faa741b62384623919cf21ccdff16c12"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/host_generic_srgb.ptp",
+      "sha256": "1aedaee25fbf4b75af030a0ca2bb98649e656c1a72d1a41a3c8caa7a1aef9666"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_harinezumi_2pp_daylight_v0_1.ptp",
+      "sha256": "8ec6298139ebcbd8f6f9a40612e547ac1736b819fbc9e00ffa412cea488b2dad"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_harinezumi_2pp_daylight_v0_2.ptp",
+      "sha256": "af82202560bc3693f0b83f707812af2cfcc41abf48f0002c96b18f27148cc4da"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_harinezumi_2pp_daylight_v0_3.ptp",
+      "sha256": "5d7e3652961889ad2dcd573b42951b4ed42a9c0a5a7c0d193d8ee6b5cad4d3dd"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_harinezumi_2pp_daylight_v0_4.ptp",
+      "sha256": "ec481892227b543e0913877214d160eb8cefc5bcbde5cf921803763876f55ab2"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_harinezumi_2pp_mono_v0_1.ptp",
+      "sha256": "276485c0c0d579c60887561321c02d19833b7128cc76ed7dd684557725b99c4e"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_harinezumi_2pp_mono_v0_2.ptp",
+      "sha256": "4a241e68d078a22ae75317ee0e6f2f7dd767f47808279b2337d7d4a7f2e736bc"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_phytoy_digital_01_v1.ptp",
+      "sha256": "6f0093295c7bf957b4b8478cd03b19ae7ea7939963a269c45163525f4200e81f"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_phytoy_digital_01_v1_1.ptp",
+      "sha256": "5d29e8e4ddbc218b671b872b4ccfa5f8d2308f371fc8fbf92a94e5dc04e78f19"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_phytoy_digital_01_v1_2.ptp",
+      "sha256": "3e36a208e5d1acf2e4a65c170b7afffb632f91740faa90f0b997a2daf5747189"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_phytoy_fisheye_05_v1.ptp",
+      "sha256": "5099a4f6ec25ee873ca7fa12ff0026bdd3532caa1c24f338587f3e70d9101712"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_phytoy_plastic_82_v1.ptp",
+      "sha256": "8f16b51baf69aa4dbc82c0205d66f00fb026406cdb2a2f92fb4e2b513426b073"
+    },
+    {
+      "path": "android/sdk/src/main/assets/phytoy/toy_phytoy_street_84_v1.ptp",
+      "sha256": "a0c4d3667e263a2fb12d5e96c08b54e9500b076c3d63ed0e06e2af65c1e357d5"
+    },
+    {
+      "path": "android/sdk/src/main/cpp/CMakeLists.txt",
+      "sha256": "90bae70c9e734776d9106f547f2f6b3cbd8947dc9068347165894a6f9ac16232"
+    },
+    {
+      "path": "android/sdk/src/main/cpp/phytoy_jni.cpp",
+      "sha256": "32399218c231cee9620d7b540ba147a80bf86ef512d2170a05d48b3deffea1db"
+    },
+    {
+      "path": "android/sdk/src/main/kotlin/com/phytoy/engine/PhyToyCameraSession.kt",
+      "sha256": "0877f1e29a35feebf3e14e10bdbfce78f3585954ef1dfc0c8af65f8f904fc5f4"
+    },
+    {
+      "path": "android/settings.gradle.kts",
+      "sha256": "3e028ba77858d0f592671feb8f0c4e3af7bd5ec15fbb22758e8a9322859f1a76"
+    }
+  ]
+}

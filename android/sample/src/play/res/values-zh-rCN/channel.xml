@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="billing_store_name">Google Play</string>
+  <string name="billing_account_name">Google Play 账号</string>
+  <string name="settings_local_only">相机偏好只保存在本机，购买和恢复由 Google Play 处理。</string>
+  <string name="purchase_scope">每款相机单独购买。用原来购买时的 Google Play 账号在 Google Play 恢复。另一个应用商店的购买不会自动转移。</string>
+  <string name="settings_restore_purchases_hint">恢复当前 Google Play 账号在 Google Play 购买的相机。</string>
+</resources>

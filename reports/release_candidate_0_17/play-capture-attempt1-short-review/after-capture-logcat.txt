@@ -1,0 +1,256 @@
+--------- beginning of main
+         1791349976.337  7719  7719 I PhyToySample: Preview throughput budget=5 fps p95_us=641200
+         1791349976.958  7719  7763 I PhyToySample: Camera2 FPS range changed to [5, 30]
+         1791349999.723  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350001.020  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350012.926  7719  7719 I PhyToySample: Camera purchase page opened style=DIGITAL_01
+         1791350026.578  7719  7719 I PhyToySample: Camera purchase page dismissed
+         1791350026.581  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350028.481  7719  7719 I PhyToySample: frames received/rendered: 142 / 30
+         1791350028.481  7719  7719 I PhyToySample: dropped/errors: 110 / 0
+         1791350028.481  7719  7719 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350028.481  7719  7719 I PhyToySample: last/max latency: 415.19 / 606.16 ms
+         1791350028.481  7719  7719 I PhyToySample: rolling P50/P95: 492.36 / 578.79 ms
+         1791350028.481  7719  7719 I PhyToySample: submits/imports/zero-copy: 30 / 11 / 30
+         1791350028.481  7719  7719 I PhyToySample: presented/recreates/output: 30 / 0 / 1080×1440
+         1791350028.481  7719  7719 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350028.481  7719  7719 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350028.481  7719  7719 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350032.094  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350033.808  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350044.404  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350045.746  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350050.959  7719  7719 I PhyToySample: Camera purchase page opened style=DIGITAL_01
+         1791350064.548  7719  7719 I PhyToySample: Camera purchase page dismissed
+         1791350064.557  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350070.448  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350071.787  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350076.961  7719  7719 I PhyToySample: Camera purchase page opened style=PLASTIC_82
+         1791350090.611  7719  7719 I PhyToySample: Camera purchase page dismissed
+         1791350090.614  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350096.533  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350097.879  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350103.918  7719  7719 I PhyToySample: Camera purchase page opened style=STREET_84
+         1791350117.411  7719  7719 I PhyToySample: Camera purchase page dismissed
+         1791350117.443  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350122.793  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350124.115  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350130.198  7719  7719 I PhyToySample: Camera purchase page opened style=FISHEYE_05
+         1791350143.353  7719  7719 I PhyToySample: Camera purchase page dismissed
+         1791350143.356  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350150.598  7719  7719 I PhyToySample: frames received/rendered: 148 / 30
+         1791350150.598  7719  7719 I PhyToySample: dropped/errors: 116 / 0
+         1791350150.598  7719  7719 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350150.598  7719  7719 I PhyToySample: last/max latency: 492.14 / 587.23 ms
+         1791350150.598  7719  7719 I PhyToySample: rolling P50/P95: 453.74 / 572.47 ms
+         1791350150.598  7719  7719 I PhyToySample: submits/imports/zero-copy: 30 / 9 / 30
+         1791350150.598  7719  7719 I PhyToySample: presented/recreates/output: 30 / 0 / 1080×1080
+         1791350150.598  7719  7719 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350150.598  7719  7719 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350150.598  7719  7719 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350156.512  7719  7719 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350159.747  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350178.278  7719  7763 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350182.599  7719  7719 I PhyToySample: frames received/rendered: 145 / 30
+         1791350182.599  7719  7719 I PhyToySample: dropped/errors: 113 / 0
+         1791350182.599  7719  7719 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350182.599  7719  7719 I PhyToySample: last/max latency: 386.47 / 1090.13 ms
+         1791350182.599  7719  7719 I PhyToySample: rolling P50/P95: 407.82 / 562.59 ms
+         1791350182.599  7719  7719 I PhyToySample: submits/imports/zero-copy: 30 / 12 / 30
+         1791350182.599  7719  7719 I PhyToySample: presented/recreates/output: 30 / 0 / 1080×1440
+         1791350182.599  7719  7719 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350182.599  7719  7719 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350182.599  7719  7719 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350226.316 10233 10233 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350227.471 10233 10265 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350239.905 10233 10233 I PhyToySample: frames received/rendered: 144 / 30
+         1791350239.905 10233 10233 I PhyToySample: dropped/errors: 113 / 0
+         1791350239.905 10233 10233 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350239.905 10233 10233 I PhyToySample: last/max latency: 356.73 / 522.85 ms
+         1791350239.905 10233 10233 I PhyToySample: rolling P50/P95: 406.04 / 487.64 ms
+         1791350239.905 10233 10233 I PhyToySample: submits/imports/zero-copy: 30 / 12 / 30
+         1791350239.905 10233 10233 I PhyToySample: presented/recreates/output: 30 / 0 / 1080×1440
+         1791350239.905 10233 10233 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350239.905 10233 10233 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350239.905 10233 10233 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350263.900 10233 10233 I PhyToySample: Preview throughput budget=5 fps p95_us=487642
+         1791350263.901 10233 10233 I PhyToySample: frames received/rendered: 422 / 90
+         1791350263.901 10233 10233 I PhyToySample: dropped/errors: 330 / 0
+         1791350263.901 10233 10233 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350263.901 10233 10233 I PhyToySample: last/max latency: 635.98 / 635.98 ms
+         1791350263.901 10233 10233 I PhyToySample: rolling P50/P95: 396.26 / 487.64 ms
+         1791350263.901 10233 10233 I PhyToySample: submits/imports/zero-copy: 90 / 32 / 90
+         1791350263.901 10233 10233 I PhyToySample: presented/recreates/output: 90 / 0 / 1080×1440
+         1791350263.901 10233 10233 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350263.901 10233 10233 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350263.901 10233 10233 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350264.406 10233 10265 I PhyToySample: Camera2 FPS range changed to [5, 30]
+         1791350291.107 10233 10233 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350291.791 10233 10408 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350306.408 10545 10545 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350307.438 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350320.072 10545 10545 I PhyToySample: frames received/rendered: 154 / 30
+         1791350320.072 10545 10545 I PhyToySample: dropped/errors: 123 / 0
+         1791350320.072 10545 10545 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350320.072 10545 10545 I PhyToySample: last/max latency: 455.27 / 556.23 ms
+         1791350320.072 10545 10545 I PhyToySample: rolling P50/P95: 400.33 / 535.85 ms
+         1791350320.072 10545 10545 I PhyToySample: submits/imports/zero-copy: 30 / 10 / 30
+         1791350320.072 10545 10545 I PhyToySample: presented/recreates/output: 30 / 0 / 369×492
+         1791350320.072 10545 10545 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350320.072 10545 10545 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350320.072 10545 10545 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350322.877 10545 10545 I PhyToySample: Camera2 exposure compensation changed index=2 ev=0.6666667
+         1791350322.969 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350323.341 10545 10545 I PhyToySample: Camera2 exposure compensation changed index=0 ev=0.0
+         1791350323.369 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350323.478 10545 10545 I PhyToySample: Camera2 exposure compensation changed index=-4 ev=-1.3333334
+         1791350323.507 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350330.155 10545 10545 I PhyToySample: Camera2 exposure compensation changed index=0 ev=0.0
+         1791350330.183 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350332.189 10545 10545 I PhyToySample: frames received/rendered: 286 / 60
+         1791350332.189 10545 10545 I PhyToySample: dropped/errors: 224 / 0
+         1791350332.189 10545 10545 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350332.189 10545 10545 I PhyToySample: last/max latency: 347.10 / 556.23 ms
+         1791350332.189 10545 10545 I PhyToySample: rolling P50/P95: 397.96 / 507.90 ms
+         1791350332.189 10545 10545 I PhyToySample: submits/imports/zero-copy: 60 / 18 / 60
+         1791350332.189 10545 10545 I PhyToySample: presented/recreates/output: 60 / 0 / 369×492
+         1791350332.189 10545 10545 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350332.189 10545 10545 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350332.189 10545 10545 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350344.115 10545 10545 I PhyToySample: Preview throughput budget=5 fps p95_us=507903
+         1791350344.115 10545 10545 I PhyToySample: frames received/rendered: 437 / 90
+         1791350344.115 10545 10545 I PhyToySample: dropped/errors: 344 / 0
+         1791350344.115 10545 10545 I PhyToySample: thermal skipped/engine/status/camera FPS: 1 / 30 / 0 / 30-30
+         1791350344.115 10545 10545 I PhyToySample: last/max latency: 426.16 / 556.23 ms
+         1791350344.115 10545 10545 I PhyToySample: rolling P50/P95: 396.06 / 507.90 ms
+         1791350344.115 10545 10545 I PhyToySample: submits/imports/zero-copy: 90 / 22 / 90
+         1791350344.115 10545 10545 I PhyToySample: presented/recreates/output: 90 / 0 / 369×492
+         1791350344.115 10545 10545 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350344.115 10545 10545 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350344.115 10545 10545 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350344.620 10545 10564 I PhyToySample: Camera2 FPS range changed to [5, 30]
+         1791350357.721 10545 10545 I PhyToySample: frames received/rendered: 538 / 120
+         1791350357.721 10545 10545 I PhyToySample: dropped/errors: 378 / 0
+         1791350357.721 10545 10545 I PhyToySample: thermal skipped/engine/status/camera FPS: 38 / 5 / 0 / 5-30
+         1791350357.721 10545 10545 I PhyToySample: last/max latency: 338.99 / 1101.44 ms
+         1791350357.721 10545 10545 I PhyToySample: rolling P50/P95: 400.22 / 535.85 ms
+         1791350357.721 10545 10545 I PhyToySample: submits/imports/zero-copy: 120 / 31 / 120
+         1791350357.721 10545 10545 I PhyToySample: presented/recreates/output: 120 / 0 / 369×492
+         1791350357.721 10545 10545 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350357.721 10545 10545 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350357.721 10545 10545 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350366.366 10545 10545 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350367.801 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350372.878 10545 10545 I PhyToySample: Camera purchase page opened style=DIGITAL_01
+         1791350446.678 10545 10545 I PhyToySample: Camera purchase page dismissed
+         1791350446.681 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350458.918 10545 10545 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350460.750 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350503.546 10545 10564 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350507.564 12120 12120 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350508.553 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350526.329 12120 12120 I PhyToySample: frames received/rendered: 162 / 30
+         1791350526.329 12120 12120 I PhyToySample: dropped/errors: 130 / 0
+         1791350526.329 12120 12120 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350526.329 12120 12120 I PhyToySample: last/max latency: 1047.48 / 1444.34 ms
+         1791350526.329 12120 12120 I PhyToySample: rolling P50/P95: 457.43 / 1273.99 ms
+         1791350526.329 12120 12120 I PhyToySample: submits/imports/zero-copy: 30 / 10 / 30
+         1791350526.329 12120 12120 I PhyToySample: presented/recreates/output: 30 / 0 / 320×427
+         1791350526.329 12120 12120 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350526.329 12120 12120 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350526.329 12120 12120 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350526.355 12120 12120 I PhyToySample: Camera2 exposure compensation changed index=-1 ev=-0.33333334
+         1791350526.388 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350526.392 12120 12120 I PhyToySample: Camera2 exposure compensation changed index=-2 ev=-0.6666667
+         1791350526.417 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350526.885 12120 12120 I PhyToySample: Camera2 exposure compensation changed index=-4 ev=-1.3333334
+         1791350526.961 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350534.170 12120 12120 I PhyToySample: Camera2 exposure compensation changed index=0 ev=0.0
+         1791350534.205 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350540.494 12120 12120 I PhyToySample: frames received/rendered: 318 / 60
+         1791350540.494 12120 12120 I PhyToySample: dropped/errors: 256 / 0
+         1791350540.494 12120 12120 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350540.494 12120 12120 I PhyToySample: last/max latency: 486.95 / 1444.34 ms
+         1791350540.494 12120 12120 I PhyToySample: rolling P50/P95: 470.50 / 1047.48 ms
+         1791350540.494 12120 12120 I PhyToySample: submits/imports/zero-copy: 60 / 16 / 60
+         1791350540.494 12120 12120 I PhyToySample: presented/recreates/output: 60 / 0 / 320×427
+         1791350540.494 12120 12120 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350540.494 12120 12120 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350540.494 12120 12120 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350555.853 12120 12120 I PhyToySample: Preview throughput budget=5 fps p95_us=924748
+         1791350556.689 12120 12154 I PhyToySample: Camera2 FPS range changed to [5, 30]
+         1791350576.557 12120 12120 I PhyToySample: frames received/rendered: 565 / 120
+         1791350576.557 12120 12120 I PhyToySample: dropped/errors: 414 / 0
+         1791350576.557 12120 12120 I PhyToySample: thermal skipped/engine/status/camera FPS: 29 / 5 / 0 / 5-30
+         1791350576.557 12120 12120 I PhyToySample: last/max latency: 952.32 / 1444.34 ms
+         1791350576.557 12120 12120 I PhyToySample: rolling P50/P95: 486.37 / 1047.48 ms
+         1791350576.557 12120 12120 I PhyToySample: submits/imports/zero-copy: 120 / 31 / 120
+         1791350576.557 12120 12120 I PhyToySample: presented/recreates/output: 120 / 0 / 320×427
+         1791350576.557 12120 12120 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350576.557 12120 12120 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350576.557 12120 12120 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350579.717 12120 12120 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350581.781 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350587.481 12120 12120 I PhyToySample: Camera purchase page opened style=DIGITAL_01
+         1791350592.393 12120 12120 I PhyToySample: Camera purchase page dismissed
+         1791350592.395 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350606.307 12120 12120 I PhyToySample: frames received/rendered: 152 / 30
+         1791350606.307 12120 12120 I PhyToySample: dropped/errors: 120 / 0
+         1791350606.307 12120 12120 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350606.307 12120 12120 I PhyToySample: last/max latency: 997.49 / 1345.25 ms
+         1791350606.307 12120 12120 I PhyToySample: rolling P50/P95: 640.01 / 1045.17 ms
+         1791350606.307 12120 12120 I PhyToySample: submits/imports/zero-copy: 30 / 8 / 30
+         1791350606.307 12120 12120 I PhyToySample: presented/recreates/output: 30 / 0 / 320×427
+         1791350606.307 12120 12120 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350606.307 12120 12120 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350606.307 12120 12120 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350617.302 12120 12120 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350618.859 12120 12154 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350684.189 12120 12120 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350689.104 12120 13464 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350696.040 13569 13569 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350697.022 13569 13599 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350712.045 13569 13569 I PhyToySample: frames received/rendered: 167 / 30
+         1791350712.045 13569 13569 I PhyToySample: dropped/errors: 135 / 0
+         1791350712.045 13569 13569 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350712.045 13569 13569 I PhyToySample: last/max latency: 409.58 / 745.39 ms
+         1791350712.045 13569 13569 I PhyToySample: rolling P50/P95: 479.79 / 665.85 ms
+         1791350712.045 13569 13569 I PhyToySample: submits/imports/zero-copy: 30 / 13 / 30
+         1791350712.045 13569 13569 I PhyToySample: presented/recreates/output: 30 / 0 / 378×504
+         1791350712.045 13569 13569 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350712.045 13569 13569 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350712.045 13569 13569 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350742.119 13829 13829 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350743.231 13829 13855 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350750.949 13829 13829 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350751.254 13829 13829 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350752.341 13829 13829 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350754.024 14038 14038 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350755.568 14038 14071 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350768.579 14038 14038 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350770.454 14038 14071 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350783.485 14038 14038 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350784.134 14038 14283 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350798.077 14038 14038 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350799.884 14038 14283 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350816.763 14038 14038 I PhyToySample: Matched host ISP edge=1 noise=1 tone=1
+         1791350818.692 14038 14283 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350838.661 14038 14038 I PhyToySample: frames received/rendered: 157 / 30
+         1791350838.661 14038 14038 I PhyToySample: dropped/errors: 125 / 0
+         1791350838.661 14038 14038 I PhyToySample: thermal skipped/engine/status/camera FPS: 0 / 30 / 0 / 30-30
+         1791350838.661 14038 14038 I PhyToySample: last/max latency: 500.06 / 918.52 ms
+         1791350838.661 14038 14038 I PhyToySample: rolling P50/P95: 619.45 / 877.81 ms
+         1791350838.661 14038 14038 I PhyToySample: submits/imports/zero-copy: 30 / 12 / 30
+         1791350838.661 14038 14038 I PhyToySample: presented/recreates/output: 30 / 0 / 560×420
+         1791350838.661 14038 14038 I PhyToySample: AImage/AHB format/usage: 34 / 35 / 0x60130
+         1791350838.661 14038 14038 I PhyToySample: Vulkan allocations/memory: 7 / 21.0 MiB
+         1791350838.661 14038 14038 I PhyToySample: Synthetic Alpha live preview: waiting
+         1791350838.762 14038 14038 I PhyToySample: Capture action style=HARINEZUMI_2PP_MONO unlocked=true ready=true capturing=false browsing=false
+         1791350838.782 14038 14283 I PhyToySample: Camera2 3A stage=WAITING_AF af=unknown ae=unknown awb=unknown
+         1791350839.385 14038 14283 I PhyToySample: Camera2 3A stage=LOCKING_3A af=4 ae=2 awb=2
+         1791350839.865 14038 14283 I PhyToySample: Camera2 3A stage=COMPLETE af=4 ae=3 awb=3
+         1791350839.866 14038 14070 I PhyToySample: Camera2 3A gate status=READY af=4 ae=3 awb=3 elapsed_ms=1084
+         1791350840.160 14038 14070 I PhyToySample: Camera2 high-resolution PRIVATE capture submitted: 1856x1392 lens=1
+         1791350843.138 14038 14283 I PhyToySample: Camera2 FPS range changed to [30, 30]
+         1791350843.138 14038 14283 I PhyToySample: Camera2 3A restored continuous preview
+         1791350843.847 14038 14038 I PhyToySample: DH/M photo saved: content://media/external/images/media/36

@@ -60,13 +60,11 @@ jobs:
         run: sdkmanager 'platforms;android-37.0' 'build-tools;36.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
       - name: Build optimized unsigned APK and AAB and SDK
         working-directory: android
-        run: ./gradlew --no-daemon --console=plain :sample:assembleRelease :sample:bundleRelease :sample:assembleBenchmark :sample:lintRelease :sdk:assembleRelease
-      - name: Audit final release files
-        run: >-
-          python tools/check_android_release.py
-          --apk android/sample/build/outputs/apk/release/sample-release-unsigned.apk
-          --aab android/sample/build/outputs/bundle/release/sample-release.aab
-          --allow-unsigned --output reports/ci-release/packaging.json
+        run: ./gradlew --no-daemon --console=plain :sample:assemblePlayRelease :sample:bundlePlayRelease :sample:assembleGalaxyRelease :sample:bundleGalaxyRelease :sample:assemblePlayBenchmark :sample:assembleGalaxyBenchmark :sample:testPlayDebugUnitTest :sample:testGalaxyDebugUnitTest :sample:lintPlayRelease :sample:lintGalaxyRelease :sdk:assembleRelease
+      - name: Audit both store candidates
+        run: |
+          python tools/check_android_release.py --channel play --apk android/sample/build/outputs/apk/play/release/sample-play-release-unsigned.apk --aab android/sample/build/outputs/bundle/playRelease/sample-play-release.aab --allow-unsigned --output reports/ci-release/play-packaging.json
+          python tools/check_android_release.py --channel galaxy --apk android/sample/build/outputs/apk/galaxy/release/sample-galaxy-release-unsigned.apk --aab android/sample/build/outputs/bundle/galaxyRelease/sample-galaxy-release.aab --allow-unsigned --output reports/ci-release/galaxy-packaging.json
       - name: Retain reviewable candidates and diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -75,10 +73,10 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
           path: |
-            android/sample/build/outputs/apk/release/
-            android/sample/build/outputs/bundle/release/
-            android/sample/build/outputs/mapping/release/
-            android/sample/build/outputs/native-debug-symbols/release/
-            android/sample/build/reports/lint-results-release.*
+            android/sample/build/outputs/apk/
+            android/sample/build/outputs/bundle/
+            android/sample/build/outputs/mapping/
+            android/sample/build/outputs/native-debug-symbols/
+            android/sample/build/reports/lint-results-*Release.*
             android/sdk/build/outputs/aar/sdk-release.aar
-            reports/ci-release/packaging.json
+            reports/ci-release/*-packaging.json

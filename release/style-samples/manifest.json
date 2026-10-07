@@ -1,0 +1,62 @@
+{
+  "purpose": "Generated scene, Python reference style illustrations; not app photographs",
+  "seed": 20261006,
+  "source_sha256": "8f0208f5b91827d33d7afc0a14d09616d8a0b2177bcfcd16028e9a3df31cfa57",
+  "host_sha256": "b5d9db913d62c02813119839d74d1b750fa9a82ccc9d3c0fbfe1735b474a0649",
+  "styles": {
+    "dh_color": {
+      "profile": "toy_harinezumi_2pp_daylight_v0_4.json",
+      "profile_sha256": "cfbc8bbca92e4222455347a3bbe87c53f87ef33b5e22a011ea5e428a4b7a085c",
+      "output_sha256": "e099fe652e84cea145d806faefbf6983973262079510744c008f69423db846e3",
+      "size": [
+        360,
+        480
+      ]
+    },
+    "dh_mono": {
+      "profile": "toy_harinezumi_2pp_mono_v0_2.json",
+      "profile_sha256": "19fb8fb9487b6c9dbe1d4826ac117995ecacadd017f2afa62d089bb2ec142373",
+      "output_sha256": "22a4cbfdf5fb37e62c39deb6ce8af2825dbf7407642654e5bd7ad922864519cc",
+      "size": [
+        360,
+        480
+      ]
+    },
+    "digital": {
+      "profile": "toy_phytoy_digital_01_v1_2.json",
+      "profile_sha256": "06ccce9feab99207c261763a3d3bb1171d42b7522857b53cadcc1b5986c4df94",
+      "output_sha256": "ce51d7b802c5683ef0553956cce18f2d4781e970df2c5b3a2fb9d21e9692fc68",
+      "size": [
+        360,
+        480
+      ]
+    },
+    "plastic": {
+      "profile": "toy_phytoy_plastic_82_v1.json",
+      "profile_sha256": "022fb3d8ea0ac1ccd4888863a85c91b4ea6108a2cfc00ec18647a512107d5b84",
+      "output_sha256": "ba4c74b5b666500637b3d38aacc45f9e843eec3fda8385964267b9375692c8bb",
+      "size": [
+        480,
+        480
+      ]
+    },
+    "street": {
+      "profile": "toy_phytoy_street_84_v1.json",
+      "profile_sha256": "ea6f300d541ef53594be46e0a85db1c9df2e6f1cf53ee54fb4f2434048e29145",
+      "output_sha256": "52dbb714f3c22ae1e51c7474a16f991d279d1a825c1b8351d032b73d1fefa4db",
+      "size": [
+        320,
+        480
+      ]
+    },
+    "fisheye": {
+      "profile": "toy_phytoy_fisheye_05_v1.json",
+      "profile_sha256": "8241d7d45003035595b1fd128f2ee5ac9b7d0316442cb12a126a7dfa28962fc3",
+      "output_sha256": "4a724a87c2b3e60dcf83dbdc15a10cd481024ceea24497b297e53d6fe053fa2b",
+      "size": [
+        480,
+        480
+      ]
+    }
+  }
+}

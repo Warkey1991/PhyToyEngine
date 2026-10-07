@@ -6,7 +6,7 @@ PhyToyEngine is a profile-driven physical toy-camera imaging engine. It reconstr
 canonical scene-linear image from a host camera and then simulates a fixed-focus toy
 camera's optics, digital sensor, ADC, and ISP in a fixed physical order.
 
-This repository delivers a **Google Play release candidate camera app (0.15.0-rc1)** and the independently versioned imaging engine.
+This repository delivers a **Google Play and Galaxy Store release candidate camera app (0.17.0)** and the independently versioned imaging engine.
 Release builds use R8/resource optimization, explicit signing configuration and an artifact audit.
 See [release preparation and remaining submission gates](release/README.md).
 Its first immutable designed profile is **PhyToy Digital 01 v1.0.0**. Fresh Android installs now default
@@ -339,7 +339,7 @@ PhyToyEngine 是一个由配置档案驱动的物理玩具相机成像引擎。�
 宿主相机的 sRGB、YUV420 或 Bayer RAW 输入归一化为统一的场景线性 Rec.2020，
 再按照固定顺序模拟目标玩具相机的镜头、数字传感器、ADC 和 ISP。
 
-当前仓库包含 **Google Play 相机应用发布候选版 0.15.0-rc1**，以及独立版本的成像引擎。
+当前仓库包含 **Google Play 与 Galaxy Store 相机应用发布候选版 0.17.0**，以及独立版本的成像引擎。
 正式构建已启用 R8/资源优化、显式签名配置和产物审核，提交前门槛见
 [发布准备文档](release/README.md)。第一款锁定的原创虚拟相机是
 **PhyToy Digital 01 v1.0.0**，Android 现默认使用经户外成片复核后的 **v1.2.0** 调校。

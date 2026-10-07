@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_capture_smoke.py", line 386, in main
+    before_description = smoke.mono_review()
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_capture_smoke.py", line 263, in mono_review
+    self.wait("review_share", timeout=90)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 173, in wait
+    return self.find(identifier, self.poll(ready, f"Timed out waiting for {identifier}", timeout=timeout))
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 167, in poll
+    raise AssertionError(message + "; last visible IDs=" + ",".join(exposed))
+AssertionError: Timed out waiting for review_share; last visible IDs=review_back,review_continue,review_next,review_photo,review_previous

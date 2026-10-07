@@ -22,6 +22,8 @@ import zipfile
 PAGE_SIZE = 16384
 ANDROID_NS = "http://schemas.android.com/apk/res/android"
 REQUIRED_LIBRARIES = {"libphytoy_core.so", "libphytoy_android.so", "libc++_shared.so"}
+BILLING_PERMISSIONS = {"play": "com.android.vending.BILLING",
+                       "galaxy": "com.samsung.android.iap.permission.BILLING"}
 
 
 class ReleaseError(ValueError):
@@ -130,6 +132,11 @@ def aab_manifest(data: bytes) -> dict:
             if name:
                 features[name] = {"required": feature_attrs.get((ANDROID_NS, "required"), "true") == "true",
                                   "version": int(feature_attrs.get((ANDROID_NS, "version"), "0"), 0)}
+    permissions = sorted({x["attrs"].get((ANDROID_NS, "name")) for x in children
+                          if x.get("name") in ("uses-permission", "uses-permission-sdk-23")})
+    channel = next((x["attrs"].get((ANDROID_NS, "value"), "") for x in app.get("children", [])
+                    if x.get("name") == "meta-data" and
+                    x["attrs"].get((ANDROID_NS, "name")) == "phytoy.store_channel"), "")
     return {"application_id": attrs.get(("", "package")),
             "version_code": int(attrs[(ANDROID_NS, "versionCode")]),
             "version_name": attrs[(ANDROID_NS, "versionName")],
@@ -138,7 +145,7 @@ def aab_manifest(data: bytes) -> dict:
             "debuggable": app_attrs.get((ANDROID_NS, "debuggable"), "false") == "true",
             "test_only": app_attrs.get((ANDROID_NS, "testOnly"), "false") == "true",
             "cleartext": app_attrs.get((ANDROID_NS, "usesCleartextTraffic"), "true") == "true",
-            "features": features}
+            "features": features, "permissions": permissions, "store_channel": channel}
 
 
 def aab_alignment(data: bytes) -> int:
@@ -238,10 +245,36 @@ def parse_apk_manifest(badging: str, tree: str) -> dict:
             version_value = re.sub(r"\(type 0x[0-9a-f]+\)", "", version_value)
             features[name[1]] = {"required": required_value not in ("false", "0x0", "0"),
                                  "version": int(version_value, 0)}
+    permissions = []
+    for block in re.finditer(r"(?m)^([ \t]*)E: uses-permission(?:-sdk-23)?[^\n]*\n((?:\1  +[^\n]*\n?)*)", tree):
+        name = re.search(r':name\([^)]*\)="([^"]+)"', block[2])
+        if name:
+            permissions.append(name[1])
+    channel = ""
+    for block in re.finditer(r"(?m)^([ \t]*)E: meta-data[^\n]*\n((?:\1  +[^\n]*\n?)*)", tree):
+        name = re.search(r':name\([^)]*\)="([^"]+)"', block[2])
+        value = re.search(r':value\([^)]*\)="([^"]+)"', block[2])
+        if name and name[1] == "phytoy.store_channel" and value:
+            channel = value[1]
     return {"application_id": package[1], "version_code": int(package[2]), "version_name": package[3],
             "min_sdk": int(sdk[1]), "target_sdk": int(target[1]),
             "debuggable": boolean("debuggable", False), "test_only": boolean("testOnly", False),
-            "cleartext": boolean("usesCleartextTraffic", True), "features": features}
+            "cleartext": boolean("usesCleartextTraffic", True), "features": features,
+            "permissions": sorted(set(permissions)), "store_channel": channel}
+
+
+def audit_channel(metadata: dict, expected_channel: str | None, store_ready: bool) -> str:
+    """Check the actual merged manifest so a store binary cannot silently use the other billing permission."""
+    channel = metadata.get("store_channel", "")
+    if expected_channel:
+        require(channel == expected_channel, "Artifact store channel does not match --channel")
+    if channel or store_ready:
+        require(channel in BILLING_PERMISSIONS, "Store channel metadata is missing or unsupported")
+        permissions = set(metadata.get("permissions", []))
+        require(BILLING_PERMISSIONS[channel] in permissions, "Expected store billing permission is missing")
+        require(not (set(BILLING_PERMISSIONS.values()) - {BILLING_PERMISSIONS[channel]}) & permissions,
+                "Artifact mixes billing permissions from different stores")
+    return channel
 
 
 def apk_manifest(path: Path, aapt2: str) -> dict:
@@ -310,6 +343,7 @@ def audit(args: argparse.Namespace) -> dict:
         require(apk["native_libraries"][name]["sha256"] == aab["native_libraries"][name]["sha256"],
                 f"APK and AAB native library differs: {name}")
     metadata = apk["manifest"]
+    channel = audit_channel(metadata, getattr(args, "channel", None), args.store_ready)
     require(metadata["target_sdk"] >= args.minimum_target_sdk, "Target SDK is below the current release policy")
     require(metadata["min_sdk"] == 26, "Unexpected minimum SDK")
     require(metadata["version_code"] > 0 and metadata["version_name"], "Invalid release version")
@@ -359,6 +393,7 @@ def audit(args: argparse.Namespace) -> dict:
     return {"status": "passed", "scope": "store_packaging" if args.store_ready else "release_candidate_packaging",
             "signed": apk["signed"], "store_ready": args.store_ready,
             "minimum_target_sdk": args.minimum_target_sdk, "apk": apk, "aab": aab,
+            "store_channel": channel,
             "device_acceptance": "separate_required_gate"}
 
 
@@ -369,6 +404,7 @@ def main() -> int:
     parser.add_argument("--sdk", type=Path)
     parser.add_argument("--allow-unsigned", action="store_true")
     parser.add_argument("--store-ready", action="store_true")
+    parser.add_argument("--channel", choices=sorted(BILLING_PERMISSIONS), help="Verify the built artifact's store channel and billing permission")
     parser.add_argument("--expected-application-id")
     parser.add_argument("--expected-cert-sha256")
     parser.add_argument("--minimum-target-sdk", type=int, default=36)

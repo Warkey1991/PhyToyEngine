@@ -1,0 +1,1 @@
+PASS: ALL_CAPS framework cancel matches its resource; Chinese unaffected; unrelated label rejected; uppercase delete confirmation blocked before any ADB call.

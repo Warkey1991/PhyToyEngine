@@ -1,6 +1,6 @@
 package com.phytoy.sample
 
-/** Stable Play product IDs. Configure one permanent BUY option named "unlock" per product. */
+/** IDs are registered separately per store/package. Play uses BUY "unlock"; Galaxy uses permanent Item acknowledgement. */
 internal object StyleProducts {
     const val PURCHASE_OPTION_ID = "unlock"
     val freeStyles: Set<CameraStyle> = setOf(CameraStyle.HARINEZUMI_2PP, CameraStyle.HARINEZUMI_2PP_MONO)

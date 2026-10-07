@@ -5,11 +5,11 @@ internal enum class BillingConnection { DISCONNECTED, CONNECTING, READY, UNAVAIL
 internal data class BillingProduct(
     val style: CameraStyle,
     val productId: String,
-    /** Exact localized Play price; never fabricate a fallback dollar amount. */
+    /** Exact localized price from this channel's store; never fabricate a fallback dollar amount. */
     val formattedPrice: String? = null,
     val currencyCode: String? = null,
     val priceAmountMicros: Long? = null,
-    /** An eligible, permanent "unlock" purchase option is available for this account. */
+    /** A permanent purchase is available for this store account. */
     val eligible: Boolean = false,
     val unavailableStatusCode: Int? = null,
 )

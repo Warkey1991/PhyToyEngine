@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_channel_smoke.py", line 92, in main
+    provider = next((n for n in nodes if n.get("text") == labels["purchase_payment_provider"]), None)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_channel_smoke.py", line 92, in <genexpr>
+    provider = next((n for n in nodes if n.get("text") == labels["purchase_payment_provider"]), None)
+KeyError: 'purchase_payment_provider'

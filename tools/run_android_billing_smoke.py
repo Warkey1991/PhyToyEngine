@@ -85,7 +85,9 @@ class Smoke:
     def label_matches(self, value: str, resource: str) -> bool:
         labels = self.strings.get(resource)
         assert labels, f"Missing source labels for {resource}; run this script from the matching repository"
-        return value in labels
+        # Framework dialog buttons may use the theme's ALL_CAPS transformation.
+        # Match that display transformation without weakening resource identity.
+        return value.casefold() in {label.casefold() for label in labels}
 
     def ui(self, *, timeout: float = 12, include_unimportant: bool = False) -> list[dict[str, str]]:
         deadline = time.monotonic() + timeout

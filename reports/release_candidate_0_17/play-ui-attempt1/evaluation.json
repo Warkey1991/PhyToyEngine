@@ -1,0 +1,107 @@
+{
+  "passed": false,
+  "package": "com.ycolor.team.phytoy.camera.android.gpapp",
+  "serial": "emulator-5580",
+  "run_started_at_ns": 1791293504036896000,
+  "scope": "0.17 emulator UI: adjustments, trial-first unlock, 200% fonts, privacy, existing photos",
+  "checks": [],
+  "styles": [],
+  "artifacts": {
+    "failure_screenshot": "failure.png"
+  },
+  "touch_targets": {},
+  "media_history": [
+    {
+      "stage": "initial",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "initial-mediastore.txt"
+    },
+    {
+      "stage": "final",
+      "count": 2,
+      "ids": [
+        22,
+        24
+      ],
+      "artifact": "final-mediastore.txt"
+    }
+  ],
+  "purchase_button_taps": 0,
+  "permission_mutations": 0,
+  "private_preference_writes": 0,
+  "locale_mutations": 0,
+  "successful_purchase_tested": false,
+  "preference_restore_scope": "Restore initial visible free style via UI; do not claim byte-for-byte private preference preservation",
+  "photos_taken": 0,
+  "photos_deleted": 0,
+  "shares_sent": 0,
+  "not_covered": [
+    "checkout or purchase success",
+    "successful photo deletion or system delete consent",
+    "pinch/multitouch",
+    "visual pixel correctness",
+    "physical devices"
+  ],
+  "emulator_properties": {
+    "ro.kernel.qemu": "1",
+    "ro.boot.qemu": "1"
+  },
+  "sdk": 36,
+  "installed_apks": [
+    {
+      "path": "/data/app/~~2vbIH_JCDtRLaDUa_sT0YA==/com.ycolor.team.phytoy.camera.android.gpapp-iYKcIalcXa6lJqQWabKn2g==/base.apk",
+      "sha256": "dbc038a12304a150f91ce294fb31140edc1979b2a67d0fd16845c6c10c25bd51"
+    }
+  ],
+  "installed_apk_sha256": "dbc038a12304a150f91ce294fb31140edc1979b2a67d0fd16845c6c10c25bd51",
+  "font_scale_original": "1.0",
+  "phase": "font 1.0",
+  "initial_visible_style": "style_dh_color",
+  "last_action": "tap style_dh_color",
+  "taps": [
+    {
+      "phase": "font 1.0",
+      "id": "exposure_value",
+      "bounds": [
+        27,
+        744,
+        162,
+        816
+      ],
+      "point": [
+        94,
+        780
+      ],
+      "started_at_ns": 1791293521334539000,
+      "completed_at_ns": 1791293521403787000
+    },
+    {
+      "phase": "font 1.0",
+      "id": "style_dh_color",
+      "bounds": [
+        18,
+        672,
+        150,
+        744
+      ],
+      "point": [
+        84,
+        708
+      ],
+      "started_at_ns": 1791293569725987000,
+      "completed_at_ns": 1791293569814486000
+    }
+  ],
+  "failure": "AssertionError: Timed out waiting for adjustment_panel; last visible IDs=adjustment_done,adjustment_reset,adjustment_slider,exposure_value,flash_mode,last_photo,open_settings,shutter,style_dh_color,style_dh_mono,style_digital,style_plastic,switch_camera,zoom_ratio",
+  "font_scale_restored": true,
+  "photos_changed": false,
+  "permissions_unchanged": true,
+  "system_locale_unchanged": true,
+  "cleanup_errors": [
+    "style restore: UIAutomator did not write a fresh hierarchy: "
+  ]
+}

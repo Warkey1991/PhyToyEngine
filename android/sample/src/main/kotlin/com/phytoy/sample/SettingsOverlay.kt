@@ -41,8 +41,24 @@ internal class SettingsOverlay(
     private var previousFocus: View? = null
     private var choiceDialog: AlertDialog? = null
     private var settings = store.load()
+    private var purchaseResult: CharSequence? = null
+    private val purchaseNotice = TextView(activity).apply {
+        id = R.id.settings_purchase_result
+        textSize = 14f
+        setTextColor(FOREGROUND)
+        setPadding(dp(16), dp(12), dp(16), dp(12))
+        background = touchBackground(CARD, 14)
+        accessibilityLiveRegion = ACCESSIBILITY_LIVE_REGION_POLITE
+        visibility = GONE
+    }
 
     fun isShowing(): Boolean = visibility == VISIBLE
+
+    fun showPurchaseResult(message: CharSequence) {
+        purchaseResult = message
+        purchaseNotice.text = message
+        purchaseNotice.visibility = VISIBLE
+    }
 
     /** Refresh entitlement text in place without rebuilding controls or moving input focus. */
     fun refreshStyleAccess() {
@@ -152,6 +168,20 @@ internal class SettingsOverlay(
             settings.rememberLastStyle) { change(settings.copy(rememberLastStyle = it)) }
         choice(R.id.settings_quality, R.string.settings_quality, activity.getString(settings.photoQuality.titleRes),
             R.string.settings_quality_hint) { chooseQuality() }
+        body.addView(Button(activity).apply {
+            text = activity.getString(R.string.settings_options_help)
+            isAllCaps = false
+            textSize = 13f
+            minHeight = dp(48)
+            setTextColor(ACCENT)
+            background = touchBackground(android.graphics.Color.TRANSPARENT, 12)
+            setOnClickListener {
+                choiceDialog?.dismiss()
+                choiceDialog = AlertDialog.Builder(activity).setTitle(R.string.settings_section_camera)
+                    .setMessage(R.string.settings_camera_help)
+                    .setPositiveButton(R.string.product_info_close, null).show()
+            }
+        }, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
 
         section(R.string.settings_section_shooting)
         toggle(R.id.settings_grid, R.string.settings_grid, R.string.settings_grid_hint,
@@ -166,6 +196,10 @@ internal class SettingsOverlay(
         section(R.string.settings_section_purchases)
         action(R.id.settings_restore_purchases, R.string.settings_restore_purchases,
             R.string.settings_restore_purchases_hint) { onRestorePurchases() }
+        (purchaseNotice.parent as? ViewGroup)?.removeView(purchaseNotice)
+        purchaseNotice.text = purchaseResult ?: ""
+        purchaseNotice.visibility = if (purchaseResult.isNullOrBlank()) GONE else VISIBLE
+        addControl(purchaseNotice)
 
         section(R.string.settings_section_information)
         action(R.id.settings_about, R.string.settings_about, R.string.settings_about_hint) {
@@ -176,6 +210,9 @@ internal class SettingsOverlay(
         }
         action(R.id.settings_licenses, R.string.settings_licenses, R.string.settings_licenses_hint) {
             ProductInfo.showLicenses(activity)
+        }
+        if (SupportInfo.hasEmail) action(R.id.settings_support, R.string.support_title, R.string.support_hint) {
+            SupportInfo.email(activity)
         }
         action(R.id.settings_reset, R.string.settings_reset, R.string.settings_reset_hint) { confirmReset() }
         body.addView(label(R.string.settings_local_only, 13f, MUTED).apply { setPadding(0, dp(12), 0, 0) })
@@ -201,7 +238,7 @@ internal class SettingsOverlay(
             includeFontPadding = false
             setSingleLine(false)
             setLineSpacing(dp(3).toFloat(), 1f)
-            setPadding(dp(16), dp(12), dp(16), dp(12))
+            setPadding(dp(16), dp(10), dp(16), dp(10))
             setTextColor(FOREGROUND)
             background = touchBackground(CARD, 14)
             setOnClickListener { click() }
@@ -220,7 +257,7 @@ internal class SettingsOverlay(
             includeFontPadding = false
             setSingleLine(false)
             setLineSpacing(dp(3).toFloat(), 1f)
-            setPadding(dp(16), dp(12), dp(16), dp(12))
+            setPadding(dp(16), dp(10), dp(16), dp(10))
             setTextColor(FOREGROUND)
             background = touchBackground(CARD, 14)
             setOnClickListener { click() }
@@ -239,7 +276,7 @@ internal class SettingsOverlay(
             setSingleLine(false)
             setLineSpacing(dp(3).toFloat(), 1f)
             switchPadding = dp(16)
-            setPadding(dp(16), dp(12), dp(16), dp(12))
+            setPadding(dp(16), dp(10), dp(16), dp(10))
             setTextColor(FOREGROUND)
             background = touchBackground(CARD, 14)
             thumbTintList = ColorStateList(
@@ -274,7 +311,15 @@ internal class SettingsOverlay(
             text.setSpan(ForegroundColorSpan(color), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         value?.let { appendLine(it, 15f, ACCENT) }
-        appendLine(activity.getString(hint), 13f, MUTED)
+        val shortHint = when (hint) {
+            R.string.settings_remember_style_hint -> R.string.settings_remember_short
+            R.string.settings_grid_hint -> R.string.settings_grid_short
+            R.string.settings_sound_hint -> R.string.settings_sound_short
+            R.string.settings_haptics_hint -> R.string.settings_haptics_short
+            R.string.settings_review_hint -> R.string.settings_review_short
+            else -> hint
+        }
+        if (value == null) appendLine(activity.getString(shortHint), 13f, MUTED)
         return text
     }
 

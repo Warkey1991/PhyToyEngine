@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.phytoy.sample.CameraLifecycleQueueTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-07T05:40:19.312Z" hostname="songyuanjindeMacBook-Pro.local" time="0.013">
+  <properties/>
+  <testcase name="fallbackReplacementAndRepeatedRetirementReleaseEachEngineOnce" classname="com.phytoy.sample.CameraLifecycleQueueTest" time="0.005"/>
+  <testcase name="oldGenerationFinishesCloseBeforeNextGenerationCreates" classname="com.phytoy.sample.CameraLifecycleQueueTest" time="0.002"/>
+  <testcase name="blockedEngineWorkDoesNotBlockSubmission" classname="com.phytoy.sample.CameraLifecycleQueueTest" time="0.003"/>
+  <testcase name="cancelledInFlightCreateIsRejectedAndReleasedOnce" classname="com.phytoy.sample.CameraLifecycleQueueTest" time="0.002"/>
+  <testcase name="cancellationAfterCreatePreventsPublicationWhileCleanupIsPending" classname="com.phytoy.sample.CameraLifecycleQueueTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

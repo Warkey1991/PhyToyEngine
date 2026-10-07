@@ -7,6 +7,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.SurfaceTexture
@@ -23,6 +24,7 @@ import android.hardware.camera2.params.StreamConfigurationMap
 import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
+import android.os.CancellationSignal
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -50,6 +52,7 @@ import com.phytoy.engine.PhyToyCameraSession
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -72,13 +75,21 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var gallery: PhotoGalleryOverlay
     private lateinit var settingsStore: SettingsStore
     private lateinit var settingsPage: SettingsOverlay
-    private lateinit var billing: PlayBillingController
+    private lateinit var billing: CameraBillingController
     private lateinit var purchasePage: CameraPurchaseOverlay
     private var previewOnlyStyle: CameraStyle? = null
     private var billingMessage: String? = null
     private lateinit var cameraSettings: SettingsSnapshot
     private var qualityAtSettingsOpen: PhotoQuality? = null
     private var photoReviewRequest = 0L
+    private var reviewPhoto: PhotoStore.SavedPhoto? = null
+    private var reviewPhotos: List<PhotoStore.SavedPhoto> = emptyList()
+    private var reviewLoad: Future<*>? = null
+    private var reviewLoading = false
+    private var reviewCancellation: CancellationSignal? = null
+    private var pendingDeletePhoto: PhotoStore.SavedPhoto? = null
+    private var pendingDeleteConsent = false
+    private val reviewExecutor = Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "PhyToyReview") }
     private lateinit var shutterSound: MediaActionSound
     private lateinit var scaleGestureDetector: ScaleGestureDetector
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -88,10 +99,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     private var cameraThread: HandlerThread? = null
     private var cameraHandler: Handler? = null
-    private var cameraDevice: CameraDevice? = null
-    private var captureSession: CameraCaptureSession? = null
+    @Volatile private var cameraDevice: CameraDevice? = null
+    @Volatile private var captureSession: CameraCaptureSession? = null
     private var previewSurface: Surface? = null
-    private var engineSession: PhyToyCameraSession? = null
+    @Volatile private var engineSession: PhyToyCameraSession? = null
+    @Volatile private var cameraResources: CameraResources? = null
     private var engineSize: Size? = null
     private var stillSize: Size? = null
     private var stillSizeCandidates: List<Size> = emptyList()
@@ -110,6 +122,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var exposureCompensationStep = 0f
     @Volatile private var exposureCompensationIndex = 0
     private var maximumZoomRatio = 1f
+    private var minimumZoomRatio = 1f
+    private var nativeZoomRatio = false
     @Volatile private var currentZoomRatio = 1f
     @Volatile private var currentCropRegion: Rect? = null
     private var flashAvailable = false
@@ -131,8 +145,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     @Volatile private var cameraRepeatingPausedForThermal = false
     private var previewBudgetUpdatedAt = 0L
     private var previewFrameRateBudget = CAMERA_PREVIEW_FPS
-    private var cameraOpening = false
-    private var activityResumed = false
+    @Volatile private var cameraOpening = false
+    @Volatile private var activityResumed = false
     private var cameraPermissionRequestPending = false
     private var cameraPermissionDialog: android.app.AlertDialog? = null
     private var previousEngineErrorFrames = 0L
@@ -151,9 +165,34 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private var gestureStartExposureIndex = 0
     private var gestureAdjustedExposure = false
     private var gestureUsedPinch = false
+    private var gestureBlocked = false
+    private var firstUseHintShown = false
+    private var restoredExposureIndex: Int? = null
+    private var restoredZoomRatio: Float? = null
+    private var restoredFlashMode: CameraFlashMode? = null
     private var backInvokedCallback: OnBackInvokedCallback? = null
     @Volatile private var cameraControlUpdatePending = false
     private val previewTouchSlop by lazy { ViewConfiguration.get(this).scaledTouchSlop }
+
+    /** Immutable opening inputs and explicit ownership for unpublished engines. */
+    private class CameraResources(
+        val generation: Long,
+        val style: CameraStyle,
+        val size: Size,
+        val stillCandidates: List<Size>,
+        val outputSurface: Surface,
+        val outputRotation: Int,
+        val manager: CameraManager,
+        val cameraId: String,
+        val handler: Handler,
+    ) {
+        val engineOwner = QueueOwnedResource<PhyToyCameraSession> { it.close() }
+        val engine: PhyToyCameraSession? get() = engineOwner.value
+        @Volatile var camera: CameraDevice? = null
+        @Volatile var session: CameraCaptureSession? = null
+        var stillIndex = 0 // Main-thread publication only.
+        var disposed = false // CameraLifecycleQueue only.
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,15 +211,35 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         settingsStore = SettingsStore(applicationContext)
         cameraSettings = settingsStore.load()
         selectedStyle = settingsStore.resolveStartupStyle(lastStyle)
-        billing = PlayBillingController(applicationContext,
+        savedInstanceState?.getString(CAMERA_STYLE_STATE)?.let { value ->
+            runCatching { CameraStyle.valueOf(value) }.getOrNull()?.let { selectedStyle = it }
+        }
+        if (savedInstanceState?.getBoolean(CAMERA_PREVIEW_STATE) == true) previewOnlyStyle = selectedStyle
+        currentLensFacing = savedInstanceState?.getInt(CAMERA_LENS_STATE, currentLensFacing) ?: currentLensFacing
+        if (savedInstanceState?.containsKey(CAMERA_EXPOSURE_STATE) == true) {
+            restoredExposureIndex = savedInstanceState.getInt(CAMERA_EXPOSURE_STATE)
+            restoredZoomRatio = savedInstanceState.getFloat(CAMERA_ZOOM_STATE, 1f)
+            restoredFlashMode = savedInstanceState.getString(CAMERA_FLASH_STATE)?.let { runCatching { CameraFlashMode.valueOf(it) }.getOrNull() }
+        }
+        billing = createBillingController(applicationContext,
             onStateChanged = { updateBillingUi() },
             onEvent = ::onBillingEvent,
         )
-        if (!billing.isUnlocked(selectedStyle)) selectedStyle = CameraStyle.HARINEZUMI_2PP
+        if (!billing.isUnlocked(selectedStyle) && previewOnlyStyle != selectedStyle) selectedStyle = CameraStyle.HARINEZUMI_2PP
         photoStore = PhotoStore(applicationContext)
         photoLibrary = PhotoLibrary(applicationContext)
         shutterSound = MediaActionSound().also { it.load(MediaActionSound.SHUTTER_CLICK) }
         createContentView()
+        pendingDeletePhoto = savedInstanceState?.let { restorePhotoState(it, DELETE_PHOTO_STATE) }
+        pendingDeleteConsent = pendingDeletePhoto != null
+        savedInstanceState?.let { restorePhotoState(it, REVIEW_PHOTO_STATE) }?.let { restored ->
+            mainHandler.post {
+                if (!isDestroyed) {
+                    gallery.show()
+                    openPhoto(restored)
+                }
+            }
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val callback = OnBackInvokedCallback {
                 if (!dismissCurrentPage()) finishAfterTransition()
@@ -204,20 +263,26 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             cameraHandler = Handler(cameraThread!!.looper)
         }
         if (preview.isAvailable) ensurePermissionAndOpen()
+        if (reviewLoading && review.isShowing()) reviewPhoto?.let { openPhoto(it, navigation = true) }
         mainHandler.post(metricsUpdater)
     }
 
     override fun onPause() {
         activityResumed = false
+        if (cameraReady || cameraResources != null) {
+            restoredExposureIndex = exposureCompensationIndex
+            restoredZoomRatio = currentZoomRatio
+            restoredFlashMode = currentFlashMode
+        }
         photoReviewRequest += 1
+        reviewLoad?.cancel(true)
+        reviewCancellation?.cancel()
         mainHandler.removeCallbacks(metricsUpdater)
-        closeCamera()
-        cameraThread?.quitSafely()
-        // Camera callbacks already carry generation guards; never block lifecycle
-        // delivery indefinitely on a vendor camera service.
-        cameraThread?.join(1_500L)
+        val retiringThread = cameraThread
+        val retiringHandler = cameraHandler
         cameraThread = null
         cameraHandler = null
+        closeCamera(retiringThread = retiringThread, retiringHandler = retiringHandler)
         super.onPause()
     }
 
@@ -237,6 +302,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         if (::billing.isInitialized) billing.close()
         shutterSound.release()
         photoExecutor.shutdown()
+        reviewExecutor.shutdownNow()
         super.onDestroy()
     }
 
@@ -251,13 +317,49 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         if (::purchasePage.isInitialized && purchasePage.dismiss()) return true
         if (::review.isInitialized && review.dismiss()) return true
         if (::settingsPage.isInitialized && settingsPage.dismiss()) return true
+        if (::chrome.isInitialized && chrome.dismissAdjustment()) return true
         return ::gallery.isInitialized && gallery.dismiss()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(CAMERA_STYLE_STATE, selectedStyle.name)
+        outState.putBoolean(CAMERA_PREVIEW_STATE, previewOnlyStyle == selectedStyle)
+        outState.putInt(CAMERA_LENS_STATE, currentLensFacing)
+        outState.putInt(CAMERA_EXPOSURE_STATE, exposureCompensationIndex)
+        outState.putFloat(CAMERA_ZOOM_STATE, currentZoomRatio)
+        outState.putString(CAMERA_FLASH_STATE, currentFlashMode.name)
+        if (::review.isInitialized && review.isShowing()) storePhotoState(outState, REVIEW_PHOTO_STATE, reviewPhoto)
+        if (pendingDeleteConsent) storePhotoState(outState, DELETE_PHOTO_STATE, pendingDeletePhoto)
+    }
+
+    private fun storePhotoState(state: Bundle, key: String, saved: PhotoStore.SavedPhoto?) {
+        if (saved == null) return
+        state.putBundle(key, Bundle().apply {
+            putString("uri", saved.uri.toString())
+            putString("name", saved.displayName)
+            putString("style", saved.styleName)
+            putString("code", saved.styleCode)
+            putInt("width", saved.width)
+            putInt("height", saved.height)
+        })
+    }
+
+    private fun restorePhotoState(state: Bundle, key: String): PhotoStore.SavedPhoto? {
+        val photo = state.getBundle(key) ?: return null
+        val uri = photo.getString("uri") ?: return null
+        return PhotoStore.SavedPhoto(Uri.parse(uri), photo.getString("name").orEmpty(), photo.getInt("width"),
+            photo.getInt("height"), photo.getString("style").orEmpty(), photo.getString("code").orEmpty())
+    }
+
+    private fun captureAspect(style: CameraStyle = selectedStyle): Float =
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1f / style.portraitAspect
+        else style.portraitAspect
 
     private fun createContentView() {
         val root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
         previewViewport = CaptureViewport(this)
-        previewViewport.setCaptureAspect(selectedStyle.portraitAspect)
+        previewViewport.setCaptureAspect(captureAspect())
         previewViewport.setGridEnabled(cameraSettings.gridEnabled)
         preview = CameraPreviewTextureView(this).apply { isOpaque = true }
         scaleGestureDetector = ScaleGestureDetector(
@@ -265,11 +367,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
                     gestureUsedPinch = true
+                    if (!cameraReady || captureInProgress || reviewVisible) return false
                     clearTouchFocusForControlChange()
-                    return cameraReady && !captureInProgress && maximumZoomRatio > 1f
+                    return maximumZoomRatio > minimumZoomRatio
                 }
 
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    if (!cameraReady || captureInProgress || reviewVisible) return false
                     setZoomRatio(currentZoomRatio * detector.scaleFactor)
                     return true
                 }
@@ -325,6 +429,19 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                     setZoomRatio(currentZoomRatio * if (direction > 0) 1.25f else 0.8f)
                 }
             }
+            setOnExposureValueSelectedListener { index ->
+                if (cameraReady && !captureInProgress && !reviewVisible) {
+                    clearTouchFocusForControlChange()
+                    setExposureCompensationIndex(index)
+                }
+            }
+            setOnZoomValueSelectedListener { ratio ->
+                if (cameraReady && !captureInProgress && !reviewVisible) {
+                    clearTouchFocusForControlChange()
+                    setZoomRatio(ratio)
+                }
+            }
+            setOnUnlockStyleClickListener { openPurchase(selectedStyle) }
             setLensSwitchAvailable(false)
             setFlashAvailable(false)
             showMessage(getString(R.string.status_waiting_permission))
@@ -337,14 +454,24 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             ),
         )
         // Keep camera controls in the surrounding chrome, outside the captured frame.
-        root.setOnApplyWindowInsetsListener { _, insets ->
+        var systemInsets = Rect()
+        val updatePreviewMargins = {
             val density = resources.displayMetrics.density
+            val sideWidth = (chrome.sideChromeDp * density).roundToInt()
             previewArea.layoutParams = (previewArea.layoutParams as FrameLayout.LayoutParams).apply {
-                topMargin = insets.systemWindowInsetTop + (chrome.topChromeDp * density).roundToInt()
-                bottomMargin = insets.systemWindowInsetBottom + (chrome.bottomChromeDp * density).roundToInt()
-                leftMargin = insets.systemWindowInsetLeft
-                rightMargin = insets.systemWindowInsetRight
+                topMargin = systemInsets.top + (chrome.topChromeDp * density).roundToInt()
+                bottomMargin = systemInsets.bottom + (chrome.bottomChromeDp * density).roundToInt()
+                leftMargin = systemInsets.left + if (chrome.layoutDirection == View.LAYOUT_DIRECTION_RTL) sideWidth else 0
+                rightMargin = systemInsets.right + if (chrome.layoutDirection == View.LAYOUT_DIRECTION_RTL) 0 else sideWidth
             }
+        }
+        chrome.setOnChromeSizeChangedListener(updatePreviewMargins)
+        root.setOnApplyWindowInsetsListener { _, insets ->
+            systemInsets = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val bars = insets.getInsets(android.view.WindowInsets.Type.systemBars() or android.view.WindowInsets.Type.displayCutout())
+                Rect(bars.left, bars.top, bars.right, bars.bottom)
+            } else Rect(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom)
+            updatePreviewMargins()
             insets
         }
         gallery = PhotoGalleryOverlay(this, photoLibrary, photoStore).apply {
@@ -377,8 +504,21 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
         ))
         review = PhotoReviewOverlay(this)
-        review.setOnReviewVisibilityChangedListener { updateBrowsingState() }
+        review.setOnReviewVisibilityChangedListener { showing ->
+            if (!showing) {
+                photoReviewRequest += 1
+                reviewLoad?.cancel(true)
+                reviewCancellation?.cancel()
+                reviewPhoto = null
+                reviewLoading = false
+            }
+            updateBrowsingState()
+        }
         review.setOnContinueShootingListener { gallery.dismiss() }
+        review.setOnShareListener(::sharePhoto)
+        review.setOnDeleteListener(::deletePhoto)
+        review.setOnNavigateListener(::navigatePhoto)
+        review.setOnRetryListener { saved -> openPhoto(saved, navigation = true) }
         root.addView(
             review,
             FrameLayout.LayoutParams(
@@ -427,9 +567,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             val session = captureSession ?: return@post
             try {
                 if (browsing) session.stopRepeating()
-                else submitRepeatingRequest(camera, session, selectCameraFpsRange())
+                else submitRepeatingRequest(camera, session, selectCameraFpsRange(), generation = generation)
             } catch (exception: Exception) {
-                showFailure("Browsing preview state failed", exception)
+                showFailure("Browsing preview state failed", exception, generation)
             }
         }
     }
@@ -530,6 +670,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
         billingMessage = message
         updateBillingUi()
+        if (::settingsPage.isInitialized && settingsPage.isShowing()) settingsPage.showPurchaseResult(message)
         if (event is BillingEvent.PurchaseCompleted && activatePurchasedStyle) {
             purchasePage.dismiss()
             settingsPage.dismiss()
@@ -541,9 +682,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun restoreLastThumbnail() {
-        val saved = photoStore.lastPhoto() ?: return
-        lastSavedPhoto = saved
+        val preferred = photoStore.lastPhoto() ?: reviewPhotos.firstOrNull()
         photoExecutor.execute {
+            val saved = preferred ?: runCatching { photoLibrary.list().firstOrNull() }.getOrNull() ?: return@execute
             val thumbnail = photoStore.loadThumbnail(saved.uri)
             if (thumbnail == null) {
                 photoStore.forgetLastPhoto()
@@ -551,7 +692,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 return@execute
             }
             mainHandler.post {
-                if (isDestroyed) thumbnail.recycle() else chrome.showThumbnail(thumbnail)
+                if (isDestroyed) thumbnail.recycle() else {
+                    lastSavedPhoto = saved
+                    chrome.showThumbnail(thumbnail)
+                }
             }
         }
     }
@@ -652,6 +796,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         cameraOpening = true
         cameraReady = false
         chrome.setReady(false)
+        val generation = ++cameraGeneration
         try {
             val manager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
             val candidates = manager.cameraIdList.map { id ->
@@ -706,22 +851,32 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             exposureCompensationStep = characteristics.get(
                 CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP
             )?.toFloat() ?: 0f
-            exposureCompensationIndex = 0
-            maximumZoomRatio = (characteristics.get(
+            exposureCompensationIndex = (restoredExposureIndex ?: 0).coerceIn(exposureCompensationRange.lower, exposureCompensationRange.upper)
+            restoredExposureIndex = null
+            val hardwareZoom = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                characteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE)
+            } else null
+            nativeZoomRatio = hardwareZoom != null
+            minimumZoomRatio = hardwareZoom?.lower ?: 1f
+            maximumZoomRatio = hardwareZoom?.upper ?: (characteristics.get(
                 CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM
             ) ?: 1f).coerceAtLeast(1f)
-            currentZoomRatio = 1f
-            currentCropRegion = sensorActiveArray?.let(::Rect)
+            currentZoomRatio = (restoredZoomRatio ?: 1f).coerceIn(minimumZoomRatio, maximumZoomRatio)
+            restoredZoomRatio = null
+            currentCropRegion = cropRegionForRatio(currentZoomRatio)
             flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
-            currentFlashMode = CameraFlashMode.OFF
+            currentFlashMode = if (flashAvailable) restoredFlashMode ?: CameraFlashMode.OFF else CameraFlashMode.OFF
+            restoredFlashMode = null
             fallbackFocalLengthMillimeters = characteristics.get(
                 CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS
             )?.firstOrNull()
+            chrome.setExposureRange(exposureCompensationRange.lower, exposureCompensationRange.upper, exposureCompensationStep)
             chrome.setExposureCompensation(
-                0f,
+                exposureCompensationIndex * exposureCompensationStep,
                 exposureCompensationRange.lower != exposureCompensationRange.upper,
             )
             chrome.setZoomRatio(currentZoomRatio)
+            chrome.setZoomRange(minimumZoomRatio, maximumZoomRatio)
             chrome.setFlashAvailable(flashAvailable)
             chrome.setFlashMode(currentFlashMode)
             // PREVIEW and STILL_CAPTURE templates can choose different host ISP
@@ -747,9 +902,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             // preview.height here reused the previous style's aspect and TextureView then
             // stretched that stale buffer into the new viewport. The style aspect is the source
             // of truth for both the visible boundary and the Vulkan output surface.
-            val outputWidth = previewViewport.fittedWidth(selectedStyle.portraitAspect)
+            val outputWidth = previewViewport.fittedWidth(captureAspect())
                 .coerceIn(1, MAXIMUM_PREVIEW_OUTPUT_WIDTH)
-            val outputHeight = (outputWidth / selectedStyle.portraitAspect)
+            val outputHeight = (outputWidth / captureAspect())
                 .roundToInt()
                 .coerceAtLeast(1)
             texture.setDefaultBufferSize(outputWidth, outputHeight)
@@ -757,14 +912,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             previewSurface = processedPreviewSurface
             val outputRotation = relativeCameraRotation(characteristics, currentLensFacing)
             currentOutputRotation = outputRotation
-            openEngineWithAvailableStillSize(size)
-            desiredCameraFps = engineSession
-                ?.snapshot()
-                ?.targetProcessingFps
-                ?: CAMERA_PREVIEW_FPS
-            val captureSize = checkNotNull(stillSize)
+            val resources = CameraResources(
+                generation, selectedStyle, size, stillSizeCandidates.toList(),
+                processedPreviewSurface, outputRotation, manager, cameraId, handler,
+            )
+            cameraResources = resources
+            val captureSize = resources.stillCandidates.first()
             chrome.setCaptureSize(captureSize.width, captureSize.height)
-            val generation = ++cameraGeneration
             lastPreviewProgressMillis = SystemClock.elapsedRealtime()
             chrome.showMessage(
                 getString(
@@ -782,14 +936,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                     captureSize.height,
                 )
             )
-            manager.openCamera(cameraId, cameraStateCallback(generation), handler)
+            enqueueEngineCreation(resources, startIndex = 0)
         } catch (exception: Throwable) {
-            cameraOpening = false
+            closeCamera()
             showFailure("Open failed", exception)
-            engineSession?.close()
-            engineSession = null
-            previewSurface?.release()
-            previewSurface = null
         }
     }
 
@@ -863,40 +1013,106 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         return candidates.toList()
     }
 
-    private fun openEngineWithAvailableStillSize(size: Size) {
-        var lastFailure: Throwable? = null
-        while (stillSizeCandidateIndex < stillSizeCandidates.size) {
-            val captureSize = stillSizeCandidates[stillSizeCandidateIndex]
+    private fun isCurrent(resources: CameraResources): Boolean =
+        resources === cameraResources && resources.generation == cameraGeneration &&
+            !resources.engineOwner.isCancelled && activityResumed && !isDestroyed
+
+    @Suppress("MissingPermission")
+    private fun enqueueEngineCreation(
+        resources: CameraResources,
+        startIndex: Int,
+        existingCamera: CameraDevice? = null,
+    ) {
+        val engineContext = applicationContext
+        CameraLifecycleQueue.execute lifecycle@{
+            if (!isCurrent(resources)) return@lifecycle
             try {
-                engineSession = openEngineSession(size, captureSize)
-                stillSize = captureSize
-                return
-            } catch (exception: Throwable) {
-                lastFailure = exception
-                Log.w(
-                    LOG_TAG,
-                    "Engine rejected PRIVATE still ${captureSize.width}x${captureSize.height}; " +
-                        "trying a smaller stream",
-                    exception,
-                )
-                stillSizeCandidateIndex += 1
+                // Fallback engines are detached from Main before this task is queued.
+                resources.engineOwner.clear()
+                var lastFailure: Throwable? = null
+                var created: PhyToyCameraSession? = null
+                var acceptedIndex = startIndex
+                for (index in startIndex until resources.stillCandidates.size) {
+                    if (!isCurrent(resources)) return@lifecycle
+                    val captureSize = resources.stillCandidates[index]
+                    try {
+                        created = PhyToyCameraSession.open(
+                            context = engineContext,
+                            width = resources.size.width,
+                            height = resources.size.height,
+                            stillWidth = captureSize.width,
+                            stillHeight = captureSize.height,
+                            outputSurface = resources.outputSurface,
+                            outputRotationDegrees = resources.outputRotation,
+                            processingFrameRateLimit = CAMERA_PREVIEW_FPS,
+                            toyProfileAsset = resources.style.toyProfileAsset,
+                        )
+                        acceptedIndex = index
+                        break
+                    } catch (error: Throwable) {
+                        lastFailure = error
+                        Log.w(LOG_TAG,
+                            "Engine rejected PRIVATE still ${captureSize.width}x${captureSize.height}; trying a smaller stream",
+                            error)
+                    }
+                }
+                val engine = created ?: throw IllegalStateException("No compatible PRIVATE still stream", lastFailure)
+                if (!resources.engineOwner.install(engine)) return@lifecycle
+                if (!isCurrent(resources)) {
+                    // The queue also owns unpublished engines; no UI callback is
+                    // needed to release a create that finishes after pause/rotation.
+                    resources.engineOwner.clear()
+                    return@lifecycle
+                }
+                val index = acceptedIndex
+                val captureSize = resources.stillCandidates[index]
+                val processingFps = engine.snapshot().targetProcessingFps
+                mainHandler.post {
+                    if (!isCurrent(resources)) {
+                        disposeCameraResources(resources)
+                        return@post
+                    }
+                    if (!resources.engineOwner.mayPublish(engine)) return@post
+                    engineSession = engine
+                    stillSize = captureSize
+                    stillSizeCandidateIndex = index
+                    resources.stillIndex = index
+                    desiredCameraFps = processingFps
+                    lastPreviewProgressMillis = SystemClock.elapsedRealtime()
+                    chrome.setCaptureSize(captureSize.width, captureSize.height)
+                    if (existingCamera != null) {
+                        chrome.showMessage(getString(R.string.status_stream_fallback,
+                            captureSize.width, captureSize.height), true)
+                        CameraLifecycleQueue.execute {
+                            if (isCurrent(resources) && resources.camera === existingCamera && resources.engine === engine) {
+                                createCaptureSession(existingCamera, resources, engine)
+                            }
+                        }
+                    } else {
+                        CameraLifecycleQueue.execute {
+                            if (!isCurrent(resources)) return@execute
+                            try {
+                                resources.manager.openCamera(resources.cameraId, cameraStateCallback(resources), resources.handler)
+                            } catch (error: Throwable) {
+                                failCameraOpening(resources, "Open failed", error)
+                            }
+                        }
+                    }
+                }
+            } catch (error: Throwable) {
+                failCameraOpening(resources, if (existingCamera == null) "Open failed" else "Fallback failed", error)
             }
         }
-        throw IllegalStateException("No compatible PRIVATE still stream", lastFailure)
     }
 
-    private fun openEngineSession(size: Size, captureSize: Size): PhyToyCameraSession =
-        PhyToyCameraSession.open(
-            context = this,
-            width = size.width,
-            height = size.height,
-            stillWidth = captureSize.width,
-            stillHeight = captureSize.height,
-            outputSurface = checkNotNull(previewSurface),
-            outputRotationDegrees = currentOutputRotation,
-            processingFrameRateLimit = CAMERA_PREVIEW_FPS,
-            toyProfileAsset = selectedStyle.toyProfileAsset,
-        )
+    private fun failCameraOpening(resources: CameraResources, prefix: String, error: Throwable) {
+        Log.e(LOG_TAG, prefix, error)
+        mainHandler.post {
+            if (!isCurrent(resources)) return@post
+            closeCamera()
+            showCameraRecovery(getString(R.string.camera_recovery_failed))
+        }
+    }
 
     @Suppress("DEPRECATION")
     private fun relativeCameraRotation(
@@ -917,155 +1133,154 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
-    private fun cameraStateCallback(generation: Long) = object : CameraDevice.StateCallback() {
+    private fun cameraStateCallback(resources: CameraResources) = object : CameraDevice.StateCallback() {
         override fun onOpened(camera: CameraDevice) {
-            if (generation != cameraGeneration) {
-                camera.close()
-                return
+            CameraLifecycleQueue.execute {
+                if (!isCurrent(resources)) {
+                    camera.close()
+                    return@execute
+                }
+                // Own the device before posting to Main: destruction may remove
+                // that UI post, but the queue can still release the device.
+                resources.camera = camera
+                mainHandler.post {
+                    if (!isCurrent(resources) || resources.camera !== camera) return@post
+                    cameraDevice = camera
+                    val engine = resources.engine ?: return@post
+                    CameraLifecycleQueue.execute {
+                        if (isCurrent(resources) && resources.camera === camera && resources.engine === engine) {
+                            createCaptureSession(camera, resources, engine)
+                        }
+                    }
+                }
             }
-            cameraOpening = false
-            cameraDevice = camera
-            createCaptureSession(camera)
         }
 
         override fun onDisconnected(camera: CameraDevice) {
-            if (generation != cameraGeneration) {
-                camera.close()
-                return
-            }
-            cameraOpening = false
-            cameraReady = false
-            camera.close()
-            if (cameraDevice === camera) cameraDevice = null
-            runOnUiThread {
-                chrome.setReady(false)
-                if (generation == cameraGeneration && activityResumed) {
+            cameraFailed(camera, resources, getString(R.string.status_disconnected))
+        }
+
+        override fun onError(camera: CameraDevice, error: Int) {
+            cameraFailed(camera, resources, getString(R.string.status_camera_error, error))
+        }
+
+        override fun onClosed(camera: CameraDevice) {
+            CameraLifecycleQueue.execute {
+                if (!isCurrent(resources) || resources.camera !== camera) return@execute
+                resources.camera = null
+                mainHandler.post {
+                    if (!isCurrent(resources) || resources.camera != null) return@post
+                    if (cameraDevice != null && cameraDevice !== camera) return@post
                     closeCamera()
                     showCameraRecovery(getString(R.string.status_disconnected))
                 }
             }
         }
+    }
 
-        override fun onError(camera: CameraDevice, error: Int) {
-            if (generation != cameraGeneration) {
-                camera.close()
-                return
-            }
-            cameraOpening = false
-            cameraReady = false
-            camera.close()
-            if (cameraDevice === camera) cameraDevice = null
-            runOnUiThread {
-                chrome.setReady(false)
-                if (generation == cameraGeneration && activityResumed) {
-                    closeCamera()
-                    showCameraRecovery(getString(R.string.status_camera_error, error))
-                }
-            }
+    private fun cameraFailed(camera: CameraDevice, resources: CameraResources, message: String) {
+        CameraLifecycleQueue.execute { camera.close() }
+        mainHandler.post {
+            if (!isCurrent(resources)) return@post
+            closeCamera()
+            showCameraRecovery(message)
         }
     }
 
     @Suppress("DEPRECATION")
-    private fun createCaptureSession(camera: CameraDevice) {
+    private fun createCaptureSession(
+        camera: CameraDevice,
+        resources: CameraResources,
+        engine: PhyToyCameraSession,
+    ) {
+        if (!isCurrent(resources) || resources.camera !== camera || resources.engine !== engine) return
         try {
-            val engineSurface = checkNotNull(engineSession?.inputSurface)
-            val stillSurface = checkNotNull(engineSession?.stillCaptureSurface)
             camera.createCaptureSession(
-                listOf(engineSurface, stillSurface),
+                listOf(engine.inputSurface, engine.stillCaptureSurface),
                 object : CameraCaptureSession.StateCallback() {
                     override fun onConfigured(session: CameraCaptureSession) {
-                        if (cameraDevice !== camera) {
-                            session.close()
-                            return
-                        }
-                        captureSession = session
-                        try {
-                            if (reviewVisible) session.stopRepeating()
-                            else submitRepeatingRequest(camera, session, selectCameraFpsRange())
-                            cameraReady = true
-                        } catch (exception: Exception) {
-                            showFailure("Start preview failed", exception)
-                            return
-                        }
-                        val generation = cameraGeneration
-                        runOnUiThread {
-                            if (generation != cameraGeneration || !activityResumed) return@runOnUiThread
-                            // Camera2 configuration is not proof of a working
-                            // viewfinder. The first presented frame enables capture.
-                            chrome.setReady(false)
-                            chrome.showMessage(
-                                getString(
-                                    R.string.status_active_high_res,
-                                    selectedStyle.name(this@MainActivity),
-                                    checkNotNull(stillSize).width,
-                                    checkNotNull(stillSize).height,
-                                ),
-                                true,
-                            )
+                        CameraLifecycleQueue.execute {
+                            if (!isCurrent(resources) || resources.camera !== camera || resources.engine !== engine) {
+                                session.close()
+                                return@execute
+                            }
+                            resources.session = session
+                            mainHandler.post publishSession@{
+                                if (!isCurrent(resources) || resources.session !== session) return@publishSession
+                                captureSession = session
+                                val captureSize = resources.stillCandidates[resources.stillIndex]
+                                resources.handler.post startPreview@{
+                                    if (!isCurrent(resources) || resources.session !== session || resources.engine !== engine) return@startPreview
+                                    try {
+                                        if (reviewVisible) session.stopRepeating()
+                                        else submitRepeatingRequest(camera, session, selectCameraFpsRange(), engine.inputSurface, resources.generation)
+                                        mainHandler.post previewReady@{
+                                            if (!isCurrent(resources) || resources.session !== session) return@previewReady
+                                            cameraOpening = false
+                                            cameraReady = true
+                                            // The first presented frame enables the shutter.
+                                            chrome.setReady(false)
+                                            chrome.showMessage(getString(R.string.status_active_high_res,
+                                                resources.style.name(this@MainActivity), captureSize.width, captureSize.height), true)
+                                        }
+                                    } catch (error: Throwable) {
+                                        failCameraOpening(resources, "Start preview failed", error)
+                                    }
+                                }
+                            }
                         }
                     }
 
                     override fun onConfigureFailed(session: CameraCaptureSession) {
-                        if (cameraDevice !== camera) {
-                            session.close()
-                            return
+                        CameraLifecycleQueue.execute {
+                            runCatching { session.close() }.onFailure {
+                                Log.w(LOG_TAG, "Rejected Camera2 session cleanup", it)
+                            }
+                            if (!isCurrent(resources) || resources.camera !== camera || resources.engine !== engine) return@execute
+                            mainHandler.post {
+                                if (!isCurrent(resources) || resources.camera !== camera || resources.engine !== engine) return@post
+                                configureNextStillSize(camera, resources, engine)
+                            }
                         }
-                        cameraReady = false
-                        session.close()
-                        if (!configureNextStillSize(camera)) {
-                            runOnUiThread {
+                    }
+
+                    override fun onClosed(session: CameraCaptureSession) {
+                        // A failed or retired session must not clear a newer
+                        // session installed for another still-size candidate.
+                        CameraLifecycleQueue.execute {
+                            if (!isCurrent(resources) || resources.engine !== engine || resources.session !== session) return@execute
+                            resources.session = null
+                            mainHandler.post {
+                                if (!isCurrent(resources) || resources.engine !== engine || resources.session != null) return@post
+                                if (captureSession != null && captureSession !== session) return@post
+                                captureSession = null
+                                cameraReady = false
                                 chrome.setReady(false)
-                                showCameraRecovery(getString(R.string.status_stream_rejected))
+                                closeCamera()
+                                showCameraRecovery(getString(R.string.status_disconnected))
                             }
                         }
                     }
                 },
-                cameraHandler,
+                resources.handler,
             )
-        } catch (exception: Throwable) {
-            showFailure("Session failed", exception)
+        } catch (error: Throwable) {
+            failCameraOpening(resources, "Session failed", error)
         }
     }
 
-    private fun configureNextStillSize(camera: CameraDevice): Boolean {
-        val size = engineSize ?: return false
-        engineSession?.close()
+    /** Called only on Main after the captured-generation callback is accepted. */
+    private fun configureNextStillSize(camera: CameraDevice, resources: CameraResources, rejectedEngine: PhyToyCameraSession) {
+        if (!isCurrent(resources) || resources.camera !== camera || engineSession !== rejectedEngine) return
+        if (resources.engine !== rejectedEngine) return
+        cameraReady = false
+        cameraOpening = true
+        chrome.setReady(false)
+        // Metrics cannot retain the old engine while its native close runs.
         engineSession = null
-        while (++stillSizeCandidateIndex < stillSizeCandidates.size) {
-            val captureSize = stillSizeCandidates[stillSizeCandidateIndex]
-            try {
-                engineSession = openEngineSession(size, captureSize)
-                stillSize = captureSize
-                Log.w(
-                    LOG_TAG,
-                    "Camera2 dual PRIVATE stream fallback to " +
-                        "${captureSize.width}x${captureSize.height}",
-                )
-                runOnUiThread {
-                    chrome.setCaptureSize(captureSize.width, captureSize.height)
-                    chrome.showMessage(
-                        getString(
-                            R.string.status_stream_fallback,
-                            captureSize.width,
-                            captureSize.height,
-                        ),
-                        true,
-                    )
-                }
-                createCaptureSession(camera)
-                return true
-            } catch (exception: Throwable) {
-                Log.w(
-                    LOG_TAG,
-                    "Fallback PRIVATE still stream rejected by engine: " +
-                        "${captureSize.width}x${captureSize.height}",
-                    exception,
-                )
-                engineSession?.close()
-                engineSession = null
-            }
-        }
-        return false
+        captureSession = null
+        stillSize = null
+        enqueueEngineCreation(resources, resources.stillIndex + 1, existingCamera = camera)
     }
 
     private fun selectCameraFpsRange(target: Int = desiredCameraFps): Range<Int>? {
@@ -1080,14 +1295,20 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun updateCameraFrameRate(target: Int = desiredCameraFps) {
-        if (reviewVisible) return
+        if (reviewVisible || captureInProgress) return
+        val generation = cameraGeneration
         if (target <= 0) {
             if (cameraRepeatingPausedForThermal) return
             val handler = cameraHandler ?: return
             cameraRepeatingPausedForThermal = true
             handler.post {
+                if (generation != cameraGeneration) return@post
+                if (captureInProgress) {
+                    cameraRepeatingPausedForThermal = false
+                    return@post
+                }
                 runCatching { captureSession?.stopRepeating() }
-                activeCameraFpsRange = null
+                if (generation == cameraGeneration) activeCameraFpsRange = null
             }
             return
         }
@@ -1096,6 +1317,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         val handler = cameraHandler ?: return
         pendingCameraFpsRange = desired
         handler.post {
+            if (generation != cameraGeneration) return@post
+            if (captureInProgress) {
+                pendingCameraFpsRange = null
+                return@post
+            }
             val camera = cameraDevice
             val session = captureSession
             if (camera == null || session == null) {
@@ -1103,11 +1329,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 return@post
             }
             try {
-                submitRepeatingRequest(camera, session, desired)
+                submitRepeatingRequest(camera, session, desired, generation = generation)
             } catch (exception: Throwable) {
-                showFailure("Camera FPS update failed", exception)
+                showFailure("Camera FPS update failed", exception, generation)
             } finally {
-                pendingCameraFpsRange = null
+                if (generation == cameraGeneration) pendingCameraFpsRange = null
             }
         }
     }
@@ -1116,21 +1342,27 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         camera: CameraDevice,
         session: CameraCaptureSession,
         fpsRange: Range<Int>?,
+        engineInputSurface: Surface? = null,
+        generation: Long = cameraGeneration,
     ) {
+        if (generation != cameraGeneration) return
         if (reviewVisible || desiredCameraFps <= 0) {
             session.stopRepeating()
+            if (generation != cameraGeneration) return
             activeCameraFpsRange = null
             cameraRepeatingPausedForThermal = true
             Log.i(LOG_TAG, "Camera2 repeating paused for review or critical thermal state")
             return
         }
         val focusToken = focusGeneration
-        val request = buildPreviewRequest(camera, fpsRange).build()
+        val request = buildPreviewRequest(camera, fpsRange, engineInputSurface = engineInputSurface).build()
+        if (generation != cameraGeneration) return
         session.setRepeatingRequest(
             request,
             if (touchFocusActive) focusStateCallback(focusToken) else null,
             cameraHandler,
         )
+        if (generation != cameraGeneration) return
         activeCameraFpsRange = fpsRange
         cameraRepeatingPausedForThermal = false
         Log.i(LOG_TAG, "Camera2 FPS range changed to ${fpsRange ?: "device default"}")
@@ -1139,14 +1371,16 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun buildPreviewRequest(
         camera: CameraDevice,
         fpsRange: Range<Int>?,
+        controls: CaptureControls? = null,
+        engineInputSurface: Surface? = null,
     ): CaptureRequest.Builder {
-        val engineSurface = checkNotNull(engineSession?.inputSurface)
+        val engineSurface = engineInputSurface ?: checkNotNull(engineSession?.inputSurface)
         return camera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
             addTarget(engineSurface)
             set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO)
-            set(CaptureRequest.CONTROL_AF_MODE, selectedAfMode())
+            set(CaptureRequest.CONTROL_AF_MODE, controls?.afMode ?: selectedAfMode())
             set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
-            set(CaptureRequest.CONTROL_AE_MODE, selectedAutoexposureMode())
+            set(CaptureRequest.CONTROL_AE_MODE, selectedAutoexposureMode(controls?.flashMode ?: currentFlashMode))
             set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO)
             if (autoexposureLockAvailable) {
                 set(CaptureRequest.CONTROL_AE_LOCK, false)
@@ -1156,16 +1390,16 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             }
             fpsRange?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
             applyHostIspModes(this)
-            applyExposureAndZoom(this)
-            applyMeteringRegion(this)
+            applyExposureAndZoom(this, controls)
+            applyMeteringRegion(this, if (controls != null) controls.meteringRegion else meteringRegion)
         }
     }
 
-    private fun selectedAutoexposureMode(): Int = when {
-        !flashAvailable || currentFlashMode == CameraFlashMode.OFF -> {
+    private fun selectedAutoexposureMode(mode: CameraFlashMode = currentFlashMode): Int = when {
+        !flashAvailable || mode == CameraFlashMode.OFF -> {
             CaptureRequest.CONTROL_AE_MODE_ON
         }
-        currentFlashMode == CameraFlashMode.AUTO -> CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+        mode == CameraFlashMode.AUTO -> CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
         else -> CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
     }
 
@@ -1175,20 +1409,31 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         hostToneMapMode?.let { builder.set(CaptureRequest.TONEMAP_MODE, it) }
     }
 
-    private fun applyExposureAndZoom(builder: CaptureRequest.Builder) {
+    private fun applyExposureAndZoom(builder: CaptureRequest.Builder, controls: CaptureControls? = null) {
         if (exposureCompensationRange.lower != exposureCompensationRange.upper) {
             builder.set(
                 CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION,
-                exposureCompensationIndex.coerceIn(
+                (controls?.exposureIndex ?: exposureCompensationIndex).coerceIn(
                     exposureCompensationRange.lower,
                     exposureCompensationRange.upper,
                 ),
             )
         }
-        currentCropRegion?.let { builder.set(CaptureRequest.SCALER_CROP_REGION, it) }
+        if (nativeZoomRatio && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            builder.set(CaptureRequest.CONTROL_ZOOM_RATIO, controls?.zoomRatio ?: currentZoomRatio)
+        }
+        (controls?.cropRegion ?: currentCropRegion)?.let { builder.set(CaptureRequest.SCALER_CROP_REGION, it) }
     }
 
     private fun handlePreviewTouch(event: MotionEvent): Boolean {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            gestureBlocked = !cameraReady || captureInProgress || reviewVisible
+            if (!gestureBlocked) chrome.dismissAdjustment()
+        }
+        if (gestureBlocked || !cameraReady || captureInProgress || reviewVisible) {
+            gestureBlocked = true
+            return true
+        }
         scaleGestureDetector.onTouchEvent(event)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
@@ -1235,6 +1480,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun setExposureCompensationIndex(index: Int) {
+        if (!cameraReady || captureInProgress || reviewVisible) return
         val clamped = index.coerceIn(
             exposureCompensationRange.lower,
             exposureCompensationRange.upper,
@@ -1248,19 +1494,23 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun setZoomRatio(ratio: Float) {
-        val clamped = ratio.coerceIn(1f, maximumZoomRatio)
+        if (!cameraReady || captureInProgress || reviewVisible) return
+        val clamped = ratio.coerceIn(minimumZoomRatio, maximumZoomRatio)
         if (abs(clamped - currentZoomRatio) < MINIMUM_ZOOM_CHANGE) return
         currentZoomRatio = clamped
-        currentCropRegion = sensorActiveArray?.let { activeArray ->
-            val width = (activeArray.width() / clamped).roundToInt().coerceAtLeast(2)
-            val height = (activeArray.height() / clamped).roundToInt().coerceAtLeast(2)
+        currentCropRegion = cropRegionForRatio(clamped)
+        chrome.setZoomRatio(clamped)
+        requestCameraControlUpdate()
+    }
+
+    private fun cropRegionForRatio(ratio: Float): Rect? = sensorActiveArray?.let { activeArray ->
+            val cropRatio = if (nativeZoomRatio) 1f else ratio
+            val width = (activeArray.width() / cropRatio).roundToInt().coerceAtLeast(2)
+            val height = (activeArray.height() / cropRatio).roundToInt().coerceAtLeast(2)
             val left = activeArray.left + (activeArray.width() - width) / 2
             val top = activeArray.top + (activeArray.height() - height) / 2
             Rect(left, top, left + width, top + height)
         }
-        chrome.setZoomRatio(clamped)
-        requestCameraControlUpdate()
-    }
 
     private fun cycleFlashMode() {
         if (!flashAvailable || !cameraReady || captureInProgress) return
@@ -1288,16 +1538,18 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun requestCameraControlUpdate() {
         if (cameraControlUpdatePending) return
         val handler = cameraHandler ?: return
+        val generation = cameraGeneration
         cameraControlUpdatePending = true
         handler.postDelayed({
+            if (generation != cameraGeneration) return@postDelayed
             cameraControlUpdatePending = false
             val camera = cameraDevice ?: return@postDelayed
             val session = captureSession ?: return@postDelayed
             if (!cameraReady || captureInProgress) return@postDelayed
             try {
-                submitRepeatingRequest(camera, session, selectCameraFpsRange())
+                submitRepeatingRequest(camera, session, selectCameraFpsRange(), generation = generation)
             } catch (exception: Throwable) {
-                showFailure("Camera control update failed", exception)
+                showFailure("Camera control update failed", exception, generation)
             }
         }, CAMERA_CONTROL_UPDATE_DELAY_MILLIS)
     }
@@ -1315,8 +1567,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         else -> CaptureRequest.CONTROL_AF_MODE_OFF
     }
 
-    private fun applyMeteringRegion(builder: CaptureRequest.Builder) {
-        val region = meteringRegion ?: return
+    private fun applyMeteringRegion(builder: CaptureRequest.Builder, selectedRegion: MeteringRectangle? = meteringRegion) {
+        val region = selectedRegion ?: return
         if (maximumAfRegions > 0) {
             builder.set(CaptureRequest.CONTROL_AF_REGIONS, arrayOf(region))
         }
@@ -1326,7 +1578,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun focusAt(viewX: Float, viewY: Float) {
-        if (!cameraReady || captureInProgress) return
+        if (!cameraReady || captureInProgress || reviewVisible) return
         val activeArray = currentCropRegion ?: sensorActiveArray ?: return
         val previewSize = engineSize ?: return
         val viewWidth = preview.width.takeIf { it > 0 } ?: return
@@ -1360,17 +1612,20 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             previewLocation[1] - chromeLocation[1] + viewY,
         )
         val handler = cameraHandler ?: return
+        val generation = cameraGeneration
+        val camera = cameraDevice ?: return
+        val session = captureSession ?: return
+        val engineInput = engineSession?.inputSurface ?: return
+        val token = ++focusGeneration
+        focusResolvedGeneration = -1L
+        touchFocusSucceeded = false
+        touchFocusLockedAtMillis = 0L
+        meteringRegion = region
+        touchFocusActive = true
         handler.post {
-            val camera = cameraDevice ?: return@post
-            val session = captureSession ?: return@post
-            val token = ++focusGeneration
-            focusResolvedGeneration = -1L
-            touchFocusSucceeded = false
-            touchFocusLockedAtMillis = 0L
-            meteringRegion = region
-            touchFocusActive = true
+            if (generation != cameraGeneration || token != focusGeneration || !cameraReady || captureInProgress || reviewVisible) return@post
             try {
-                val builder = buildPreviewRequest(camera, selectCameraFpsRange())
+                val builder = buildPreviewRequest(camera, selectCameraFpsRange(), engineInputSurface = engineInput)
                 if (CaptureRequest.CONTROL_AF_MODE_AUTO in availableAfModes) {
                     builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
                     builder.set(
@@ -1378,6 +1633,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         CaptureRequest.CONTROL_AF_TRIGGER_START,
                     )
                 }
+                if (generation != cameraGeneration || token != focusGeneration) return@post
                 session.capture(builder.build(), null, handler)
                 builder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
                 session.setRepeatingRequest(builder.build(), focusStateCallback(token), handler)
@@ -1388,9 +1644,12 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         "region=${region.rect}",
                 )
             } catch (exception: Throwable) {
-                touchFocusActive = false
-                meteringRegion = null
-                showFailure("Touch focus failed", exception)
+                mainHandler.post {
+                    if (generation != cameraGeneration || token != focusGeneration) return@post
+                    touchFocusActive = false
+                    meteringRegion = null
+                    showFailure("Touch focus failed", exception, generation)
+                }
             }
         }
     }
@@ -1436,39 +1695,27 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 request: CaptureRequest,
                 result: TotalCaptureResult,
             ) {
-                if (token != focusGeneration || focusResolvedGeneration == token) return
-                when (result.get(CaptureResult.CONTROL_AF_STATE)) {
-                    CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED -> {
-                        focusResolvedGeneration = token
-                        touchFocusSucceeded = true
-                        touchFocusLockedAtMillis = SystemClock.elapsedRealtime()
-                        runOnUiThread { chrome.completeFocus(true) }
-                        Log.i(LOG_TAG, "Touch AF locked")
-                    }
-                    CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED -> {
-                        focusResolvedGeneration = token
-                        touchFocusSucceeded = false
-                        touchFocusLockedAtMillis = 0L
-                        runOnUiThread { chrome.completeFocus(false) }
-                        Log.i(LOG_TAG, "Touch AF completed without lock")
-                    }
+                val focused = when (result.get(CaptureResult.CONTROL_AF_STATE)) {
+                    CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED -> true
+                    CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED -> false
+                    else -> return
+                }
+                mainHandler.post {
+                    if (isDestroyed || !activityResumed || token != focusGeneration || focusResolvedGeneration == token) return@post
+                    focusResolvedGeneration = token
+                    touchFocusSucceeded = focused
+                    touchFocusLockedAtMillis = if (focused) SystemClock.elapsedRealtime() else 0L
+                    chrome.completeFocus(focused)
+                    Log.i(LOG_TAG, if (focused) "Touch AF locked" else "Touch AF completed without lock")
                 }
             }
         }
 
     private fun resetTouchFocus(token: Long) {
-        if (token != focusGeneration || captureInProgress) return
-        touchFocusActive = false
-        meteringRegion = null
-        touchFocusSucceeded = false
-        touchFocusLockedAtMillis = 0L
-        val camera = cameraDevice ?: return
-        val session = captureSession ?: return
-        try {
-            submitRepeatingRequest(camera, session, selectCameraFpsRange())
-            runOnUiThread { chrome.clearFocusIndicator() }
-        } catch (exception: Throwable) {
-            showFailure("Focus reset failed", exception)
+        mainHandler.post {
+            if (isDestroyed || !activityResumed || token != focusGeneration || captureInProgress) return@post
+            clearTouchFocusForControlChange()
+            requestCameraControlUpdate()
         }
     }
 
@@ -1509,16 +1756,26 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         val cameraSession = captureSession ?: return
         val generation = cameraGeneration
         val captureStyle = selectedStyle
+        val captureControls = CaptureControls(
+            exposureIndex = exposureCompensationIndex,
+            zoomRatio = currentZoomRatio,
+            cropRegion = currentCropRegion?.let(::Rect),
+            flashMode = currentFlashMode,
+            afMode = selectedAfMode(),
+            meteringRegion = meteringRegion,
+            soundEnabled = cameraSettings.soundEnabled,
+            fpsRange = selectCameraFpsRange(),
+        )
         val captureMetadata = captureMetadataSnapshot(captureStyle)
         captureInProgress = true
+        gestureBlocked = true
         chrome.setCapturing()
         val reviewAfterCapture = cameraSettings.reviewAfterCapture
-        if (cameraSettings.soundEnabled) shutterSound.play(MediaActionSound.SHUTTER_CLICK)
         photoExecutor.execute {
             try {
                 val metadataCollector = StillCaptureMetadataCollector(captureMetadata)
                 val frame = try {
-                    val threeA = awaitCapture3A(camera, cameraSession, generation)
+                    val threeA = awaitCapture3A(camera, cameraSession, generation, captureControls)
                     check(threeA.canCapture) {
                         threeA.failureReason.ifBlank { "Camera changed before still capture" }
                     }
@@ -1536,6 +1793,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                             generation,
                             lock3A = threeA.status == Camera3AController.Status.READY,
                             metadataCollector = metadataCollector,
+                            controls = captureControls,
                         )
                     }
                 } finally {
@@ -1559,6 +1817,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 if (!photoLibrary.record(saved, captureMetadata.capturedAtMillis)) {
                     Log.w(LOG_TAG, "Photo saved but local gallery index could not be persisted")
                 }
+                val libraryPhotos = if (reviewAfterCapture) runCatching { photoLibrary.list() }.getOrDefault(emptyList()) else emptyList()
                 val thumbnail = savedResult.thumbnail
                 val reviewBitmap = savedResult.review
                 mainHandler.post {
@@ -1569,14 +1828,17 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                     }
                     lastSavedPhoto = saved
                     chrome.showThumbnail(thumbnail)
-                    chrome.flashCapture()
                     chrome.finishCapture()
                     captureInProgress = false
                     if (cameraReady && generation == cameraGeneration) chrome.setReady(true)
                     // Saving an already exposed frame may finish after Home or a
                     // session change. Preserve the photo without opening stale UI.
                     if (activityResumed && generation == cameraGeneration && reviewAfterCapture) {
+                        reviewPhoto = saved
+                        reviewPhotos = listOf(saved) + libraryPhotos.filterNot { it.uri == saved.uri }
+                        updatePhotoNavigation()
                         review.show(reviewBitmap, saved)
+                        Toast.makeText(this, R.string.camera_saved_short, Toast.LENGTH_SHORT).show()
                     } else {
                         reviewBitmap.recycle()
                         if (activityResumed && generation == cameraGeneration) {
@@ -1622,6 +1884,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         camera: CameraDevice,
         session: CameraCaptureSession,
         generation: Long,
+        controls: CaptureControls,
     ): Camera3AController.Outcome {
         val handler = checkNotNull(cameraHandler) { "Camera thread is unavailable" }
         val touchFocusAgeMillis = SystemClock.elapsedRealtime() - touchFocusLockedAtMillis
@@ -1636,9 +1899,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             camera = camera,
             session = session,
             cameraHandler = handler,
-            previewRequest = { buildPreviewRequest(camera, selectCameraFpsRange()) },
+            previewRequest = { buildPreviewRequest(camera, controls.fpsRange, controls) },
             triggerAutofocus =
-                selectedAfMode() != CaptureRequest.CONTROL_AF_MODE_OFF && !reuseTouchFocus,
+                controls.afMode != CaptureRequest.CONTROL_AF_MODE_OFF && !reuseTouchFocus,
             autoexposureLockAvailable = autoexposureLockAvailable,
             autoWhiteBalanceLockAvailable = autoWhiteBalanceLockAvailable,
             isCameraCurrent = {
@@ -1727,6 +1990,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         generation: Long,
         lock3A: Boolean,
         metadataCollector: StillCaptureMetadataCollector,
+        controls: CaptureControls,
     ) {
         check(generation == cameraGeneration && cameraDevice === camera) {
             "Camera changed before still capture"
@@ -1736,9 +2000,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             addTarget(stillSurface)
             set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO)
             set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_STILL_CAPTURE)
-            set(CaptureRequest.CONTROL_AF_MODE, selectedAfMode())
+            set(CaptureRequest.CONTROL_AF_MODE, controls.afMode)
             set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
-            set(CaptureRequest.CONTROL_AE_MODE, selectedAutoexposureMode())
+            set(CaptureRequest.CONTROL_AE_MODE, selectedAutoexposureMode(controls.flashMode))
             set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE)
             set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_AUTO)
             if (autoexposureLockAvailable) {
@@ -1748,12 +2012,24 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 set(CaptureRequest.CONTROL_AWB_LOCK, lock3A)
             }
             applyHostIspModes(this)
-            applyExposureAndZoom(this)
-            applyMeteringRegion(this)
+            applyExposureAndZoom(this, controls)
+            applyMeteringRegion(this, controls.meteringRegion)
         }.build()
         session.capture(
             request,
             object : CameraCaptureSession.CaptureCallback() {
+                override fun onCaptureStarted(
+                    session: CameraCaptureSession,
+                    request: CaptureRequest,
+                    timestamp: Long,
+                    frameNumber: Long,
+                ) {
+                    mainHandler.post {
+                        if (isDestroyed || !activityResumed || generation != cameraGeneration || !captureInProgress) return@post
+                        chrome.flashCapture()
+                        if (controls.soundEnabled) shutterSound.play(MediaActionSound.SHUTTER_CLICK)
+                    }
+                }
                 override fun onCaptureCompleted(
                     session: CameraCaptureSession,
                     request: CaptureRequest,
@@ -1792,7 +2068,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         styleName = style.name(this),
         styleCode = style.shortCode,
         styleVersion = style.profileVersion,
-        outputAspect = style.portraitAspect,
+        outputAspect = captureAspect(style),
         maximumOutputPixels = minOf(style.maximumCapturePixels, cameraSettings.photoQuality.maxPixels),
         capturedAtMillis = System.currentTimeMillis(),
         zoomRatio = currentZoomRatio,
@@ -1800,33 +2076,149 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         flashMode = currentFlashMode,
     )
 
-    private fun openPhoto(saved: PhotoStore.SavedPhoto) {
+    private fun openPhoto(saved: PhotoStore.SavedPhoto, navigation: Boolean = false) {
         if (captureInProgress) return
-        if (review.isShowing()) return
+        if (review.isShowing() && !navigation) return
+        if (!navigation) {
+            reviewPhotos = gallery.photos().ifEmpty { listOf(saved) }
+            if (reviewPhotos.none { it.uri == saved.uri }) reviewPhotos = listOf(saved) + reviewPhotos
+        }
+        reviewPhoto = saved
+        reviewLoading = true
+        review.setLoading(saved)
+        updatePhotoNavigation()
         val request = ++photoReviewRequest
-        photoExecutor.execute {
+        reviewLoad?.cancel(true)
+        reviewCancellation?.cancel()
+        val cancellation = CancellationSignal()
+        reviewCancellation = cancellation
+        val loadHistory = reviewPhotos.size <= 1
+        reviewLoad = reviewExecutor.submit {
+            if (Thread.currentThread().isInterrupted) return@submit
+            val history = if (loadHistory) runCatching { photoLibrary.list() }.getOrNull() else null
             val bitmap = photoStore.loadReview(
                 saved.uri,
                 resources.displayMetrics.widthPixels,
                 resources.displayMetrics.heightPixels,
+                cancellation,
             )
+            if (Thread.currentThread().isInterrupted) {
+                bitmap?.recycle()
+                return@submit
+            }
             mainHandler.post {
-                if (isDestroyed || request != photoReviewRequest || !gallery.isShowing()) {
+                if (isDestroyed || request != photoReviewRequest || !review.isShowing()) {
                     bitmap?.recycle()
-                } else if (bitmap != null && activityResumed && !captureInProgress && !review.isShowing()) {
+                } else if (bitmap != null && activityResumed && !captureInProgress) {
+                    reviewLoad = null
+                    reviewLoading = false
+                    reviewCancellation = null
+                    if (!history.isNullOrEmpty()) reviewPhotos = history.let { photos ->
+                        if (photos.any { it.uri == saved.uri }) photos else listOf(saved) + photos
+                    }
                     review.show(bitmap, saved)
+                    updatePhotoNavigation()
+                    review.setBusy(pendingDeletePhoto != null)
                 } else {
                     bitmap?.recycle()
-                    if (activityResumed) gallery.showMessage(getString(R.string.review_load_failed))
+                    reviewLoad = null
+                    reviewLoading = false
+                    reviewCancellation = null
+                    if (activityResumed) review.setLoadFailed(getString(R.string.review_load_failed))
                 }
             }
+        }
+    }
+
+    private fun updatePhotoNavigation() {
+        val index = reviewPhotos.indexOfFirst { it.uri == reviewPhoto?.uri }
+        review.setNavigation(index > 0, index >= 0 && index < reviewPhotos.lastIndex)
+    }
+
+    private fun navigatePhoto(direction: Int) {
+        val index = reviewPhotos.indexOfFirst { it.uri == reviewPhoto?.uri }
+        val target = index + direction
+        if (index >= 0 && target in reviewPhotos.indices) openPhoto(reviewPhotos[target], navigation = true)
+    }
+
+    private fun sharePhoto(saved: PhotoStore.SavedPhoto) {
+        try {
+            startActivity(Intent.createChooser(photoStore.createShareIntent(saved), getString(R.string.photo_share_title)))
+        } catch (exception: Exception) {
+            Log.w(LOG_TAG, "Photo sharing failed", exception)
+            Toast.makeText(this, R.string.photo_share_failed, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun deletePhoto(saved: PhotoStore.SavedPhoto) {
+        if (pendingDeletePhoto != null || captureInProgress) return
+        pendingDeletePhoto = saved
+        review.setBusy(true)
+        photoExecutor.execute {
+            val result = photoStore.delete(saved)
+            if (result is PhotoStore.DeleteResult.Deleted) photoLibrary.remove(saved.uri)
+            mainHandler.post {
+                if (isDestroyed) return@post
+                when (result) {
+                    PhotoStore.DeleteResult.Deleted -> {
+                        pendingDeletePhoto = null
+                        pendingDeleteConsent = false
+                        review.setBusy(false)
+                        val oldIndex = reviewPhotos.indexOfFirst { it.uri == saved.uri }.coerceAtLeast(0)
+                        reviewPhotos = reviewPhotos.filterNot { it.uri == saved.uri }
+                        gallery.removePhoto(saved.uri)
+                        if (lastSavedPhoto?.uri == saved.uri) {
+                            lastSavedPhoto = null
+                            chrome.clearThumbnail()
+                            restoreLastThumbnail()
+                        }
+                        if (reviewPhoto?.uri == saved.uri) {
+                            val next = reviewPhotos.getOrNull(oldIndex.coerceAtMost(reviewPhotos.lastIndex))
+                            if (next != null) openPhoto(next, navigation = true) else review.dismiss()
+                        }
+                        Toast.makeText(this, R.string.photo_deleted, Toast.LENGTH_SHORT).show()
+                    }
+                    is PhotoStore.DeleteResult.ConsentRequired -> {
+                        try {
+                            pendingDeleteConsent = true
+                            @Suppress("DEPRECATION")
+                            startIntentSenderForResult(result.intentSender, PHOTO_DELETE_REQUEST, null, 0, 0, 0)
+                        } catch (exception: Exception) {
+                            pendingDeletePhoto = null
+                            pendingDeleteConsent = false
+                            review.setBusy(false)
+                            Toast.makeText(this, R.string.photo_delete_failed, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    PhotoStore.DeleteResult.Failed -> {
+                        pendingDeletePhoto = null
+                        pendingDeleteConsent = false
+                        review.setBusy(false)
+                        Toast.makeText(this, R.string.photo_delete_failed, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    @Deprecated("Activity result bridge supports the minimum Android version")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != PHOTO_DELETE_REQUEST) return
+        val pending = pendingDeletePhoto ?: return
+        pendingDeletePhoto = null
+        pendingDeleteConsent = false
+        if (resultCode == RESULT_OK) deletePhoto(pending)
+        else {
+            review.setBusy(false)
+            Toast.makeText(this, R.string.photo_delete_cancelled, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun switchStyle(style: CameraStyle) {
         if (captureInProgress || cameraOpening || review.isShowing()) return
         if (!billing.isUnlocked(style)) {
-            openPurchase(style)
+            applyCameraStyle(style, previewOnly = true)
             return
         }
         applyCameraStyle(style, previewOnly = false)
@@ -1835,6 +2227,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun applyCameraStyle(style: CameraStyle, previewOnly: Boolean) {
         if (captureInProgress || isDestroyed) return
         previewOnlyStyle = if (previewOnly) style else null
+        chrome.dismissAdjustment()
         chrome.setStylePreviewOnly(previewOnly)
         // Trial selections never become the remembered or default paid style.
         if (!previewOnly) {
@@ -1843,7 +2236,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
         if (style == selectedStyle) return
         selectedStyle = style
-        previewViewport.setCaptureAspect(style.portraitAspect)
+        previewViewport.setCaptureAspect(captureAspect(style))
         chrome.setStyle(style)
         cameraReady = false
         closeCamera()
@@ -1972,6 +2365,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                                 checkNotNull(stillSize).width, checkNotNull(stillSize).height), true)
                         }
                         chrome.setReady(true)
+                        maybeShowFirstUseHint()
                     }
                     if (value.renderedFrames > 0 && value.renderedFrames % 30L == 0L) {
                         Log.i(LOG_TAG, chrome.metrics.text.toString())
@@ -1984,7 +2378,22 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
-    private fun closeCamera() {
+    private fun closeCamera(
+        releaseTexture: SurfaceTexture? = null,
+        retiringThread: HandlerThread? = null,
+        retiringHandler: Handler? = null,
+    ) {
+        val resources = cameraResources
+        resources?.engineOwner?.cancel()
+        val orphanSurface = if (resources == null) previewSurface else null
+        // Invalidate and detach synchronously. The shared queue owns every
+        // published or in-flight handle until it can finish safe destruction.
+        cameraResources = null
+        cameraGeneration += 1L
+        captureSession = null
+        cameraDevice = null
+        engineSession = null
+        previewSurface = null
         previousEngineErrorFrames = 0L
         lastObservedRenderedFrames = 0L
         lastPreviewProgressMillis = 0L
@@ -1993,7 +2402,6 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         previewFrameRateBudget = CAMERA_PREVIEW_FPS
         cameraOpening = false
         cameraReady = false
-        cameraGeneration += 1L
         focusGeneration += 1L
         focusResolvedGeneration = -1L
         touchFocusActive = false
@@ -2002,18 +2410,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         touchFocusLockedAtMillis = 0L
         chrome.setReady(false)
         chrome.clearFocusIndicator()
-        try {
-            captureSession?.stopRepeating()
-        } catch (_: Throwable) {
-        }
-        captureSession?.close()
-        captureSession = null
-        cameraDevice?.close()
-        cameraDevice = null
-        engineSession?.close()
-        engineSession = null
-        previewSurface?.release()
-        previewSurface = null
+        disposeCameraResources(resources, orphanSurface, releaseTexture, retiringThread, retiringHandler)
         engineSize = null
         stillSize = null
         stillSizeCandidates = emptyList()
@@ -2033,10 +2430,51 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         cameraControlUpdatePending = false
     }
 
-    private fun showFailure(prefix: String, exception: Throwable) {
+    private fun disposeCameraResources(
+        resources: CameraResources?,
+        orphanSurface: Surface? = null,
+        releaseTexture: SurfaceTexture? = null,
+        retiringThread: HandlerThread? = null,
+        retiringHandler: Handler? = null,
+    ) {
+        CameraLifecycleQueue.execute {
+            try {
+                if (resources != null && !resources.disposed) {
+                    resources.disposed = true
+                    runCatching { resources.session?.stopRepeating() }.onFailure {
+                        Log.w(LOG_TAG, "Camera2 stop during cleanup failed", it)
+                    }
+                    runCatching { resources.session?.close() }.onFailure {
+                        Log.w(LOG_TAG, "Camera2 session cleanup failed", it)
+                    }
+                    resources.session = null
+                    runCatching { resources.camera?.close() }.onFailure {
+                        Log.w(LOG_TAG, "Camera2 device cleanup failed", it)
+                    }
+                    resources.camera = null
+                    // Keep the output alive throughout an unbounded vendor/native
+                    // shutdown. Never time out and delete a still-running engine.
+                    resources.engineOwner.clear()
+                    resources.outputSurface.release()
+                }
+                orphanSurface?.release()
+                releaseTexture?.release()
+            } finally {
+                if (retiringThread != null) {
+                    // Drain already-delivered Camera2 callbacks on their own
+                    // handler; lifecycle delivery never waits for that thread.
+                    val posted = retiringHandler?.post { retiringThread.quitSafely() } ?: false
+                    if (!posted) retiringThread.quitSafely()
+                }
+            }
+        }
+    }
+
+    private fun showFailure(prefix: String, exception: Throwable, generation: Long? = null) {
         Log.e(LOG_TAG, prefix, exception)
         runOnUiThread {
             if (isDestroyed || !activityResumed) return@runOnUiThread
+            if (generation != null && generation != cameraGeneration) return@runOnUiThread
             cameraReady = false
             chrome.setReady(false)
             showCameraRecovery(getString(R.string.camera_recovery_failed))
@@ -2054,15 +2492,35 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     ) {
         if (width <= 0 || height <= 0) return
         val outputWidth = width.coerceAtMost(MAXIMUM_PREVIEW_OUTPUT_WIDTH)
-        surface.setDefaultBufferSize(outputWidth, (outputWidth / selectedStyle.portraitAspect).roundToInt().coerceAtLeast(1))
+        surface.setDefaultBufferSize(outputWidth, (outputWidth / captureAspect()).roundToInt().coerceAtLeast(1))
     }
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-        closeCamera()
-        return true
+        closeCamera(releaseTexture = surface)
+        // CameraLifecycleQueue releases this texture after the Vulkan owner.
+        return false
     }
 
     override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
+
+    private fun maybeShowFirstUseHint() {
+        if (firstUseHintShown || captureInProgress || reviewVisible || !cameraReady) return
+        val preferences = getSharedPreferences(CAMERA_PREFERENCES, MODE_PRIVATE)
+        if (preferences.getBoolean(FIRST_USE_HINT_SEEN, false)) return
+        firstUseHintShown = true
+        chrome.showFirstUseHint { preferences.edit().putBoolean(FIRST_USE_HINT_SEEN, true).apply() }
+    }
+
+    private data class CaptureControls(
+        val exposureIndex: Int,
+        val zoomRatio: Float,
+        val cropRegion: Rect?,
+        val flashMode: CameraFlashMode,
+        val afMode: Int,
+        val meteringRegion: MeteringRectangle?,
+        val soundEnabled: Boolean,
+        val fpsRange: Range<Int>?,
+    )
 
     private class StillCaptureMetadataCollector(fallback: CaptureMetadata) {
         private val latch = CountDownLatch(1)
@@ -2093,10 +2551,20 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     companion object {
         private const val CAMERA_PERMISSION_REQUEST = 901
         private const val STORAGE_PERMISSION_REQUEST = 902
+        private const val PHOTO_DELETE_REQUEST = 903
+        private const val REVIEW_PHOTO_STATE = "review_photo"
+        private const val DELETE_PHOTO_STATE = "delete_photo"
+        private const val CAMERA_STYLE_STATE = "camera_style"
+        private const val CAMERA_PREVIEW_STATE = "camera_preview_only"
+        private const val CAMERA_LENS_STATE = "camera_lens"
+        private const val CAMERA_EXPOSURE_STATE = "camera_exposure"
+        private const val CAMERA_ZOOM_STATE = "camera_zoom"
+        private const val CAMERA_FLASH_STATE = "camera_flash"
         private const val CAMERA_PREFERENCES = "phytoy_camera_ui"
         private const val SELECTED_STYLE_PREFERENCE = "selected_style"
         private const val CAMERA_PERMISSION_ASKED = "camera_permission_asked"
         private const val STORAGE_PERMISSION_ASKED = "storage_permission_asked"
+        private const val FIRST_USE_HINT_SEEN = "first_use_hint_seen"
         private const val LOG_TAG = "PhyToySample"
         private const val GPU_SAMPLED_IMAGE_USAGE = 0x100L
         private const val MAXIMUM_BUFFER_IMPORTS = 16L

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_capture_smoke.py", line 382, in main
+    smoke.disposable_tap(smoke.wait("shutter"), "capture")
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_capture_smoke.py", line 174, in disposable_tap
+    nodes = self.camera(MONO)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_017_ui_smoke.py", line 74, in camera
+    return self.poll(ready, f"Camera did not reach style={style}, trial={trial}", timeout=60)
+  File "/Users/songyuanjin/GoogleApp/PhyToyCamera/PhyToyEngine/tools/run_android_billing_smoke.py", line 167, in poll
+    raise AssertionError(message + "; last visible IDs=" + ",".join(exposed))
+AssertionError: Camera did not reach style=style_dh_mono, trial=False; last visible IDs=

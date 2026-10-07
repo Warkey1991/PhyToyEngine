@@ -1,0 +1,12 @@
+Samsung In-App Purchase SDK 6.5.2
+Copyright Samsung Electronics Co., Ltd.
+
+The compiled Samsung IAP SDK and its services are governed by Samsung IAP License Agreement:
+https://developer.samsung.com/iap/terms/license-agreement.txt
+
+Official artifact metadata and licensing summary:
+https://github.com/Samsung/iap-metadata
+Official documentation:
+https://developer.samsung.com/iap/programming-guide.html
+
+This app uses permanent one-time Item purchases and acknowledges delivery; it does not consume camera unlocks. The Samsung SDK is included only in the Galaxy Store build.
