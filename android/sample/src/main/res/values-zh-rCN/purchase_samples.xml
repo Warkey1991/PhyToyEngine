@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="purchase_effect_heading">看看成像效果</string>
+    <string name="purchase_sample_original_label">原场景</string>
     <string name="purchase_sample_source">原创生成场景</string>
     <string name="purchase_sample_style">%1$s 风格示意</string>
     <string name="purchase_sample_caption">原场景 → %1$s。AI 场景经处理的示意效果；实拍效果取决于设备和光线。</string>

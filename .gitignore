@@ -21,6 +21,13 @@
 /renders/
 *.pfm
 
+# Generated validation reports and Android package artifacts
+/reports/
+*.apk
+*.aab
+*.apks
+*.idsig
+
 # Documentation working directory
 /docs/
 

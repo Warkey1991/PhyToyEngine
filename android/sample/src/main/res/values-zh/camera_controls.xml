@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="camera_unlock_short">解锁</string>
     <string name="camera_adjust_exposure_value">曝光 EV %1$+.2f</string>
     <string name="camera_adjust_zoom_value">倍率 %1$.2f×</string>
     <string name="camera_adjust_reset">重置</string>

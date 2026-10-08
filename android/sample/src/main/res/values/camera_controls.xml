@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="camera_unlock_short">Unlock</string>
     <item name="adjustment_panel" type="id" />
     <item name="adjustment_slider" type="id" />
     <item name="adjustment_reset" type="id" />

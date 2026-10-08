@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="purchase_title">下一台口袋相机</string>
+    <string name="purchase_title">相机风格</string>
     <string name="purchase_back">返回</string>
     <string name="purchase_one_time">一次购买 · 无订阅</string>
     <string name="purchase_details">解锁这款相机的拍摄功能。照片只保存在本机，前两款免费相机仍可继续使用。</string>
@@ -9,6 +9,8 @@
     <string name="purchase_price_unavailable">暂时无法获取价格</string>
     <string name="purchase_buy">%1$s 解锁</string>
     <string name="purchase_buy_unavailable">暂时无法购买</string>
+    <string name="purchase_pending_action">等待付款确认</string>
+    <string name="purchase_busy_action">正在确认购买…</string>
     <string name="purchase_owned">相机已解锁</string>
     <string name="purchase_preview">试试实时预览</string>
     <string name="purchase_use_camera">使用这款相机</string>

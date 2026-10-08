@@ -7,8 +7,9 @@
     <item name="purchase_restore" type="id" />
     <item name="purchase_retry" type="id" />
     <item name="purchase_status" type="id" />
+    <item name="purchase_price" type="id" />
     <item name="settings_restore_purchases" type="id" />
-    <string name="purchase_title">Your next camera</string>
+    <string name="purchase_title">Camera Style</string>
     <string name="purchase_back">Back</string>
     <string name="purchase_one_time">One-time purchase · no subscription</string>
     <string name="purchase_details">Unlock photography with this camera style. Photos stay on your device. Your two free cameras remain available.</string>
@@ -17,6 +18,8 @@
     <string name="purchase_price_unavailable">Price unavailable</string>
     <string name="purchase_buy">Unlock for %1$s</string>
     <string name="purchase_buy_unavailable">Purchase unavailable</string>
+    <string name="purchase_pending_action">Payment pending</string>
+    <string name="purchase_busy_action">Confirming purchase…</string>
     <string name="purchase_owned">Camera unlocked</string>
     <string name="purchase_preview">Try live preview</string>
     <string name="purchase_use_camera">Use this camera</string>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gallery_title">Your photos</string>
+    <string name="gallery_title">Gallery</string>
+    <string name="gallery_camera">Camera</string>
+    <string name="gallery_settings">Settings</string>
+    <string name="gallery_first_photo">Take your first photo</string>
+    <string name="gallery_saved_photos">Saved photos</string>
     <string name="gallery_back_description">Back to camera</string>
     <string name="gallery_newest_first">Newest first · stored on this device</string>
     <string name="gallery_loading">Loading your photos…</string>

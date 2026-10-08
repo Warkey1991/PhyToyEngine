@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
+import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -16,8 +17,10 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Switch
@@ -42,12 +45,15 @@ internal class SettingsOverlay(
     private var choiceDialog: AlertDialog? = null
     private var settings = store.load()
     private var purchaseResult: CharSequence? = null
+    private var activeGroup: LinearLayout? = null
+    private var defaultStyleValue: TextView? = null
+    private var defaultStyleControl: View? = null
     private val purchaseNotice = TextView(activity).apply {
         id = R.id.settings_purchase_result
         textSize = 14f
         setTextColor(FOREGROUND)
         setPadding(dp(16), dp(12), dp(16), dp(12))
-        background = touchBackground(CARD, 14)
+        background = ToviTheme.card(activity, 12)
         accessibilityLiveRegion = ACCESSIBILITY_LIVE_REGION_POLITE
         visibility = GONE
     }
@@ -62,8 +68,10 @@ internal class SettingsOverlay(
 
     /** Refresh entitlement text in place without rebuilding controls or moving input focus. */
     fun refreshStyleAccess() {
-        body.findViewById<Button>(R.id.settings_default_style)?.text = controlText(
-            R.string.settings_default_style, styleLabel(settings.defaultStyle), R.string.settings_default_style_hint,
+        val value = styleLabel(settings.defaultStyle)
+        defaultStyleValue?.text = value
+        defaultStyleControl?.contentDescription = rowDescription(
+            R.string.settings_default_style, value, R.string.settings_default_style_short,
         )
     }
 
@@ -90,12 +98,10 @@ internal class SettingsOverlay(
         page.addView(topBar, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
         ))
-        page.addView(View(activity).apply { setBackgroundColor(0xFF292929.toInt()) },
-            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(1)))
         scroll.apply {
             isFillViewport = true
             clipToPadding = false
-            setPadding(dp(20), dp(12), dp(20), dp(24))
+            setPadding(dp(16), dp(4), dp(16), dp(28))
         }
         body.orientation = LinearLayout.VERTICAL
         scroll.addView(body, FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
@@ -160,166 +166,235 @@ internal class SettingsOverlay(
 
     private fun rebuild() {
         body.removeAllViews()
-        body.addView(label(R.string.settings_intro, 14f, MUTED).apply { setPadding(0, 0, 0, dp(12)) })
-        section(R.string.settings_section_camera)
+        activeGroup = null
+        defaultStyleControl = null
+        defaultStyleValue = null
+
+        section(R.string.settings_section_shooting)
         choice(R.id.settings_default_style, R.string.settings_default_style, styleLabel(settings.defaultStyle),
-            R.string.settings_default_style_hint) { chooseDefaultStyle() }
-        toggle(R.id.settings_remember_style, R.string.settings_remember_style, R.string.settings_remember_style_hint,
-            settings.rememberLastStyle) { change(settings.copy(rememberLastStyle = it)) }
+            R.string.settings_default_style_short, SettingsRowIcon.CAMERA) { chooseDefaultStyle() }
+        toggle(R.id.settings_remember_style, R.string.settings_remember_style, R.string.settings_remember_short,
+            settings.rememberLastStyle, SettingsRowIcon.HISTORY) { change(settings.copy(rememberLastStyle = it)) }
         choice(R.id.settings_quality, R.string.settings_quality, activity.getString(settings.photoQuality.titleRes),
-            R.string.settings_quality_hint) { chooseQuality() }
-        body.addView(Button(activity).apply {
+            R.string.settings_quality_short, SettingsRowIcon.PHOTO) { chooseQuality() }
+        toggle(R.id.settings_grid, R.string.settings_grid, R.string.settings_grid_short,
+            settings.gridEnabled, SettingsRowIcon.GRID) { change(settings.copy(gridEnabled = it)) }
+        addControl(Button(activity).apply {
             text = activity.getString(R.string.settings_options_help)
             isAllCaps = false
             textSize = 13f
             minHeight = dp(48)
+            setPadding(dp(12), dp(10), dp(12), dp(10))
             setTextColor(ACCENT)
-            background = touchBackground(android.graphics.Color.TRANSPARENT, 12)
+            background = touchBackground()
             setOnClickListener {
                 choiceDialog?.dismiss()
-                choiceDialog = AlertDialog.Builder(activity).setTitle(R.string.settings_section_camera)
+                choiceDialog = AlertDialog.Builder(activity).setTitle(R.string.settings_section_shooting)
                     .setMessage(R.string.settings_camera_help)
                     .setPositiveButton(R.string.product_info_close, null).show()
             }
-        }, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        })
 
-        section(R.string.settings_section_shooting)
-        toggle(R.id.settings_grid, R.string.settings_grid, R.string.settings_grid_hint,
-            settings.gridEnabled) { change(settings.copy(gridEnabled = it)) }
-        toggle(R.id.settings_sound, R.string.settings_sound, R.string.settings_sound_hint,
-            settings.soundEnabled) { change(settings.copy(soundEnabled = it)) }
-        toggle(R.id.settings_haptics, R.string.settings_haptics, R.string.settings_haptics_hint,
-            settings.hapticsEnabled) { change(settings.copy(hapticsEnabled = it)) }
-        toggle(R.id.settings_review, R.string.settings_review, R.string.settings_review_hint,
-            settings.reviewAfterCapture) { change(settings.copy(reviewAfterCapture = it)) }
+        section(R.string.settings_section_experience)
+        toggle(R.id.settings_sound, R.string.settings_sound, R.string.settings_sound_short,
+            settings.soundEnabled, SettingsRowIcon.SOUND) { change(settings.copy(soundEnabled = it)) }
+        toggle(R.id.settings_haptics, R.string.settings_haptics, R.string.settings_haptics_short,
+            settings.hapticsEnabled, SettingsRowIcon.HAPTICS) { change(settings.copy(hapticsEnabled = it)) }
+        toggle(R.id.settings_review, R.string.settings_review, R.string.settings_review_short,
+            settings.reviewAfterCapture, SettingsRowIcon.REVIEW) { change(settings.copy(reviewAfterCapture = it)) }
 
-        section(R.string.settings_section_purchases)
+        section(R.string.settings_section_information)
         action(R.id.settings_restore_purchases, R.string.settings_restore_purchases,
-            R.string.settings_restore_purchases_hint) { onRestorePurchases() }
+            R.string.settings_restore_purchases_hint, SettingsRowIcon.PURCHASES) { onRestorePurchases() }
         (purchaseNotice.parent as? ViewGroup)?.removeView(purchaseNotice)
         purchaseNotice.text = purchaseResult ?: ""
         purchaseNotice.visibility = if (purchaseResult.isNullOrBlank()) GONE else VISIBLE
-        addControl(purchaseNotice)
-
-        section(R.string.settings_section_information)
-        action(R.id.settings_about, R.string.settings_about, R.string.settings_about_hint) {
+        activeGroup?.addView(purchaseNotice, LinearLayout.LayoutParams(
+            LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
+        ).apply { setMargins(dp(8), 0, dp(8), dp(8)) })
+        action(R.id.settings_about, R.string.settings_about, R.string.settings_about_short, SettingsRowIcon.INFO) {
             ProductInfo.showAbout(activity)
         }
-        action(R.id.settings_privacy, R.string.settings_privacy, R.string.settings_privacy_hint) {
+        action(R.id.settings_privacy, R.string.settings_privacy, R.string.settings_privacy_short, SettingsRowIcon.PRIVACY) {
             ProductInfo.showPrivacy(activity)
         }
-        action(R.id.settings_licenses, R.string.settings_licenses, R.string.settings_licenses_hint) {
+        action(R.id.settings_licenses, R.string.settings_licenses, R.string.settings_licenses_short, SettingsRowIcon.LICENSE) {
             ProductInfo.showLicenses(activity)
         }
-        if (SupportInfo.hasEmail) action(R.id.settings_support, R.string.support_title, R.string.support_hint) {
-            SupportInfo.email(activity)
-        }
-        action(R.id.settings_reset, R.string.settings_reset, R.string.settings_reset_hint) { confirmReset() }
-        body.addView(label(R.string.settings_local_only, 13f, MUTED).apply { setPadding(0, dp(12), 0, 0) })
-    }
-
-    private fun section(title: Int) {
-        body.addView(label(title, 12f, ACCENT).apply {
-            typeface = Typeface.create("sans-serif", Typeface.BOLD)
-            letterSpacing = 0.08f
-            setPadding(0, dp(12), 0, dp(8))
-            if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
+        if (SupportInfo.hasEmail) action(R.id.settings_support, R.string.support_title, R.string.support_hint,
+            SettingsRowIcon.HELP) { SupportInfo.email(activity) }
+        action(R.id.settings_reset, R.string.settings_reset, R.string.settings_reset_short,
+            SettingsRowIcon.RESET) { confirmReset() }
+        body.addView(label(R.string.settings_local_only, 12f, MUTED).apply {
+            setPadding(dp(8), dp(18), dp(8), 0)
         })
     }
 
-    private fun choice(id: Int, title: Int, value: String, hint: Int, click: () -> Unit) {
-        val button = Button(activity).apply {
-            this.id = id
-            text = controlText(title, value, hint)
-            isAllCaps = false
-            gravity = Gravity.START or Gravity.CENTER_VERTICAL
-            textSize = 17f
-            minHeight = dp(48)
-            includeFontPadding = false
-            setSingleLine(false)
-            setLineSpacing(dp(3).toFloat(), 1f)
-            setPadding(dp(16), dp(10), dp(16), dp(10))
-            setTextColor(FOREGROUND)
-            background = touchBackground(CARD, 14)
-            setOnClickListener { click() }
-        }
-        addControl(button)
+    private fun section(title: Int) {
+        body.addView(label(title, 17f, MUTED).apply {
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            setPadding(dp(6), dp(20), 0, dp(10))
+            if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
+        })
+        activeGroup = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(8), dp(4), dp(8), dp(4))
+            background = ToviTheme.card(activity)
+            clipToOutline = true
+        }.also { body.addView(it, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)) }
     }
 
-    private fun action(id: Int, title: Int, hint: Int, click: () -> Unit) {
-        val button = Button(activity).apply {
-            this.id = id
-            text = controlText(title, null, hint, if (id == R.id.settings_reset) ACCENT else FOREGROUND)
-            isAllCaps = false
-            gravity = Gravity.START or Gravity.CENTER_VERTICAL
-            textSize = 17f
-            minHeight = dp(48)
-            includeFontPadding = false
-            setSingleLine(false)
-            setLineSpacing(dp(3).toFloat(), 1f)
-            setPadding(dp(16), dp(10), dp(16), dp(10))
-            setTextColor(FOREGROUND)
-            background = touchBackground(CARD, 14)
-            setOnClickListener { click() }
+    private fun choice(id: Int, title: Int, value: String, hint: Int, icon: SettingsRowIcon, click: () -> Unit) {
+        val (control, valueView) = actionRow(id, title, hint, icon, value, click)
+        if (id == R.id.settings_default_style) {
+            defaultStyleControl = control
+            defaultStyleValue = valueView
         }
-        addControl(button)
+        addControl(control)
     }
 
-    private fun toggle(id: Int, title: Int, hint: Int, checked: Boolean, changed: (Boolean) -> Unit) {
+    private fun action(id: Int, title: Int, hint: Int, icon: SettingsRowIcon, click: () -> Unit) {
+        addControl(actionRow(id, title, hint, icon, null, click).first)
+    }
+
+    /** One focusable action per row; decorative children cannot duplicate TalkBack announcements. */
+    private fun actionRow(
+        id: Int, title: Int, hint: Int, icon: SettingsRowIcon, value: String?, click: () -> Unit,
+    ): Pair<View, TextView?> {
+        val row = LinearLayout(activity).apply {
+            this.id = id
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            minimumHeight = dp(76)
+            setPadding(dp(8), dp(12), dp(8), dp(12))
+            isClickable = true
+            isFocusable = true
+            background = touchBackground()
+            contentDescription = rowDescription(title, value, hint)
+            accessibilityDelegate = object : View.AccessibilityDelegate() {
+                override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.className = Button::class.java.name
+                }
+            }
+            setOnClickListener { click() }
+        }
+        row.addView(ImageView(activity).apply {
+            setImageDrawable(SettingsIconDrawable(activity, icon))
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(40), dp(40)).apply { marginEnd = dp(12) })
+
+        val copy = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+        }
+        copy.addView(label(title, 16f, FOREGROUND).apply {
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            includeFontPadding = false
+        })
+        copy.addView(label(hint, 12f, MUTED).apply {
+            includeFontPadding = false
+            setPadding(0, dp(3), 0, 0)
+        })
+        row.addView(copy, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+        val valueView = value?.let {
+            TextView(activity).apply {
+                text = it
+                textSize = 13f
+                setTextColor(MUTED)
+                includeFontPadding = false
+                importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+            }.also { text ->
+                // Let the current value wrap below the label when scaled text needs more room.
+                if (resources.configuration.fontScale >= 1.3f || resources.configuration.screenWidthDp < 340) {
+                    copy.addView(text, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+                        topMargin = dp(5)
+                    })
+                } else {
+                    text.gravity = Gravity.END
+                    text.maxWidth = dp(104)
+                    row.addView(text, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                        marginStart = dp(8)
+                    })
+                }
+            }
+        }
+        row.addView(ImageView(activity).apply {
+            setImageDrawable(SettingsIconDrawable(activity, SettingsRowIcon.CHEVRON))
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+            scaleX = if (layoutDirection == LAYOUT_DIRECTION_RTL) -1f else 1f
+        }, LinearLayout.LayoutParams(dp(16), dp(24)).apply { marginStart = dp(8) })
+        return row to valueView
+    }
+
+    private fun toggle(
+        id: Int, title: Int, hint: Int, checked: Boolean, icon: SettingsRowIcon, changed: (Boolean) -> Unit,
+    ) {
         val control = Switch(activity).apply {
             this.id = id
-            text = controlText(title, null, hint)
-            textSize = 17f
-            minHeight = dp(48)
+            text = controlText(title, hint)
+            textSize = 16f
+            minHeight = dp(76)
             gravity = Gravity.START or Gravity.CENTER_VERTICAL
             includeFontPadding = false
             setSingleLine(false)
-            setLineSpacing(dp(3).toFloat(), 1f)
-            switchPadding = dp(16)
-            setPadding(dp(16), dp(10), dp(16), dp(10))
+            setLineSpacing(dp(2).toFloat(), 1f)
+            switchPadding = dp(12)
+            setPadding(dp(8), dp(12), dp(8), dp(12))
             setTextColor(FOREGROUND)
-            background = touchBackground(CARD, 14)
-            thumbTintList = ColorStateList(
-                arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                intArrayOf(FOREGROUND, FOREGROUND),
-            )
-            trackTintList = ColorStateList(
-                arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                intArrayOf(0xFF846B3D.toInt(), 0xFF777777.toInt()),
-            )
+            background = touchBackground()
+            setCompoundDrawablesRelativeWithIntrinsicBounds(SettingsIconDrawable(activity, icon), null, null, null)
+            compoundDrawablePadding = dp(12)
+            showText = false
+            splitTrack = false
+            switchMinWidth = dp(48)
+            thumbDrawable = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(FOREGROUND)
+                setSize(dp(24), dp(24))
+            }
+            thumbTintList = ColorStateList.valueOf(FOREGROUND)
+            trackDrawable = StateListDrawable().apply {
+                addState(intArrayOf(android.R.attr.state_checked), switchTrack(ACCENT))
+                addState(intArrayOf(), switchTrack(0xFF55555C.toInt()))
+            }
+            trackTintList = null
             isChecked = checked
             setOnCheckedChangeListener { _, value -> changed(value) }
         }
         addControl(control)
     }
 
-    private fun addControl(control: View) {
-        body.addView(control, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT).apply { bottomMargin = dp(8) })
+    private fun switchTrack(color: Int) = GradientDrawable().apply {
+        setColor(color)
+        cornerRadius = dp(14).toFloat()
+        setSize(dp(48), dp(28))
     }
 
-    /** Keep one native, accessible control per setting, with text that can grow at large font sizes. */
-    private fun controlText(title: Int, value: String?, hint: Int, titleColor: Int = FOREGROUND): CharSequence {
+    private fun addControl(control: View) {
+        val group = activeGroup ?: return
+        if (group.childCount > 0) group.addView(View(activity).apply {
+            setBackgroundColor(ToviTheme.BORDER)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(1)).apply {
+            marginStart = dp(60)
+            marginEnd = dp(8)
+        })
+        group.addView(control, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+    }
+
+    private fun rowDescription(title: Int, value: String?, hint: Int): String = listOfNotNull(
+        activity.getString(title), value, activity.getString(hint),
+    ).joinToString(", ")
+
+    private fun controlText(title: Int, hint: Int): CharSequence {
         val text = SpannableStringBuilder(activity.getString(title))
         text.setSpan(TypefaceSpan("sans-serif-medium"), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        text.setSpan(ForegroundColorSpan(titleColor), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        fun appendLine(line: String, size: Float, color: Int) {
-            text.append('\n')
-            val start = text.length
-            text.append(line)
-            text.setSpan(RelativeSizeSpan(size / 17f), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            text.setSpan(ForegroundColorSpan(color), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        value?.let { appendLine(it, 15f, ACCENT) }
-        val shortHint = when (hint) {
-            R.string.settings_remember_style_hint -> R.string.settings_remember_short
-            R.string.settings_grid_hint -> R.string.settings_grid_short
-            R.string.settings_sound_hint -> R.string.settings_sound_short
-            R.string.settings_haptics_hint -> R.string.settings_haptics_short
-            R.string.settings_review_hint -> R.string.settings_review_short
-            else -> hint
-        }
-        if (value == null) appendLine(activity.getString(shortHint), 13f, MUTED)
+        text.append('\n')
+        val start = text.length
+        text.append(activity.getString(hint))
+        text.setSpan(RelativeSizeSpan(12f / 16f), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        text.setSpan(ForegroundColorSpan(MUTED), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return text
     }
 
@@ -380,26 +455,20 @@ internal class SettingsOverlay(
         setLineSpacing(dp(2).toFloat(), 1f)
     }
 
-    private fun touchBackground(color: Int, radius: Int): RippleDrawable {
-        val surface = GradientDrawable().apply {
-            setColor(color)
-            cornerRadius = dp(radius).toFloat()
-            setStroke(dp(1), 0xFF30343B.toInt())
-        }
+    private fun touchBackground(): RippleDrawable {
         val mask = GradientDrawable().apply {
             setColor(0xFFFFFFFF.toInt())
-            cornerRadius = dp(radius).toFloat()
+            cornerRadius = dp(12).toFloat()
         }
-        return RippleDrawable(ColorStateList.valueOf(0x28F2B84B), surface, mask)
+        return RippleDrawable(ColorStateList.valueOf(0x24FFC629), null, mask)
     }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
-        private const val BACKGROUND = PageTopBar.SURFACE
-        private const val CARD = 0xFF1D2026.toInt()
-        private const val FOREGROUND = PageTopBar.ON_SURFACE
-        private const val MUTED = PageTopBar.ON_SURFACE_VARIANT
-        private const val ACCENT = PageTopBar.PRIMARY
+        private val BACKGROUND = ToviTheme.SURFACE
+        private val FOREGROUND = ToviTheme.TEXT
+        private val MUTED = ToviTheme.MUTED
+        private val ACCENT = ToviTheme.PRIMARY
     }
 }

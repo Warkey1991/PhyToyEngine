@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.ImageView
+import kotlin.math.abs
 
 /** A bounded photo transform. Opening another photo always restores the full composition. */
 internal class ZoomablePhotoView(context: Context) : ImageView(context) {
@@ -22,9 +23,18 @@ internal class ZoomablePhotoView(context: Context) : ImageView(context) {
     private var offsetY = 0f
     private val zoom get() = if (fitScale > 0) scale / fitScale else 1f
     var onZoomChanged: ((Boolean) -> Unit)? = null
+    /** Navigation is available only at fit scale; enlarged photos keep one-finger panning. */
+    var onNavigate: ((Int) -> Unit)? = null
+    private var swipeBlocked = false
+    private var touchStartX = 0f
+    private var touchStartY = 0f
 
     private val scaling = ScaleGestureDetector(context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                swipeBlocked = true
+                return true
+            }
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 zoomTo(zoom * detector.scaleFactor, detector.focusX, detector.focusY)
                 return true
@@ -35,6 +45,7 @@ internal class ZoomablePhotoView(context: Context) : ImageView(context) {
             override fun onDown(event: MotionEvent): Boolean = true
             override fun onSingleTapConfirmed(event: MotionEvent): Boolean = performClick()
             override fun onDoubleTap(event: MotionEvent): Boolean {
+                swipeBlocked = true
                 if (zoom > 1.05f) resetZoom() else zoomTo(2.5f, event.x, event.y)
                 return true
             }
@@ -132,8 +143,22 @@ internal class ZoomablePhotoView(context: Context) : ImageView(context) {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (bitmapWidth <= 0) return false
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            swipeBlocked = zoom > 1.05f
+            touchStartX = event.x
+            touchStartY = event.y
+        }
+        if (event.pointerCount > 1 || event.actionMasked == MotionEvent.ACTION_POINTER_DOWN ||
+            event.actionMasked == MotionEvent.ACTION_CANCEL) swipeBlocked = true
         scaling.onTouchEvent(event)
         gestures.onTouchEvent(event)
+        if (event.actionMasked == MotionEvent.ACTION_UP && !swipeBlocked && !scaling.isInProgress && zoom <= 1.05f) {
+            val distance = event.x - touchStartX
+            val vertical = event.y - touchStartY
+            if (abs(distance) >= 56f * resources.displayMetrics.density && abs(distance) >= abs(vertical) * 1.5f) {
+                onNavigate?.invoke(if (distance < 0f) 1 else -1)
+            }
+        }
         return true
     }
 

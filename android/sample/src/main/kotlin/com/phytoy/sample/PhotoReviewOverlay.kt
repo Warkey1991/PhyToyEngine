@@ -1,6 +1,7 @@
 package com.phytoy.sample
 
 import android.app.AlertDialog
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -22,6 +23,11 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.ImageView
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /** Local review with deliberate sharing/deletion actions and a bounded zoomable image. */
 internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
@@ -35,8 +41,14 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
     private val nextButton = action(R.id.review_next, R.string.photo_next)
     private val shareButton = action(R.id.review_share, R.string.photo_share)
     private val deleteButton = action(R.id.review_delete, R.string.photo_delete)
+    private val infoButton = action(R.id.review_info, R.string.photo_info)
+    private val metadataCard = LinearLayout(context)
+    private val metadataTitle = TextView(context)
+    private val metadataTime = TextView(context)
+    private val metadataDimensions = TextView(context)
     private val resetButton = action(R.id.review_zoom_reset, R.string.photo_zoom_reset)
     private val statePanel = LinearLayout(context)
+    private val stateViewport = ScrollView(context)
     private val loading = ProgressBar(context)
     private val stateText = TextView(context)
     private val retryButton = action(R.id.review_retry, R.string.photo_retry)
@@ -55,6 +67,9 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
     private var zoomHintShown = false
     private val hideZoomHint = Runnable { zoomHint.visibility = GONE }
     private var deletionDialog: AlertDialog? = null
+    private var informationDialog: AlertDialog? = null
+    private var photoIndex = -1
+    private var photoCount = 0
     private var reviewBitmap: Bitmap? = null
     var currentPhoto: PhotoStore.SavedPhoto? = null
         private set
@@ -87,6 +102,13 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         updateActions()
     }
 
+    /** Position comes from the same activity snapshot used by previous/next navigation. */
+    fun setPhotoPosition(index: Int, total: Int) {
+        photoIndex = index
+        photoCount = total
+        updateTitle()
+    }
+
     fun setBusy(busy: Boolean) {
         this.busy = busy
         updateActions()
@@ -103,7 +125,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             accessibilityPaneTitle = context.getString(R.string.review_pane_title)
         }
-        setBackgroundColor(PageTopBar.SURFACE)
+        setBackgroundColor(ToviTheme.SURFACE)
 
         val page = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         addView(page, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -117,7 +139,12 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             contentDescription = context.getString(R.string.review_navigate_back)
         }
         topBar.setOnBackClickListener { dismiss() }
-        details.visibility = VISIBLE
+        details.visibility = GONE
+        title.apply {
+            textSize = 18f
+            gravity = Gravity.CENTER
+            maxLines = 1
+        }
         page.addView(topBar, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         photoBody.orientation = LinearLayout.VERTICAL
         page.addView(photoBody, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
@@ -132,7 +159,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             textSize = 12f
             setTextColor(PageTopBar.ON_SURFACE_VARIANT)
             gravity = Gravity.CENTER
-            maxLines = 2
+            maxLines = if (resources.configuration.fontScale >= 1.5f) 3 else 2
             setPadding(dp(12), dp(6), dp(12), dp(6))
             background = rounded(0xD9111318.toInt(), dp(12).toFloat())
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
@@ -146,11 +173,15 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             resetButton.visibility = if (it) VISIBLE else GONE
             if (it) zoomHint.visibility = GONE
         }
+        photo.onNavigate = { direction ->
+            if (!busy && reviewBitmap != null && (if (direction < 0) canPrevious else canNext)) {
+                navigateListener?.invoke(direction)
+            }
+        }
         statePanel.apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             setPadding(dp(24), dp(24), dp(24), dp(24))
-            visibility = GONE
         }
         stateText.apply {
             textSize = 16f
@@ -163,17 +194,23 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         statePanel.addView(stateText, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         retryButton.setOnClickListener { if (!busy) currentPhoto?.let { retryListener?.invoke(it) } }
         statePanel.addView(retryButton, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
-        imageArea.addView(statePanel, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+        stateViewport.apply {
+            isFillViewport = true
+            visibility = GONE
+            addView(statePanel, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        }
+        imageArea.addView(stateViewport, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         photoBody.addView(imageArea, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
 
         actions.apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_VERTICAL
-            setBackgroundColor(PageTopBar.SURFACE)
+            background = ToviTheme.card(context, 24)
             minimumHeight = dp(88)
             setPadding(dp(16), dp(12), dp(16), dp(16))
         }
         tools.orientation = LinearLayout.VERTICAL
+        buildMetadataCard()
         toolsScroll.apply {
             isFillViewport = false
             isHorizontalScrollBarEnabled = false
@@ -198,7 +235,14 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         nextButton.setOnClickListener { if (!busy && canNext) navigateListener?.invoke(1) }
         shareButton.setOnClickListener { if (!busy && reviewBitmap != null) currentPhoto?.let { shareListener?.invoke(it) } }
         deleteButton.setOnClickListener { if (!busy && reviewBitmap != null) confirmDeletion() }
-        deleteButton.setTextColor(0xFFFFABA5.toInt())
+        infoButton.setOnClickListener { if (!busy) showInformation() }
+        listOf(shareButton to R.drawable.ic_photo_share, deleteButton to R.drawable.ic_photo_delete,
+            infoButton to R.drawable.ic_photo_info).forEach { (button, icon) ->
+            val drawable = context.getDrawable(icon)?.mutate()?.apply { setBounds(0, 0, dp(26), dp(26)) }
+            button.setCompoundDrawables(null, drawable, null, null)
+            button.compoundDrawablePadding = dp(6)
+            button.minimumHeight = dp(68)
+        }
         actions.addView(toolsScroll, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
 
         continueButton.apply {
@@ -212,7 +256,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             minimumHeight = dp(48)
             setPadding(dp(24), dp(12), dp(24), dp(12))
             maxLines = 2
-            background = touchBackground(ACCENT, dp(24).toFloat())
+            background = ToviTheme.actionBackground(context, primary = true)
             isClickable = true
             isFocusable = true
             accessibilityDelegate = buttonAccessibilityDelegate()
@@ -256,7 +300,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             removeCallbacks(hideZoomHint)
             postDelayed(hideZoomHint, 3_000L)
         }
-        statePanel.visibility = GONE
+        stateViewport.visibility = GONE
         photo.contentDescription = context.getString(
             R.string.review_photo_description, saved.styleName, saved.width, saved.height,
         ) + ". " + context.getString(R.string.photo_zoom_hint)
@@ -279,7 +323,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         loading.visibility = VISIBLE
         retryButton.visibility = GONE
         stateText.setText(R.string.photo_loading)
-        statePanel.visibility = VISIBLE
+        stateViewport.visibility = VISIBLE
         updateActions()
         reveal()
     }
@@ -288,14 +332,28 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         loading.visibility = GONE
         stateText.text = text
         retryButton.visibility = VISIBLE
-        statePanel.visibility = VISIBLE
+        stateViewport.visibility = VISIBLE
         updateActions()
     }
 
     private fun bindPhoto(saved: PhotoStore.SavedPhoto) {
+        informationDialog?.dismiss()
+        informationDialog = null
         currentPhoto = saved
-        title.text = saved.styleName
-        details.text = context.getString(R.string.review_image_details, saved.width, saved.height)
+        updateTitle()
+        metadataTitle.text = saved.styleName
+        metadataTime.text = capturedTime(saved)?.let {
+            DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it))
+        }.orEmpty()
+        metadataTime.visibility = if (metadataTime.text.isEmpty()) GONE else VISIBLE
+        metadataDimensions.text = if (saved.width > 0 && saved.height > 0) {
+            context.getString(R.string.review_dimensions, saved.width, saved.height, aspectRatio(saved))
+        } else saved.styleCode
+    }
+
+    private fun updateTitle() {
+        title.text = if (photoIndex in 0 until photoCount) context.getString(R.string.review_position,
+            photoIndex + 1, photoCount) else context.getString(R.string.review_pane_title)
     }
 
     private fun reveal() {
@@ -312,8 +370,10 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         if (!wasShowing) visibilityListener?.invoke(true)
         if (!wasShowing) {
             animate().cancel()
-            alpha = 0f
-            animate().alpha(1f).setDuration(160L).start()
+            if (ValueAnimator.areAnimatorsEnabled()) {
+                alpha = 0f
+                animate().alpha(1f).setDuration(160L).start()
+            } else alpha = 1f
             back.requestFocus()
         }
         // The native pane-title event is sufficient on API 28+. Announce the
@@ -332,6 +392,8 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         removeCallbacks(hideZoomHint)
         deletionDialog?.dismiss()
         deletionDialog = null
+        informationDialog?.dismiss()
+        informationDialog = null
         visibility = GONE
         visibilityListener?.invoke(false)
         photo.setImageBitmap(null)
@@ -342,6 +404,8 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         busy = false
         canPrevious = false
         canNext = false
+        photoIndex = -1
+        photoCount = 0
         restoreBackgroundAccessibility()
         val candidates = if (isTouchExplorationEnabled()) listOf(previousAccessibilityFocus, previousInputFocus)
             else listOf(previousInputFocus)
@@ -360,13 +424,14 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         // In a short, wide window keep the photograph tall and move its tools to the side.
-        val sideTools = w > h && w >= dp(600)
+        val sideTools = w > h && w >= dp(480)
         val largeFont = resources.configuration.fontScale >= 1.5f
-        // In a very short window, a fixed two-line primary action can leave
-        // less than one complete touch target for the tools. Scroll the whole
-        // column instead, so every action can be brought fully into view.
-        val scrollAllActions = sideTools && largeFont && h < dp(420)
-        val focusedAction = listOf(previousButton, nextButton, shareButton, deleteButton, continueButton)
+        val bodyHeight = (h - paddingTop - paddingBottom - topBar.measuredHeight).coerceAtLeast(dp(120))
+        // Every landscape action stays reachable in one scrolling side column.
+        // Portrait keeps Continue fixed and scrolls the information and tools.
+        val scrollAllActions = sideTools || bodyHeight < dp(if (largeFont) 400 else 320)
+        val railWidth = dp(if (largeFont) 272 else 248)
+        val focusedAction = listOf(previousButton, nextButton, shareButton, deleteButton, infoButton, continueButton)
             .firstOrNull { it.hasFocus() }
         photoBody.orientation = if (sideTools) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
         imageArea.layoutParams = if (sideTools) LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f)
@@ -377,24 +442,27 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
                 sidebarScroll.addView(actions, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
             }
             if (sidebarScroll.parent !== photoBody) {
-                photoBody.addView(sidebarScroll, LinearLayout.LayoutParams(dp(240), LayoutParams.MATCH_PARENT))
+                photoBody.addView(sidebarScroll)
             }
+            sidebarScroll.layoutParams = if (sideTools) LinearLayout.LayoutParams(railWidth, LayoutParams.MATCH_PARENT)
+                else LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, (bodyHeight * 0.55f).toInt())
         } else {
             if (sidebarScroll.parent === photoBody) photoBody.removeView(sidebarScroll)
             if (actions.parent !== photoBody) {
                 (actions.parent as? ViewGroup)?.removeView(actions)
                 photoBody.addView(actions)
             }
-            actions.layoutParams = if (sideTools) LinearLayout.LayoutParams(dp(240), LayoutParams.MATCH_PARENT)
-                else LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            val actionFraction = if (!largeFont && bodyHeight >= dp(480)) 0.60f else 0.50f
+            val actionHeight = minOf(dp(if (largeFont) 360 else 304), (bodyHeight * actionFraction).toInt())
+            actions.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, actionHeight)
         }
-        val toolWidth = (if (sideTools) dp(240) else w - paddingLeft - paddingRight) -
+        val toolWidth = (if (sideTools) railWidth else w - paddingLeft - paddingRight) -
             actions.paddingLeft - actions.paddingRight
         // A side rail is narrow even on a wide display. At large fonts, give
         // Share/Delete the full row so that their words stay together.
         rebuildTools(toolWidth < dp(300) || (toolWidth < dp(600) && largeFont),
             toolWidth < dp(300) && largeFont)
-        toolsScroll.layoutParams = if (sideTools && !scrollAllActions) LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f)
+        toolsScroll.layoutParams = if (!scrollAllActions) LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f)
             else LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         focusedAction?.requestFocus()
     }
@@ -403,16 +471,19 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         if (splitToolRows == split && stackToolActions == stackActions) return
         splitToolRows = split
         stackToolActions = stackActions
-        val buttons = listOf(previousButton, shareButton, deleteButton, nextButton)
+        val buttons = listOf(previousButton, shareButton, deleteButton, infoButton, nextButton)
         val focused = buttons.firstOrNull { it.hasFocus() }
         buttons.forEach { (it.parent as? ViewGroup)?.removeView(it) }
         tools.removeAllViews()
+        (metadataCard.parent as? ViewGroup)?.removeView(metadataCard)
+        tools.addView(metadataCard, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+            bottomMargin = dp(12)
+        })
         previousButton.textSize = if (split) 18f else 24f
         nextButton.textSize = if (split) 18f else 24f
         val rows = when {
-            stackActions -> listOf(listOf(previousButton, nextButton), listOf(shareButton), listOf(deleteButton))
-            split -> listOf(listOf(previousButton, nextButton), listOf(shareButton, deleteButton))
-            else -> listOf(buttons)
+            stackActions -> listOf(listOf(previousButton, nextButton), listOf(shareButton), listOf(deleteButton), listOf(infoButton))
+            else -> listOf(listOf(previousButton, nextButton), listOf(shareButton, deleteButton, infoButton))
         }
         rows.forEachIndexed { rowIndex, rowButtons ->
             val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
@@ -443,13 +514,95 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         deletionDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(0xFFFFABA5.toInt())
     }
 
+    private fun buildMetadataCard() {
+        metadataCard.apply {
+            id = R.id.review_metadata
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(12), dp(12), dp(12), dp(12))
+            background = ToviTheme.card(context, 16, ToviTheme.SURFACE).apply {
+                setStroke(dp(1), ToviTheme.BORDER)
+            }
+        }
+        metadataCard.addView(ImageView(context).apply {
+            setImageResource(R.drawable.ic_gallery_camera)
+            imageTintList = ColorStateList.valueOf(ToviTheme.PRIMARY)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(30), dp(30)).apply { marginEnd = dp(12) })
+        val text = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        metadataTitle.apply {
+            textSize = 15f
+            setTextColor(ToviTheme.PRIMARY)
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            maxLines = 2
+            includeFontPadding = false
+        }
+        metadataTime.apply {
+            textSize = 11f
+            setTextColor(ToviTheme.MUTED)
+            includeFontPadding = false
+        }
+        metadataDimensions.apply {
+            textSize = 11f
+            setTextColor(ToviTheme.TEXT)
+            includeFontPadding = false
+        }
+        text.addView(metadataTitle, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        text.addView(metadataTime, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(5)
+        })
+        text.addView(metadataDimensions, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+            topMargin = dp(4)
+        })
+        metadataCard.addView(text, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+    }
+
+    private fun showInformation() {
+        val saved = currentPhoto ?: return
+        if (informationDialog?.isShowing == true) return
+        val lines = mutableListOf(context.getString(R.string.review_metadata_style, saved.styleName))
+        capturedTime(saved)?.let {
+            lines += context.getString(R.string.review_metadata_time,
+                DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM).format(Date(it)))
+        }
+        if (saved.width > 0 && saved.height > 0) {
+            lines += context.getString(R.string.review_dimensions, saved.width, saved.height,
+                context.getString(R.string.review_megapixels, saved.width.toLong() * saved.height / 1_000_000.0))
+            lines += context.getString(R.string.review_metadata_ratio, aspectRatio(saved))
+        }
+        if (saved.displayName.isNotBlank()) lines += context.getString(R.string.review_metadata_name, saved.displayName)
+        informationDialog = AlertDialog.Builder(context)
+            .setTitle(R.string.review_metadata_title)
+            .setMessage(lines.joinToString("\n\n"))
+            .setPositiveButton(R.string.review_metadata_close, null)
+            .setOnDismissListener { informationDialog = null }
+            .show()
+        informationDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(ToviTheme.PRIMARY)
+    }
+
+    /** Uses the existing capture filename; never invents unavailable EXIF fields. */
+    private fun capturedTime(saved: PhotoStore.SavedPhoto): Long? = runCatching {
+        if (!saved.displayName.startsWith("PT_")) return@runCatching null
+        SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).apply { isLenient = false }
+            .parse(saved.displayName.removePrefix("PT_").substringBeforeLast('.'))?.time
+    }.getOrNull()
+
+    private fun aspectRatio(saved: PhotoStore.SavedPhoto): String {
+        var a = saved.width
+        var b = saved.height
+        while (b != 0) { val remainder = a % b; a = b; b = remainder }
+        val divisor = a.coerceAtLeast(1)
+        return "${saved.width / divisor}:${saved.height / divisor}"
+    }
+
     private fun updateActions() {
         previousButton.isEnabled = canPrevious && !busy
         nextButton.isEnabled = canNext && !busy
         shareButton.isEnabled = reviewBitmap != null && !busy
         deleteButton.isEnabled = reviewBitmap != null && !busy
+        infoButton.isEnabled = currentPhoto != null && !busy
         retryButton.isEnabled = !busy
-        listOf(previousButton, nextButton, shareButton, deleteButton, retryButton).forEach {
+        listOf(previousButton, nextButton, shareButton, deleteButton, infoButton, retryButton).forEach {
             it.alpha = if (it.isEnabled) 1f else 0.38f
         }
     }
@@ -465,7 +618,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         minimumHeight = dp(48)
         setPadding(dp(8), dp(10), dp(8), dp(10))
         maxLines = 2
-        background = touchBackground(0xFF24272E.toInt(), dp(16).toFloat())
+        background = ToviTheme.actionBackground(context)
         isClickable = true
         isFocusable = true
         accessibilityDelegate = buttonAccessibilityDelegate()

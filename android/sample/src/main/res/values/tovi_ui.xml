@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_style_color_ui" translatable="false">DH 2++ COLOR</string>
+    <string name="camera_style_mono_ui" translatable="false">DH 2++ MONO</string>
+    <string name="camera_first_use_compact">Tap to focus · Swipe up or down for exposure · Pinch to zoom</string>
+</resources>

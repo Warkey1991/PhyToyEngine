@@ -11,7 +11,7 @@ import traceback
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from run_android_017_ui_smoke import UiSmoke
+from run_android_ui_redesign_smoke import RedesignSmoke as UiSmoke
 from run_android_billing_smoke import FREE, PAID
 
 
@@ -23,9 +23,9 @@ def main():
     parser.add_argument("--activity", default="com.phytoy.sample.MainActivity")
     parser.add_argument("--channel", choices=("play", "galaxy"), required=True)
     parser.add_argument("--expected-apk-sha256", required=True)
-    parser.add_argument("--large-font-actions", action="store_true", help="Also verify fixed actions at 200% font scale, then restore it")
-    parser.add_argument("--adjustment-actions", action="store_true", help="Also check EV/zoom sliders at the original font scale and at 200% when requested")
-    parser.add_argument("--review-actions", action="store_true", help="Also exercise existing-photo review at 200%; requires --large-font-actions and seed photos")
+    parser.add_argument("--large-font-actions", action="store_true", help="Also verify fixed actions at 200%% font scale, then restore it")
+    parser.add_argument("--adjustment-actions", action="store_true", help="Also check EV/zoom sliders at the original font scale and at 200%% when requested")
+    parser.add_argument("--review-actions", action="store_true", help="Also exercise existing-photo review at 200%%; requires --large-font-actions and seed photos")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.review_actions and not args.large_font_actions:

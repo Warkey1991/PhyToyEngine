@@ -40,20 +40,19 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     val flashMode: View
         get() = flashModeControl
 
-    private val portraitTopChromeDp = maxOf(72, (52f * resources.configuration.fontScale + 20f).toInt())
+    private val portraitTopChromeDp = maxOf(76, (32f * resources.configuration.fontScale + 28f).toInt())
     private val compactTopChromeDp = maxOf(72, kotlin.math.ceil(Paint().apply {
         textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 22f, resources.displayMetrics)
         typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
     }.fontSpacing / resources.displayMetrics.density).toInt() + 16)
     val topChromeDp: Int get() = if (compactLayout) compactTopChromeDp else portraitTopChromeDp
+    val previewTopInsetDp: Int get() = if (compactLayout) topChromeDp else 0
     private val styleCaptionHeightDp = maxOf(24, kotlin.math.ceil(Paint().apply {
         textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12f, resources.displayMetrics)
     }.fontSpacing / resources.displayMetrics.density).toInt() + 4)
-    val bottomChromeDp: Int get() = when {
-        compactLayout -> 56
-        shortPortraitLayout -> 172
-        else -> 178 + styleCaptionHeightDp
-    }
+    private val styleArtworkDp = if (resources.configuration.fontScale >= 1.5f) 48 else 58
+    private val styleRailDp = styleArtworkDp + styleCaptionHeightDp * 2 + 12
+    val bottomChromeDp: Int get() = if (compactLayout) 56 else styleRailDp + if (shortPortraitLayout) 82 else 94
     val sideChromeDp: Int get() = if (compactLayout) 128 else 0
     private var compactLayout = false
     private var shortPortraitLayout = false
@@ -70,6 +69,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     private val settingsControl = SettingsControlView(context)
     private val exposureControl = TextView(context)
     private val zoomControl = TextView(context)
+    private val zoomPresets = LinearLayout(context)
+    private val zoomPresetControls = linkedMapOf<Float, TextView>()
     private val message = TextView(context)
     private val recoveryAction = TextView(context)
     private val messagePanel = LinearLayout(context)
@@ -95,6 +96,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     private var canUseStyle: (CameraStyle) -> Boolean = { true }
     private var stylePreviewOnly = false
     private var cameraReady = false
+    private var readyStatePublished = false
     private var lensSwitchAvailable = false
     private var flashAvailable = false
     private var exposureSupported = false
@@ -112,6 +114,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     private var maximumZoom = 1f
     private var zoomRatio = 1f
     private var hintVisible = false
+    private var firstHintDismiss: (() -> Unit)? = null
+    private val clearFirstHint = Runnable { completeFirstUseHint() }
     private var hapticsEnabled = true
 
     fun setHapticsEnabled(enabled: Boolean) { hapticsEnabled = enabled }
@@ -164,26 +168,29 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             } else view.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop,
                 insets.systemWindowInsetRight, insets.systemWindowInsetBottom)
             if (width > 0 && height > 0) {
-                if (compactLayout) updateResponsiveLayout() else updateAdjustmentPanelBounds()
+                updateResponsiveLayout()
             }
             insets
         }
     }
 
     fun setReady(ready: Boolean) {
+        if (readyStatePublished && cameraReady == ready) return
+        readyStatePublished = true
         cameraReady = ready
         shutterControl.setReady(ready)
         lensSwitchControl.isEnabled = ready && lensSwitchAvailable && !capturing
         lensSwitchControl.alpha = if (lensSwitchControl.isEnabled) 1f else 0.35f
         flashModeControl.isEnabled = ready && flashAvailable && !capturing
         flashModeControl.alpha = if (flashModeControl.isEnabled) 1f else 0.35f
-        styleTitle.text = selectedStyle.name(context)
+        styleTitle.text = selectedStyle.uiName(context)
         if (ready && !capturing && !hintVisible) messagePanel.visibility = INVISIBLE
         updateShutterDescription()
         updateStyleControlState()
     }
 
     fun setCapturing() {
+        completeFirstUseHint()
         capturing = true
         hintVisible = false
         adjustmentPanel.dismiss()
@@ -205,6 +212,12 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     fun finishCapture() {
         capturing = false
+        // The camera can remain ready throughout saving, so finish the progress
+        // message here rather than relying on another readiness notification.
+        if (recoveryAction.visibility != VISIBLE) {
+            removeCallbacks(clearMessage)
+            messagePanel.visibility = INVISIBLE
+        }
         shutterControl.setCapturing(false)
         shutterControl.setReady(cameraReady)
         updateShutterDescription()
@@ -271,6 +284,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         zoomRatio = ratio
         zoomControl.text = context.getString(R.string.zoom_ratio, ratio)
         zoomControl.contentDescription = context.getString(R.string.camera_adjust_zoom_open, ratio)
+        updateZoomPresetState()
     }
 
     fun setExposureRange(minimum: Int, maximum: Int, step: Float) {
@@ -284,6 +298,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         adjustmentPanel.dismiss()
         minimumZoom = minimum
         maximumZoom = maximum
+        rebuildZoomPresets()
     }
 
     fun setOnExposureValueSelectedListener(listener: (Int) -> Unit) { exposureValueListener = listener }
@@ -294,12 +309,21 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     fun showFirstUseHint(onDismiss: () -> Unit) {
         if (!cameraReady || capturing) return
-        showRecoveryMessage(context.getString(R.string.camera_first_use_hint), context.getString(R.string.camera_first_use_done)) {
-            hintVisible = false
-            messagePanel.visibility = INVISIBLE
-            onDismiss()
-        }
+        showMessage(context.getString(R.string.camera_first_use_compact))
+        message.maxLines = if (resources.configuration.fontScale >= 1.5f) 4 else 2
         hintVisible = true
+        firstHintDismiss = onDismiss
+        postDelayed(clearFirstHint, messageTimeoutMillis())
+    }
+
+    private fun completeFirstUseHint() {
+        if (!hintVisible) return
+        removeCallbacks(clearFirstHint)
+        hintVisible = false
+        messagePanel.visibility = INVISIBLE
+        val dismissed = firstHintDismiss
+        firstHintDismiss = null
+        dismissed?.invoke()
     }
 
     fun setCaptureSize(width: Int, height: Int) {
@@ -334,9 +358,9 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     fun setStyle(style: CameraStyle) {
         selectedStyle = style
-        styleTitle.text = style.name(context)
+        styleTitle.text = style.uiName(context)
         updateStyleCaption()
-        header.contentDescription = style.name(context)
+        header.contentDescription = style.uiName(context)
         styleControls.forEach { (candidate, control) ->
             val selected = candidate == style
             control.isSelected = selected
@@ -373,9 +397,9 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     private fun updateStyleCaption() {
         styleDescription.setText(if (stylePreviewOnly) R.string.camera_preview_style else selectedStyle.descriptionRes)
-        styleDescription.setTextColor(if (stylePreviewOnly) ACCENT else 0xFF8E939B.toInt())
+        styleDescription.setTextColor(if (stylePreviewOnly) ACCENT else ToviTheme.MUTED)
         unlockControl.visibility = if (stylePreviewOnly) VISIBLE else GONE
-        captureFormat.visibility = if (stylePreviewOnly || compactLayout) GONE else VISIBLE
+        captureFormat.visibility = GONE
         if (compactLayout && styleStrip.layoutParams != null) {
             styleStrip.layoutParams = (styleStrip.layoutParams as LayoutParams).apply { marginEnd = dp(sideChromeDp + if (stylePreviewOnly) 128 else 0) }
         }
@@ -400,9 +424,12 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         zoomControl.alpha = if (zoomControl.isEnabled) 1f else 0.35f
         unlockControl.isEnabled = !capturing
         settingsControl.isEnabled = !capturing
+        header.isEnabled = !capturing
+        updateZoomPresetState()
     }
 
     fun showFocusIndicator(x: Float, y: Float) {
+        completeFirstUseHint()
         focusIndicator.animate().cancel()
         focusIndicator.setSuccess(null)
         focusIndicator.x = x - focusIndicator.layoutParams.width / 2f
@@ -428,11 +455,14 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     }
 
     fun showMessage(text: CharSequence, temporary: Boolean = false) {
+        removeCallbacks(clearFirstHint)
+        firstHintDismiss = null
         hintVisible = false
         removeCallbacks(clearMessage)
         messagePanel.animate().cancel()
         messagePanel.alpha = 1f
         message.text = text
+        message.maxLines = 5
         messagePanel.visibility = VISIBLE
         recoveryAction.visibility = GONE
         recoveryAction.setOnClickListener(null)
@@ -470,7 +500,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             topScrim.apply {
                 background = GradientDrawable(
                     GradientDrawable.Orientation.TOP_BOTTOM,
-                    intArrayOf(PageTopBar.SURFACE, PageTopBar.SURFACE),
+                    intArrayOf(0xC90B0B0C.toInt(), Color.TRANSPARENT),
                 )
             },
             LayoutParams(LayoutParams.MATCH_PARENT, dp(topChromeDp), Gravity.TOP),
@@ -491,31 +521,59 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     private fun addTopBar() {
         header.apply {
-            orientation = LinearLayout.VERTICAL
+            orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.START or Gravity.CENTER_VERTICAL
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
             if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
-            setPadding(0, dp(8), 0, dp(8))
+            setPadding(dp(12), dp(8), dp(10), dp(8))
+            background = touchBackground(0xE60B0B0C.toInt(), dp(24).toFloat())
+            isClickable = true
+            isFocusable = true
+            accessibilityDelegate = buttonAccessibilityDelegate()
+            setOnClickListener { if (!capturing) unlockListener?.invoke() }
         }
+        header.addView(ImageView(context).apply {
+            setImageResource(R.drawable.ic_gallery_camera)
+            imageTintList = ColorStateList.valueOf(ACCENT)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(24), dp(24)).apply { marginEnd = dp(8) })
         styleTitle.apply {
-            setTextColor(PageTopBar.ON_SURFACE)
-            textSize = 22f
+            setTextColor(ACCENT)
+            textSize = 15f
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
             maxLines = 2
             ellipsize = android.text.TextUtils.TruncateAt.END
             includeFontPadding = false
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         }
-        header.addView(styleTitle)
-        addView(header, LayoutParams(LayoutParams.MATCH_PARENT, dp(topChromeDp), Gravity.TOP or Gravity.START).apply {
-            marginStart = dp(16)
+        styleDescription.apply {
+            textSize = 11f
+            maxLines = 1
+            ellipsize = android.text.TextUtils.TruncateAt.END
+            includeFontPadding = false
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        header.addView(LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(styleTitle)
+            addView(styleDescription, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply { topMargin = dp(3) })
+        }, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+        header.addView(TextView(context).apply {
+            text = "⌄"
+            textSize = 20f
+            setTextColor(Color.WHITE)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(16), LayoutParams.WRAP_CONTENT))
+        addView(header, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.TOP or Gravity.START).apply {
+            marginStart = dp(12)
             marginEnd = dp(120)
+            topMargin = dp(10)
         })
         settingsControl.apply {
             contentDescription = context.getString(R.string.camera_settings_action)
             isClickable = true
             isFocusable = true
-            background = touchBackground(Color.TRANSPARENT, dp(24).toFloat())
+            background = touchBackground(0xE60B0B0C.toInt(), dp(24).toFloat())
         }
         addView(settingsControl, LayoutParams(dp(48), dp(48), Gravity.TOP or Gravity.END).apply {
             marginEnd = dp(8)
@@ -525,7 +583,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             contentDescription = context.getString(R.string.flash_control_description)
             isClickable = true
             isFocusable = true
-            background = touchBackground(Color.TRANSPARENT, dp(24).toFloat())
+            background = touchBackground(0xE60B0B0C.toInt(), dp(24).toFloat())
         }
         addView(flashModeControl, LayoutParams(dp(48), dp(48), Gravity.TOP or Gravity.END).apply {
             marginEnd = dp(60)
@@ -549,7 +607,9 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             isFocusable = true
             setOnClickListener {
                 if (cameraReady && !capturing && maximumZoom > minimumZoom) {
+                    completeFirstUseHint()
                     adjustmentPanel.showZoom(zoomRatio, minimumZoom, maximumZoom) { zoomValueListener?.invoke(it) }
+                    updateAdjustmentPanelBounds()
                 }
             }
         }
@@ -566,7 +626,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             setPadding(dp(12), 0, dp(12), 0)
         }
         CameraStyle.entries.forEach { style ->
-            val chip = StyleChipView(context).apply {
+            val chip = StyleChipView(context, style, styleArtworkDp).apply {
                 id = when (style) {
                     CameraStyle.HARINEZUMI_2PP -> R.id.style_dh_color
                     CameraStyle.HARINEZUMI_2PP_MONO -> R.id.style_dh_mono
@@ -575,16 +635,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
                     CameraStyle.STREET_84 -> R.id.style_street
                     CameraStyle.FISHEYE_05 -> R.id.style_fisheye
                 }
-                text = style.name(context)
-                setTextColor(Color.WHITE)
-                textSize = 12f
-                setPadding(dp(12), 0, dp(12), dp(2))
-                minimumWidth = dp(88)
-                letterSpacing = 0.035f
-                gravity = Gravity.CENTER
-                typeface = Typeface.create("sans", Typeface.BOLD)
-                includeFontPadding = false
-                background = touchBackground(Color.TRANSPARENT, dp(12).toFloat())
+                setTextColor(ToviTheme.TEXT)
+                background = touchBackground(Color.TRANSPARENT, dp(16).toFloat())
                 isClickable = true
                 isFocusable = true
                 accessibilityDelegate = buttonAccessibilityDelegate()
@@ -598,7 +650,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             styleControls[style] = chip
             styleRow.addView(
                 chip,
-                LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, dp(48)).apply { marginEnd = dp(4) },
+                LinearLayout.LayoutParams(dp(maxOf(70, (60 * resources.configuration.fontScale).toInt())), dp(styleRailDp)).apply { marginEnd = dp(6) },
             )
         }
         styleScroller.apply {
@@ -631,22 +683,16 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         styleRow.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> updateFades() }
         addView(
             styleStrip,
-            LayoutParams(LayoutParams.MATCH_PARENT, dp(48), Gravity.BOTTOM).apply {
-                bottomMargin = dp(130 + styleCaptionHeightDp)
+            LayoutParams(LayoutParams.MATCH_PARENT, dp(styleRailDp), Gravity.BOTTOM).apply {
+                bottomMargin = dp(94)
             },
         )
-
-        styleDescription.apply {
-            setTextColor(0x99FFFFFF.toInt())
-            textSize = 12f
-            gravity = Gravity.CENTER
-            maxLines = 1
-            ellipsize = android.text.TextUtils.TruncateAt.END
-            includeFontPadding = false
-            setPadding(dp(18), 0, dp(18), 0)
-        }
-        addView(styleDescription, LayoutParams(LayoutParams.MATCH_PARENT, dp(styleCaptionHeightDp), Gravity.BOTTOM).apply {
-            bottomMargin = dp(130)
+        zoomPresets.orientation = LinearLayout.HORIZONTAL
+        zoomPresets.gravity = Gravity.CENTER
+        zoomPresets.background = rounded(0xE60B0B0C.toInt(), dp(28).toFloat())
+        zoomPresets.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        addView(zoomPresets, LayoutParams(LayoutParams.WRAP_CONTENT, dp(48), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL).apply {
+            bottomMargin = dp(bottomChromeDp + 8)
         })
 
         exposureControl.apply {
@@ -664,9 +710,11 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             isFocusable = true
             setOnClickListener {
                 if (cameraReady && !capturing && exposureSupported) {
+                    completeFirstUseHint()
                     adjustmentPanel.showExposure(exposureIndex, exposureMinimum, exposureMaximum, exposureStep) {
                         exposureValueListener?.invoke(it)
                     }
+                    updateAdjustmentPanelBounds()
                 }
             }
         }
@@ -750,11 +798,12 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         })
         unlockControl.apply {
             id = R.id.camera_unlock_style
-            text = context.getString(R.string.camera_unlock_style)
+            text = context.getString(R.string.camera_unlock_short)
+            contentDescription = context.getString(R.string.camera_unlock_style)
             setTextColor(ACCENT)
             textSize = 12f
             gravity = Gravity.CENTER
-            maxLines = 2
+            maxLines = 1
             background = compactControlBackground()
             isClickable = true
             isFocusable = true
@@ -807,7 +856,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             shortPortraitLayout = nextShortPortrait
             updateResponsiveLayout()
             chromeSizeListener?.invoke()
-        } else if (compactLayout) updateResponsiveLayout()
+        } else updateResponsiveLayout()
         updateAdjustmentPanelBounds(width, height)
         val available = height - paddingTop - paddingBottom - dp(topChromeDp + bottomChromeDp + 24)
         val panelHeight = minOf(dp(270), available.coerceAtLeast(dp(48)))
@@ -818,11 +867,12 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     private fun updateAdjustmentPanelBounds(width: Int = this.width, height: Int = this.height) {
         val usableWidth = width - paddingLeft - paddingRight - dp(sideChromeDp)
-        val panelWidth = minOf(usableWidth - dp(32), dp(480)).coerceAtLeast(dp(1))
+        val vertical = adjustmentPanel.isVerticalExposure && !compactLayout
+        val panelWidth = minOf(usableWidth - dp(32), dp(if (vertical) 164 else 480)).coerceAtLeast(dp(1))
         adjustmentPanel.layoutParams = (adjustmentPanel.layoutParams as LayoutParams).apply {
             this.width = panelWidth
             gravity = Gravity.BOTTOM or Gravity.START
-            marginStart = ((usableWidth - panelWidth) / 2).coerceAtLeast(0)
+            marginStart = if (vertical) (usableWidth - panelWidth - dp(16)).coerceAtLeast(0) else ((usableWidth - panelWidth) / 2).coerceAtLeast(0)
             marginEnd = dp(sideChromeDp + 16)
             bottomMargin = dp(bottomChromeDp + 8)
         }
@@ -847,25 +897,23 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         compactRailScroll.visibility = GONE
         styleTitle.maxLines = if (compactLayout) 1 else 2
         topScrim.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dp(topChromeDp), Gravity.TOP)
-        header.layoutParams = (header.layoutParams as LayoutParams).apply { height = dp(topChromeDp) }
+        header.layoutParams = (header.layoutParams as LayoutParams).apply { height = LayoutParams.WRAP_CONTENT }
         listOf(settingsControl, flashModeControl).forEach { control ->
             control.layoutParams = (control.layoutParams as LayoutParams).apply { topMargin = dp((topChromeDp - 48) / 2) }
         }
         bottomScrim.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dp(bottomChromeDp), Gravity.BOTTOM)
         sideScrim.visibility = if (compactLayout) VISIBLE else GONE
         sideScrim.layoutParams = LayoutParams(dp(sideChromeDp), LayoutParams.MATCH_PARENT, Gravity.END).apply { topMargin = dp(topChromeDp) }
-        styleStrip.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dp(48), Gravity.BOTTOM).apply {
-            bottomMargin = dp(when {
-                compactLayout -> 4
-                shortPortraitLayout -> 120
-                else -> 130 + styleCaptionHeightDp
-            })
+        styleStrip.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, dp(if (compactLayout) 56 else styleRailDp), Gravity.BOTTOM).apply {
+            bottomMargin = dp(if (compactLayout) 0 else bottomChromeDp - styleRailDp)
         }
-        styleDescription.visibility = if (compactLayout || shortPortraitLayout) GONE else VISIBLE
+        styleControls.values.forEach { it.setCompact(compactLayout) }
+        styleDescription.visibility = if (compactLayout || resources.configuration.fontScale >= 1.5f) GONE else VISIBLE
+        zoomPresets.visibility = if (!compactLayout && zoomPresetControls.isNotEmpty()) VISIBLE else GONE
         if (compactLayout) {
             val availableHeight = ((height - paddingTop - paddingBottom) / resources.displayMetrics.density).toInt()
             val railHeight = (availableHeight - topChromeDp).coerceAtLeast(0)
-            val gridControlHeight = maxOf(48, kotlin.math.ceil(exposureControl.paint.fontSpacing * 2 / resources.displayMetrics.density).toInt() + 2)
+            val gridControlHeight = maxOf(48, kotlin.math.ceil(exposureControl.paint.fontSpacing * 2 / resources.displayMetrics.density).toInt() + 18)
             val gridMinimumHeight = 48 + 48 + gridControlHeight
             val gridLayout = railHeight < 192
             val scrolling = gridLayout && railHeight < gridMinimumHeight
@@ -904,15 +952,16 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             }
         } else {
             val shutterSize = if (shortPortraitLayout) 68 else 78
-            val controlBottom = if (shortPortraitLayout) 72 else 82
             val thumbnailBottom = if (shortPortraitLayout) 12 else 18
-            place(shutterControl, shutterSize, shutterSize, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 4)
-            place(exposureControl, 90, 48, Gravity.BOTTOM or Gravity.START, controlBottom, start = 18)
-            place(zoomControl, 90, 48, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, controlBottom)
-            place(unlockControl, 90, 48, Gravity.BOTTOM or Gravity.END, controlBottom, end = 18)
-            place(captureFormat, 90, 48, Gravity.BOTTOM or Gravity.END, controlBottom, end = 18)
-            place(thumbnail, 50, 50, Gravity.BOTTOM or Gravity.START, thumbnailBottom, start = 24)
-            place(lensSwitchControl, 50, 50, Gravity.BOTTOM or Gravity.END, thumbnailBottom, end = 24)
+            place(shutterControl, shutterSize + 8, shutterSize + 8, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 4)
+            place(exposureControl, 100, 48, Gravity.TOP or Gravity.END, 0, end = 12)
+            (exposureControl.layoutParams as LayoutParams).topMargin = dp(topChromeDp + 8)
+            place(zoomControl, 90, 48, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, bottomChromeDp + if (zoomPresetControls.isEmpty()) 8 else 62)
+            zoomPresets.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, dp(48), Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL).apply { bottomMargin = dp(bottomChromeDp + 8) }
+            place(unlockControl, 110, 48, Gravity.TOP or Gravity.START, 0, start = 12)
+            (unlockControl.layoutParams as LayoutParams).topMargin = dp(topChromeDp + 8)
+            place(thumbnail, 56, 56, Gravity.BOTTOM or Gravity.START, thumbnailBottom, start = 24)
+            place(lensSwitchControl, 56, 56, Gravity.BOTTOM or Gravity.END, thumbnailBottom, end = 24)
         }
         listOf(messagePanel, metrics).forEach { view ->
             view.layoutParams = (view.layoutParams as LayoutParams).apply { bottomMargin = dp(bottomChromeDp + 12) }
@@ -923,6 +972,48 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+    private fun rebuildZoomPresets() {
+        zoomPresets.removeAllViews()
+        zoomPresetControls.clear()
+        if (minimumZoom > 0f && maximumZoom > minimumZoom) {
+            listOf(0.5f, 1f, 2f).filter { it >= minimumZoom && it <= maximumZoom }.forEach { value ->
+                val button = TextView(context).apply {
+                    text = if (value == 0.5f) "0.5×" else "${value.toInt()}×"
+                    textSize = 14f
+                    gravity = Gravity.CENTER
+                    typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                    minimumWidth = dp(52)
+                    minimumHeight = dp(48)
+                    setPadding(dp(12), 0, dp(12), 0)
+                    isClickable = true
+                    isFocusable = true
+                    accessibilityDelegate = buttonAccessibilityDelegate()
+                    contentDescription = context.getString(R.string.camera_adjust_zoom_value, value)
+                    setOnClickListener {
+                        if (cameraReady && !capturing) zoomValueListener?.invoke(value)
+                    }
+                }
+                zoomPresetControls[value] = button
+                zoomPresets.addView(button, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, dp(48)))
+            }
+        }
+        updateZoomPresetState()
+        if (width > 0) updateResponsiveLayout()
+    }
+
+    private fun updateZoomPresetState() {
+        zoomPresetControls.forEach { (value, button) ->
+            val selected = kotlin.math.abs(value - zoomRatio) < 0.015f
+            val selectionChanged = button.isSelected != selected || button.background == null
+            button.isSelected = selected
+            button.isEnabled = cameraReady && !capturing
+            button.alpha = if (button.isEnabled) 1f else 0.35f
+            val color = if (selected) Color.BLACK else ToviTheme.TEXT
+            if (button.currentTextColor != color) button.setTextColor(color)
+            if (selectionChanged) button.background = touchBackground(if (selected) ACCENT else Color.TRANSPARENT, dp(24).toFloat())
+        }
+    }
 
     private fun buttonAccessibilityDelegate() = object : View.AccessibilityDelegate() {
         override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
@@ -977,6 +1068,8 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     }
 
     override fun onDetachedFromWindow() {
+        removeCallbacks(clearFirstHint)
+        firstHintDismiss = null
         removeCallbacks(clearMessage)
         messagePanel.animate().cancel()
         flash.animate().cancel()
@@ -985,7 +1078,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
 
     // Keep the full 48dp accessibility area while drawing a quieter 32dp pill.
     private fun compactControlBackground() = InsetDrawable(
-        rounded(0xFF20242A.toInt(), dp(16).toFloat()),
+        rounded(0xE60B0B0C.toInt(), dp(16).toFloat()),
         dp(4), dp(8), dp(4), dp(8),
     )
 
@@ -1007,7 +1100,23 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         rounded(Color.WHITE, radius),
     )
 
-    private class StyleChipView(context: Context) : TextView(context) {
+    private class StyleChipView(context: Context, style: CameraStyle, private val artworkDp: Int) : FrameLayout(context) {
+        private val title = TextView(context).apply {
+            text = style.uiName(context).replace(" COLOR", "\nCOLOR").replace(" MONO", "\nMONO").let {
+                if (style == CameraStyle.HARINEZUMI_2PP || style == CameraStyle.HARINEZUMI_2PP_MONO) it
+                else it.replace(" ", "\n")
+            }
+            textSize = 11f
+            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            includeFontPadding = false
+            maxLines = 2
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        private val artwork = CameraArtworkView(context).apply {
+            setStyle(style)
+            background = ToviTheme.card(context, 14)
+        }
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = ACCENT
             strokeCap = Paint.Cap.ROUND
@@ -1017,21 +1126,47 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         private val lockBody = RectF()
         private val lockShackle = Path()
 
+        init {
+            setWillNotDraw(false)
+            val unit = resources.displayMetrics.density
+            addView(artwork, LayoutParams((artworkDp * unit).toInt(), (artworkDp * unit).toInt(), Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = (4 * unit).toInt() })
+            addView(title, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.TOP).apply { topMargin = ((artworkDp + 10) * unit).toInt() })
+        }
+
+        fun setTextColor(color: Int) { title.setTextColor(color) }
+
+        fun setCompact(compact: Boolean) {
+            artwork.visibility = if (compact) GONE else VISIBLE
+            title.textSize = if (compact) 10f else 11f
+            title.gravity = Gravity.CENTER
+            title.layoutParams = (title.layoutParams as LayoutParams).apply {
+                height = if (compact) LayoutParams.MATCH_PARENT else LayoutParams.WRAP_CONTENT
+                topMargin = if (compact) 0 else ((artworkDp + 10) * resources.displayMetrics.density).toInt()
+            }
+        }
+
         fun setLocked(value: Boolean) {
             if (locked == value) return
             locked = value
-            val unit = resources.displayMetrics.density
-            setPaddingRelative(((if (locked) 34 else 12) * unit).toInt(), 0, (12 * unit).toInt(), (2 * unit).toInt())
             invalidate()
         }
 
-        override fun onDraw(canvas: Canvas) {
-            super.onDraw(canvas)
+        override fun dispatchDraw(canvas: Canvas) {
+            super.dispatchDraw(canvas)
+            val unit = resources.displayMetrics.density
+            if (artwork.visibility == VISIBLE && isSelected) {
+                paint.color = ACCENT
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = 2.5f * unit
+                canvas.drawRoundRect(RectF(artwork.left.toFloat(), artwork.top.toFloat(), artwork.right.toFloat(), artwork.bottom.toFloat()), 14f * unit, 14f * unit, paint)
+            }
             if (locked) {
-                val unit = resources.displayMetrics.density
-                val x = if (layoutDirection == LAYOUT_DIRECTION_RTL) width - 19f * unit else 19f * unit
-                val y = height / 2f - unit
-                paint.color = currentTextColor
+                val x = if (artwork.visibility == VISIBLE) artwork.right - 9f * unit else width - 8f * unit
+                val y = if (artwork.visibility == VISIBLE) artwork.bottom - 10f * unit else 10f * unit
+                paint.color = ToviTheme.SURFACE
+                paint.style = Paint.Style.FILL
+                canvas.drawCircle(x, y, 10f * unit, paint)
+                paint.color = ToviTheme.TEXT
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 1.4f * unit
                 lockBody.set(x - 4f * unit, y - unit, x + 4f * unit, y + 6f * unit)
@@ -1044,11 +1179,11 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
                 canvas.drawPath(lockShackle, paint)
                 canvas.drawPoint(x, y + 3f * unit, paint)
             }
-            if (isSelected) {
+            if (isSelected && artwork.visibility != VISIBLE) {
                 paint.color = ACCENT
                 paint.strokeWidth = resources.displayMetrics.density * 2f
                 val halfWidth = minOf(width * 0.20f, resources.displayMetrics.density * 18f)
-                val baseline = height - resources.displayMetrics.density * 5f
+                val baseline = height - resources.displayMetrics.density * 2f
                 canvas.drawLine(width / 2f - halfWidth, baseline, width / 2f + halfWidth, baseline, paint)
             }
         }
@@ -1156,11 +1291,11 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             bolt.lineTo(x + 7f * unit, y - unit)
             bolt.lineTo(x + unit, y - unit)
             bolt.close()
-            paint.color = if (mode == CameraFlashMode.ON) ACCENT else Color.WHITE
+            paint.color = if (mode != CameraFlashMode.OFF) ACCENT else Color.WHITE
             paint.strokeWidth = unit * 1.8f
             paint.strokeJoin = Paint.Join.ROUND
             paint.strokeCap = Paint.Cap.ROUND
-            paint.style = if (mode == CameraFlashMode.ON) Paint.Style.FILL else Paint.Style.STROKE
+            paint.style = if (mode != CameraFlashMode.OFF) Paint.Style.FILL else Paint.Style.STROKE
             canvas.drawPath(bolt, paint)
             if (mode == CameraFlashMode.OFF) {
                 paint.style = Paint.Style.STROKE
@@ -1175,25 +1310,13 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     }
 
     private class SettingsControlView(context: Context) : View(context) {
-        private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-            style = Paint.Style.STROKE
-            strokeWidth = resources.displayMetrics.density * 1.7f
-            strokeCap = Paint.Cap.ROUND
-        }
+        private val icon = context.getDrawable(R.drawable.ic_gallery_settings)
 
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
-            val unit = resources.displayMetrics.density
-            val centerX = width / 2f
-            val centerY = height / 2f
-            for (row in -1..1) {
-                val y = centerY + row * 7f * unit
-                val knob = centerX + (if (row == 0) 4f else -4f) * unit
-                canvas.drawLine(centerX - 10f * unit, y, knob - 2.5f * unit, y, paint)
-                canvas.drawLine(knob + 2.5f * unit, y, centerX + 10f * unit, y, paint)
-                canvas.drawCircle(knob, y, 2.5f * unit, paint)
-            }
+            val size = (26 * resources.displayMetrics.density).toInt()
+            icon?.setBounds((width - size) / 2, (height - size) / 2, (width + size) / 2, (height + size) / 2)
+            icon?.draw(canvas)
         }
     }
 
@@ -1201,6 +1324,9 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         private var ready = false
         private var capturing = false
+        private val animatedProgress = android.provider.Settings.Global.getFloat(
+            context.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f,
+        ) > 0f
 
         init {
             isClickable = true
@@ -1237,12 +1363,22 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
             val radius = minOf(width, height) / 2f
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = radius * 0.075f
-            paint.color = Color.WHITE
+            paint.color = if (isPressed) 0xFFFFE08A.toInt() else ACCENT
             canvas.drawCircle(centerX, centerY, radius * 0.91f, paint)
 
             paint.style = Paint.Style.FILL
-            paint.color = if (capturing || isPressed) ACCENT else 0xFFF7F4EC.toInt()
-            canvas.drawCircle(centerX, centerY, radius * if (capturing) 0.58f else 0.72f, paint)
+            paint.color = if (isPressed) 0xFFDDE0E5.toInt() else 0xFFF5F6FA.toInt()
+            canvas.drawCircle(centerX, centerY, radius * if (capturing) 0.62f else 0.78f, paint)
+
+            if (capturing) {
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = radius * 0.075f
+                paint.color = ACCENT
+                val inset = radius * 0.08f
+                val angle = if (animatedProgress) (android.os.SystemClock.uptimeMillis() % 1200L) * 360f / 1200f else -90f
+                canvas.drawArc(RectF(inset, inset, width - inset, height - inset), angle, 110f, false, paint)
+                if (animatedProgress) postInvalidateDelayed(32L)
+            }
 
             if (ready && !capturing) {
                 paint.style = Paint.Style.STROKE
@@ -1254,7 +1390,7 @@ internal class CameraChrome(context: Context) : FrameLayout(context) {
     }
 
     companion object {
-        private const val ACCENT = 0xFFF2B84B.toInt()
+        private const val ACCENT = ToviTheme.PRIMARY
         private const val MESSAGE_DURATION_MILLIS = 3_500L
     }
 }

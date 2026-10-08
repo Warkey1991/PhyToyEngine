@@ -3,10 +3,12 @@ package com.phytoy.sample
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Canvas
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
 import android.view.View
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.SeekBar
@@ -21,11 +23,7 @@ import kotlin.math.roundToInt
 internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     private val content = FrameLayout(context).apply {
         setPadding(dp(16), dp(8), dp(16), dp(8))
-        background = GradientDrawable().apply {
-            setColor(0xF51B1E22.toInt())
-            cornerRadius = dp(18).toFloat()
-            setStroke(dp(1), 0x35FFFFFF)
-        }
+        background = ToviTheme.card(context, 24, 0xF00B0B0C.toInt())
         isClickable = true
     }
     private val title = TextView(context).apply {
@@ -37,10 +35,10 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         setPadding(0, dp(4), 0, dp(4))
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
     }
-    private val slider = SeekBar(context).apply {
+    private val slider = DirectionalSeekBar(context).apply {
         id = R.id.adjustment_slider
         progressTintList = ColorStateList.valueOf(ACCENT)
-        thumbTintList = ColorStateList.valueOf(ACCENT)
+        thumbTintList = ColorStateList.valueOf(ToviTheme.TEXT)
     }
     private val actions = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
@@ -56,6 +54,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     private var arrangedActionCount = 0
     private var maximumPanelHeight = Int.MAX_VALUE
     private var onValue: ((Int) -> Unit)? = null
+    val isVerticalExposure: Boolean get() = slider.vertical
 
     init {
         id = R.id.adjustment_panel
@@ -77,10 +76,12 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
             override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
         })
+        slider.onVerticalProgress = { progress -> onValue?.invoke(progress) }
     }
 
     fun showExposure(index: Int, minimum: Int, maximum: Int, step: Float, onSelected: (Int) -> Unit) {
         if (minimum >= maximum || step <= 0f) return
+        setSliderDirection(resources.configuration.fontScale < 1.5f && maximumPanelHeight >= dp(252))
         actions.removeAllViews()
         actionButtons.clear()
         actionColumns = 0
@@ -109,6 +110,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
 
     fun showZoom(ratio: Float, minimum: Float, maximum: Float, onSelected: (Float) -> Unit) {
         if (minimum <= 0f || minimum >= maximum) return
+        setSliderDirection(false)
         actions.removeAllViews()
         actionButtons.clear()
         actionColumns = 0
@@ -129,7 +131,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
             onSelected(value)
         }
         // Show only focal multipliers the hardware actually reports as supported.
-        listOf(minimum, 1f, 2f, maximum).filter { it in minimum..maximum }
+        listOf(0.5f, 1f, 2f).filter { it in minimum..maximum }
             .distinctBy { (it * 100).roundToInt() }.take(3).forEach { value ->
                 addAction(String.format(Locale.getDefault(), "%.1f×", value)) {
                     slider.progress = toProgress(value)
@@ -149,6 +151,12 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     }
 
     private fun addDoneAction() = addAction(context.getString(R.string.camera_adjust_done), R.id.adjustment_done) { dismiss() }
+
+    private fun setSliderDirection(vertical: Boolean) {
+        slider.vertical = vertical
+        slider.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(if (vertical) 156 else 48))
+        requestLayout()
+    }
 
     private fun addAction(label: String, viewId: Int = View.NO_ID, action: () -> Unit) {
         val button = TextView(context).apply {
@@ -210,5 +218,60 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     }
 
     private fun dp(value: Int) = (value * resources.displayMetrics.density).roundToInt()
-    companion object { private const val ACCENT = 0xFFF2B84B.toInt() }
+    /** Keep the native SeekBar range/keyboard accessibility while drawing exposure vertically. */
+    private class DirectionalSeekBar(context: Context) : SeekBar(context) {
+        var vertical = false
+        var onVerticalProgress: ((Int) -> Unit)? = null
+
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            if (!vertical) super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            else {
+                super.onMeasure(heightMeasureSpec, widthMeasureSpec)
+                setMeasuredDimension(measuredHeight, measuredWidth)
+            }
+        }
+
+        override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+            if (vertical) super.onSizeChanged(h, w, oldh, oldw)
+            else super.onSizeChanged(w, h, oldw, oldh)
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            if (!vertical) super.onDraw(canvas)
+            else {
+                val save = canvas.save()
+                canvas.rotate(-90f)
+                canvas.translate(-height.toFloat(), 0f)
+                super.onDraw(canvas)
+                canvas.restoreToCount(save)
+            }
+        }
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            if (!vertical) return super.onTouchEvent(event)
+            if (!isEnabled) return false
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE, MotionEvent.ACTION_UP -> {
+                    parent?.requestDisallowInterceptTouchEvent(event.actionMasked != MotionEvent.ACTION_UP)
+                    isPressed = event.actionMasked != MotionEvent.ACTION_UP
+                    progress = (((height - event.y) / height.coerceAtLeast(1)) * max).roundToInt().coerceIn(0, max)
+                    onSizeChanged(width, height, width, height)
+                    onVerticalProgress?.invoke(progress)
+                    if (event.actionMasked == MotionEvent.ACTION_UP) performClick()
+                    invalidate()
+                    return true
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    isPressed = false
+                    parent?.requestDisallowInterceptTouchEvent(false)
+                    return true
+                }
+            }
+            return true
+        }
+
+        override fun performClick(): Boolean { super.performClick(); return true }
+    }
+
+    companion object { private const val ACCENT = ToviTheme.PRIMARY }
 }

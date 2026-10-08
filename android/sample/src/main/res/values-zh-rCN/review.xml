@@ -2,6 +2,15 @@
 <resources>
     <string name="review_navigate_back">返回</string>
     <string name="review_action_continue">继续拍摄</string>
+    <string name="review_position">%1$d / %2$d</string>
+    <string name="review_dimensions">%1$d × %2$d · %3$s</string>
+    <string name="review_megapixels">%1$.1f 百万像素</string>
+    <string name="review_metadata_title">照片信息</string>
+    <string name="review_metadata_name">文件：%1$s</string>
+    <string name="review_metadata_style">相机：%1$s</string>
+    <string name="review_metadata_ratio">画幅：%1$s</string>
+    <string name="review_metadata_time">拍摄时间：%1$s</string>
+    <string name="review_metadata_close">完成</string>
     <string name="review_saved_details">%1$s · %2$d × %3$d · 已保存</string>
     <string name="review_image_details">%1$d × %2$d · 已保存</string>
 </resources>

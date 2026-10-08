@@ -4,6 +4,7 @@
     <string name="photo_next">下一张</string>
     <string name="photo_share">分享</string>
     <string name="photo_delete">删除</string>
+    <string name="photo_info">信息</string>
     <string name="photo_share_title">分享照片</string>
     <string name="photo_share_failed">暂时无法分享这张照片，请重试或在系统相册中打开。</string>
     <string name="photo_delete_title">删除这张照片？</string>
@@ -19,5 +20,5 @@
     <string name="photo_zoom_out">缩小照片</string>
     <string name="photo_zoom_reset">适合屏幕</string>
     <string name="photo_zoom_state">照片放大 %1$.1f 倍</string>
-    <string name="photo_zoom_hint">双指缩放或双击照片，查看细节。</string>
+    <string name="photo_zoom_hint">左右滑动切换照片，双指或双击缩放。</string>
 </resources>

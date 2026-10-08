@@ -6,6 +6,7 @@
     <string name="photo_next_symbol" translatable="false">›</string>
     <string name="photo_share">Share</string>
     <string name="photo_delete">Delete</string>
+    <string name="photo_info">Info</string>
     <string name="photo_share_title">Share photo</string>
     <string name="photo_share_failed">Couldn’t share this photo. Try again or open it in your system gallery.</string>
     <string name="photo_delete_title">Delete this photo?</string>
@@ -21,11 +22,13 @@
     <string name="photo_zoom_out">Zoom out</string>
     <string name="photo_zoom_reset">Fit photo</string>
     <string name="photo_zoom_state">Zoom %1$.1f times</string>
-    <string name="photo_zoom_hint">Pinch or double tap the photo to see details.</string>
+    <string name="photo_zoom_hint">Swipe to change photos. Pinch or double tap to zoom.</string>
     <item name="review_previous" type="id" />
     <item name="review_next" type="id" />
     <item name="review_share" type="id" />
     <item name="review_delete" type="id" />
+    <item name="review_info" type="id" />
+    <item name="review_metadata" type="id" />
     <item name="review_retry" type="id" />
     <item name="review_zoom_in" type="id" />
     <item name="review_zoom_out" type="id" />

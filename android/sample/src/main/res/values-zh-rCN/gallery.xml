@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gallery_title">我的照片</string>
+    <string name="gallery_title">相册</string>
+    <string name="gallery_camera">相机</string>
+    <string name="gallery_settings">设置</string>
+    <string name="gallery_first_photo">拍摄第一张照片</string>
+    <string name="gallery_saved_photos">已保存照片</string>
     <string name="gallery_back_description">返回相机</string>
     <string name="gallery_newest_first">最新在前 · 保存在本机</string>
     <string name="gallery_loading">正在载入照片…</string>

@@ -453,13 +453,13 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 ViewGroup.LayoutParams.MATCH_PARENT,
             ),
         )
-        // Keep camera controls in the surrounding chrome, outside the captured frame.
+        // Layout only: the existing viewport still fits the selected capture aspect.
         var systemInsets = Rect()
         val updatePreviewMargins = {
             val density = resources.displayMetrics.density
             val sideWidth = (chrome.sideChromeDp * density).roundToInt()
             previewArea.layoutParams = (previewArea.layoutParams as FrameLayout.LayoutParams).apply {
-                topMargin = systemInsets.top + (chrome.topChromeDp * density).roundToInt()
+                topMargin = systemInsets.top + (chrome.previewTopInsetDp * density).roundToInt()
                 bottomMargin = systemInsets.bottom + (chrome.bottomChromeDp * density).roundToInt()
                 leftMargin = systemInsets.left + if (chrome.layoutDirection == View.LAYOUT_DIRECTION_RTL) sideWidth else 0
                 rightMargin = systemInsets.right + if (chrome.layoutDirection == View.LAYOUT_DIRECTION_RTL) 0 else sideWidth
@@ -476,6 +476,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
         gallery = PhotoGalleryOverlay(this, photoLibrary, photoStore).apply {
             setOnPhotoSelectedListener(::openPhoto)
+            setOnSettingsListener { openSettings() }
             setOnGalleryVisibilityChangedListener { showing ->
                 if (!showing) photoReviewRequest += 1
                 updateBrowsingState()
@@ -580,7 +581,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun openSettings() {
-        if (captureInProgress || reviewVisible) return
+        if (captureInProgress || review.isShowing() || purchasePage.isShowing() || settingsPage.isShowing()) return
         qualityAtSettingsOpen = cameraSettings.photoQuality
         settingsPage.show()
         updateBrowsingState()
@@ -2133,6 +2134,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun updatePhotoNavigation() {
         val index = reviewPhotos.indexOfFirst { it.uri == reviewPhoto?.uri }
         review.setNavigation(index > 0, index >= 0 && index < reviewPhotos.lastIndex)
+        review.setPhotoPosition(index, reviewPhotos.size)
     }
 
     private fun navigatePhoto(direction: Int) {

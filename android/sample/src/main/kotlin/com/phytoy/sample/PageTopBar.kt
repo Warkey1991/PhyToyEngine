@@ -31,9 +31,9 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
             gravity = Gravity.CENTER_VERTICAL
         }
         titleView.apply {
-            textSize = 22f
+            textSize = 24f
             setTextColor(ON_SURFACE)
-            typeface = Typeface.create("sans-serif", Typeface.NORMAL)
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
             includeFontPadding = false
             maxLines = 2
             ellipsize = TextUtils.TruncateAt.END
@@ -53,8 +53,8 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
         })
         addView(heading, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
             Gravity.CENTER_VERTICAL or Gravity.START).apply {
-            marginStart = dp(72)
-            marginEnd = dp(20)
+            marginStart = dp(76)
+            marginEnd = dp(24)
             topMargin = dp(16)
             bottomMargin = dp(16)
         })
@@ -62,11 +62,7 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
             isClickable = true
             isFocusable = true
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
-            background = RippleDrawable(
-                ColorStateList.valueOf(0x30FFFFFF),
-                null,
-                GradientDrawable().apply { setColor(0xFFFFFFFF.toInt()); cornerRadius = dp(24).toFloat() },
-            )
+            background = ToviTheme.actionBackground(context)
             accessibilityDelegate = object : View.AccessibilityDelegate() {
                 override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
                     super.onInitializeAccessibilityNodeInfo(host, info)
@@ -105,16 +101,15 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
             val cx = width / 2f
             val cy = height / 2f
             val direction = if (layoutDirection == LAYOUT_DIRECTION_RTL) -1f else 1f
-            canvas.drawLine(cx + 8f * unit * direction, cy, cx - 8f * unit * direction, cy, paint)
-            canvas.drawLine(cx - 8f * unit * direction, cy, cx - 1f * unit * direction, cy - 7f * unit, paint)
-            canvas.drawLine(cx - 8f * unit * direction, cy, cx - 1f * unit * direction, cy + 7f * unit, paint)
+            canvas.drawLine(cx + 3f * unit * direction, cy - 8f * unit, cx - 5f * unit * direction, cy, paint)
+            canvas.drawLine(cx - 5f * unit * direction, cy, cx + 3f * unit * direction, cy + 8f * unit, paint)
         }
     }
 
     companion object {
-        const val SURFACE = 0xFF111318.toInt()
-        const val ON_SURFACE = 0xFFF1F1F1.toInt()
-        const val ON_SURFACE_VARIANT = 0xFFC4C7C5.toInt()
-        const val PRIMARY = 0xFFF2B84B.toInt()
+        const val SURFACE = ToviTheme.SURFACE
+        const val ON_SURFACE = ToviTheme.TEXT
+        const val ON_SURFACE_VARIANT = ToviTheme.MUTED
+        const val PRIMARY = ToviTheme.PRIMARY
     }
 }

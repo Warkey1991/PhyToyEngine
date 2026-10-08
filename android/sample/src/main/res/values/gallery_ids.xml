@@ -5,4 +5,8 @@
     <item name="gallery_item" type="id" />
     <item name="gallery_empty" type="id" />
     <item name="gallery_count" type="id" />
+    <item name="gallery_tab_camera" type="id" />
+    <item name="gallery_tab_gallery" type="id" />
+    <item name="gallery_tab_settings" type="id" />
+    <item name="gallery_state_action" type="id" />
 </resources>
