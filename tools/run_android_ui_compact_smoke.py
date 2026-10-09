@@ -52,8 +52,9 @@ class CompactSmoke(RedesignSmoke):
             "exposure_value", "zoom_ratio", "adjustment_reset", "adjustment_done",
             "camera_unlock_style", "purchase_back", "purchase_preview", "open_settings", "settings_back",
         }
-        zoom_reset = not identifier and re.fullmatch(r"1[.,]0×", node.get("text", ""))
-        assert identifier in allowed or zoom_reset, f"Compact smoke forbids tapping {identifier or node.get('text')}"
+        zoom_opener = not identifier and node.get("selected") == "true" and \
+            re.fullmatch(r"\d+(?:[.,]\d+)?×", node.get("text", ""))
+        assert identifier in allowed or zoom_opener, f"Compact smoke forbids tapping {identifier or node.get('text')}"
         super().tap(node, **kwargs)
 
     def geometry(self, name, *, timeout=35):
@@ -65,38 +66,9 @@ class CompactSmoke(RedesignSmoke):
         return self.width, self.height
 
     def adjustment(self, identifier, font):
-        before = self.number(identifier)
-        self.tap(self.accessible_target(identifier, record="compact/" + identifier))
-        slider = self.scroll_to("adjustment_slider")
-        assert slider.get("class") == "android.widget.SeekBar", "Native SeekBar is not exposed"
-        left, top, right, bottom = self.bounds(slider)
-        horizontal = right - left >= bottom - top
-        self.swipe(slider, to_start=False, horizontal=horizontal)
-        nodes = self.poll(lambda ns: (n := self.find(identifier, ns)) is not None and
-                          abs(self.node_number(n) - before) > .01, f"Compact {identifier} did not change")
-        changed = self.node_number(self.find(identifier, nodes))
-        self.snapshot("compact-" + identifier + "-changed", nodes)
-        if identifier == "exposure_value":
-            self.tap(self.accessible_target("adjustment_reset", record="compact/ev-reset"))
-            expected = 0
-        else:
-            nodes = self.ui()
-            panel = self.find("adjustment_panel", self.ui(include_unimportant=True))
-            assert panel, "Zoom panel geometry unavailable"
-            pl, pt, pr, pb = self.bounds(panel)
-            reset = next((n for n in nodes if re.fullmatch(r"1[.,]0×", n.get("text", ""))
-                          and n.get("clickable") == "true" and self.visible(n)
-                          and (b := self.bounds(n))[0] >= pl and b[2] <= pr and b[1] >= pt and b[3] <= pb), None)
-            assert reset, "Supported 1× reset is not fully visible"
-            self.target("zoom-1x-reset", reset, record="compact/zoom-reset")
-            self.tap(reset)
-            expected = 1
-        self.poll(lambda ns: (n := self.find(identifier, ns)) is not None and
-                  abs(self.node_number(n) - expected) < .01, f"Compact {identifier} did not reset")
-        self.tap(self.accessible_target("adjustment_done", record="compact/" + identifier + "-done"))
-        self.poll(lambda ns: self.find("adjustment_slider", ns) is None, "Adjustment did not close")
-        self.check("Compact " + identifier + " changes and resets", before=before, changed=changed,
-                   reset=expected, slider_orientation="horizontal" if horizontal else "vertical")
+        # Use the same actual-value and 48dp checks as portrait. The selected
+        # focal preset now opens zoom, and the panel's Reset returns to 1×.
+        super().adjustment(identifier, font)
 
     def details(self, initial_style):
         self.tap(self.style_target(PAID[0]))

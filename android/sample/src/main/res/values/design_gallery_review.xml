@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_gallery_select">Select</string>
+    <string name="design_gallery_done">Done</string>
+    <string name="design_gallery_selected_count">%1$d selected</string>
+    <string name="design_gallery_share_failed">Couldn’t share the selected photos. Please try again.</string>
+    <string name="design_review_favorite">Favorite</string>
+    <string name="design_review_favorite_add">Add photo to favorites</string>
+    <string name="design_review_favorite_remove">Remove photo from favorites</string>
+    <string name="design_review_favorite_added">Added to favorites</string>
+    <string name="design_review_favorite_removed">Removed from favorites</string>
+    <string name="design_review_more">More photo actions</string>
+    <string name="design_review_more_title">Photo actions</string>
+    <string name="design_review_aperture">f/%1$.1f</string>
+    <string name="design_review_iso">ISO: %1$d</string>
+    <string name="design_review_focal">Focal length: %1$.1f mm</string>
+    <string name="design_review_exposure">Exposure: %1$s</string>
+    <string name="design_review_ev">Exposure compensation: %1$+.2f EV</string>
+    <item name="design_gallery_heading" type="id" />
+    <item name="design_gallery_select" type="id" />
+    <item name="design_gallery_share_selected" type="id" />
+    <item name="review_more" type="id" />
+    <item name="review_favorite" type="id" />
+</resources>

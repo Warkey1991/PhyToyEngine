@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_settings_help_description">设置帮助</string>
+    <string name="design_settings_save_resolution">保存分辨率</string>
+    <string name="design_settings_resolution_hint">照片保存分辨率</string>
+    <string name="design_settings_quality_high">高（≤1250万像素）</string>
+    <string name="design_settings_quality_balanced">均衡（≤500万像素）</string>
+    <string name="design_settings_quality_compact">轻巧（≤320万像素）</string>
+    <string name="design_settings_grid">网格</string>
+    <string name="design_settings_grid_hint">在取景器显示构图网格</string>
+    <string name="design_settings_haptics">触感反馈</string>
+    <string name="design_settings_haptics_hint">操作相机时轻微振动</string>
+    <string name="design_settings_sound_hint">实际捕获照片时播放声音</string>
+    <string name="design_settings_review_hint">拍摄后打开已保存的照片</string>
+    <string name="design_settings_restore_hint">通过 %1$s 恢复</string>
+    <string name="design_settings_about_hint">相机指南与应用版本</string>
+    <string name="design_settings_help_feedback">帮助与反馈</string>
+    <string name="design_settings_feedback_hint">获取帮助或发送反馈</string>
+    <string name="design_settings_help">帮助与提示</string>
+    <string name="design_settings_help_hint">了解相机选项</string>
+    <string name="design_settings_more">更多设置</string>
+    <string name="design_settings_default_camera">默认相机</string>
+    <string name="design_settings_default_hint">首次启动时使用的相机</string>
+    <string name="design_settings_remember_camera">记住上次相机</string>
+    <string name="design_settings_remember_hint">恢复最近使用的相机</string>
+    <string name="design_settings_privacy_hint">照片与权限的处理方式</string>
+    <string name="design_settings_licenses_hint">软件许可与声明</string>
+    <string name="design_settings_reset_hint">还原默认选项，保留照片</string>
+</resources>

@@ -23,13 +23,15 @@ import traceback
 from pathlib import Path
 
 from run_android_billing_smoke import CAMERA_HIDDEN, FREE
-from run_android_ui_redesign_smoke import RedesignSmoke
+from run_android_ui_redesign_smoke import GALLERY_TABS, RedesignSmoke
 
 
 class PreviewSmoke(RedesignSmoke):
     def tap(self, node, **kwargs):
         identifier = node.get("resource-id", "").rsplit("/", 1)[-1]
-        assert identifier not in ("review_share", "review_delete"), "Sharing/deletion are outside preview scope"
+        assert identifier not in ("review_share", "review_delete", "review_favorite", "review_more",
+                                  "design_gallery_select", "design_gallery_share_selected"), (
+            "Sharing, deletion, Favorite, selection and review menus are outside preview scope")
         assert not identifier.startswith("purchase_"), "Purchase-page actions are outside preview scope"
         assert not identifier.startswith("settings_") or identifier == "settings_back", (
             "Settings controls must remain unchanged during the preview")
@@ -56,10 +58,12 @@ def main():
     smoke.report.update({
         "scope": "100% font screenshots and navigation only: camera, gallery, settings, existing-photo review",
         "font_mutations": 0, "setting_control_changes": 0, "share_chooser_opened": False,
+        "private_preference_write_scope": "No direct preference writes; Favorite and settings controls are untouched; restore the initial visible free camera through UI",
         "not_covered": [
             "checkout or purchase success", "successful deletion or delete consent", "sharing",
             "photo capture, output quality, EXIF or engine correctness", "photo gestures or adjustment sliders",
             "200% font regression", "complete settings operations or privacy document contents",
+            "Favorite changes or gallery selection",
             "physical devices", "visual pixel correctness",
         ],
     })
@@ -111,37 +115,33 @@ def main():
         smoke.tap(smoke.accessible_target("last_photo", record="normal/last_photo"))
 
         smoke.phase = "normal gallery"
-        def gallery_ready(nodes):
-            return visible_node(smoke, "gallery_back", nodes) and any(
-                node.get("resource-id", "").endswith(":id/gallery_item") and smoke.visible(node)
-                for node in nodes)
-        nodes = smoke.poll(gallery_ready, "Existing app photo did not appear in gallery", timeout=40)
-        assert all(smoke.find(identifier, nodes) is None for identifier in CAMERA_HIDDEN), "Camera leaked through gallery modal"
+        nodes = smoke.gallery_ready()
+        for identifier in GALLERY_TABS + ("design_gallery_select",):
+            node = smoke.find(identifier, nodes)
+            assert node is not None, f"Normal gallery control {identifier} is missing"
+            smoke.target(identifier, node, record="normal/" + identifier)
         smoke.snapshot("gallery-normal", nodes)
         smoke.tap(smoke.accessible_target("gallery_tab_settings", record="normal/gallery_tab_settings"))
 
         smoke.phase = "normal settings"
-        nodes = smoke.settle(("settings_back",), CAMERA_HIDDEN + ("gallery_back",))
+        nodes = smoke.settle(("settings_back",), CAMERA_HIDDEN + GALLERY_TABS + ("design_gallery_select",))
         smoke.snapshot("settings-normal", nodes)
         smoke.tap(smoke.accessible_target("settings_back", record="normal/settings_back"))
-        nodes = smoke.poll(lambda ns: gallery_ready(ns) and smoke.find("settings_back", ns) is None,
-                           "Settings Back did not return to gallery")
+        nodes = smoke.gallery_ready()
         smoke.check("100%: gallery Settings opens and Back returns to gallery without changing a setting")
-        item = next((node for node in nodes if node.get("resource-id", "").endswith(":id/gallery_item")
-                     and smoke.visible(node)), None)
-        assert item is not None, "No existing gallery item remains visible"
-        smoke.tap(item)
+        smoke.tap(smoke.first_gallery_photo(nodes))
 
         smoke.phase = "normal review"
         nodes = smoke.review_ready()
-        smoke.snapshot("review-normal", nodes)
-        for identifier in ("review_share", "review_delete", "review_info"):
+        for identifier in ("review_favorite", "review_share", "review_delete", "review_info",
+                           "review_continue", "review_back", "review_more"):
             node = smoke.find(identifier, nodes)
             assert node is not None, f"Normal review action {identifier} is missing"
+            # These IDs belong to the clickable accessibility parent, not its
+            # smaller decorative icon/circle. No scrolling precedes this check.
             smoke.target(identifier, node, record="normal/" + identifier)
-            left, top, right, bottom = smoke.bounds(node)
-            assert bottom - top >= 68 * smoke.density - 1, f"Normal review action {identifier} is clipped"
-        smoke.check("100%: Share/Delete/Info are fully visible without scrolling")
+        smoke.snapshot("review-normal", nodes)
+        smoke.check("100%: Favorite/Share/Delete/Info, Continue and header actions have fully visible 48dp hit controls without scrolling")
         smoke.report["review_position"] = list(smoke.position(nodes))
         smoke.tap(smoke.accessible_target("review_continue", record="normal/review_continue"))
         smoke.camera(initial_style)
@@ -196,11 +196,6 @@ def main():
         smoke.save()
     print(json.dumps({"passed": smoke.report["passed"], "report": str(smoke.output / "evaluation.json")}, ensure_ascii=False))
     return 0 if smoke.report["passed"] else 1
-
-
-def visible_node(smoke, identifier, nodes):
-    node = smoke.find(identifier, nodes)
-    return node is not None and smoke.visible(node)
 
 
 def verify_equal(actual, expected, message):

@@ -28,10 +28,11 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         val heading = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_VERTICAL
+            gravity = Gravity.CENTER
         }
         titleView.apply {
-            textSize = 24f
+            textSize = 20f
+            gravity = Gravity.CENTER
             setTextColor(ON_SURFACE)
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
             includeFontPadding = false
@@ -40,6 +41,7 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) isAccessibilityHeading = true
         }
         subtitleView.apply {
+            gravity = Gravity.CENTER
             visibility = GONE
             textSize = 12f
             setTextColor(ON_SURFACE_VARIANT)
@@ -53,16 +55,17 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
         })
         addView(heading, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
             Gravity.CENTER_VERTICAL or Gravity.START).apply {
-            marginStart = dp(76)
-            marginEnd = dp(24)
-            topMargin = dp(16)
-            bottomMargin = dp(16)
+            marginStart = dp(64)
+            marginEnd = dp(64)
+            topMargin = dp(12)
+            bottomMargin = dp(12)
         })
         backButton.apply {
             isClickable = true
             isFocusable = true
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
-            background = ToviTheme.actionBackground(context)
+            background = RippleDrawable(ColorStateList.valueOf(0x25FFFFFF),
+                android.graphics.drawable.InsetDrawable(ToviTheme.card(context, 24), dp(7)), null)
             accessibilityDelegate = object : View.AccessibilityDelegate() {
                 override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
                     super.onInitializeAccessibilityNodeInfo(host, info)
@@ -71,7 +74,7 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
             }
         }
         addView(backButton, LayoutParams(dp(48), dp(48), Gravity.CENTER_VERTICAL or Gravity.START).apply {
-            marginStart = dp(12)
+            marginStart = dp(8)
         })
     }
 
@@ -81,7 +84,7 @@ internal class PageTopBar(context: Context) : FrameLayout(context) {
 
     override fun getSuggestedMinimumHeight(): Int = maxOf(
         super.getSuggestedMinimumHeight(),
-        dp(if (subtitleView.visibility == GONE) 64 else 88),
+        dp(if (subtitleView.visibility == GONE) 56 else 80),
     )
 
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()

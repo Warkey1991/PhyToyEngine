@@ -5,6 +5,9 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Canvas
 import android.graphics.Typeface
+import android.graphics.Paint
+import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
 import android.view.View
@@ -22,24 +25,46 @@ import kotlin.math.roundToInt
 /** An inline camera control. Values are always bounded by this camera's capabilities. */
 internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     private val content = FrameLayout(context).apply {
-        setPadding(dp(16), dp(8), dp(16), dp(8))
-        background = ToviTheme.card(context, 24, 0xF00B0B0C.toInt())
+        setPadding(dp(4), dp(4), dp(4), 0)
         isClickable = true
     }
     private val title = TextView(context).apply {
         setTextColor(Color.WHITE)
-        textSize = 14f
+        textSize = if (resources.configuration.fontScale >= 1.5f) 16f else 22f
         typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
         gravity = Gravity.CENTER
-        minimumHeight = dp(32)
-        setPadding(0, dp(4), 0, dp(4))
+        minimumHeight = dp(36)
+        setPadding(dp(14), dp(4), dp(14), dp(4))
+        background = GradientDrawable().apply { setColor(0xE60B0B0C.toInt()); cornerRadius = dp(24).toFloat() }
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
     }
     private val slider = DirectionalSeekBar(context).apply {
         id = R.id.adjustment_slider
         progressTintList = ColorStateList.valueOf(ACCENT)
         thumbTintList = ColorStateList.valueOf(ToviTheme.TEXT)
+        thumb = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(ToviTheme.TEXT); setSize(dp(12), dp(12)) }
+        val track = GradientDrawable().apply { setColor(0x998A8A8A.toInt()); setSize(dp(2), dp(2)); cornerRadius = dp(1).toFloat() }
+        val fill = ClipDrawable(GradientDrawable().apply { setColor(ACCENT); cornerRadius = dp(1).toFloat() }, Gravity.LEFT, ClipDrawable.HORIZONTAL)
+        progressDrawable = LayerDrawable(arrayOf(track, fill)).apply {
+            setId(0, android.R.id.background); setId(1, android.R.id.progress)
+            setLayerHeight(0, dp(2)); setLayerHeight(1, dp(2))
+            setLayerGravity(0, Gravity.CENTER_VERTICAL); setLayerGravity(1, Gravity.CENTER_VERTICAL)
+        }
     }
+    private val exposureSun = object : View(context) {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ACCENT; strokeWidth = dp(2).toFloat(); strokeCap = Paint.Cap.ROUND }
+        override fun onDraw(canvas: Canvas) {
+            val x = width / 2f
+            val y = height / 2f
+            paint.style = Paint.Style.FILL
+            canvas.drawCircle(x, y, dp(5).toFloat(), paint)
+            for (i in 0..7) {
+                val angle = Math.PI * i / 4
+                canvas.drawLine(x + (Math.cos(angle) * dp(8)).toFloat(), y + (Math.sin(angle) * dp(8)).toFloat(),
+                    x + (Math.cos(angle) * dp(11)).toFloat(), y + (Math.sin(angle) * dp(11)).toFloat(), paint)
+            }
+        }
+    }.apply { visibility = GONE; importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO }
     private val actions = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         gravity = Gravity.CENTER
@@ -62,7 +87,8 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         addView(content, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         val body = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            addView(title, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+            addView(title, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply { gravity = Gravity.CENTER_HORIZONTAL })
+            addView(exposureSun, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(28)))
             addView(slider, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(48)))
         }
         bodyScroll.addView(body, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
@@ -86,7 +112,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         actionButtons.clear()
         actionColumns = 0
         val update = { value: Int ->
-            title.text = context.getString(R.string.camera_adjust_exposure_value, value * step)
+            title.text = String.format(Locale.getDefault(), "EV %+.1f", value * step)
             slider.contentDescription = title.text
         }
         onValue = null
@@ -118,7 +144,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         fun fromProgress(progress: Int): Float = (minimum * exp(span * progress / 1000f)).coerceIn(minimum, maximum)
         fun toProgress(value: Float): Int = (ln(value.coerceIn(minimum, maximum) / minimum) / span * 1000f).roundToInt()
         val update = { value: Float ->
-            title.text = context.getString(R.string.camera_adjust_zoom_value, value)
+            title.text = String.format(Locale.getDefault(), "%.1f×", value)
             slider.contentDescription = title.text
         }
         onValue = null
@@ -130,15 +156,12 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
             update(value)
             onSelected(value)
         }
-        // Show only focal multipliers the hardware actually reports as supported.
-        listOf(0.5f, 1f, 2f).filter { it in minimum..maximum }
-            .distinctBy { (it * 100).roundToInt() }.take(3).forEach { value ->
-                addAction(String.format(Locale.getDefault(), "%.1f×", value)) {
-                    slider.progress = toProgress(value)
-                    update(value)
-                    onSelected(value)
-                }
-            }
+        addAction(context.getString(R.string.camera_adjust_reset), R.id.adjustment_reset) {
+            val reset = 1f.coerceIn(minimum, maximum)
+            slider.progress = toProgress(reset)
+            update(reset)
+            onSelected(reset)
+        }
         addDoneAction()
         visibility = VISIBLE
     }
@@ -154,7 +177,11 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
 
     private fun setSliderDirection(vertical: Boolean) {
         slider.vertical = vertical
-        slider.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(if (vertical) 156 else 48))
+        exposureSun.visibility = if (vertical) VISIBLE else GONE
+        slider.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(if (vertical) 128 else 48))
+        title.textSize = if (vertical) 13f else if (resources.configuration.fontScale >= 1.5f) 16f else 22f
+        if (!vertical) slider.background = GradientDrawable().apply { setColor(0xB80B0B0C.toInt()); cornerRadius = dp(24).toFloat() }
+        else slider.background = null
         requestLayout()
     }
 
@@ -162,8 +189,9 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         val button = TextView(context).apply {
             id = viewId
             text = label
-            setTextColor(ACCENT)
-            textSize = 12f
+            setTextColor(ToviTheme.TEXT)
+            background = GradientDrawable().apply { setColor(0x990B0B0C.toInt()); cornerRadius = dp(20).toFloat() }
+            textSize = 10f
             gravity = Gravity.CENTER
             minimumHeight = dp(48)
             setPadding(dp(8), dp(8), dp(8), dp(8))
@@ -182,13 +210,12 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val availableWidth = (MeasureSpec.getSize(widthMeasureSpec) - dp(32)).coerceAtLeast(0)
+        val availableWidth = (MeasureSpec.getSize(widthMeasureSpec) - dp(8)).coerceAtLeast(0)
         val buttonWidth = actionButtons.maxOfOrNull { button ->
             (button.paint.measureText(button.text.toString()) + button.paddingLeft + button.paddingRight).roundToInt()
                 .coerceAtLeast(dp(48))
         } ?: dp(48)
-        val columns = if (actionButtons.size > 2 && availableWidth < buttonWidth * actionButtons.size) 2
-            else actionButtons.size.coerceAtLeast(1)
+        val columns = minOf(actionButtons.size.coerceAtLeast(1), (availableWidth / buttonWidth.coerceAtLeast(1)).coerceAtLeast(1))
         if (columns != actionColumns || actionButtons.size != arrangedActionCount) {
             actions.removeAllViews()
             actionButtons.forEach { button -> (button.parent as? LinearLayout)?.removeView(button) }
@@ -222,6 +249,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
     private class DirectionalSeekBar(context: Context) : SeekBar(context) {
         var vertical = false
         var onVerticalProgress: ((Int) -> Unit)? = null
+        private val ticks = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0x99FFFFFF.toInt(); strokeWidth = resources.displayMetrics.density }
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             if (!vertical) super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -237,8 +265,16 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         }
 
         override fun onDraw(canvas: Canvas) {
-            if (!vertical) super.onDraw(canvas)
-            else {
+            if (!vertical) {
+                super.onDraw(canvas)
+                val unit = resources.displayMetrics.density
+                val left = paddingLeft + unit * 8
+                val right = width - paddingRight - unit * 8
+                for (i in 0..14) {
+                    val x = left + (right - left) * i / 14f
+                    canvas.drawLine(x, height / 2f + unit * 8, x, height / 2f + unit * if (i % 2 == 0) 12 else 10, ticks)
+                }
+            } else {
                 val save = canvas.save()
                 canvas.rotate(-90f)
                 canvas.translate(-height.toFloat(), 0f)

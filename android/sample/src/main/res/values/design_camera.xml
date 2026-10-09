@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_trait_color">Warm · Soft · Film-like</string>
+    <string name="design_trait_mono">Deep · Bold · Monochrome</string>
+    <string name="design_trait_digital">Crisp · Simple · Digital</string>
+    <string name="design_trait_plastic">Soft · Dreamy · Unpredictable</string>
+    <string name="design_trait_street">Punchy · Street · High Contrast</string>
+    <string name="design_trait_fisheye">Wide · Playful · Distorted</string>
+</resources>

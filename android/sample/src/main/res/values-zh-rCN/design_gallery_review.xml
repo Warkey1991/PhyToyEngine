@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_gallery_select">选择</string>
+    <string name="design_gallery_done">完成</string>
+    <string name="design_gallery_selected_count">已选 %1$d 张</string>
+    <string name="design_gallery_share_failed">暂时无法分享所选照片，请重试。</string>
+    <string name="design_review_favorite">收藏</string>
+    <string name="design_review_favorite_add">收藏照片</string>
+    <string name="design_review_favorite_remove">取消收藏照片</string>
+    <string name="design_review_favorite_added">已收藏照片</string>
+    <string name="design_review_favorite_removed">已取消收藏</string>
+    <string name="design_review_more">更多照片操作</string>
+    <string name="design_review_more_title">照片操作</string>
+    <string name="design_review_aperture">f/%1$.1f</string>
+    <string name="design_review_iso">感光度：ISO %1$d</string>
+    <string name="design_review_focal">焦距：%1$.1f mm</string>
+    <string name="design_review_exposure">曝光时间：%1$s</string>
+    <string name="design_review_ev">曝光补偿：%1$+.2f EV</string>
+</resources>

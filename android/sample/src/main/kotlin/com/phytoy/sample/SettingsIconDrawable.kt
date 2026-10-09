@@ -3,9 +3,11 @@ package com.phytoy.sample
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
 
 internal enum class SettingsRowIcon {
@@ -13,8 +15,13 @@ internal enum class SettingsRowIcon {
 }
 
 /** Small vector-style settings icons. No text or bitmap assets are baked into the controls. */
-internal class SettingsIconDrawable(context: Context, private val icon: SettingsRowIcon) : Drawable() {
-    private val size = (40 * context.resources.displayMetrics.density).toInt()
+internal class SettingsIconDrawable(
+    context: Context,
+    private val icon: SettingsRowIcon,
+    sizeDp: Int = 34,
+    private val withDisc: Boolean = true,
+) : Drawable() {
+    private val size = (sizeDp * context.resources.displayMetrics.density).toInt()
     private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeWidth = 2.1f
@@ -22,7 +29,10 @@ internal class SettingsIconDrawable(context: Context, private val icon: Settings
         strokeJoin = Paint.Join.ROUND
         color = ToviTheme.PRIMARY
     }
-    private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFF252527.toInt() }
+    private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        shader = LinearGradient(0f, 0f, 48f, 48f,
+            0xFF27292B.toInt(), 0xFF191B1D.toInt(), Shader.TileMode.CLAMP)
+    }
 
     override fun getIntrinsicWidth(): Int = size
     override fun getIntrinsicHeight(): Int = size
@@ -37,7 +47,7 @@ internal class SettingsIconDrawable(context: Context, private val icon: Settings
             canvas.restoreToCount(checkpoint)
             return
         }
-        canvas.drawCircle(24f, 24f, 23f, fill)
+        if (withDisc) canvas.drawCircle(24f, 24f, 23f, fill)
         stroke.color = ToviTheme.PRIMARY
         when (icon) {
             SettingsRowIcon.CAMERA -> {

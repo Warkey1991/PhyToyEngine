@@ -4,7 +4,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Build
@@ -50,9 +52,9 @@ internal class SettingsOverlay(
     private var defaultStyleControl: View? = null
     private val purchaseNotice = TextView(activity).apply {
         id = R.id.settings_purchase_result
-        textSize = 14f
+        textSize = 11f
         setTextColor(FOREGROUND)
-        setPadding(dp(16), dp(12), dp(16), dp(12))
+        setPadding(dp(12), dp(9), dp(12), dp(9))
         background = ToviTheme.card(activity, 12)
         accessibilityLiveRegion = ACCESSIBILITY_LIVE_REGION_POLITE
         visibility = GONE
@@ -71,7 +73,7 @@ internal class SettingsOverlay(
         val value = styleLabel(settings.defaultStyle)
         defaultStyleValue?.text = value
         defaultStyleControl?.contentDescription = rowDescription(
-            R.string.settings_default_style, value, R.string.settings_default_style_short,
+            R.string.design_settings_default_camera, value, R.string.design_settings_default_hint,
         )
     }
 
@@ -81,7 +83,7 @@ internal class SettingsOverlay(
         isClickable = true
         isFocusable = true
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-        setBackgroundColor(BACKGROUND)
+        background = pageBackground()
         if (Build.VERSION.SDK_INT >= 28) accessibilityPaneTitle = activity.getString(R.string.settings_title)
 
         val page = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
@@ -95,13 +97,26 @@ internal class SettingsOverlay(
         }
         topBar.subtitleView.visibility = GONE
         topBar.setOnBackClickListener { dismiss() }
+        topBar.addView(ImageView(activity).apply {
+            id = R.id.design_settings_help_header
+            setImageDrawable(SettingsIconDrawable(activity, SettingsRowIcon.HELP, 20, false))
+            scaleType = ImageView.ScaleType.CENTER
+            contentDescription = activity.getString(R.string.design_settings_help_description)
+            isClickable = true
+            isFocusable = true
+            background = touchBackground()
+            accessibilityDelegate = actionAccessibilityDelegate()
+            setOnClickListener { showSettingsHelp() }
+        }, LayoutParams(dp(48), dp(48), Gravity.END or Gravity.CENTER_VERTICAL).apply {
+            marginEnd = dp(10)
+        })
         page.addView(topBar, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
         ))
         scroll.apply {
             isFillViewport = true
             clipToPadding = false
-            setPadding(dp(16), dp(4), dp(16), dp(28))
+            setPadding(dp(12), dp(4), dp(12), dp(24))
         }
         body.orientation = LinearLayout.VERTICAL
         scroll.addView(body, FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
@@ -171,75 +186,85 @@ internal class SettingsOverlay(
         defaultStyleValue = null
 
         section(R.string.settings_section_shooting)
-        choice(R.id.settings_default_style, R.string.settings_default_style, styleLabel(settings.defaultStyle),
-            R.string.settings_default_style_short, SettingsRowIcon.CAMERA) { chooseDefaultStyle() }
-        toggle(R.id.settings_remember_style, R.string.settings_remember_style, R.string.settings_remember_short,
-            settings.rememberLastStyle, SettingsRowIcon.HISTORY) { change(settings.copy(rememberLastStyle = it)) }
-        choice(R.id.settings_quality, R.string.settings_quality, activity.getString(settings.photoQuality.titleRes),
-            R.string.settings_quality_short, SettingsRowIcon.PHOTO) { chooseQuality() }
-        toggle(R.id.settings_grid, R.string.settings_grid, R.string.settings_grid_short,
+        choice(R.id.settings_quality, R.string.design_settings_save_resolution, qualityLabel(),
+            R.string.design_settings_resolution_hint, SettingsRowIcon.PHOTO) { chooseQuality() }
+        toggle(R.id.settings_grid, R.string.design_settings_grid, R.string.design_settings_grid_hint,
             settings.gridEnabled, SettingsRowIcon.GRID) { change(settings.copy(gridEnabled = it)) }
-        addControl(Button(activity).apply {
-            text = activity.getString(R.string.settings_options_help)
-            isAllCaps = false
-            textSize = 13f
-            minHeight = dp(48)
-            setPadding(dp(12), dp(10), dp(12), dp(10))
-            setTextColor(ACCENT)
-            background = touchBackground()
-            setOnClickListener {
-                choiceDialog?.dismiss()
-                choiceDialog = AlertDialog.Builder(activity).setTitle(R.string.settings_section_shooting)
-                    .setMessage(R.string.settings_camera_help)
-                    .setPositiveButton(R.string.product_info_close, null).show()
-            }
-        })
 
         section(R.string.settings_section_experience)
-        toggle(R.id.settings_sound, R.string.settings_sound, R.string.settings_sound_short,
-            settings.soundEnabled, SettingsRowIcon.SOUND) { change(settings.copy(soundEnabled = it)) }
-        toggle(R.id.settings_haptics, R.string.settings_haptics, R.string.settings_haptics_short,
+        toggle(R.id.settings_haptics, R.string.design_settings_haptics, R.string.design_settings_haptics_hint,
             settings.hapticsEnabled, SettingsRowIcon.HAPTICS) { change(settings.copy(hapticsEnabled = it)) }
-        toggle(R.id.settings_review, R.string.settings_review, R.string.settings_review_short,
+        toggle(R.id.settings_sound, R.string.settings_sound, R.string.design_settings_sound_hint,
+            settings.soundEnabled, SettingsRowIcon.SOUND) { change(settings.copy(soundEnabled = it)) }
+        toggle(R.id.settings_review, R.string.settings_review, R.string.design_settings_review_hint,
             settings.reviewAfterCapture, SettingsRowIcon.REVIEW) { change(settings.copy(reviewAfterCapture = it)) }
 
         section(R.string.settings_section_information)
         action(R.id.settings_restore_purchases, R.string.settings_restore_purchases,
-            R.string.settings_restore_purchases_hint, SettingsRowIcon.PURCHASES) { onRestorePurchases() }
+            R.string.design_settings_restore_hint, SettingsRowIcon.PURCHASES) { onRestorePurchases() }
         (purchaseNotice.parent as? ViewGroup)?.removeView(purchaseNotice)
         purchaseNotice.text = purchaseResult ?: ""
         purchaseNotice.visibility = if (purchaseResult.isNullOrBlank()) GONE else VISIBLE
         activeGroup?.addView(purchaseNotice, LinearLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
-        ).apply { setMargins(dp(8), 0, dp(8), dp(8)) })
-        action(R.id.settings_about, R.string.settings_about, R.string.settings_about_short, SettingsRowIcon.INFO) {
+        ).apply { setMargins(dp(6), 0, dp(6), dp(6)) })
+        action(R.id.settings_about, R.string.settings_about, R.string.design_settings_about_hint, SettingsRowIcon.INFO) {
             ProductInfo.showAbout(activity)
         }
-        action(R.id.settings_privacy, R.string.settings_privacy, R.string.settings_privacy_short, SettingsRowIcon.PRIVACY) {
+        if (SupportInfo.hasEmail) {
+            action(R.id.settings_support, R.string.design_settings_help_feedback,
+                R.string.design_settings_feedback_hint, SettingsRowIcon.HELP) { SupportInfo.email(activity) }
+        } else {
+            action(R.id.design_settings_help, R.string.design_settings_help,
+                R.string.design_settings_help_hint, SettingsRowIcon.HELP) { showSettingsHelp() }
+        }
+
+        // Preserve real options beyond the reference's three primary groups without
+        // inventing location, gallery-storage branches or rotation settings.
+        section(R.string.design_settings_more)
+        choice(R.id.settings_default_style, R.string.design_settings_default_camera, styleLabel(settings.defaultStyle),
+            R.string.design_settings_default_hint, SettingsRowIcon.CAMERA) { chooseDefaultStyle() }
+        toggle(R.id.settings_remember_style, R.string.design_settings_remember_camera, R.string.design_settings_remember_hint,
+            settings.rememberLastStyle, SettingsRowIcon.HISTORY) { change(settings.copy(rememberLastStyle = it)) }
+        action(R.id.settings_privacy, R.string.settings_privacy, R.string.design_settings_privacy_hint, SettingsRowIcon.PRIVACY) {
             ProductInfo.showPrivacy(activity)
         }
-        action(R.id.settings_licenses, R.string.settings_licenses, R.string.settings_licenses_short, SettingsRowIcon.LICENSE) {
+        action(R.id.settings_licenses, R.string.settings_licenses, R.string.design_settings_licenses_hint, SettingsRowIcon.LICENSE) {
             ProductInfo.showLicenses(activity)
         }
-        if (SupportInfo.hasEmail) action(R.id.settings_support, R.string.support_title, R.string.support_hint,
-            SettingsRowIcon.HELP) { SupportInfo.email(activity) }
-        action(R.id.settings_reset, R.string.settings_reset, R.string.settings_reset_short,
+        action(R.id.settings_reset, R.string.settings_reset, R.string.design_settings_reset_hint,
             SettingsRowIcon.RESET) { confirmReset() }
-        body.addView(label(R.string.settings_local_only, 12f, MUTED).apply {
-            setPadding(dp(8), dp(18), dp(8), 0)
+        body.addView(label(R.string.settings_local_only, 10.5f, MUTED).apply {
+            setPadding(dp(6), dp(14), dp(6), 0)
         })
     }
 
+    private fun showSettingsHelp() {
+        choiceDialog?.dismiss()
+        choiceDialog = AlertDialog.Builder(activity)
+            .setTitle(R.string.design_settings_help_description)
+            .setMessage(R.string.settings_camera_help)
+            .setPositiveButton(R.string.product_info_close, null)
+            .show()
+    }
+
+    private fun qualityLabel(): String = activity.getString(when (settings.photoQuality) {
+        PhotoQuality.HIGH -> R.string.design_settings_quality_high
+        PhotoQuality.BALANCED -> R.string.design_settings_quality_balanced
+        PhotoQuality.COMPACT -> R.string.design_settings_quality_compact
+    })
+
     private fun section(title: Int) {
-        body.addView(label(title, 17f, MUTED).apply {
+        body.addView(label(title, 13f, MUTED).apply {
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-            setPadding(dp(6), dp(20), 0, dp(10))
+            includeFontPadding = false
+            setPadding(dp(6), dp(if (activeGroup == null) 8 else 16), 0, dp(7))
             if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
         })
         activeGroup = LinearLayout(activity).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(8), dp(4), dp(8), dp(4))
-            background = ToviTheme.card(activity)
+            background = groupBackground()
             clipToOutline = true
         }.also { body.addView(it, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)) }
     }
@@ -265,34 +290,29 @@ internal class SettingsOverlay(
             this.id = id
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
-            minimumHeight = dp(76)
-            setPadding(dp(8), dp(12), dp(8), dp(12))
+            minimumHeight = dp(56)
+            setPadding(dp(6), dp(7), dp(6), dp(7))
             isClickable = true
             isFocusable = true
             background = touchBackground()
             contentDescription = rowDescription(title, value, hint)
-            accessibilityDelegate = object : View.AccessibilityDelegate() {
-                override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
-                    super.onInitializeAccessibilityNodeInfo(host, info)
-                    info.className = Button::class.java.name
-                }
-            }
+            accessibilityDelegate = actionAccessibilityDelegate()
             setOnClickListener { click() }
         }
         row.addView(ImageView(activity).apply {
             setImageDrawable(SettingsIconDrawable(activity, icon))
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-        }, LinearLayout.LayoutParams(dp(40), dp(40)).apply { marginEnd = dp(12) })
+        }, LinearLayout.LayoutParams(dp(34), dp(34)).apply { marginEnd = dp(10) })
 
         val copy = LinearLayout(activity).apply {
             orientation = LinearLayout.VERTICAL
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
         }
-        copy.addView(label(title, 16f, FOREGROUND).apply {
+        copy.addView(label(title, 13f, FOREGROUND).apply {
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
             includeFontPadding = false
         })
-        copy.addView(label(hint, 12f, MUTED).apply {
+        copy.addView(label(hint, 10.5f, MUTED).apply {
             includeFontPadding = false
             setPadding(0, dp(3), 0, 0)
         })
@@ -300,7 +320,7 @@ internal class SettingsOverlay(
         val valueView = value?.let {
             TextView(activity).apply {
                 text = it
-                textSize = 13f
+                textSize = 11.5f
                 setTextColor(MUTED)
                 includeFontPadding = false
                 importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
@@ -312,7 +332,7 @@ internal class SettingsOverlay(
                     })
                 } else {
                     text.gravity = Gravity.END
-                    text.maxWidth = dp(104)
+                    text.maxWidth = dp(116)
                     row.addView(text, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                         marginStart = dp(8)
                     })
@@ -323,7 +343,7 @@ internal class SettingsOverlay(
             setImageDrawable(SettingsIconDrawable(activity, SettingsRowIcon.CHEVRON))
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
             scaleX = if (layoutDirection == LAYOUT_DIRECTION_RTL) -1f else 1f
-        }, LinearLayout.LayoutParams(dp(16), dp(24)).apply { marginStart = dp(8) })
+        }, LinearLayout.LayoutParams(dp(12), dp(20)).apply { marginStart = dp(6) })
         return row to valueView
     }
 
@@ -333,30 +353,30 @@ internal class SettingsOverlay(
         val control = Switch(activity).apply {
             this.id = id
             text = controlText(title, hint)
-            textSize = 16f
-            minHeight = dp(76)
+            textSize = 13f
+            minHeight = dp(56)
             gravity = Gravity.START or Gravity.CENTER_VERTICAL
             includeFontPadding = false
             setSingleLine(false)
-            setLineSpacing(dp(2).toFloat(), 1f)
-            switchPadding = dp(12)
-            setPadding(dp(8), dp(12), dp(8), dp(12))
+            setLineSpacing(dp(1).toFloat(), 1f)
+            switchPadding = dp(10)
+            setPadding(dp(6), dp(7), dp(6), dp(7))
             setTextColor(FOREGROUND)
             background = touchBackground()
             setCompoundDrawablesRelativeWithIntrinsicBounds(SettingsIconDrawable(activity, icon), null, null, null)
-            compoundDrawablePadding = dp(12)
+            compoundDrawablePadding = dp(10)
             showText = false
             splitTrack = false
-            switchMinWidth = dp(48)
+            switchMinWidth = dp(42)
             thumbDrawable = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
                 setColor(FOREGROUND)
-                setSize(dp(24), dp(24))
+                setSize(dp(22), dp(22))
             }
             thumbTintList = ColorStateList.valueOf(FOREGROUND)
             trackDrawable = StateListDrawable().apply {
                 addState(intArrayOf(android.R.attr.state_checked), switchTrack(ACCENT))
-                addState(intArrayOf(), switchTrack(0xFF55555C.toInt()))
+                addState(intArrayOf(), switchTrack(0xFF44464C.toInt()))
             }
             trackTintList = null
             isChecked = checked
@@ -367,39 +387,40 @@ internal class SettingsOverlay(
 
     private fun switchTrack(color: Int) = GradientDrawable().apply {
         setColor(color)
-        cornerRadius = dp(14).toFloat()
-        setSize(dp(48), dp(28))
+        cornerRadius = dp(12).toFloat()
+        setSize(dp(42), dp(24))
     }
 
     private fun addControl(control: View) {
         val group = activeGroup ?: return
         if (group.childCount > 0) group.addView(View(activity).apply {
-            setBackgroundColor(ToviTheme.BORDER)
+            setBackgroundColor(0xFF292B2F.toInt())
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
-        }, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, dp(1)).apply {
-            marginStart = dp(60)
-            marginEnd = dp(8)
+        }, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 1).apply {
+            marginStart = dp(6)
+            marginEnd = dp(6)
         })
         group.addView(control, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
     }
 
     private fun rowDescription(title: Int, value: String?, hint: Int): String = listOfNotNull(
-        activity.getString(title), value, activity.getString(hint),
+        displayText(title), value, activity.getString(if (hint == R.string.design_settings_restore_hint)
+            R.string.settings_restore_purchases_hint else hint),
     ).joinToString(", ")
 
     private fun controlText(title: Int, hint: Int): CharSequence {
-        val text = SpannableStringBuilder(activity.getString(title))
+        val text = SpannableStringBuilder(displayText(title))
         text.setSpan(TypefaceSpan("sans-serif-medium"), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         text.append('\n')
         val start = text.length
-        text.append(activity.getString(hint))
-        text.setSpan(RelativeSizeSpan(12f / 16f), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        text.append(displayText(hint))
+        text.setSpan(RelativeSizeSpan(10.5f / 13f), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         text.setSpan(ForegroundColorSpan(MUTED), start, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return text
     }
 
     private fun styleLabel(style: CameraStyle): String {
-        val name = style.name(activity)
+        val name = style.uiName(activity)
         return if (canUseStyle(style)) name else activity.getString(R.string.settings_style_locked, name)
     }
 
@@ -415,7 +436,7 @@ internal class SettingsOverlay(
 
     private fun chooseQuality() {
         val qualities = PhotoQuality.entries
-        showChoice(R.string.settings_quality, qualities.map { activity.getString(it.titleRes) }.toTypedArray(),
+        showChoice(R.string.design_settings_save_resolution, qualities.map { activity.getString(it.titleRes) }.toTypedArray(),
             qualities.indexOf(settings.photoQuality)) { index -> change(settings.copy(photoQuality = qualities[index]), true) }
     }
 
@@ -449,10 +470,39 @@ internal class SettingsOverlay(
     }
 
     private fun label(text: Int, size: Float, color: Int) = TextView(activity).apply {
-        setText(text)
+        setText(displayText(text))
         textSize = size
         setTextColor(color)
         setLineSpacing(dp(2).toFloat(), 1f)
+    }
+
+    private fun displayText(resource: Int): String = if (resource == R.string.design_settings_restore_hint) {
+        activity.getString(resource, activity.getString(R.string.billing_store_name))
+    } else activity.getString(resource)
+
+    private fun actionAccessibilityDelegate() = object : View.AccessibilityDelegate() {
+        override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+            super.onInitializeAccessibilityNodeInfo(host, info)
+            info.className = Button::class.java.name
+        }
+    }
+
+    private fun groupBackground() = GradientDrawable(
+        GradientDrawable.Orientation.TL_BR,
+        intArrayOf(0xFF151618.toInt(), 0xFF101113.toInt(), 0xFF0C0D0F.toInt()),
+    ).apply {
+        cornerRadius = dp(17).toFloat()
+        setStroke(1, 0xFF2D2E32.toInt())
+    }
+
+    private fun pageBackground(): LayerDrawable {
+        fun glow(x: Float, y: Float) = GradientDrawable().apply {
+            colors = intArrayOf(0x16C98C14, 0x00C98C14)
+            gradientType = GradientDrawable.RADIAL_GRADIENT
+            gradientRadius = dp(190).toFloat()
+            setGradientCenter(x, y)
+        }
+        return LayerDrawable(arrayOf(ColorDrawable(BACKGROUND), glow(1f, 0f), glow(0f, 0.9f)))
     }
 
     private fun touchBackground(): RippleDrawable {

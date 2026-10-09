@@ -1,6 +1,9 @@
 package com.phytoy.sample
 
 import android.content.Context
+import android.app.Activity
+import android.content.Intent
+import android.content.ClipData
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -33,6 +36,7 @@ import android.widget.TextView
 import java.text.DateFormat
 import java.util.Date
 import java.util.Calendar
+import java.util.Locale
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.RejectedExecutionException
@@ -47,9 +51,15 @@ internal class PhotoGalleryOverlay(
 ) : FrameLayout(context) {
     // Virtualize complete photo rows so a date heading spans all columns.
     private val grid = ListView(context)
-    private val topBar = PageTopBar(context)
-    private val subtitle = topBar.subtitleView
-    private val back = topBar.backButton
+    private val galleryHeader = LinearLayout(context)
+    private val heading = TextView(context)
+    private val select = TextView(context)
+    private val selectionCount = TextView(context)
+    private val selectionShare = TextView(context)
+    private val selectionBar = LinearLayout(context)
+    private lateinit var navigation: View
+    private var selecting = false
+    private val selectedUris = linkedSetOf<Uri>()
     private val content = FrameLayout(context)
     private val stateContainer = ScrollView(context)
     private val statePanel = LinearLayout(context)
@@ -105,7 +115,7 @@ internal class PhotoGalleryOverlay(
         val page = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         addView(page, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         addHeader()
-        page.addView(topBar, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        page.addView(galleryHeader, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         page.addView(content, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
         grid.apply {
             divider = null
@@ -136,7 +146,10 @@ internal class PhotoGalleryOverlay(
         }
         content.addView(grid, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         addStatePanel()
-        page.addView(bottomNavigation(), LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        navigation = bottomNavigation()
+        page.addView(navigation, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
+        buildSelectionBar()
+        page.addView(selectionBar, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         notice.apply {
             textSize = 13f
             setTextColor(PageTopBar.ON_SURFACE)
@@ -178,8 +191,9 @@ internal class PhotoGalleryOverlay(
         cache.remove(key)
         failedThumbnails.remove(key)
         entries = entries.filterNot { it.photo.uri == uri }
+        selectedUris.remove(uri)
         rebuildRows()
-        subtitle.text = resources.getQuantityString(R.plurals.gallery_photo_count, entries.size, entries.size)
+        updateSelection()
         if (entries.isEmpty()) showState(R.string.gallery_empty, loading = false)
     }
 
@@ -196,7 +210,7 @@ internal class PhotoGalleryOverlay(
         requestApplyInsets()
         if (!wasShowing) visibilityListener?.invoke(true)
         if (!wasShowing) {
-            back.requestFocus()
+            select.requestFocus()
             // API 28+ announces the accessibility pane when it appears. Older
             // platforms need a window event, not an app-selected TalkBack focus.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
@@ -226,8 +240,9 @@ internal class PhotoGalleryOverlay(
                 listing = null
                 result.onSuccess { photos ->
                     entries = photos
+                    selectedUris.retainAll(photos.map { it.photo.uri }.toSet())
                     rebuildRows()
-                    subtitle.text = resources.getQuantityString(R.plurals.gallery_photo_count, photos.size, photos.size)
+                    updateSelection()
                     if (photos.isEmpty()) showState(R.string.gallery_empty, loading = false)
                     else {
                         stateContainer.visibility = GONE
@@ -254,6 +269,9 @@ internal class PhotoGalleryOverlay(
         cancelPending()
         mainHandler.removeCallbacks(hideNotice)
         notice.visibility = GONE
+        selecting = false
+        selectedUris.clear()
+        updateSelection()
         restoreBackgroundAccessibility()
         // Restore keyboard/input navigation. The pane-disappeared event lets
         // the accessibility service decide where its own focus should return.
@@ -329,13 +347,14 @@ internal class PhotoGalleryOverlay(
             val row = getItem(position)
             if (row is GalleryRow.Heading) {
                 return (convertView as? TextView ?: TextView(context).apply {
-                    textSize = 13f
+                    textSize = 12f
                     setTextColor(ToviTheme.MUTED)
                     typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
                     letterSpacing = 0.06f
-                    setPadding(dp(4), dp(18), dp(4), dp(4))
+                    includeFontPadding = false
+                    setPadding(dp(6), dp(14), dp(4), dp(4))
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) isAccessibilityHeading = true
-                }).apply { text = if (row.day > 0) DateFormat.getDateInstance(DateFormat.LONG).format(Date(row.day))
+                }).apply { text = if (row.day > 0) DateFormat.getDateInstance(DateFormat.LONG).format(Date(row.day)).uppercase(Locale.getDefault())
                     else context.getString(R.string.gallery_saved_photos) }
             }
             val photoRow = row as GalleryRow.Photos
@@ -366,12 +385,22 @@ internal class PhotoGalleryOverlay(
             cell.image.setImageBitmap(bitmap)
             if (bitmap == null) cell.image.setImageResource(R.drawable.ic_gallery_placeholder)
             cell.label.text = if (photo.uri.toString() in failedThumbnails) context.getString(R.string.gallery_thumbnail_failed)
-                else photo.styleCode
+                else if (photo.styleCode == "S84") "ST84" else photo.styleCode
             cell.label.setTextColor(if (photo.styleCode == "DH2") ToviTheme.PRIMARY else ToviTheme.TEXT)
             cell.label.compoundDrawables[0]?.setTint(if (photo.styleCode == "DH2") ToviTheme.PRIMARY else ToviTheme.TEXT)
             cell.contentDescription = context.getString(R.string.gallery_item_description, photo.styleName,
                 DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(entry.capturedAtMillis)))
-            cell.setOnClickListener { photoSelectedListener?.invoke(photo) }
+            val checked = photo.uri in selectedUris
+            cell.isSelected = checked
+            cell.selectionMark.visibility = if (selecting) VISIBLE else GONE
+            cell.selectionMark.text = if (checked) "✓" else ""
+            cell.selectionMark.background = rounded(if (checked) ToviTheme.PRIMARY else 0xA60B0B0C.toInt(), dp(14).toFloat()).apply {
+                setStroke(dp(1), if (checked) ToviTheme.PRIMARY else ToviTheme.TEXT)
+            }
+            val border = if (checked) rounded(Color.TRANSPARENT, dp(14).toFloat()).apply { setStroke(dp(2), ToviTheme.PRIMARY) } else null
+            cell.foreground = RippleDrawable(ColorStateList.valueOf(0x35FFFFFF), border, rounded(Color.WHITE, dp(14).toFloat()))
+            cell.setOnClickListener { if (selecting) toggleSelection(photo.uri) else photoSelectedListener?.invoke(photo) }
+            cell.setOnLongClickListener { if (!selecting) { selecting = true; selectedUris.clear() }; toggleSelection(photo.uri); true }
             if (bitmap == null) requestThumbnail(photo)
         }
     }
@@ -379,12 +408,20 @@ internal class PhotoGalleryOverlay(
     private inner class PhotoCell(context: Context) : FrameLayout(context) {
         val image = ImageView(context)
         val label = TextView(context)
+        val selectionMark = TextView(context)
         init {
             id = R.id.gallery_item
             isClickable = true
             isFocusable = true
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
-            accessibilityDelegate = buttonDelegate()
+            accessibilityDelegate = object : View.AccessibilityDelegate() {
+                override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.className = if (selecting) android.widget.CheckBox::class.java.name else Button::class.java.name
+                    info.isCheckable = selecting
+                    info.isChecked = isSelected
+                }
+            }
             background = ToviTheme.card(context, 14)
             clipToOutline = true
             image.scaleType = ImageView.ScaleType.CENTER_CROP
@@ -414,6 +451,14 @@ internal class PhotoGalleryOverlay(
                 marginStart = dp(6)
                 bottomMargin = dp(6)
             })
+            selectionMark.apply {
+                textSize = 16f; gravity = Gravity.CENTER; setTextColor(ToviTheme.SURFACE)
+                importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+                visibility = GONE
+            }
+            addView(selectionMark, LayoutParams(dp(24), dp(24), Gravity.TOP or Gravity.END).apply {
+                marginEnd = dp(6); topMargin = dp(6)
+            })
             foreground = RippleDrawable(ColorStateList.valueOf(0x35FFFFFF), null, rounded(Color.WHITE, dp(14).toFloat()))
         }
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -424,19 +469,33 @@ internal class PhotoGalleryOverlay(
     }
 
     private fun addHeader() {
-        topBar.titleView.apply {
+        galleryHeader.apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(18), dp(8), dp(12), dp(8))
+            minimumHeight = dp(64)
+        }
+        heading.apply {
+            id = R.id.design_gallery_heading
             text = context.getString(R.string.gallery_title)
+            textSize = 24f
+            typeface = Typeface.create("sans-serif", Typeface.BOLD)
+            setTextColor(ToviTheme.TEXT)
+            includeFontPadding = false
+            if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
         }
-        subtitle.apply {
-            id = R.id.gallery_count
-            visibility = VISIBLE
-            text = context.getString(R.string.gallery_newest_first)
+        select.apply {
+            id = R.id.design_gallery_select
+            setText(R.string.design_gallery_select)
+            textSize = 15f; setTextColor(ToviTheme.PRIMARY); gravity = Gravity.CENTER
+            minimumHeight = dp(48); minimumWidth = dp(64)
+            setPadding(dp(8), dp(10), dp(8), dp(10))
+            background = RippleDrawable(ColorStateList.valueOf(0x24FFC629), null, rounded(Color.WHITE, dp(24).toFloat()))
+            isClickable = true; isFocusable = true; accessibilityDelegate = buttonDelegate()
+            setOnClickListener { selecting = !selecting; if (!selecting) selectedUris.clear(); updateSelection(); adapter.notifyDataSetChanged() }
         }
-        back.apply {
-            id = R.id.gallery_back
-            contentDescription = context.getString(R.string.gallery_back_description)
-        }
-        topBar.setOnBackClickListener { dismiss(); backListener?.invoke() }
+        galleryHeader.addView(heading, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+        galleryHeader.addView(select, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
     }
 
     private fun addStatePanel() {
@@ -481,14 +540,14 @@ internal class PhotoGalleryOverlay(
         retry.setText(if (empty) R.string.gallery_first_photo else R.string.gallery_retry)
         retry.setOnClickListener { if (empty) { dismiss(); backListener?.invoke() } else refresh() }
         stateText.setText(textRes)
-        subtitle.text = context.getString(R.string.gallery_newest_first)
+        updateSelection()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val available = (w - paddingLeft - paddingRight - dp(24)).coerceAtLeast(0)
-        val minimumCell = dp(if (resources.configuration.fontScale >= 1.5f) 136 else 104)
-        val count = (available / minimumCell.coerceAtLeast(1)).coerceIn(2, 6)
+        val count = if (w < dp(600)) (if (resources.configuration.fontScale >= 1.5f) 2 else 3)
+            else (available / dp(112).coerceAtLeast(1)).coerceIn(3, 6)
         if (columns != count) { columns = count; rebuildRows() }
     }
 
@@ -524,8 +583,8 @@ internal class PhotoGalleryOverlay(
     private fun bottomNavigation(): View = LinearLayout(context).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
-        setPadding(dp(12), dp(8), dp(12), dp(8))
-        background = ToviTheme.card(context, 24)
+        setPadding(dp(12), dp(8), dp(12), dp(6))
+        background = rounded(ToviTheme.SURFACE, dp(22).toFloat()).apply { setStroke(dp(1), ToviTheme.BORDER) }
         val tabs = listOf(
             Triple(R.id.gallery_tab_camera, R.string.gallery_camera, R.drawable.ic_gallery_camera),
             Triple(R.id.gallery_tab_gallery, R.string.gallery_title, R.drawable.ic_gallery_photos),
@@ -541,14 +600,17 @@ internal class PhotoGalleryOverlay(
                 setTextColor(if (index == 1) ToviTheme.PRIMARY else ToviTheme.MUTED)
                 val drawable = context.getDrawable(icon)?.mutate()?.apply {
                     setTint(if (index == 1) ToviTheme.PRIMARY else ToviTheme.MUTED)
-                    setBounds(0, 0, dp(24), dp(24))
+                    setBounds(0, 0, dp(28), dp(28))
                 }
-                setCompoundDrawables(null, drawable, null, null)
-                compoundDrawablePadding = dp(4)
-                minimumHeight = dp(64)
-                setPadding(dp(4), dp(8), dp(4), dp(8))
+                val dot = if (index == 1) GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL; setColor(ToviTheme.PRIMARY); setBounds(0, 0, dp(5), dp(5))
+                } else GradientDrawable().apply { setColor(Color.TRANSPARENT); setBounds(0, 0, dp(5), dp(5)) }
+                setCompoundDrawables(null, drawable, null, dot)
+                compoundDrawablePadding = dp(6)
+                minimumHeight = dp(66)
+                setPadding(dp(4), dp(2), dp(4), dp(2))
                 maxLines = 2
-                background = ToviTheme.actionBackground(context)
+                background = RippleDrawable(ColorStateList.valueOf(0x24FFC629), null, rounded(Color.WHITE, dp(16).toFloat()))
                 isClickable = true; isFocusable = true
                 accessibilityDelegate = buttonDelegate()
                 if (index == 1) isSelected = true
@@ -559,6 +621,76 @@ internal class PhotoGalleryOverlay(
                     }
                 }
             }, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+        }
+    }
+
+    private fun buildSelectionBar() {
+        selectionBar.apply {
+            orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(18), dp(10), dp(12), dp(10))
+            background = rounded(ToviTheme.SURFACE, dp(22).toFloat()).apply { setStroke(dp(1), ToviTheme.BORDER) }
+            visibility = GONE
+        }
+        selectionCount.apply {
+            textSize = 14f; setTextColor(ToviTheme.TEXT)
+            accessibilityLiveRegion = ACCESSIBILITY_LIVE_REGION_POLITE
+        }
+        selectionShare.apply {
+            id = R.id.design_gallery_share_selected
+            setText(R.string.photo_share)
+            textSize = 15f; setTextColor(ToviTheme.SURFACE); gravity = Gravity.CENTER
+            minimumHeight = dp(48); minimumWidth = dp(100)
+            setPadding(dp(16), dp(10), dp(16), dp(10))
+            background = ToviTheme.actionBackground(context, true)
+            isClickable = true; isFocusable = true; accessibilityDelegate = buttonDelegate()
+            setOnClickListener { shareSelection() }
+        }
+        selectionBar.addView(selectionCount, LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
+        selectionBar.addView(selectionShare, LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
+        updateSelection()
+    }
+
+    private fun toggleSelection(uri: Uri) {
+        if (!selectedUris.add(uri)) selectedUris.remove(uri)
+        updateSelection()
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun updateSelection() {
+        select.setText(if (selecting) R.string.design_gallery_done else R.string.design_gallery_select)
+        select.isEnabled = selecting || entries.isNotEmpty()
+        select.alpha = if (select.isEnabled) 1f else 0.4f
+        if (::navigation.isInitialized) navigation.visibility = if (selecting) GONE else VISIBLE
+        selectionBar.visibility = if (selecting) VISIBLE else GONE
+        selectionCount.text = context.getString(R.string.design_gallery_selected_count, selectedUris.size)
+        selectionShare.isEnabled = selectedUris.isNotEmpty()
+        selectionShare.alpha = if (selectionShare.isEnabled) 1f else 0.4f
+    }
+
+    /** Shares only explicitly selected app-photo URIs with the system chooser. */
+    private fun shareSelection() {
+        val chosen = entries.filter { it.photo.uri in selectedUris }.map { it.photo }
+        if (chosen.isEmpty()) return
+        try {
+            // Reuse the existing saved-MediaStore-URI validation for every item.
+            val validated = chosen.map(photoStore::createShareIntent)
+            val send = if (chosen.size == 1) validated.first() else {
+                val uris = ArrayList(chosen.map { it.uri })
+                val clip = ClipData.newUri(context.contentResolver, context.getString(R.string.gallery_title), uris.first())
+                uris.drop(1).forEach { clip.addItem(ClipData.Item(it)) }
+                Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                    type = "image/jpeg"
+                    putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
+                    clipData = clip
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            }
+            val chooser = Intent.createChooser(send, context.getString(R.string.photo_share_title)).apply {
+                if (context !is Activity) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(chooser)
+        } catch (_: Exception) {
+            showMessage(context.getString(R.string.design_gallery_share_failed))
         }
     }
 

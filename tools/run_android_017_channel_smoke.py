@@ -89,14 +89,16 @@ def main():
         smoke.camera(PAID[0], trial=True)
         smoke.tap(smoke.wait("camera_unlock_style"))
         nodes = smoke.purchase()
-        for key in ("purchase_preview", "purchase_buy"):
-            node = smoke.find(key, nodes)
-            assert node and smoke.visible(node), f"Fixed action {key} is absent"
-            if key == "purchase_preview":
-                smoke.target(key, node)
+        buy = smoke.find("purchase_buy", nodes)
+        assert buy and smoke.visible(buy), "The primary unlock action is absent from the fixed dock"
+        smoke.inspect_control("purchase_buy", buy, record="normal/purchase_buy")
+        buy_bounds = smoke.bounds(buy)
+        smoke.accessible_target("purchase_preview", record="normal/purchase_preview")
+        nodes = smoke.ui()
+        assert smoke.bounds(smoke.find("purchase_buy", nodes)) == buy_bounds, "The primary action moved with the body scroll"
         smoke.snapshot("purchase-fixed-actions", nodes)
         smoke.unconfigured("unconfigured-purchase")
-        smoke.check("Trial does not unlock photography; fixed actions visible; checkout disabled without store configuration")
+        smoke.check("Trial does not unlock photography; primary action stays fixed, body preview is reachable; unconfigured checkout disabled")
         smoke.tap(smoke.scroll_to("purchase_restore"))
         status = smoke.scroll_to("purchase_status", interactive=False)
         assert smoke.label_matches(status.get("text", ""), "billing_not_configured")
@@ -143,21 +145,19 @@ def main():
             smoke.tap(smoke.wait("camera_unlock_style"))
             nodes = smoke.purchase()
             buy = smoke.find("purchase_buy", nodes)
-            preview = smoke.find("purchase_preview", nodes)
-            assert buy and preview and smoke.visible(buy) and smoke.visible(preview), "Large-font fixed actions clipped"
+            assert buy and smoke.visible(buy), "Large-font primary action clipped"
             assert buy.get("enabled") == "false", "Unconfigured checkout enabled"
-            for key, node in (("purchase_buy", buy), ("purchase_preview", preview)):
-                left, top, right, bottom = smoke.bounds(node)
-                assert min(right-left, bottom-top) >= 48 * smoke.density - 1
-                smoke.report["touch_targets"]["font2/" + key] = {"bounds": [left, top, right, bottom]}
-            if smoke.width / smoke.density < 600:
-                assert smoke.bounds(buy)[3] <= smoke.bounds(preview)[1], "Narrow-screen large-font actions should stack"
+            smoke.inspect_control("purchase_buy", buy, record="font2/purchase_buy")
+            buy_bounds = smoke.bounds(buy)
+            preview = smoke.accessible_target("purchase_preview", record="font2/purchase_preview")
+            nodes = smoke.ui()
+            assert smoke.bounds(smoke.find("purchase_buy", nodes)) == buy_bounds, "Large-font primary action moved with the body"
             smoke.snapshot("font2-purchase-fixed-actions", nodes)
             smoke.tap(preview)
             smoke.camera(PAID[0], trial=True)
             smoke.tap(smoke.style_target(initial))
             smoke.camera(initial)
-            smoke.check("200%: fixed actions remain visible, >=48dp, stack on narrow screens; preview returns to the trial")
+            smoke.check("200%: primary action stays fixed; body preview is fully reachable at >=48dp and returns to the trial")
             if args.review_actions:
                 smoke.phase = "existing-photo review at 200% font scale"
                 smoke.photos()

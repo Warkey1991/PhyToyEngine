@@ -4,9 +4,12 @@
 Requires an already installed APK with a supplied SHA-256, CAMERA already
 granted, an initially selected free camera, and two existing app photos. Never
 captures, purchases, confirms deletion, grants permissions, chooses a share
-recipient, writes private preferences, or operates a physical device. Font scale
-and the initial visible free style are restored in finally. MediaStore IDs and
-photo bytes, permissions, and locale must remain unchanged.
+recipient, directly writes private preferences, or operates a physical device. Font scale
+and the initial visible free style are restored in finally. Favorite is changed
+only through its visible control and its initial checked state is restored,
+including a UI recovery attempt if the round trip fails. No private preferences
+are read or written directly. MediaStore IDs and photo bytes, permissions, and
+locale must remain unchanged.
 
 Uses visible UI and fresh UIAutomator dumps. Checks adjustments and trial/detail
 at 100/200% fonts, then gallery/review at 200%. Controls may scroll into view;
@@ -27,20 +30,67 @@ from pathlib import Path
 from run_android_017_ui_smoke import UiSmoke
 from run_android_billing_smoke import CAMERA_HIDDEN, FREE, PAID
 
+GALLERY_TABS = ("gallery_tab_camera", "gallery_tab_gallery", "gallery_tab_settings")
+
 
 class RedesignSmoke(UiSmoke):
     def __init__(self, args):
         super().__init__(args)
         self.report.update({
-            "scope": "UI redesign: directional EV/zoom, trial/detail, grouped gallery, nested settings, review gestures/actions",
+            "scope": "UI redesign: directional EV/zoom, trial/detail, grouped gallery, empty selection, nested settings, review menu/gestures/actions and Favorite round trip",
             "not_covered": [
                 "checkout or purchase success", "successful photo deletion or system delete consent",
                 "pinch/multitouch", "capture timing, output quality, EXIF or engine correctness",
                 "visual pixel correctness", "physical devices", "all paid cameras and entitlement states",
                 "complete settings operations and privacy document content",
+                "sharing selected gallery photos", "byte-for-byte private preference preservation",
             ],
             "photos_taken": 0, "photos_deleted": 0, "shares_sent": 0,
+            "direct_private_preference_writes": 0,
+            "private_preference_write_scope": "No direct preference writes; Favorite is toggled through UI and its initial checked state is restored",
+            "preference_restore_scope": "Restore the initial visible free camera and the tested photo's initial Favorite checked flag through UI; no byte-for-byte private preference claim",
         })
+        self.pending_favorite = None
+
+    def tap(self, node, **kwargs):
+        assert not node.get("resource-id", "").endswith(":id/design_gallery_share_selected"), (
+            "Dispatching selected-photo sharing is outside this regression")
+        super().tap(node, **kwargs)
+
+    def inspect_control(self, identifier, node, *, record):
+        """Validate the actual accessible hit control, including disabled items."""
+        if node.get("enabled") == "true":
+            self.target(identifier, node, record=record)
+            return
+        assert node.get("enabled") == "false", f"{identifier} has no explicit enabled state"
+        assert self.visible(node), f"Disabled {identifier} is not fully visible"
+        assert node.get("clickable") == "true", f"Disabled {identifier} lost button semantics"
+        label = node.get("content-desc") or node.get("text")
+        assert label, f"Disabled {identifier} has no accessible label"
+        left, top, right, bottom = self.bounds(node)
+        assert min(right - left, bottom - top) >= 48 * self.density - 1, f"Disabled {identifier} is below 48dp"
+        self.report["touch_targets"][record] = {
+            "id": identifier, "enabled": False, "bounds": [left, top, right, bottom],
+            "width_dp": round((right - left) / self.density, 2),
+            "height_dp": round((bottom - top) / self.density, 2), "label": label,
+        }
+
+    def gallery_ready(self):
+        def ready(nodes):
+            return all((node := self.find(identifier, nodes)) is not None and self.visible(node)
+                       for identifier in GALLERY_TABS) and any(
+                node.get("resource-id", "").endswith(":id/gallery_item") and self.visible(node)
+                for node in nodes) and self.find("settings_back", nodes) is None
+        nodes = self.poll(ready, "Existing seeded photos and gallery tabs did not appear", timeout=40)
+        assert all(self.find(identifier, nodes) is None for identifier in CAMERA_HIDDEN), (
+            "Camera leaked through the gallery modal")
+        return nodes
+
+    def first_gallery_photo(self, nodes):
+        item = next((node for node in nodes if node.get("resource-id", "").endswith(":id/gallery_item")
+                     and self.visible(node)), None)
+        assert item is not None, "No existing gallery item is fully visible"
+        return item
 
     def accessible_target(self, identifier, *, record=None):
         node = self.scroll_to(identifier)
@@ -90,7 +140,24 @@ class RedesignSmoke(UiSmoke):
                                and b[1] >= pt and b[3] <= pb]
                 assert scrolls, f"No visible scroll region can reveal {identifier}"
                 if identifier in ("purchase_buy", "purchase_preview"):
-                    scroll = max(scrolls, key=lambda node: (self.bounds(node)[1], self.bounds(node)[0]))
+                    # Preview belongs to the body for a locked camera and to
+                    # the dock for an owned camera. Use the exposed target's
+                    # actual container, including when its hit box is clipped.
+                    target = self.find(identifier, nodes)
+                    enclosing = []
+                    if target is not None:
+                        tl, tt, tr, tb = self.bounds(target)
+                        enclosing = [node for node in scrolls if
+                                     (b := self.bounds(node))[0] <= tl < tr <= b[2] and
+                                     b[1] <= tt < tb <= b[3]]
+                    if enclosing:
+                        scroll = min(enclosing, key=lambda node:
+                                     (self.bounds(node)[2] - self.bounds(node)[0]) *
+                                     (self.bounds(node)[3] - self.bounds(node)[1]))
+                    elif identifier == "purchase_buy":
+                        scroll = max(scrolls, key=lambda node: (self.bounds(node)[1], self.bounds(node)[0]))
+                    else:
+                        scroll = min(scrolls, key=lambda node: (self.bounds(node)[1], self.bounds(node)[0]))
                 elif identifier.startswith("review_"):
                     scroll = max(scrolls, key=lambda node: (self.bounds(node)[2] - self.bounds(node)[0]) *
                                  (self.bounds(node)[3] - self.bounds(node)[1]))
@@ -121,43 +188,81 @@ class RedesignSmoke(UiSmoke):
         raise AssertionError(f"Could not scroll a complete target into view: {identifier}")
 
     def adjustment(self, identifier, font):
-        before = self.number(identifier)
-        self.target(identifier, self.wait(identifier), record=f"font{font}/{identifier}")
-        self.tap(self.wait(identifier))
-        slider = self.wait("adjustment_slider")
+        nodes = self.ui()
+        if identifier == "zoom_ratio":
+            before = self.zoom_value(nodes)
+            opener = self.zoom_opener(nodes)
+        else:
+            opener = self.wait(identifier)
+            before = self.node_number(opener)
+        self.target(identifier, opener, record=f"font{font}/{identifier}")
+        self.tap(opener)
+        slider = self.scroll_to("adjustment_slider")
         assert slider.get("class") == "android.widget.SeekBar", "Native adjustment range is not exposed"
         left, top, right, bottom = self.bounds(slider)
+        assert self.visible(slider) and min(right - left, bottom - top) >= 48 * self.density - 1, (
+            "Native adjustment touch area is clipped or below 48dp")
+        self.report["touch_targets"][f"font{font}/{identifier}-slider"] = {
+            "bounds": [left, top, right, bottom], "width_dp": (right - left) / self.density,
+            "height_dp": (bottom - top) / self.density,
+        }
         horizontal = right - left >= bottom - top
         self.swipe(slider, to_start=False, horizontal=horizontal)
-        nodes = self.poll(lambda ns: (node := self.find(identifier, ns)) is not None and
-                          abs(self.node_number(node) - before) > .01,
+        def value(nodes):
+            if identifier == "zoom_ratio":
+                return self.zoom_value(nodes)
+            node = self.find(identifier, nodes)
+            assert node is not None, f"Actual {identifier} readout disappeared"
+            return self.node_number(node)
+        nodes = self.poll(lambda ns: abs(value(ns) - before) > .01,
                           f"{identifier} did not change its actual camera value")
-        changed = self.node_number(self.find(identifier, nodes))
+        changed = value(nodes)
         self.snapshot(f"font{font}-{identifier}-changed", nodes)
         if identifier == "exposure_value":
             self.tap(self.accessible_target("adjustment_reset"))
             self.poll(lambda ns: (node := self.find(identifier, ns)) is not None and
                       abs(self.node_number(node)) < .01, "EV reset did not return to zero")
         else:
-            nodes = self.ui()
-            panel = self.find("adjustment_panel", nodes)
-            if panel is None:
-                # The root frame owns no action; compressed trees may omit it.
-                panel = self.find("adjustment_panel", self.ui(include_unimportant=True))
-            assert panel is not None, "Zoom panel is missing"
-            panel_bounds = self.bounds(panel)
-            reset = next((node for node in nodes if node.get("clickable") == "true" and
-                          re.fullmatch(r"1[.,]0×", node.get("text", "")) and self.visible(node) and
-                          self.bounds(node)[0] >= panel_bounds[0] and self.bounds(node)[2] <= panel_bounds[2] and
-                          self.bounds(node)[1] >= panel_bounds[1] and self.bounds(node)[3] <= panel_bounds[3]), None)
-            assert reset is not None, "Hardware-supported 1× zoom shortcut is missing"
-            self.tap(reset)
-            self.poll(lambda ns: (node := self.find(identifier, ns)) is not None and
-                      abs(self.node_number(node) - 1) < .01, "Zoom reset did not return to 1×")
+            # The design keeps focal presets below the inline slider. Reset in
+            # the panel uses the existing 1x callback, with a real native target.
+            self.tap(self.accessible_target("adjustment_reset"))
+            self.poll(lambda ns: abs(self.zoom_value(ns) - 1) < .01, "Zoom reset did not return to 1×")
         self.tap(self.accessible_target("adjustment_done"))
         self.poll(lambda ns: self.find("adjustment_slider", ns) is None, "Adjustment panel did not close")
         self.check(f"font {font}: {identifier} changes the camera value and resets",
                    before=before, changed=changed, slider_orientation="horizontal" if horizontal else "vertical")
+
+    def selected_zoom_preset(self, nodes):
+        candidates = []
+        for node in nodes:
+            if node.get("selected") != "true" or node.get("clickable") != "true" or not self.visible(node):
+                continue
+            match = re.fullmatch(r"(\d+(?:[.,]\d+)?)×", node.get("text", ""))
+            if match is None:
+                continue
+            amount = float(match.group(1).replace(",", "."))
+            labels = {label.replace("%1$.2f", f"{amount:.2f}") for label in self.strings["camera_adjust_zoom_value"]}
+            labels |= {label.replace(f"{amount:.2f}", f"{amount:.2f}".replace(".", ",")) for label in labels}
+            if node.get("content-desc", "") in labels:
+                candidates.append((node, amount))
+        assert len(candidates) <= 1, "Multiple real camera zoom presets are selected"
+        return candidates[0] if candidates else None
+
+    def zoom_value(self, nodes):
+        node = self.find("zoom_ratio", nodes)
+        if node is not None and self.visible(node):
+            return self.node_number(node)
+        preset = self.selected_zoom_preset(nodes)
+        assert preset is not None, "Neither the actual zoom readout nor an accessible selected zoom preset is visible"
+        return preset[1]
+
+    def zoom_opener(self, nodes):
+        node = self.find("zoom_ratio", nodes)
+        if node is not None and self.visible(node):
+            return node
+        preset = self.selected_zoom_preset(nodes)
+        assert preset is not None, "The camera has no accessible zoom slider opener"
+        return preset[0]
 
     @staticmethod
     def node_number(node):
@@ -204,7 +309,9 @@ class RedesignSmoke(UiSmoke):
                 return False
             return not any(self.label_matches(item.get("text", ""), "photo_loading") for item in nodes)
         nodes = self.poll(ready, f"Photo did not load at position {expected_position}", timeout=40)
-        assert all(self.find(identifier, nodes) is None for identifier in CAMERA_HIDDEN), "Camera leaked through the review modal"
+        assert all(self.find(identifier, nodes) is None for identifier in
+                   CAMERA_HIDDEN + GALLERY_TABS + ("design_gallery_select",)), (
+            "Camera or gallery leaked through the review modal")
         return nodes
 
     def image_gesture_target(self):
@@ -231,64 +338,204 @@ class RedesignSmoke(UiSmoke):
         self.review_ready()
         return filenames[0]
 
+    def gallery_selection(self):
+        self.gallery_ready()
+        select = self.accessible_target("design_gallery_select", record="font2/gallery-select")
+        assert self.label_matches(select.get("text", ""), "design_gallery_select"), "Gallery starts in selection mode"
+        self.tap(select)
+        def selecting(nodes):
+            control = self.find("design_gallery_select", nodes)
+            return control is not None and self.label_matches(control.get("text", ""), "design_gallery_done") and \
+                (share := self.find("design_gallery_share_selected", nodes)) is not None and self.visible(share)
+        nodes = self.poll(selecting, "Select did not open the gallery selection mode")
+        assert all(self.find(identifier, nodes) is None for identifier in GALLERY_TABS), (
+            "Navigation remains exposed underneath selection controls")
+        zero_labels = {label.replace("%1$d", "0") for label in self.strings["design_gallery_selected_count"]}
+        assert any(node.get("text", "") in zero_labels for node in nodes), "Selection count does not start at zero"
+        items = [node for node in nodes if node.get("resource-id", "").endswith(":id/gallery_item") and self.visible(node)]
+        assert items and all(node.get("checkable") == "true" and node.get("checked") == "false" for node in items), (
+            "Selection mode must expose actual unchecked photo controls")
+        share = self.scroll_to("design_gallery_share_selected")
+        assert share.get("enabled") == "false", "Zero selected photos must disable sharing"
+        self.inspect_control("design_gallery_share_selected", share, record="font2/gallery-empty-selection-share")
+        self.snapshot("font2-gallery-empty-selection")
+        done = self.accessible_target("design_gallery_select", record="font2/gallery-selection-done")
+        assert self.label_matches(done.get("text", ""), "design_gallery_done"), "Selection exit is not Done"
+        self.tap(done)
+        nodes = self.gallery_ready()
+        assert self.find("design_gallery_share_selected", nodes) is None, "Selection sharing leaked after Done"
+        assert self.label_matches(self.find("design_gallery_select", nodes).get("text", ""), "design_gallery_select"), (
+            "Done did not restore Select")
+        self.check("200%: Select opens zero-selection mode and Done exits without selecting or sharing photos")
+        return nodes
+
+    def review_menu(self, name, expected_position, *, zoomed=None):
+        self.review_ready(expected_position)
+        self.tap(self.accessible_target("review_more", record=name + "/more"))
+        self.poll(lambda ns: any(self.label_matches(node.get("text", ""), "design_review_more_title")
+                                 for node in ns), "More photo actions did not open")
+        enabled = {}
+        for identifier, label in (("review_previous", "photo_previous"), ("review_next", "photo_next"),
+                                  ("review_zoom_reset", "photo_zoom_reset")):
+            node = self.scroll_to(identifier)
+            assert self.label_matches(node.get("text", ""), label), f"Menu item {identifier} has the wrong label"
+            self.inspect_control(identifier, node, record=name + "/" + identifier)
+            enabled[identifier] = node.get("enabled") == "true"
+        assert enabled["review_previous"] == (expected_position[0] > 1), "Previous does not match the actual photo position"
+        assert enabled["review_next"] == (expected_position[0] < expected_position[1]), "Next does not match the actual photo count"
+        if zoomed is not None:
+            assert enabled["review_zoom_reset"] == zoomed, "Fit photo does not reflect the actual zoom state"
+        self.snapshot(name)
+        return enabled
+
+    def close_review_menu(self, expected_position):
+        done = self.accessible_target("button2")
+        assert self.label_matches(done.get("text", ""), "review_metadata_close"), "More menu exit is not Done"
+        self.tap(done)
+        self.menu_dismissed()
+        return self.review_ready(expected_position)
+
+    def menu_dismissed(self):
+        self.poll(lambda ns: all(self.find(identifier, ns) is None for identifier in
+                                ("review_previous", "review_next", "review_zoom_reset")) and
+                  not any(self.label_matches(node.get("text", ""), "design_review_more_title") for node in ns),
+                  "More photo actions did not close")
+
+    def menu_navigate(self, direction, position, name):
+        assert direction in (-1, 1)
+        result = (position[0] + direction, position[1])
+        assert 1 <= result[0] <= result[1], "Menu navigation would exceed the actual photo list"
+        self.review_menu(name, position, zoomed=False)
+        identifier = "review_previous" if direction < 0 else "review_next"
+        self.tap(self.accessible_target(identifier, record=name + "/navigate"))
+        self.menu_dismissed()
+        self.review_ready(result)
+        return result
+
+    def favorite_state(self, node):
+        assert node.get("checkable") == "true" and node.get("class") == "android.widget.CheckBox", (
+            "Favorite is missing its checkable accessibility semantics")
+        assert node.get("checked") in ("true", "false") and node.get("selected") == node.get("checked"), (
+            "Favorite checked/selected states disagree")
+        checked = node["checked"] == "true"
+        assert self.label_matches(node.get("content-desc", ""),
+                                  "design_review_favorite_remove" if checked else "design_review_favorite_add"), (
+            "Favorite action label does not match its current checked state")
+        return checked
+
+    def favorite_roundtrip(self, position, filename):
+        self.review_ready(position)
+        node = self.accessible_target("review_favorite", record="font2/favorite-before")
+        initial = self.favorite_state(node)
+        self.pending_favorite = {"position": position, "filename": filename, "checked": initial}
+        self.report["favorite_initial"] = dict(self.pending_favorite)
+        self.save()
+        try:
+            self.tap(node)
+            nodes = self.poll(lambda ns: (current := self.find("review_favorite", ns)) is not None and
+                              self.favorite_state(current) != initial,
+                              "Favorite did not change its actual checked state")
+            assert self.position(nodes) == position, "Favorite switched the current photo"
+            self.snapshot("font2-favorite-changed", nodes)
+        finally:
+            self.restore_favorite()
+        self.check("200%: Favorite toggles its real accessible state and restores the original photo favorite flag",
+                   photo=filename, initial_checked=initial, final_checked=initial)
+
+    def restore_favorite(self, *, reopen=False):
+        pending = self.pending_favorite
+        if pending is None:
+            return
+        self.phase = "Favorite restore"
+        position = tuple(pending["position"])
+        if reopen:
+            # Recovery uses the same safe UI route. It never reads or writes
+            # app preferences directly, and identifies the actual photo again.
+            self.restart()
+            self.camera()
+            self.tap(self.accessible_target("last_photo"))
+            self.tap(self.first_gallery_photo(self.gallery_ready()))
+            current = self.position(self.review_ready())
+            assert current[1] == position[1], "Photo count changed before Favorite recovery"
+            for step in range(position[1]):
+                if current == position:
+                    break
+                current = self.menu_navigate(1 if current[0] < position[0] else -1, current,
+                                             f"favorite-recovery-{step}")
+            assert current == position, "Could not return to the original Favorite photo"
+        self.review_ready(position)
+        assert self.photo_info("favorite-restore-info") == pending["filename"], (
+            "Favorite recovery reached a different photo; refuse to change it")
+        node = self.accessible_target("review_favorite", record="favorite/restore")
+        if self.favorite_state(node) != pending["checked"]:
+            self.tap(node)
+        nodes = self.poll(lambda ns: (current := self.find("review_favorite", ns)) is not None and
+                          self.favorite_state(current) == pending["checked"], "Initial Favorite state was not restored")
+        assert self.position(nodes) == position, "Favorite recovery changed the review position"
+        self.report["favorite_initial_state_restored"] = True
+        self.pending_favorite = None
+        self.save()
+
     def photos(self):
         self.tap(self.wait("last_photo"))
-        nodes = self.poll(lambda ns: self.find("gallery_back", ns) is not None and
-                          any(node.get("resource-id", "").endswith(":id/gallery_item") and self.visible(node)
-                              for node in ns), "Existing seeded photos did not appear", timeout=40)
-        assert all(self.find(identifier, nodes) is None for identifier in CAMERA_HIDDEN), "Camera leaked through gallery modal"
+        nodes = self.gallery_ready()
         headings = [node.get("text", "") for node in nodes
                     if node.get("class") == "android.widget.TextView" and not node.get("resource-id") and
                     not node.get("clickable") == "true" and self.visible(node) and
                     re.search(r"(?:19|20)\d{2}", node.get("text", "")) and len(node.get("text", "")) < 80]
         assert headings, "No actual date heading is exposed above the gallery rows"
         self.snapshot("font2-gallery", nodes)
+        nodes = self.gallery_selection()
         settings_tab = self.wait("gallery_tab_settings")
         self.target("gallery_tab_settings", settings_tab, record="font2/gallery-settings-tab")
         self.tap(settings_tab)
-        self.settle(("settings_back",), CAMERA_HIDDEN + ("gallery_back",))
+        self.settle(("settings_back",), CAMERA_HIDDEN + GALLERY_TABS + ("design_gallery_select",))
         for identifier in ("settings_quality", "settings_haptics", "settings_restore_purchases"):
             self.accessible_target(identifier, record="font2/" + identifier)
             self.snapshot("font2-" + identifier)
         self.tap(self.wait("settings_back"))
-        nodes = self.poll(lambda ns: self.find("gallery_back", ns) is not None and
-                          self.find("settings_back", ns) is None, "Settings Back did not return to gallery")
+        nodes = self.gallery_ready()
         self.snapshot("font2-gallery-after-settings", nodes)
-        self.check("200%: dated gallery rows and settings navigation preserve the gallery", date_headings=headings)
-        item = next((node for node in nodes if node.get("resource-id", "").endswith(":id/gallery_item")
-                     and self.visible(node)), None)
-        assert item is not None, "Existing gallery item disappeared after settings"
-        self.tap(item)
+        for identifier in GALLERY_TABS:
+            node = self.find(identifier, nodes)
+            self.target(identifier, node, record="font2/" + identifier)
+            assert (node.get("selected") == "true") == (identifier == "gallery_tab_gallery"), (
+                "Gallery bottom navigation exposes the wrong selected page")
+        self.tap(self.accessible_target("gallery_tab_camera", record="font2/gallery-camera-tab"))
+        self.camera()
+        self.tap(self.accessible_target("last_photo"))
+        nodes = self.gallery_ready()
+        self.check("200%: dated gallery rows, Settings Back and the Camera tab preserve gallery/camera navigation",
+                   date_headings=headings)
+        self.tap(self.first_gallery_photo(nodes))
         nodes = self.review_ready()
         origin = self.position(nodes)
         assert origin[1] >= 2, "Two seeded photos are required for actual adjacent-photo regression"
         self.snapshot("font2-review", nodes)
-        for identifier in ("review_previous", "review_next"):
-            node = self.scroll_to(identifier)
-            if node.get("enabled") == "true":
-                self.target(identifier, node, record="font2/" + identifier)
-            else:
-                left, top, right, bottom = self.bounds(node)
-                assert node.get("content-desc"), f"Disabled {identifier} has no accessible label"
-                assert min(right - left, bottom - top) >= 48 * self.density - 1, f"Disabled {identifier} is below 48dp"
-                self.report["touch_targets"]["font2/" + identifier] = {
-                    "id": identifier, "enabled": False, "bounds": [left, top, right, bottom],
-                    "width_dp": round((right - left) / self.density, 2),
-                    "height_dp": round((bottom - top) / self.density, 2), "label": node["content-desc"],
-                }
         origin_file = self.photo_info("font2-review-info")
         direction = 1 if origin[0] < origin[1] else -1
         neighbor = (origin[0] + direction, origin[1])
+        self.menu_navigate(direction, origin, "font2-more-origin")
+        menu_neighbor_file = self.photo_info("font2-menu-neighbor-info")
+        assert menu_neighbor_file != origin_file, "Menu navigation changed the counter but not the photo"
+        self.menu_navigate(-direction, neighbor, "font2-more-neighbor")
+        assert self.photo_info("font2-menu-origin-info") == origin_file, "Menu return did not load the original photo"
+        self.check("200%: More exposes accessible Previous/Next/Fit controls and menu navigation loads adjacent photos",
+                   origin_position=origin, neighbor_position=neighbor, neighbor_file=menu_neighbor_file)
         self.swipe(self.image_gesture_target(), to_start=direction < 0, horizontal=True)
         self.review_ready(neighbor)
         neighbor_file = self.photo_info("font2-review-neighbor-info")
         assert neighbor_file != origin_file, "Swipe changed the counter but did not load a different photo"
+        assert neighbor_file == menu_neighbor_file, "Swipe and menu navigation load different photos at the same position"
         self.swipe(self.image_gesture_target(), to_start=direction > 0, horizontal=True)
         self.review_ready(origin)
         restored_file = self.photo_info("font2-review-origin-info")
         assert restored_file == origin_file, "Opposite swipe did not restore the original photo"
         self.check("200%: left/right image swipes load actual adjacent photos and return",
                    origin_position=origin, neighbor_position=neighbor, origin_file=origin_file, neighbor_file=neighbor_file)
+
+        self.favorite_roundtrip(origin, origin_file)
+        self.phase = "200% gallery and review"
 
         photo = self.image_gesture_target()
         left, top, right, bottom = self.bounds(photo)
@@ -298,14 +545,17 @@ class RedesignSmoke(UiSmoke):
         time.sleep(.1)
         self.adb("shell", "input", "tap", *point)
         self.report["double_tap_dispatch_seconds"] = round(time.monotonic() - started, 3)
-        self.wait("review_zoom_reset")
+        self.review_menu("font2-more-zoomed", origin, zoomed=True)
+        self.close_review_menu(origin)
         self.snapshot("font2-review-zoom")
         self.swipe(self.image_gesture_target(), to_start=direction < 0, horizontal=True)
         nodes = self.review_ready(origin)
-        assert self.find("review_zoom_reset", nodes) is not None, "Drag unexpectedly reset the enlarged image"
         assert self.photo_info("font2-review-zoom-drag-info") == origin_file, "Enlarged-image panning switched photos"
+        self.review_menu("font2-more-after-zoom-drag", origin, zoomed=True)
         self.tap(self.accessible_target("review_zoom_reset", record="font2/review_zoom_reset"))
-        self.poll(lambda ns: self.find("review_zoom_reset", ns) is None, "Fit photo did not restore the unzoomed state")
+        self.menu_dismissed()
+        self.review_menu("font2-more-after-fit", origin, zoomed=False)
+        self.close_review_menu(origin)
         self.check("200%: double tap enlarges, horizontal drag preserves the photo, and fit resets")
 
         self.tap(self.accessible_target("review_delete", record="font2/review_delete"))
@@ -432,6 +682,11 @@ def main():
                 smoke.report["failure_evidence_error"] = str(evidence_error)
     finally:
         cleanup_errors = []
+        if smoke.pending_favorite is not None:
+            try:
+                smoke.restore_favorite(reopen=True)
+            except Exception as exc:
+                cleanup_errors.append("Favorite UI restore: " + str(exc))
         if font_changed and font_original is not None:
             try:
                 if font_original == "null":

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_purchase_series">玩具相机系列</string>
+    <string name="design_purchase_illustration">设计效果示意，实拍效果受设备与光线影响。</string>
+    <string name="design_purchase_street_city">STREET 84 设计效果示意：日落中的电车</string>
+    <string name="design_purchase_street_portrait">STREET 84 设计效果示意：暮光中的人像</string>
+    <string name="design_purchase_street_cafe">STREET 84 设计效果示意：街边咖啡馆</string>
+    <string name="design_purchase_restore_short">恢复购买</string>
+    <string name="design_purchase_compare">展开原图与效果对比</string>
+    <string name="design_purchase_compare_hide">收起对比</string>
+    <string name="design_purchase_expanded">已展开</string>
+    <string name="design_purchase_collapsed">已收起</string>
+    <string name="design_purchase_lifetime">一次购买 · 终身使用</string>
+    <string name="design_purchase_unlock">%1$s 解锁相机</string>
+    <string name="design_purchase_camera_unlocked">%1$s，已解锁。查看相机详情。</string>
+    <string name="design_purchase_camera_locked">%1$s，尚未解锁。查看详情与预览。</string>
+</resources>

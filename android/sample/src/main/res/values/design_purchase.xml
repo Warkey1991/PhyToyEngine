@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="purchase_compare" type="id" />
+    <item name="purchase_style_dh_color" type="id" />
+    <item name="purchase_style_dh_mono" type="id" />
+    <item name="purchase_style_digital" type="id" />
+    <item name="purchase_style_plastic" type="id" />
+    <item name="purchase_style_street" type="id" />
+    <item name="purchase_style_fisheye" type="id" />
+    <string name="design_purchase_series">TOY CAMERA SERIES</string>
+    <string name="design_purchase_illustration">Design illustrations. Actual photographs depend on your device and lighting.</string>
+    <string name="design_purchase_street_city">Street 84 design illustration: sunset tram</string>
+    <string name="design_purchase_street_portrait">Street 84 design illustration: portrait in evening light</string>
+    <string name="design_purchase_street_cafe">Street 84 design illustration: sidewalk café</string>
+    <string name="design_purchase_restore_short">Restore</string>
+    <string name="design_purchase_compare">Compare original and effect</string>
+    <string name="design_purchase_compare_hide">Hide comparison</string>
+    <string name="design_purchase_expanded">Expanded</string>
+    <string name="design_purchase_collapsed">Collapsed</string>
+    <string name="design_purchase_lifetime">One-time purchase · Lifetime access</string>
+    <string name="design_purchase_unlock">Unlock Camera %1$s</string>
+    <string name="design_purchase_camera_unlocked">%1$s. Unlocked. View camera details.</string>
+    <string name="design_purchase_camera_locked">%1$s. Locked. View camera details and preview.</string>
+</resources>

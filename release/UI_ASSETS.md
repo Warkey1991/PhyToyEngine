@@ -1,9 +1,13 @@
-# ToviCam camera artwork
+# ToviCam UI artwork
 
-The six camera_art_*.png resources are decorative product illustrations generated with the built-in imagegen tool on 2026-10-07, using the supplied png screen designs as visual references. They have transparent RGBA backgrounds and no embedded labels, prices, lock states or brand text. All interactive state and typography is rendered by native views.
+The supplied designs in the workspace `png/` directory are the visual reference. Three unmodified source designs are bundled as `design_plastic_reference.png`, `design_street_reference.png` and `design_camera_reference.png` under `android/sample/src/main/res/drawable-nodpi/`. `CameraArtworkView` decodes named decorative regions with `BitmapRegionDecoder` on its dedicated worker; app text, actions, prices, focus, sliders and ownership badges remain native views.
 
-The artwork is not a sample of the camera engine's photo output. Existing original/processed demonstration scenes and their illustrative disclosures remain separate. No engine profile, shader or capture asset was changed for this UI refactor.
+- Free camera tiles use the camera images in the Plastic design's lower strip.
+- Plastic and Street hero artwork use image-only regions without baked titles, prices or action controls.
+- Plastic's film image and Street's three examples come from the supplied designs and are explicitly disclosed as design illustrations, including in accessibility descriptions.
+- Street and Fisheye tiles combine clean sky regions with their existing transparent camera layers, avoiding the designs' baked padlocks. All lock badges use actual billing entitlement.
+- Free-style heroes use the existing high-resolution transparent camera illustrations.
 
-CameraArtworkView shares a six-entry bitmap cache, decodes at half source resolution on a dedicated UI-art worker and fits the image without distortion. Style cards and purchase pages reuse the same resource; changing page or style does not recreate the camera TextureView or Surface.
+The six `camera_art_*.webp` resources are decorative transparent camera layers. The twelve `style_source_*.webp` / `style_sample_*.webp` resources remain a separate original/effect comparison, behind the native compare action. No design image is used by the capture engine, as a saved photo, or as a fake gallery entry.
 
-Resources: camera_art_dh_color.png, camera_art_dh_mono.png, camera_art_digital.png, camera_art_plastic.png, camera_art_street.png and camera_art_fisheye.png under android/sample/src/main/res/drawable-nodpi.
+The shared bitmap cache is limited to 12 MiB by allocation size. Region decoding runs off the main thread; stale results cannot replace a different artwork mode. Decorative images fill their cards. Actual captured photographs continue to fit their complete boundaries in the unchanged zoom/photo view.

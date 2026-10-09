@@ -196,7 +196,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_FULLSCREEN)
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -426,7 +426,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             setOnZoomAdjustmentListener { direction ->
                 if (cameraReady && !captureInProgress) {
                     clearTouchFocusForControlChange()
-                    setZoomRatio(currentZoomRatio * if (direction > 0) 1.25f else 0.8f)
+                    this@MainActivity.setZoomRatio(currentZoomRatio * if (direction > 0) 1.25f else 0.8f)
                 }
             }
             setOnExposureValueSelectedListener { index ->
@@ -438,7 +438,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             setOnZoomValueSelectedListener { ratio ->
                 if (cameraReady && !captureInProgress && !reviewVisible) {
                     clearTouchFocusForControlChange()
-                    setZoomRatio(ratio)
+                    this@MainActivity.setZoomRatio(ratio)
                 }
             }
             setOnUnlockStyleClickListener { openPurchase(selectedStyle) }
@@ -460,7 +460,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             val sideWidth = (chrome.sideChromeDp * density).roundToInt()
             previewArea.layoutParams = (previewArea.layoutParams as FrameLayout.LayoutParams).apply {
                 topMargin = systemInsets.top + (chrome.previewTopInsetDp * density).roundToInt()
-                bottomMargin = systemInsets.bottom + (chrome.bottomChromeDp * density).roundToInt()
+                bottomMargin = systemInsets.bottom + (chrome.previewBottomInsetDp * density).roundToInt()
                 leftMargin = systemInsets.left + if (chrome.layoutDirection == View.LAYOUT_DIRECTION_RTL) sideWidth else 0
                 rightMargin = systemInsets.right + if (chrome.layoutDirection == View.LAYOUT_DIRECTION_RTL) 0 else sideWidth
             }
@@ -546,11 +546,19 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 billingMessage = null
                 billing.onResume()
             },
+            isStyleUnlocked = billing::isUnlocked,
+            onSelectStyle = ::openPurchase,
         )
         root.addView(purchasePage, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
         ))
         setContentView(root)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.apply {
+                systemBarsBehavior = android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                hide(android.view.WindowInsets.Type.statusBars())
+            }
+        }
         updateBillingUi()
     }
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="design_settings_help_header" type="id" />
+    <item name="design_settings_help" type="id" />
+    <string name="design_settings_help_description">Settings help</string>
+    <string name="design_settings_save_resolution">Save resolution</string>
+    <string name="design_settings_resolution_hint">Photo save resolution</string>
+    <string name="design_settings_quality_high">High (≤12.5MP)</string>
+    <string name="design_settings_quality_balanced">Balanced (≤5MP)</string>
+    <string name="design_settings_quality_compact">Compact (≤3.2MP)</string>
+    <string name="design_settings_grid">Grid</string>
+    <string name="design_settings_grid_hint">Show grid on camera view</string>
+    <string name="design_settings_haptics">Haptic feedback</string>
+    <string name="design_settings_haptics_hint">Vibrate on camera actions</string>
+    <string name="design_settings_sound_hint">Sound at photo capture</string>
+    <string name="design_settings_review_hint">Open photo after capture</string>
+    <string name="design_settings_restore_hint">Restore with %1$s</string>
+    <string name="design_settings_about_hint">Camera guide and app version</string>
+    <string name="design_settings_help_feedback">Help &amp; Feedback</string>
+    <string name="design_settings_feedback_hint">Get help or send feedback</string>
+    <string name="design_settings_help">Help &amp; Tips</string>
+    <string name="design_settings_help_hint">Camera options explained</string>
+    <string name="design_settings_more">More settings</string>
+    <string name="design_settings_default_camera">Default camera</string>
+    <string name="design_settings_default_hint">Default on first launch</string>
+    <string name="design_settings_remember_camera">Remember last camera</string>
+    <string name="design_settings_remember_hint">Open with your last camera</string>
+    <string name="design_settings_privacy_hint">Photos and permissions</string>
+    <string name="design_settings_licenses_hint">Software licenses and notices</string>
+    <string name="design_settings_reset_hint">Restore defaults; keep photos</string>
+</resources>

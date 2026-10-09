@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_trait_color">暖色 · 柔和 · 胶片感</string>
+    <string name="design_trait_mono">深邃 · 鲜明 · 黑白</string>
+    <string name="design_trait_digital">清晰 · 简洁 · 数码</string>
+    <string name="design_trait_plastic">柔和 · 梦幻 · 随机感</string>
+    <string name="design_trait_street">鲜明 · 街头 · 高对比</string>
+    <string name="design_trait_fisheye">广角 · 趣味 · 畸变</string>
+</resources>
