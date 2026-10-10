@@ -143,8 +143,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     @Volatile private var pendingCameraFpsRange: Range<Int>? = null
     @Volatile private var desiredCameraFps = CAMERA_PREVIEW_FPS
     @Volatile private var cameraRepeatingPausedForThermal = false
-    private var previewBudgetUpdatedAt = 0L
     private var previewFrameRateBudget = CAMERA_PREVIEW_FPS
+    private val previewPerformancePolicies = mutableMapOf<String, PreviewPerformancePolicy>()
+    private var previewOutputShortEdgeLimit = PreviewQualityTier.HIGH.maximumOutputShortEdge
+    private var lastLoggedMetricsFrame = 0L
     @Volatile private var cameraOpening = false
     @Volatile private var activityResumed = false
     private var cameraPermissionRequestPending = false
@@ -185,6 +187,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         val manager: CameraManager,
         val cameraId: String,
         val handler: Handler,
+        val previewTier: PreviewQualityTier,
+        val processingFrameRateLimit: Int,
     ) {
         val engineOwner = QueueOwnedResource<PhyToyCameraSession> { it.close() }
         val engine: PhyToyCameraSession? get() = engineOwner.value
@@ -903,7 +907,11 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             stillSizeCandidates = chooseStillSizeCandidates(map)
             stillSizeCandidateIndex = 0
             val requestedCaptureSize = stillSizeCandidates.first()
-            val size = chooseEngineSize(map, requestedCaptureSize)
+            val performance = previewPerformancePolicies.getOrPut(cameraId) { PreviewPerformancePolicy() }
+            performance.startSession(SystemClock.elapsedRealtime())
+            previewFrameRateBudget = performance.frameRateBudget
+            previewOutputShortEdgeLimit = performance.tier.maximumOutputShortEdge
+            val size = chooseEngineSize(map, requestedCaptureSize, performance.tier)
             engineSize = size
 
             val texture = checkNotNull(preview.surfaceTexture)
@@ -911,12 +919,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             // preview.height here reused the previous style's aspect and TextureView then
             // stretched that stale buffer into the new viewport. The style aspect is the source
             // of truth for both the visible boundary and the Vulkan output surface.
-            val outputWidth = previewViewport.fittedWidth(captureAspect())
-                .coerceIn(1, MAXIMUM_PREVIEW_OUTPUT_WIDTH)
-            val outputHeight = (outputWidth / captureAspect())
-                .roundToInt()
-                .coerceAtLeast(1)
-            texture.setDefaultBufferSize(outputWidth, outputHeight)
+            val outputSize = previewOutputSize(
+                previewViewport.fittedWidth(captureAspect()), captureAspect(), previewOutputShortEdgeLimit,
+            )
+            texture.setDefaultBufferSize(outputSize.width, outputSize.height)
             val processedPreviewSurface = Surface(texture)
             previewSurface = processedPreviewSurface
             val outputRotation = relativeCameraRotation(characteristics, currentLensFacing)
@@ -924,7 +930,9 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
             val resources = CameraResources(
                 generation, selectedStyle, size, stillSizeCandidates.toList(),
                 processedPreviewSurface, outputRotation, manager, cameraId, handler,
+                performance.tier, performance.frameRateBudget,
             )
+            Log.i(LOG_TAG, "Preview configuration camera=$cameraId tier=${performance.tier} input=${size.width}x${size.height} output=${outputSize.width}x${outputSize.height} fps=${performance.frameRateBudget}")
             cameraResources = resources
             val captureSize = resources.stillCandidates.first()
             chrome.setCaptureSize(captureSize.width, captureSize.height)
@@ -952,35 +960,16 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         }
     }
 
-    private fun chooseEngineSize(map: StreamConfigurationMap, captureSize: Size): Size {
+    private fun chooseEngineSize(map: StreamConfigurationMap, captureSize: Size, tier: PreviewQualityTier): Size {
         val sizes = checkNotNull(map.getOutputSizes(android.graphics.ImageFormat.PRIVATE)) {
             "Camera has no PRIVATE output sizes"
         }
-        val captureAspect = captureSize.width.toDouble() / captureSize.height
-        val bounded = sizes.filter {
-            it.width <= MAXIMUM_PREVIEW_WIDTH &&
-                it.height <= MAXIMUM_PREVIEW_HEIGHT &&
-                it.width.toLong() * it.height <= MAXIMUM_PREVIEW_PIXELS
-        }
-        val aspectMatched = bounded.filter {
-            kotlin.math.abs(it.width.toDouble() / it.height - captureAspect) <=
-                MAXIMUM_PREVIEW_ASPECT_ERROR
-        }
-        return aspectMatched.firstOrNull {
-            it.width == TARGET_PREVIEW_WIDTH && it.height == TARGET_PREVIEW_HEIGHT
-        }
-            ?: aspectMatched.minByOrNull {
-                kotlin.math.abs(
-                    it.width.toLong() * it.height -
-                        TARGET_PREVIEW_WIDTH.toLong() * TARGET_PREVIEW_HEIGHT
-                )
-            }
-            ?: bounded.minWithOrNull(
-                compareBy<Size> {
-                    kotlin.math.abs(it.width.toDouble() / it.height - captureAspect)
-                }.thenByDescending { it.width.toLong() * it.height }
-            )
-            ?: sizes.minBy { it.width.toLong() * it.height }
+        val chosen = selectPreviewSize(
+            sizes.map { PreviewSize(it.width, it.height) },
+            captureSize.width.toDouble() / captureSize.height,
+            tier,
+        )
+        return Size(chosen.width, chosen.height)
     }
 
     private fun chooseStillSizeCandidates(map: StreamConfigurationMap): List<Size> {
@@ -1075,6 +1064,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 }
                 val index = acceptedIndex
                 val captureSize = resources.stillCandidates[index]
+                engine.setPreviewFrameRateBudget(resources.processingFrameRateLimit)
                 val processingFps = engine.snapshot().targetProcessingFps
                 mainHandler.post {
                     if (!isCurrent(resources)) {
@@ -1293,14 +1283,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun selectCameraFpsRange(target: Int = desiredCameraFps): Range<Int>? {
-        if (target <= 0) return null
-        val fixed = cameraFpsRanges.filter { it.lower == it.upper }
-        fixed.firstOrNull { it.upper == target }?.let { return it }
-        fixed.filter { it.upper <= target }.maxByOrNull { it.upper }?.let { return it }
-        return cameraFpsRanges.firstOrNull { it.lower == target && it.upper == target }
-            ?: cameraFpsRanges.filter { it.contains(target) }
-                .minByOrNull { it.upper - it.lower }
-            ?: cameraFpsRanges.minByOrNull { kotlin.math.abs(it.upper - target) }
+        val selected = selectPreviewFpsRange(
+            cameraFpsRanges.map { PreviewFpsRange(it.lower, it.upper) }, target,
+        ) ?: return null
+        return Range(selected.lower, selected.upper)
     }
 
     private fun updateCameraFrameRate(target: Int = desiredCameraFps) {
@@ -2278,6 +2264,24 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         openCamera()
     }
 
+    /** Main-thread only; cadence changes keep the clear stream and camera session intact. */
+    private fun updatePreviewPerformance(value: PhyToyCameraSession.Snapshot, now: Long) {
+        val resources = cameraResources ?: return
+        val performance = previewPerformancePolicies[resources.cameraId] ?: return
+        if (!cameraReady || cameraOpening || captureInProgress || reviewVisible || value.errorFrames > 0L ||
+            value.thermalStatus >= PowerManager.THERMAL_STATUS_MODERATE
+        ) {
+            performance.suspendSampling(now, value.renderedFrames)
+            return
+        }
+        performance.observe(now, value.renderedFrames, value.lastLatencyUs, value.thermalStatus)
+        if (performance.frameRateBudget != previewFrameRateBudget) {
+            previewFrameRateBudget = performance.frameRateBudget
+            resources.engine?.setPreviewFrameRateBudget(previewFrameRateBudget)
+            Log.i(LOG_TAG, "Preview throughput budget=$previewFrameRateBudget fps tier=${performance.tier} last_us=${value.lastLatencyUs}")
+        }
+    }
+
     private val metricsUpdater = object : Runnable {
         override fun run() {
             val engine = engineSession
@@ -2285,19 +2289,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 try {
                     val value = engine.snapshot()
                     val now = SystemClock.elapsedRealtime()
-                    if (!captureInProgress && value.renderedFrames >= 90 &&
-                        value.latencyP95Us > 0 && now - previewBudgetUpdatedAt >= 3_000L
-                    ) {
-                        // Leave 10% headroom and use coarse cadence steps to avoid oscillation.
-                        val capacity = (900_000L / value.latencyP95Us).toInt().coerceIn(5, CAMERA_PREVIEW_FPS)
-                        val budget = listOf(30, 24, 20, 15, 12, 10, 8, 5).first { it <= capacity }
-                        if (budget != previewFrameRateBudget) {
-                            previewFrameRateBudget = budget
-                            engine.setPreviewFrameRateBudget(budget)
-                            Log.i(LOG_TAG, "Preview throughput budget=$budget fps p95_us=${value.latencyP95Us}")
-                        }
-                        previewBudgetUpdatedAt = now
-                    }
+                    updatePreviewPerformance(value, now)
                     if (value.targetProcessingFps != desiredCameraFps) {
                         desiredCameraFps = value.targetProcessingFps
                     }
@@ -2314,38 +2306,41 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         value.latencyP95Us <= PRODUCT_ALPHA_P95_US &&
                         (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || value.thermalStatus < 0 ||
                             value.thermalStatus <= PowerManager.THERMAL_STATUS_MODERATE)
-                    chrome.metrics.text = String.format(
-                        Locale.US,
-                        getString(R.string.metrics_format),
-                        value.receivedFrames,
-                        value.renderedFrames,
-                        value.droppedFrames,
-                        value.errorFrames,
-                        value.throttledFrames,
-                        value.targetProcessingFps,
-                        value.thermalStatus,
-                        activeCameraFpsRange?.let { "${it.lower}-${it.upper}" } ?: "-",
-                        latencyMs,
-                        value.maximumLatencyUs / 1000.0,
-                        value.latencyP50Us / 1000.0,
-                        value.latencyP95Us / 1000.0,
-                        value.queueSubmissions,
-                        value.hardwareBufferImports,
-                        value.zeroCopyFrames,
-                        value.presentedFrames,
-                        value.swapchainRecreates,
-                        value.outputWidth,
-                        value.outputHeight,
-                        value.inputImageFormat,
-                        value.inputBufferFormat,
-                        value.inputBufferUsage,
-                        value.resourceAllocations,
-                        value.allocatedBytes / (1024.0 * 1024.0),
-                        getString(
-                            if (verified) R.string.verification_yes
-                            else R.string.verification_waiting
-                        ),
-                    )
+                    val shouldLogMetrics = value.renderedFrames - lastLoggedMetricsFrame >= 30L
+                    if (chrome.metrics.visibility == View.VISIBLE || shouldLogMetrics) {
+                        chrome.metrics.text = String.format(
+                            Locale.US,
+                            getString(R.string.metrics_format),
+                            value.receivedFrames,
+                            value.renderedFrames,
+                            value.droppedFrames,
+                            value.errorFrames,
+                            value.throttledFrames,
+                            value.targetProcessingFps,
+                            value.thermalStatus,
+                            activeCameraFpsRange?.let { "${it.lower}-${it.upper}" } ?: "-",
+                            latencyMs,
+                            value.maximumLatencyUs / 1000.0,
+                            value.latencyP50Us / 1000.0,
+                            value.latencyP95Us / 1000.0,
+                            value.queueSubmissions,
+                            value.hardwareBufferImports,
+                            value.zeroCopyFrames,
+                            value.presentedFrames,
+                            value.swapchainRecreates,
+                            value.outputWidth,
+                            value.outputHeight,
+                            value.inputImageFormat,
+                            value.inputBufferFormat,
+                            value.inputBufferUsage,
+                            value.resourceAllocations,
+                            value.allocatedBytes / (1024.0 * 1024.0),
+                            getString(
+                                if (verified) R.string.verification_yes
+                                else R.string.verification_waiting
+                            ),
+                        )
+                    }
                     if (value.errorFrames > 0 && !captureInProgress) {
                         if (value.errorFrames > previousEngineErrorFrames) {
                             showCameraRecovery(getString(R.string.camera_recovery_failed))
@@ -2377,7 +2372,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                         chrome.setReady(true)
                         maybeShowFirstUseHint()
                     }
-                    if (value.renderedFrames > 0 && value.renderedFrames % 30L == 0L) {
+                    if (shouldLogMetrics) {
+                        lastLoggedMetricsFrame = value.renderedFrames
                         Log.i(LOG_TAG, chrome.metrics.text.toString())
                     }
                 } catch (exception: Throwable) {
@@ -2408,8 +2404,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         lastObservedRenderedFrames = 0L
         lastPreviewProgressMillis = 0L
         previewPausedForHeat = false
-        previewBudgetUpdatedAt = 0L
         previewFrameRateBudget = CAMERA_PREVIEW_FPS
+        lastLoggedMetricsFrame = 0L
         cameraOpening = false
         cameraReady = false
         focusGeneration += 1L
@@ -2501,8 +2497,8 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         height: Int,
     ) {
         if (width <= 0 || height <= 0) return
-        val outputWidth = width.coerceAtMost(MAXIMUM_PREVIEW_OUTPUT_WIDTH)
-        surface.setDefaultBufferSize(outputWidth, (outputWidth / captureAspect()).roundToInt().coerceAtLeast(1))
+        val outputSize = previewOutputSize(width, captureAspect(), previewOutputShortEdgeLimit)
+        surface.setDefaultBufferSize(outputSize.width, outputSize.height)
     }
 
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -2579,12 +2575,6 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         private const val GPU_SAMPLED_IMAGE_USAGE = 0x100L
         private const val MAXIMUM_BUFFER_IMPORTS = 16L
         private const val PRODUCT_ALPHA_P95_US = 33_333L
-        private const val MAXIMUM_PREVIEW_OUTPUT_WIDTH = 1080
-        private const val TARGET_PREVIEW_WIDTH = 1280
-        private const val TARGET_PREVIEW_HEIGHT = 960
-        private const val MAXIMUM_PREVIEW_WIDTH = 1440
-        private const val MAXIMUM_PREVIEW_HEIGHT = 1080
-        private const val MAXIMUM_PREVIEW_PIXELS = 1_600_000L
         private const val MAXIMUM_PREVIEW_ASPECT_ERROR = 0.015
         private const val CAMERA_PREVIEW_FPS = 30
         private const val CAPTURE_TIMEOUT_MILLIS = 10_000

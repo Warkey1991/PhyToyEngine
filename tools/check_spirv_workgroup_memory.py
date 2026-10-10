@@ -7,7 +7,7 @@ import struct
 from pathlib import Path
 
 
-def workgroup_memory_bytes(path: Path) -> int:
+def workgroup_memory_bytes(path: Path, specialization: dict[int, int] | None = None) -> int:
     data = path.read_bytes()
     if len(data) < 20 or len(data) % 4:
         raise ValueError('SPIR-V header/payload is truncated')
@@ -15,6 +15,8 @@ def workgroup_memory_bytes(path: Path) -> int:
     if words[0] != 0x07230203:
         raise ValueError('unsupported SPIR-V magic/byte order')
     constants = {}
+    expressions = {}
+    specialization_ids = {}
     types = {}
     workgroup_pointer_types = []
     position = 5
@@ -26,11 +28,31 @@ def workgroup_memory_bytes(path: Path) -> int:
         operands = words[position+1:position+count]
         if opcode in (21, 22, 23, 28, 30, 32):  # Int/Float/Vector/Array/Struct/Pointer
             types[operands[0]] = (opcode, operands[1:])
-        elif opcode == 43:  # OpConstant; array lengths in these shaders are uint32
+        elif opcode in (43, 50):  # OpConstant / OpSpecConstant; uint32 array lengths
             constants[operands[1]] = operands[2]
+        elif opcode == 52:  # OpSpecConstantOp
+            expressions[operands[1]] = (operands[2], operands[3:])
+        elif opcode == 71 and operands[1] == 1:  # OpDecorate, Decoration SpecId
+            specialization_ids[operands[0]] = operands[2]
         elif opcode == 59 and operands[2] == 4:  # OpVariable, StorageClass Workgroup
             workgroup_pointer_types.append(operands[0])
         position += count
+
+    def constant_value(result_id):
+        spec_id = specialization_ids.get(result_id)
+        if specialization is not None and spec_id in specialization:
+            return specialization[spec_id]
+        if result_id in constants:
+            return constants[result_id]
+        opcode, arguments = expressions[result_id]
+        left, right = (constant_value(value) for value in arguments)
+        if opcode == 128:  # IAdd
+            return left + right
+        if opcode == 130:  # ISub
+            return left - right
+        if opcode == 132:  # IMul
+            return left * right
+        raise ValueError(f'unsupported array-length specialization opcode {opcode}')
 
     def size(type_id):
         opcode, operands = types[type_id]
@@ -41,7 +63,7 @@ def workgroup_memory_bytes(path: Path) -> int:
                 raise ValueError('vec3 Workgroup padding requires target-specific reflection')
             return size(operands[0])*operands[1]
         if opcode == 28:
-            return size(operands[0])*constants[operands[1]]
+            return size(operands[0])*constant_value(operands[1])
         if opcode == 30:
             raise ValueError('struct Workgroup alignment requires target-specific reflection')
         if opcode == 32:

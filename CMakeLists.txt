@@ -66,6 +66,21 @@ if(PHYTOY_BUILD_VULKAN_SHADERS)
             list(APPEND PHYTOY_SPIRV_FILES "${SHADER_ID}=${SPIRV_FILE}")
             list(APPEND PHYTOY_SPIRV_OUTPUTS "${SPIRV_FILE}")
         endforeach()
+        # Preview-only control-flow specialization leaves capture shader binaries intact.
+        foreach(SHADER_NAME optics isp)
+            set(SPIRV_FILE "${PHYTOY_SPIRV_DIR}/${SHADER_NAME}_preview.spv")
+            add_custom_command(
+                OUTPUT "${SPIRV_FILE}"
+                COMMAND "${CMAKE_COMMAND}" -E make_directory "${PHYTOY_SPIRV_DIR}"
+                COMMAND "${PHYTOY_GLSLC}" --target-env=vulkan1.1 -O
+                    -DPHYTOY_PREVIEW_SPECIALIZATION=1
+                    "${PHYTOY_SHADER_DIR}/${SHADER_NAME}.comp" -o "${SPIRV_FILE}"
+                DEPENDS "${PHYTOY_SHADER_DIR}/${SHADER_NAME}.comp"
+                VERBATIM
+            )
+            list(APPEND PHYTOY_SPIRV_FILES "${SHADER_NAME}_preview=${SPIRV_FILE}")
+            list(APPEND PHYTOY_SPIRV_OUTPUTS "${SPIRV_FILE}")
+        endforeach()
         set(PHYTOY_SPIRV_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/phytoy_spirv.hpp")
         add_custom_command(
             OUTPUT "${PHYTOY_SPIRV_HEADER}"

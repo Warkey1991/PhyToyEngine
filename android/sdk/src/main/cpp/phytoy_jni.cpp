@@ -1,4 +1,5 @@
 #include "phytoy/phytoy.h"
+#include "preview_cadence.hpp"
 
 #include <android/hardware_buffer.h>
 #include <android/log.h>
@@ -30,7 +31,6 @@ namespace {
 constexpr const char* kLogTag = "PhyToyCamera2";
 constexpr uint32_t kDefaultProcessingFrameRate = 15U;
 constexpr uint32_t kMaximumProcessingFrameRate = 60U;
-constexpr uint64_t kNanosecondsPerSecond = 1'000'000'000ULL;
 
 void log_error(const std::string& message) {
     __android_log_print(ANDROID_LOG_ERROR, kLogTag, "%s", message.c_str());
@@ -205,13 +205,14 @@ public:
         target_processing_fps_.store(static_cast<uint32_t>(frames_per_second));
         {
             std::lock_guard lock(queue_mutex_);
-            last_admitted_time_ns_ = 0U;
+            preview_cadence_.reset();
             if (frames_per_second == 0 && pending_image_ &&
                 !pending_image_.is_still_capture()) {
                 ++throttled_frames_;
                 pending_image_.reset();
             }
         }
+        queue_ready_.notify_one();
         log_info("Camera2 Vulkan processing target changed to " +
                  std::to_string(frames_per_second) + " fps");
     }
@@ -429,13 +430,6 @@ private:
 
         const uint64_t sequence = ++received_frames_;
         PendingImage incoming(image, acquire_fence_fd, sequence, still_capture);
-        int64_t image_timestamp_ns = 0;
-        if (!still_capture) {
-            // Camera callbacks may arrive in short bursts even when sensor exposure timestamps
-            // are evenly spaced. Cadencing on callback wall time incorrectly discarded valid
-            // 30 FPS frames, so prefer the sensor timestamp and keep wall time only as fallback.
-            AImage_getTimestamp(image, &image_timestamp_ns);
-        }
         {
             std::lock_guard lock(queue_mutex_);
             if (worker_stopping_) {
@@ -454,38 +448,17 @@ private:
                     ++throttled_frames_;
                     return;
                 }
-                const uint64_t cadence_time_ns = image_timestamp_ns > 0
-                    ? static_cast<uint64_t>(image_timestamp_ns)
-                    : static_cast<uint64_t>(
-                        std::chrono::duration_cast<std::chrono::nanoseconds>(
-                            std::chrono::steady_clock::now().time_since_epoch()).count());
-                const uint64_t interval_ns = kNanosecondsPerSecond / target_fps;
-                const uint64_t jitter_tolerance_ns = std::min<uint64_t>(
-                    interval_ns / 20U, 4'000'000ULL);
-                if (last_admitted_time_ns_ != 0U &&
-                    cadence_time_ns >= last_admitted_time_ns_ &&
-                    cadence_time_ns + jitter_tolerance_ns <
-                        last_admitted_time_ns_ + interval_ns) {
-                    ++throttled_frames_;
-                    return;
-                }
-                if (last_admitted_time_ns_ == 0U ||
-                    cadence_time_ns < last_admitted_time_ns_) {
-                    last_admitted_time_ns_ = cadence_time_ns;
-                } else {
-                    const uint64_t elapsed_ns = cadence_time_ns - last_admitted_time_ns_;
-                    const uint64_t elapsed_intervals = std::max<uint64_t>(
-                        1U,
-                        (elapsed_ns + jitter_tolerance_ns) / interval_ns);
-                    last_admitted_time_ns_ += elapsed_intervals * interval_ns;
-                }
             }
             if (pending_image_) {
                 if (!still_capture && pending_image_.is_still_capture()) {
                     ++dropped_frames_;
                     return;
                 }
-                ++dropped_frames_;
+                // Until the worker's deadline, keep the freshest preview input.
+                // Throttling callbacks used to retain a frame up to one whole
+                // processing interval older during a pan.
+                if (!still_capture && preview_cadence_waiting_) ++throttled_frames_;
+                else ++dropped_frames_;
             }
             pending_image_ = std::move(incoming);
         }
@@ -501,6 +474,23 @@ private:
                     return worker_stopping_ || static_cast<bool>(pending_image_);
                 });
                 if (worker_stopping_) return;
+                if (!pending_image_.is_still_capture()) {
+                    const uint32_t fps = target_processing_fps_.load();
+                    if (fps == 0U) {
+                        ++throttled_frames_;
+                        pending_image_.reset();
+                        continue;
+                    }
+                    const auto now = std::chrono::steady_clock::now();
+                    const auto deadline = preview_cadence_.deadline(now, fps);
+                    if (deadline > now) {
+                        preview_cadence_waiting_ = true;
+                        queue_ready_.wait_until(lock, deadline);
+                        preview_cadence_waiting_ = false;
+                        continue;
+                    }
+                    preview_cadence_.begin(now);
+                }
                 image = std::move(pending_image_);
             }
             process_image(image);
@@ -740,7 +730,8 @@ private:
     std::condition_variable queue_ready_;
     PendingImage pending_image_;
     bool worker_stopping_{};
-    uint64_t last_admitted_time_ns_{};
+    phytoy::android_detail::PreviewCadence preview_cadence_;
+    bool preview_cadence_waiting_{};
     mutable std::mutex render_mutex_;
 
     mutable std::mutex capture_mutex_;

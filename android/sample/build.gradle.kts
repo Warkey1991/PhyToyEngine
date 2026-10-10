@@ -16,10 +16,10 @@ val galaxyApplicationId = providers.gradleProperty("phytoyGalaxyApplicationId")
     .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyapp")
 val releaseVersionCode = providers.gradleProperty("phytoyVersionCode")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_CODE"))
-    .getOrElse("19").toInt()
+    .getOrElse("23").toInt()
 val releaseVersionName = providers.gradleProperty("phytoyVersionName")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_NAME"))
-    .getOrElse("0.17.1")
+    .getOrElse("0.17.5")
 require(listOf(playApplicationId, galaxyApplicationId).all {
     it.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+"))
 }) {

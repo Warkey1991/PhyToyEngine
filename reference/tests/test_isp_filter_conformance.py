@@ -106,6 +106,13 @@ def test_isp_shader_compiles_within_guaranteed_workgroup_budget(project_root, tm
     spec.loader.exec_module(module)
     amount = module.workgroup_memory_bytes(spirv)
     assert 0 < amount <= 32768
+    # The capture default retains its original maximum allocation. Preview's
+    # actual halo reduces allocation without changing weight-array dimensions.
+    assert amount == 23196
+    for halo in range(9):
+        scene = 16 + halo * 2
+        expected = 4 * ((scene + 2)**2 + scene**2 * 3 + 16 * scene * 3 + 9 + 9 + 17)
+        assert module.workgroup_memory_bytes(spirv, {0: halo}) == expected
 
 
 @pytest.mark.skipif(not os.environ.get('PHYTOY_CPP_LIBRARY') or not os.environ.get('PHYTOY_CPP_PROFILE_DIR'),

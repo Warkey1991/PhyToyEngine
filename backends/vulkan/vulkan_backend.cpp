@@ -1,13 +1,16 @@
 #include "vulkan_backend.hpp"
 
 #include "cpu_backend.hpp"
+#include "preview_geometry.hpp"
 
 #include <algorithm>
 #include <array>
 #include <bit>
+#include <chrono>
 #include <cmath>
 #include <cstring>
 #include <dlfcn.h>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -16,6 +19,7 @@
 #if defined(__ANDROID__) && defined(PHYTOY_HAS_EMBEDDED_SPIRV)
 #include "phytoy_spirv.hpp"
 #include <android/hardware_buffer.h>
+#include <android/log.h>
 #include <android/native_window.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -235,6 +239,7 @@ struct VulkanBackend::Impl {
         VkImage image{VK_NULL_HANDLE};
         VkDeviceMemory memory{VK_NULL_HANDLE};
         VkImageView view{VK_NULL_HANDLE};
+        VkDeviceSize allocation_size{};
 
         ImportedAhbImage() = default;
         ImportedAhbImage(const ImportedAhbImage&) = delete;
@@ -247,6 +252,7 @@ struct VulkanBackend::Impl {
                 image = std::exchange(other.image, VK_NULL_HANDLE);
                 memory = std::exchange(other.memory, VK_NULL_HANDLE);
                 view = std::exchange(other.view, VK_NULL_HANDLE);
+                allocation_size = std::exchange(other.allocation_size, 0U);
             }
             return *this;
         }
@@ -259,6 +265,7 @@ struct VulkanBackend::Impl {
             image = VK_NULL_HANDLE;
             memory = VK_NULL_HANDLE;
             view = VK_NULL_HANDLE;
+            allocation_size = 0U;
         }
     };
 
@@ -304,12 +311,35 @@ struct VulkanBackend::Impl {
         }
     };
 
+    struct PreparedPreview {
+        const HostProfile* host{};
+        const ToyProfile* toy{};
+        uint32_t width{};
+        uint32_t height{};
+        std::vector<float> normalization;
+        std::vector<float> optics;
+        std::vector<float> sensor;
+        std::vector<float> isp;
+        VkPipeline optics_pipeline{VK_NULL_HANDLE};
+        VkPipeline isp_pipeline{VK_NULL_HANDLE};
+        uint32_t optics_radius{};
+        uint32_t isp_halo{};
+    };
+
+    using Clock = std::chrono::steady_clock;
+    static double elapsed_ms(Clock::time_point start, Clock::time_point end) {
+        return std::chrono::duration<double, std::milli>(end - start).count();
+    }
+
     VkInstance instance{VK_NULL_HANDLE};
     VkPhysicalDevice physical_device{VK_NULL_HANDLE};
     VkDevice device{VK_NULL_HANDLE};
     VkQueue queue{VK_NULL_HANDLE};
     uint32_t queue_family{};
     VkQueueFlags queue_flags{};
+    uint32_t timestamp_valid_bits{};
+    float timestamp_period{};
+    VkQueryPool preview_timestamp_pool{VK_NULL_HANDLE};
     PFN_vkGetAndroidHardwareBufferPropertiesANDROID get_ahb_properties{};
     PFN_vkImportSemaphoreFdKHR import_semaphore_fd{};
     PFN_vkCreateSamplerYcbcrConversion create_ycbcr_conversion{};
@@ -321,6 +351,9 @@ struct VulkanBackend::Impl {
     VkPipeline optics_pipeline{VK_NULL_HANDLE};
     VkPipeline sensor_pipeline{VK_NULL_HANDLE};
     VkPipeline isp_pipeline{VK_NULL_HANDLE};
+    std::map<std::array<int32_t, 6>, VkPipeline> preview_optics_pipelines;
+    std::map<std::array<int32_t, 7>, VkPipeline> preview_isp_pipelines;
+    PreparedPreview prepared_preview;
     VkDescriptorSetLayout ahb_descriptor_layout{VK_NULL_HANDLE};
     VkPipelineLayout ahb_pipeline_layout{VK_NULL_HANDLE};
     VkPipeline ahb_pipeline{VK_NULL_HANDLE};
@@ -373,7 +406,19 @@ struct VulkanBackend::Impl {
     uint64_t presented_frames{};
     uint64_t swapchain_recreates{};
     uint64_t ahb_use_clock{};
+    uint64_t ahb_cache_hits{};
+    uint64_t ahb_cache_misses{};
+    uint64_t ahb_cache_evictions{};
+    uint64_t ahb_cache_removals{};
+    uint64_t ahb_stable_ids{};
+    uint64_t ahb_pointer_ids{};
+    uint64_t preview_frames{};
+    uint64_t preview_preparations{};
+    double sampled_prepare_ms{};
+    double sampled_import_ms{};
+    double sampled_upload_ms{};
     std::vector<CachedAhbImage> ahb_cache;
+    ImportedAhbImage uncached_ahb;
     bool ready{};
     std::string error;
 
@@ -430,6 +475,7 @@ struct VulkanBackend::Impl {
                     physical_device = candidate;
                     queue_family = family;
                     queue_flags = families[family].queueFlags;
+                    timestamp_valid_bits = families[family].timestampValidBits;
                     break;
                 }
             }
@@ -453,6 +499,8 @@ struct VulkanBackend::Impl {
 
         VkPhysicalDeviceProperties physical_properties{};
         vkGetPhysicalDeviceProperties(physical_device, &physical_properties);
+        timestamp_period = physical_properties.limits.timestampPeriod;
+        if (!physical_properties.limits.timestampComputeAndGraphics) timestamp_valid_bits = 0U;
         VkPhysicalDeviceSamplerYcbcrConversionFeatures ycbcr_features{};
         ycbcr_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
         if (VK_VERSION_MAJOR(physical_properties.apiVersion) > 1U ||
@@ -585,9 +633,20 @@ struct VulkanBackend::Impl {
         VkFenceCreateInfo fence_info{};
         fence_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         require_vk(vkCreateFence(device, &fence_info, nullptr, &render_fence), "vkCreateFence");
+        if (timestamp_valid_bits != 0U && timestamp_period > 0.0F) {
+            VkQueryPoolCreateInfo query_info{};
+            query_info.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+            query_info.queryType = VK_QUERY_TYPE_TIMESTAMP;
+            query_info.queryCount = 6U;
+            if (vkCreateQueryPool(device, &query_info, nullptr, &preview_timestamp_pool) != VK_SUCCESS) {
+                preview_timestamp_pool = VK_NULL_HANDLE;
+                __android_log_print(ANDROID_LOG_WARN, "PhyToyCamera2", "Preview GPU timings unavailable; CPU timings only");
+            }
+        }
     }
 
-    VkPipeline create_pipeline(const uint32_t* words, size_t byte_count, VkPipelineLayout layout) {
+    VkPipeline create_pipeline(const uint32_t* words, size_t byte_count, VkPipelineLayout layout,
+                               const VkSpecializationInfo* specialization = nullptr) {
         VkShaderModuleCreateInfo module_info{};
         module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         module_info.codeSize = byte_count;
@@ -599,6 +658,7 @@ struct VulkanBackend::Impl {
         stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
         stage.module = module;
         stage.pName = "main";
+        stage.pSpecializationInfo = specialization;
         VkComputePipelineCreateInfo pipeline_info{};
         pipeline_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         pipeline_info.stage = stage;
@@ -608,6 +668,71 @@ struct VulkanBackend::Impl {
         vkDestroyShaderModule(device, module, nullptr);
         require_vk(result, "vkCreateComputePipelines");
         return pipeline;
+    }
+
+    template <size_t Count>
+    VkPipeline preview_pipeline(std::map<std::array<int32_t, Count>, VkPipeline>& pipelines,
+                                const std::array<int32_t, Count>& values,
+                                const uint32_t* words, size_t bytes, VkPipeline fallback) {
+        if (const auto found = pipelines.find(values); found != pipelines.end()) return found->second;
+        // Every completed graph waits for its fence, so old compute pipelines
+        // are idle here. Bound the cache across arbitrary preview size changes.
+        if (pipelines.size() >= 16U) {
+            const auto oldest = pipelines.begin();
+            if (oldest->second != fallback) vkDestroyPipeline(device, oldest->second, nullptr);
+            pipelines.erase(oldest);
+        }
+        VkPipeline pipeline = VK_NULL_HANDLE;
+        {
+            std::array<VkSpecializationMapEntry, Count> entries{};
+            for (size_t index = 0U; index < Count; ++index) {
+                entries[index] = {static_cast<uint32_t>(index),
+                    static_cast<uint32_t>(index * sizeof(int32_t)), sizeof(int32_t)};
+            }
+            const VkSpecializationInfo specialization{
+                static_cast<uint32_t>(Count), entries.data(), sizeof(values), values.data()};
+            try {
+                pipeline = create_pipeline(words, bytes, pipeline_layout, &specialization);
+            } catch (const std::exception& exception) {
+                // Drivers that reject a specialization retain the complete generic shader.
+                pipeline = fallback;
+                __android_log_print(ANDROID_LOG_WARN, "PhyToyCamera2",
+                    "Preview control specialization halo=%d unavailable: %s", values[0], exception.what());
+            }
+        }
+        pipelines.emplace(values, pipeline);
+        return pipeline;
+    }
+
+    PreparedPreview& prepare_preview(const HostProfile& host, const ToyProfile& toy,
+                                     uint32_t width, uint32_t height) {
+        // Profiles are immutable for the lifetime of their owning engine. Dimension
+        // changes rebuild all parameters; capture continues to prepare its own set.
+        if (prepared_preview.host == &host && prepared_preview.toy == &toy &&
+            prepared_preview.width == width && prepared_preview.height == height) return prepared_preview;
+        PreparedPreview fresh;
+        fresh.host = &host;
+        fresh.toy = &toy;
+        fresh.width = width;
+        fresh.height = height;
+        const ToyProfile resolved = profile_for_resolution(toy, width, height);
+        fresh.normalization = ahb_normalization_parameters(width, height, host);
+        fresh.optics = optics_parameters(width, height, resolved.optics);
+        fresh.sensor = sensor_parameters(width, height, resolved.sensor, 0U);
+        fresh.isp = isp_parameters(width, height, resolved.sensor, resolved.isp);
+        fresh.optics_radius = vulkan_detail::preview_optics_radius(
+            resolved.optics.psf_bases.front().width, resolved.optics.psf_bases.front().height);
+        fresh.isp_halo = vulkan_detail::preview_isp_halo(
+            resolved.isp.denoise_sigma, resolved.isp.sharpen_amount, resolved.isp.sharpen_radius);
+        fresh.optics_pipeline = preview_pipeline(preview_optics_pipelines,
+            vulkan_detail::preview_optics_specialization(fresh.optics),
+            spirv::optics_preview, spirv::optics_preview_bytes, optics_pipeline);
+        fresh.isp_pipeline = preview_pipeline(preview_isp_pipelines,
+            vulkan_detail::preview_isp_specialization(fresh.isp),
+            spirv::isp_preview, spirv::isp_preview_bytes, isp_pipeline);
+        prepared_preview = std::move(fresh);
+        ++preview_preparations;
+        return prepared_preview;
     }
 
     static bool is_srgb_format(VkFormat format) noexcept {
@@ -1062,6 +1187,7 @@ struct VulkanBackend::Impl {
         if (ahb_pipeline != VK_NULL_HANDLE && ahb_format == format_properties.format &&
             ahb_external_format == format_properties.externalFormat) return;
         ahb_cache.clear();
+        uncached_ahb.destroy();
         destroy_ahb_pipeline();
         try {
             if ((format_properties.formatFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == 0U) {
@@ -1192,6 +1318,7 @@ struct VulkanBackend::Impl {
 
         ImportedAhbImage imported;
         imported.device = device;
+        imported.allocation_size = properties.allocationSize;
         const bool external_format = format_properties.format == VK_FORMAT_UNDEFINED;
         VkExternalFormatANDROID external{};
         external.sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_ANDROID;
@@ -1265,36 +1392,60 @@ struct VulkanBackend::Impl {
         for (auto& entry : ahb_cache) {
             if (entry.identity == identity && entry.width == width && entry.height == height) {
                 entry.last_use = ahb_use_clock;
+                ++ahb_cache_hits;
                 return entry.imported;
             }
         }
-        if (ahb_cache.size() >= 8U) {
+        ++ahb_cache_misses;
+        ImportedAhbImage imported = import_ahardware_buffer(buffer, width, height);
+        ++ahb_imports;
+        // Accommodate camera pools larger than eight without retaining unlimited
+        // gralloc buffers. Count actual Vulkan-reported allocation bytes, not RGB estimates.
+        constexpr size_t maximum_entries = 32U;
+        constexpr VkDeviceSize maximum_bytes = 128U * 1024U * 1024U;
+        if (imported.allocation_size > maximum_bytes) {
+            uncached_ahb = std::move(imported);
+            return uncached_ahb;
+        }
+        while (!ahb_cache.empty() && (ahb_cache.size() >= maximum_entries ||
+               cached_ahb_bytes() > maximum_bytes - imported.allocation_size)) {
             const auto oldest = std::min_element(
                 ahb_cache.begin(), ahb_cache.end(), [](const auto& left, const auto& right) {
                     return left.last_use < right.last_use;
                 });
             ahb_cache.erase(oldest);
+            ++ahb_cache_evictions;
         }
-        ImportedAhbImage imported = import_ahardware_buffer(buffer, width, height);
         ahb_cache.emplace_back(
             buffer, identity, std::move(imported), width, height, ahb_use_clock);
-        ++ahb_imports;
         return ahb_cache.back().imported;
     }
 
-    [[nodiscard]] uint64_t ahardware_buffer_identity(AHardwareBuffer* buffer) const noexcept {
+    [[nodiscard]] VkDeviceSize cached_ahb_bytes() const noexcept {
+        VkDeviceSize bytes = 0U;
+        for (const auto& entry : ahb_cache) bytes += entry.imported.allocation_size;
+        return bytes;
+    }
+
+    [[nodiscard]] uint64_t ahardware_buffer_identity(AHardwareBuffer* buffer) noexcept {
         uint64_t identity = 0U;
-        if (get_ahb_id != nullptr && get_ahb_id(buffer, &identity) == 0) return identity;
+        if (get_ahb_id != nullptr && get_ahb_id(buffer, &identity) == 0) {
+            ++ahb_stable_ids;
+            return identity;
+        }
+        ++ahb_pointer_ids;
         return static_cast<uint64_t>(reinterpret_cast<uintptr_t>(buffer));
     }
 
     void forget_ahardware_buffer(AHardwareBuffer* buffer) noexcept {
         if (buffer == nullptr) {
+            ahb_cache_removals += ahb_cache.size();
             ahb_cache.clear();
+            uncached_ahb.destroy();
             return;
         }
         const uint64_t identity = ahardware_buffer_identity(buffer);
-        std::erase_if(ahb_cache, [identity](const auto& entry) {
+        ahb_cache_removals += std::erase_if(ahb_cache, [identity](const auto& entry) {
             return entry.identity == identity;
         });
     }
@@ -1545,7 +1696,13 @@ struct VulkanBackend::Impl {
                              VkImage ahb_image = VK_NULL_HANDLE,
                              VkSemaphore wait_semaphore = VK_NULL_HANDLE,
                              RenderResourceMode resource_mode = RenderResourceMode::Production,
-                             bool host_readback = true) {
+                             bool host_readback = true,
+                             const PreparedPreview* preview = nullptr,
+                             bool sample = false) {
+        sample = sample && preview != nullptr;
+        const auto stamp = [sample] { return sample ? Clock::now() : Clock::time_point{}; };
+        const auto acquire_start = stamp();
+        const bool gpu_sample = sample && preview_timestamp_pool != VK_NULL_HANDLE;
         const bool has_ahb_input = ahb_image != VK_NULL_HANDLE;
         const bool has_presentation = swapchain != VK_NULL_HANDLE;
         const Buffer& final_output_buffer =
@@ -1568,11 +1725,17 @@ struct VulkanBackend::Impl {
             }
             update_presentation_descriptor(final_output_buffer);
         }
+        const auto record_start = stamp();
         require_vk(vkResetCommandBuffer(command_buffer, 0U), "vkResetCommandBuffer");
         VkCommandBufferBeginInfo begin{};
         begin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         begin.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         require_vk(vkBeginCommandBuffer(command_buffer, &begin), "vkBeginCommandBuffer");
+        const auto timestamp = [this, gpu_sample](uint32_t index, VkPipelineStageFlagBits stage) {
+            if (gpu_sample) vkCmdWriteTimestamp(command_buffer, stage, preview_timestamp_pool, index);
+        };
+        if (gpu_sample) vkCmdResetQueryPool(command_buffer, preview_timestamp_pool, 0U, 6U);
+        timestamp(0U, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
 
         if (has_ahb_input) {
             const std::array<VkBufferMemoryBarrier, 4> upload_barriers{
@@ -1641,7 +1804,10 @@ struct VulkanBackend::Impl {
                                  0U, nullptr);
         }
 
-        bind_and_dispatch(optics_pipeline, descriptor_sets[0], width, height);
+        timestamp(1U, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+        bind_and_dispatch(preview != nullptr ? preview->optics_pipeline : optics_pipeline,
+                          descriptor_sets[0], width, height);
+        timestamp(2U, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
         const VkBufferMemoryBarrier optics_barrier = buffer_barrier(
             optics_buffer, VK_ACCESS_SHADER_WRITE_BIT,
             VK_ACCESS_SHADER_READ_BIT |
@@ -1651,6 +1817,7 @@ struct VulkanBackend::Impl {
                              0U, 0U, nullptr, 1U, &optics_barrier, 0U, nullptr);
 
         bind_and_dispatch(sensor_pipeline, descriptor_sets[1], width, height);
+        timestamp(3U, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
         const VkBufferMemoryBarrier sensor_barrier = buffer_barrier(
             sensor_buffer, VK_ACCESS_SHADER_WRITE_BIT,
             VK_ACCESS_SHADER_READ_BIT |
@@ -1659,7 +1826,9 @@ struct VulkanBackend::Impl {
                              VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_HOST_BIT,
                              0U, 0U, nullptr, 1U, &sensor_barrier, 0U, nullptr);
 
-        bind_and_dispatch(isp_pipeline, descriptor_sets[2], width, height);
+        bind_and_dispatch(preview != nullptr ? preview->isp_pipeline : isp_pipeline,
+                          descriptor_sets[2], width, height);
+        timestamp(4U, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
         const Buffer& isp_linear_buffer = resource_mode == RenderResourceMode::Production
             ? optics_buffer
             : stage_buffer;
@@ -1677,6 +1846,7 @@ struct VulkanBackend::Impl {
             record_presentation(
                 presentation_image_index, final_output_buffer, width, height);
         }
+        timestamp(5U, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 
         require_vk(vkEndCommandBuffer(command_buffer), "vkEndCommandBuffer");
         require_vk(vkResetFences(device, 1U, &render_fence), "vkResetFences");
@@ -1704,9 +1874,12 @@ struct VulkanBackend::Impl {
         submit.pSignalSemaphores = has_presentation
             ? &presentation_render_finished
             : nullptr;
+        const auto submit_start = stamp();
         require_vk(vkQueueSubmit(queue, 1U, &submit, render_fence), "vkQueueSubmit");
         ++queue_submissions;
+        const auto fence_start = stamp();
         require_vk(vkWaitForFences(device, 1U, &render_fence, VK_TRUE, UINT64_MAX), "vkWaitForFences");
+        const auto present_start = stamp();
         if (has_presentation) {
             VkPresentInfoKHR present{};
             present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -1724,6 +1897,39 @@ struct VulkanBackend::Impl {
             } else {
                 require_vk(present_result, "vkQueuePresentKHR");
             }
+        }
+        if (sample) {
+            const auto present_end = Clock::now();
+            std::array<double, 5> gpu_ms{-1.0, -1.0, -1.0, -1.0, -1.0};
+            std::array<uint64_t, 6> ticks{};
+            // The existing fence has already completed. Never add a query WAIT or
+            // another synchronization point solely for diagnostics.
+            if (gpu_sample && vkGetQueryPoolResults(device, preview_timestamp_pool, 0U, 6U,
+                    sizeof(ticks), ticks.data(), sizeof(uint64_t), VK_QUERY_RESULT_64_BIT) == VK_SUCCESS) {
+                const uint64_t mask = timestamp_valid_bits >= 64U
+                    ? UINT64_MAX : (uint64_t{1U} << timestamp_valid_bits) - 1U;
+                for (size_t index = 0U; index < gpu_ms.size(); ++index) {
+                    gpu_ms[index] = static_cast<double>((ticks[index + 1U] - ticks[index]) & mask) *
+                        static_cast<double>(timestamp_period) / 1'000'000.0;
+                }
+            }
+            __android_log_print(ANDROID_LOG_INFO, "PhyToyCamera2",
+                "PreviewStages frame=%llu size=%ux%u halo=%u/%u "
+                "cpu_ms[prepare=%.3f import=%.3f upload=%.3f acquire=%.3f record=%.3f submit=%.3f fence=%.3f present=%.3f] "
+                "gpu_ms[normalize=%.3f optics=%.3f sensor=%.3f isp=%.3f display=%.3f] "
+                "cache[entries=%zu bytes=%llu hits=%llu misses=%llu evictions=%llu removals=%llu stable_id=%llu pointer_id=%llu] preparations=%llu",
+                static_cast<unsigned long long>(preview_frames), width, height,
+                preview->optics_radius, preview->isp_halo,
+                sampled_prepare_ms, sampled_import_ms, sampled_upload_ms,
+                elapsed_ms(acquire_start, record_start), elapsed_ms(record_start, submit_start),
+                elapsed_ms(submit_start, fence_start), elapsed_ms(fence_start, present_start),
+                elapsed_ms(present_start, present_end),
+                gpu_ms[0], gpu_ms[1], gpu_ms[2], gpu_ms[3], gpu_ms[4],
+                ahb_cache.size(), static_cast<unsigned long long>(cached_ahb_bytes()),
+                static_cast<unsigned long long>(ahb_cache_hits), static_cast<unsigned long long>(ahb_cache_misses),
+                static_cast<unsigned long long>(ahb_cache_evictions), static_cast<unsigned long long>(ahb_cache_removals),
+                static_cast<unsigned long long>(ahb_stable_ids), static_cast<unsigned long long>(ahb_pointer_ids),
+                static_cast<unsigned long long>(preview_preparations));
         }
     }
 
@@ -1802,12 +2008,28 @@ struct VulkanBackend::Impl {
             throw std::invalid_argument(
                 "AHardwareBuffer input requires an encoded-sRGB host profile");
         }
-        const std::vector<float> ahb_params =
-            ahb_normalization_parameters(width, height, host);
-        const ToyProfile resolved = profile_for_resolution(toy, width, height);
-        const std::vector<float> optics_params = optics_parameters(width, height, resolved.optics);
-        const std::vector<float> sensor_params = sensor_parameters(width, height, resolved.sensor, seed);
-        const std::vector<float> isp_params = isp_parameters(width, height, resolved.sensor, resolved.isp);
+        const bool is_preview = callback == nullptr && destination == nullptr;
+        const bool sample = is_preview && ++preview_frames % 30U == 0U;
+        const auto prepare_start = sample ? Clock::now() : Clock::time_point{};
+        PreparedPreview capture_parameters;
+        PreparedPreview* parameters = nullptr;
+        if (is_preview) {
+            parameters = &prepare_preview(host, toy, width, height);
+            parameters->sensor[22] = std::bit_cast<float>(static_cast<uint32_t>(seed));
+        } else {
+            // Keep capture preparation and generic pipelines independent of preview.
+            capture_parameters.normalization = ahb_normalization_parameters(width, height, host);
+            const ToyProfile resolved = profile_for_resolution(toy, width, height);
+            capture_parameters.optics = optics_parameters(width, height, resolved.optics);
+            capture_parameters.sensor = sensor_parameters(width, height, resolved.sensor, seed);
+            capture_parameters.isp = isp_parameters(width, height, resolved.sensor, resolved.isp);
+            parameters = &capture_parameters;
+        }
+        const auto import_start = sample ? Clock::now() : Clock::time_point{};
+        const auto& ahb_params = parameters->normalization;
+        const auto& optics_params = parameters->optics;
+        const auto& sensor_params = parameters->sensor;
+        const auto& isp_params = parameters->isp;
         const VkDeviceSize pixels = static_cast<VkDeviceSize>(width) * height;
         const VkDeviceSize rgb_bytes = pixels * 3U * sizeof(float);
         const VkDeviceSize raw_bytes = pixels * sizeof(float);
@@ -1815,6 +2037,7 @@ struct VulkanBackend::Impl {
             ? RenderResourceMode::Production
             : RenderResourceMode::PreserveSceneAndOptics;
         ImportedAhbImage& imported = cached_ahardware_buffer(buffer, width, height);
+        const auto upload_start = sample ? Clock::now() : Clock::time_point{};
         ensure_frame_resources(
             rgb_bytes, raw_bytes,
             static_cast<VkDeviceSize>(optics_params.size() * sizeof(float)),
@@ -1830,9 +2053,15 @@ struct VulkanBackend::Impl {
 
         VkSemaphore wait_semaphore = import_acquire_fence(acquire_fence_fd);
         try {
+            if (sample) {
+                sampled_prepare_ms = elapsed_ms(prepare_start, import_start);
+                sampled_import_ms = elapsed_ms(import_start, upload_start);
+                sampled_upload_ms = elapsed_ms(upload_start, Clock::now());
+            }
             submit_render_graph(
                 width, height, imported.image, wait_semaphore, resource_mode,
-                callback != nullptr || destination != nullptr);
+                callback != nullptr || destination != nullptr,
+                is_preview ? parameters : nullptr, sample);
         } catch (...) {
             if (device != VK_NULL_HANDLE) vkQueueWaitIdle(queue);
             if (wait_semaphore != VK_NULL_HANDLE) {
@@ -1905,6 +2134,7 @@ struct VulkanBackend::Impl {
         if (device != VK_NULL_HANDLE) vkDeviceWaitIdle(device);
         destroy_presentation();
         ahb_cache.clear();
+        uncached_ahb.destroy();
         scene_buffer.destroy();
         optics_buffer.destroy();
         sensor_buffer.destroy();
@@ -1915,6 +2145,19 @@ struct VulkanBackend::Impl {
         ahb_parameter_buffer.destroy();
         stage_buffer.destroy();
         destroy_ahb_pipeline();
+        for (const auto& [key, pipeline] : preview_optics_pipelines) {
+            if (device != VK_NULL_HANDLE && pipeline != VK_NULL_HANDLE && pipeline != optics_pipeline)
+                vkDestroyPipeline(device, pipeline, nullptr);
+        }
+        for (const auto& [key, pipeline] : preview_isp_pipelines) {
+            if (device != VK_NULL_HANDLE && pipeline != VK_NULL_HANDLE && pipeline != isp_pipeline)
+                vkDestroyPipeline(device, pipeline, nullptr);
+        }
+        preview_optics_pipelines.clear();
+        preview_isp_pipelines.clear();
+        if (device != VK_NULL_HANDLE && preview_timestamp_pool != VK_NULL_HANDLE)
+            vkDestroyQueryPool(device, preview_timestamp_pool, nullptr);
+        preview_timestamp_pool = VK_NULL_HANDLE;
         if (device != VK_NULL_HANDLE && render_fence != VK_NULL_HANDLE) vkDestroyFence(device, render_fence, nullptr);
         if (device != VK_NULL_HANDLE && command_pool != VK_NULL_HANDLE) vkDestroyCommandPool(device, command_pool, nullptr);
         if (device != VK_NULL_HANDLE && descriptor_pool != VK_NULL_HANDLE) vkDestroyDescriptorPool(device, descriptor_pool, nullptr);

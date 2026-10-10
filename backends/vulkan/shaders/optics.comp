@@ -1,5 +1,12 @@
 #version 450
 
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+#extension GL_EXT_control_flow_attributes : require
+#define PREVIEW_UNROLL [[unroll]]
+#else
+#define PREVIEW_UNROLL
+#endif
+
 layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 layout(std430, set = 0, binding = 0) readonly buffer InputBuffer { float input_pixels[]; };
 layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float output_pixels[]; };
@@ -7,7 +14,17 @@ layout(std430, set = 0, binding = 2) buffer AuxBuffer { float aux_pixels[]; };
 layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float parameters[]; };
 
 const int LOCAL_WIDTH = 16;
-const int MAX_PSF_RADIUS = 4;
+// Full-size capture keeps the default. Preview specializes only the tile halo;
+// all distortion, interpolation and PSF arithmetic stays identical.
+layout(constant_id = 0) const int MAX_PSF_RADIUS = 4;
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+// Immutable profile geometry is known before preview pipeline compilation.
+layout(constant_id = 1) const int PREVIEW_BASIS_COUNT = 1;
+layout(constant_id = 2) const int PREVIEW_KERNEL_WIDTH = 1;
+layout(constant_id = 3) const int PREVIEW_KERNEL_HEIGHT = 1;
+layout(constant_id = 4) const int PREVIEW_GRID_WIDTH = 1;
+layout(constant_id = 5) const int PREVIEW_GRID_HEIGHT = 1;
+#endif
 const int WARP_TILE_WIDTH = LOCAL_WIDTH + MAX_PSF_RADIUS * 2;
 shared vec4 warped_tile[WARP_TILE_WIDTH * WARP_TILE_WIDTH];
 
@@ -51,6 +68,7 @@ vec3 warped_rgb_at(int output_x, int output_y, int width, int height) {
     float yb = yn * radial + parameters[4] * (radius2 + 2.0 * yn * yn) +
                2.0 * parameters[5] * xn * yn;
     vec3 result;
+    PREVIEW_UNROLL
     for (int channel = 0; channel < 3; ++channel) {
         float scale = parameters[6 + channel];
         float sx = ((xb * scale + 1.0) * 0.5 * float(width)) - 0.5;
@@ -85,6 +103,7 @@ void populate_warped_tile(int width, int height) {
     int local_index = int(gl_LocalInvocationIndex);
     int base_x = int(gl_WorkGroupID.x) * LOCAL_WIDTH;
     int base_y = int(gl_WorkGroupID.y) * LOCAL_WIDTH;
+    PREVIEW_UNROLL
     for (int index = local_index;
          index < WARP_TILE_WIDTH * WARP_TILE_WIDTH;
          index += LOCAL_WIDTH * LOCAL_WIDTH) {
@@ -111,11 +130,19 @@ void main() {
     populate_warped_tile(width, height);
     if (x >= width || y >= height) return;
 
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    int basis_count = PREVIEW_BASIS_COUNT;
+    int kernel_width = PREVIEW_KERNEL_WIDTH;
+    int kernel_height = PREVIEW_KERNEL_HEIGHT;
+    int grid_width = PREVIEW_GRID_WIDTH;
+    int grid_height = PREVIEW_GRID_HEIGHT;
+#else
     int basis_count = int(parameters[15] + 0.5);
     int kernel_width = int(parameters[16] + 0.5);
     int kernel_height = int(parameters[17] + 0.5);
     int grid_width = int(parameters[18] + 0.5);
     int grid_height = int(parameters[19] + 0.5);
+#endif
     int radius_x = kernel_width / 2;
     int radius_y = kernel_height / 2;
     float xn = ((float(x) + 0.5) / float(width)) * 2.0 - 1.0;
@@ -124,9 +151,11 @@ void main() {
     int tile_x = int(gl_LocalInvocationID.x) + MAX_PSF_RADIUS;
     int tile_y = int(gl_LocalInvocationID.y) + MAX_PSF_RADIUS;
 
+    PREVIEW_UNROLL
     for (int channel = 0; channel < 3; ++channel) {
         float weights[8];
         float weight_sum = 0.0;
+        PREVIEW_UNROLL
         for (int basis = 0; basis < basis_count; ++basis) {
             weights[basis] = coefficient_at(
                 basis, channel, x, y, width, height, basis_count,
@@ -134,9 +163,12 @@ void main() {
             weight_sum += weights[basis];
         }
         float weighted = 0.0;
+        PREVIEW_UNROLL
         for (int ky = 0; ky < kernel_height; ++ky) {
+            PREVIEW_UNROLL
             for (int kx = 0; kx < kernel_width; ++kx) {
                 float effective_kernel = 0.0;
+                PREVIEW_UNROLL
                 for (int basis = 0; basis < basis_count; ++basis) {
                     int kernel_index = 21 + basis * kernel_width * kernel_height +
                                        ky * kernel_width + kx;

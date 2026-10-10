@@ -1,5 +1,7 @@
 #include "phytoy/phytoy.h"
 #include "../src/error_state.hpp"
+#include "../../backends/vulkan/preview_geometry.hpp"
+#include "../../android/sdk/src/main/cpp/preview_cadence.hpp"
 
 #include <algorithm>
 #include <array>
@@ -22,6 +24,52 @@
 #include <vector>
 
 namespace {
+
+void test_preview_tile_geometry() {
+    using namespace phytoy::vulkan_detail;
+    // Radius boundaries must match the GLSL truncate=4 contract, including
+    // disabled sharpening whose radius may exceed the active filter limit.
+    for (const auto& [sigma, radius] : std::array{
+             std::pair{0.0F, 0U}, std::pair{0.124F, 0U}, std::pair{0.125F, 1U},
+             std::pair{0.374F, 1U}, std::pair{0.375F, 2U}, std::pair{0.624F, 2U},
+             std::pair{0.625F, 3U}, std::pair{0.874F, 3U}, std::pair{0.875F, 4U},
+             std::pair{1.0F, 4U},
+         }) assert(preview_filter_radius(sigma) == radius);
+    assert(preview_isp_halo(1.0F, 0.0F, 12.0F) == 4U);
+    assert(preview_isp_halo(1.0F, -0.5F, 1.0F) == 8U);
+    assert(preview_isp_halo(0.0F, 0.0F, 1.0F) == 0U);
+    assert(preview_optics_radius(3U, 9U) == 4U);
+    assert(preview_optics_radius(1U, 1U) == 0U);
+
+    std::vector<float> optics(21U);
+    optics[15] = 8.0F; optics[16] = 3.0F; optics[17] = 9.0F;
+    optics[18] = 2.0F; optics[19] = 4.0F;
+    assert((preview_optics_specialization(optics) == std::array<int32_t, 6>{4, 8, 3, 9, 2, 4}));
+    std::vector<float> isp(28U);
+    isp[4] = 3.0F; isp[17] = 3.0F; isp[24] = 0.375F;
+    isp[25] = -0.5F; isp[26] = 0.875F; isp[27] = 1.0F;
+    assert((preview_isp_specialization(isp) == std::array<int32_t, 7>{6, 3, 3, 2, 4, 1, 1}));
+    isp[25] = 0.0F; isp[26] = 12.0F;
+    assert((preview_isp_specialization(isp) == std::array<int32_t, 7>{2, 3, 3, 2, 0, 0, 1}));
+
+    using Cadence = phytoy::android_detail::PreviewCadence;
+    using namespace std::chrono_literals;
+    Cadence cadence;
+    const auto start = Cadence::Clock::time_point{};
+    assert(cadence.deadline(start, 30U) == start);
+    cadence.begin(start);
+    // New arrivals replace pending input without postponing the existing slot.
+    for (const auto arrival : {34ms, 67ms, 134ms, 199ms}) {
+        assert(cadence.deadline(start + arrival, 5U) == start + 200ms);
+    }
+    // An overrun starts from now; it never replays a backlog of stale slots.
+    assert(cadence.deadline(start + 473ms, 30U) == start + 473ms);
+    cadence.begin(start + 473ms);
+    assert(cadence.deadline(start + 480ms, 15U) == start + 473ms + 66'666'666ns);
+    cadence.reset();
+    assert(cadence.deadline(start + 480ms, 30U) == start + 480ms);
+    assert(cadence.deadline(start + 480ms, 0U) == start + 480ms);
+}
 
 std::filesystem::path profile(const char* name) {
     return std::filesystem::path(PHYTOY_TEST_PROFILE_DIR) / name;
@@ -447,6 +495,7 @@ void test_product_toy_profiles_open() {
 
 int main() {
     std::cout << pte_version_string() << '\n';
+    test_preview_tile_geometry();
     test_srgb_determinism_and_stages();
     test_yuv_and_raw_execute();
     test_argument_validation();

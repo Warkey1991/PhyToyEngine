@@ -1,5 +1,12 @@
 #version 450
 
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+#extension GL_EXT_control_flow_attributes : require
+#define PREVIEW_UNROLL [[unroll]]
+#else
+#define PREVIEW_UNROLL
+#endif
+
 layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 layout(std430, set = 0, binding = 0) readonly buffer InputBuffer { float input_pixels[]; };
 layout(std430, set = 0, binding = 1) writeonly buffer OutputBuffer { float output_pixels[]; };
@@ -9,7 +16,18 @@ layout(std430, set = 0, binding = 3) readonly buffer ParameterBuffer { float par
 const int MAX_FILTER_RADIUS = 4;
 const int LOCAL_WIDTH = 16;
 const int MAX_COMBINED_RADIUS = MAX_FILTER_RADIUS * 2;
-const int MAX_SCENE_TILE_WIDTH = LOCAL_WIDTH + MAX_COMBINED_RADIUS * 2;
+// Preview can allocate the actual halo; capture keeps the maximum default.
+// Weight-array dimensions and filter arithmetic deliberately remain unchanged.
+layout(constant_id = 0) const int MAX_SCENE_HALO = MAX_COMBINED_RADIUS;
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+layout(constant_id = 1) const int PREVIEW_CFA_PATTERN = 0;
+layout(constant_id = 2) const int PREVIEW_TONE_COUNT = 2;
+layout(constant_id = 3) const int PREVIEW_DENOISE_RADIUS = 0;
+layout(constant_id = 4) const int PREVIEW_SHARPEN_RADIUS = 0;
+layout(constant_id = 5) const int PREVIEW_SHARPEN_ENABLED = 0;
+layout(constant_id = 6) const int PREVIEW_MONOCHROME = 0;
+#endif
+const int MAX_SCENE_TILE_WIDTH = LOCAL_WIDTH + MAX_SCENE_HALO * 2;
 const int MAX_RAW_TILE_WIDTH = MAX_SCENE_TILE_WIDTH + 2;
 const int FILTER_WIDTH = MAX_FILTER_RADIUS * 2 + 1;
 const int COMBINED_FILTER_WIDTH = MAX_COMBINED_RADIUS * 2 + 1;
@@ -48,7 +66,9 @@ vec3 demosaic_shared(int tile_x, int tile_y, int global_x, int global_y,
     float kernel[9] = float[9](1.0, 2.0, 1.0, 2.0, 4.0, 2.0, 1.0, 2.0, 1.0);
     vec3 numerator = vec3(0.0);
     vec3 denominator = vec3(0.0);
+    PREVIEW_UNROLL
     for (int ky = -1; ky <= 1; ++ky) {
+        PREVIEW_UNROLL
         for (int kx = -1; kx <= 1; ++kx) {
             int sx = mirror_index(global_x + kx, width);
             int sy = mirror_index(global_y + ky, height);
@@ -75,6 +95,7 @@ void populate_shared_tiles(int width, int height, int pattern, int halo) {
     int base_y = int(gl_WorkGroupID.y) * LOCAL_WIDTH;
     int scene_width = LOCAL_WIDTH + halo * 2;
     int raw_width = scene_width + 2;
+    PREVIEW_UNROLL
     for (int index = local_index; index < raw_width * raw_width; index += 256) {
         int tile_x = index % raw_width;
         int tile_y = index / raw_width;
@@ -85,6 +106,7 @@ void populate_shared_tiles(int width, int height, int pattern, int halo) {
             max(parameters[3] - parameters[2], 1e-12), 0.0);
     }
     barrier();
+    PREVIEW_UNROLL
     for (int index = local_index; index < scene_width * scene_width; index += 256) {
         int tile_x = index % scene_width;
         int tile_y = index / scene_width;
@@ -113,8 +135,13 @@ int filter_radius(float sigma) {
 
 void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
     int local_index = int(gl_LocalInvocationIndex);
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    int denoise_radius = PREVIEW_DENOISE_RADIUS;
+    int sharpen_radius = PREVIEW_SHARPEN_RADIUS;
+#else
     int denoise_radius = filter_radius(denoise_sigma);
     int sharpen_radius = filter_radius(sharpen_sigma);
+#endif
     if (local_index < FILTER_WIDTH) {
         int offset = local_index - MAX_FILTER_RADIUS;
         denoise_axis_weights[local_index] = denoise_radius == 0
@@ -130,10 +157,12 @@ void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
     if (local_index == 0) {
         float denoise_sum = 0.0;
         float sharpen_sum = 0.0;
+        PREVIEW_UNROLL
         for (int index = 0; index < FILTER_WIDTH; ++index) {
             denoise_sum += denoise_axis_weights[index];
             sharpen_sum += sharpen_axis_weights[index];
         }
+        PREVIEW_UNROLL
         for (int index = 0; index < FILTER_WIDTH; ++index) {
             denoise_axis_weights[index] /= max(denoise_sum, 1e-12);
             sharpen_axis_weights[index] /= max(sharpen_sum, 1e-12);
@@ -143,6 +172,7 @@ void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
     if (local_index < COMBINED_FILTER_WIDTH) {
         int combined_offset = local_index - MAX_COMBINED_RADIUS;
         float value = 0.0;
+        PREVIEW_UNROLL
         for (int index = 0; index < FILTER_WIDTH; ++index) {
             int sharpen_index = combined_offset - (index - MAX_FILTER_RADIUS) + MAX_FILTER_RADIUS;
             if (sharpen_index >= 0 && sharpen_index < FILTER_WIDTH) {
@@ -158,11 +188,13 @@ void populate_filter_weights(float denoise_sigma, float sharpen_sigma) {
 
 void populate_sharpen_horizontal(int radius, int halo, int scene_width) {
     int local_index = int(gl_LocalInvocationIndex);
+    PREVIEW_UNROLL
     for (int index = local_index; index < LOCAL_WIDTH * scene_width; index += 256) {
         int output_x = index % LOCAL_WIDTH;
         int tile_y = index / LOCAL_WIDTH;
         int scene_x = output_x + halo;
         vec3 sum = vec3(0.0);
+        PREVIEW_UNROLL
         for (int kx = -radius; kx <= radius; ++kx) {
             sum += shared_scene(scene_x + kx, tile_y, scene_width) *
                    lowpass_axis_weights[kx + MAX_COMBINED_RADIUS];
@@ -177,6 +209,7 @@ void populate_sharpen_horizontal(int radius, int halo, int scene_width) {
 
 vec3 gaussian_sharpen_separable(int local_x, int local_y, int radius) {
     vec3 sum = vec3(0.0);
+    PREVIEW_UNROLL
     for (int ky = -radius; ky <= radius; ++ky) {
         int offset = ((local_y + ky) * LOCAL_WIDTH + local_x) * 3;
         sum += vec3(sharpen_horizontal[offset], sharpen_horizontal[offset + 1],
@@ -188,7 +221,9 @@ vec3 gaussian_sharpen_separable(int local_x, int local_y, int radius) {
 
 vec3 gaussian_denoise_shared(int x, int y, int radius, int scene_width) {
     vec3 sum = vec3(0.0);
+    PREVIEW_UNROLL
     for (int ky = -radius; ky <= radius; ++ky) {
+        PREVIEW_UNROLL
         for (int kx = -radius; kx <= radius; ++kx) {
             float weight = denoise_axis_weights[kx + MAX_FILTER_RADIUS] *
                            denoise_axis_weights[ky + MAX_FILTER_RADIUS];
@@ -200,6 +235,7 @@ vec3 gaussian_denoise_shared(int x, int y, int radius, int scene_width) {
 
 float apply_tone(float value, int count, int offset) {
     if (value <= parameters[offset]) return parameters[offset + 1];
+    PREVIEW_UNROLL
     for (int point = 1; point < count; ++point) {
         float x1 = parameters[offset + point * 2];
         if (value <= x1) {
@@ -222,21 +258,38 @@ void main() {
     int y = int(gl_GlobalInvocationID.y);
     int width = int(parameters[0] + 0.5);
     int height = int(parameters[1] + 0.5);
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    int pattern = PREVIEW_CFA_PATTERN;
+    int tone_count = PREVIEW_TONE_COUNT;
+#else
     int pattern = int(parameters[4] + 0.5);
     int tone_count = int(parameters[17] + 0.5);
+#endif
     int tone_offset = 18;
     int filter_offset = tone_offset + tone_count * 2;
     float denoise_sigma = parameters[filter_offset];
     float sharpen_amount = parameters[filter_offset + 1];
     float sharpen_radius = parameters[filter_offset + 2];
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    bool sharpen_enabled = PREVIEW_SHARPEN_ENABLED != 0;
+    int denoise_radius = PREVIEW_DENOISE_RADIUS;
+    float active_sharpen_sigma = sharpen_enabled ? sharpen_radius : 0.0;
+    int lowpass_radius = denoise_radius + PREVIEW_SHARPEN_RADIUS;
+    int halo = MAX_SCENE_HALO;
+#else
     int denoise_radius = filter_radius(denoise_sigma);
     float active_sharpen_sigma = sharpen_amount != 0.0 ? sharpen_radius : 0.0;
     int lowpass_radius = denoise_radius + filter_radius(active_sharpen_sigma);
     int halo = sharpen_amount != 0.0 ? lowpass_radius : denoise_radius;
+#endif
     int scene_width = LOCAL_WIDTH + halo * 2;
     populate_shared_tiles(width, height, pattern, halo);
     populate_filter_weights(denoise_sigma, active_sharpen_sigma);
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    if (sharpen_enabled) {
+#else
     if (sharpen_amount != 0.0) {
+#endif
         populate_sharpen_horizontal(lowpass_radius, halo, scene_width);
     }
     // Every invocation, including the partial right/bottom workgroup, reaches
@@ -247,12 +300,20 @@ void main() {
     vec3 scene = denoise_radius == 0
         ? shared_scene(shared_x, shared_y, scene_width)
         : gaussian_denoise_shared(shared_x, shared_y, denoise_radius, scene_width);
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    if (sharpen_enabled) {
+#else
     if (sharpen_amount != 0.0) {
+#endif
         vec3 low_pass = gaussian_sharpen_separable(
             int(gl_LocalInvocationID.x), shared_y, lowpass_radius);
         scene += sharpen_amount * (scene - low_pass);
     }
+#ifdef PHYTOY_PREVIEW_SPECIALIZATION
+    bool monochrome = PREVIEW_MONOCHROME != 0;
+#else
     bool monochrome = parameters[filter_offset + 3] > 0.5;
+#endif
     if (monochrome) scene = vec3(dot(scene, vec3(0.2627, 0.6780, 0.0593)));
     vec3 toned = vec3(
         apply_tone(max(scene.r, 0.0), tone_count, tone_offset),
