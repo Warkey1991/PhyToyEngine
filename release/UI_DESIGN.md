@@ -19,3 +19,14 @@ Camera2/3A, parameter snapshots, capture crop/rotation/mirroring, image encoding
 Controls retain at least 48dp actual touch targets; large fonts and compact windows reflow or scroll. Captured photos are never cropped to imitate a design. Background accessibility is hidden by modal pages; explicit parameter/zoom/photo-navigation controls remain available. Runtime smoke tools check the exact installed APK hash, task-owned emulator identity, real UI values and unchanged photo hashes/IDs, permissions, language and restored font/display settings. Tests open sharing only to return, cancel deletion, restore Favorite state and never capture, pay, send a photo or operate the attached physical phone.
 
 Current build and screenshot evidence belongs to the exact hash in `reports/ui_design_match_20261008/build-summary.json` and its evaluation files. These tests do not certify physical capture quality, real store checkout/entitlement restoration, successful system deletion consent, complete pinch/multitouch, every locale/form factor or manual TalkBack. Final source/build/visual scope is recorded in that report, rather than inferred from touch bounds alone.
+
+## UI polish — 0.17.6 / 24
+
+10 October 2026. Follow-up to the release UI audit:
+
+- Plastic's normal-font copy and camera illustration occupy separate horizontal regions. Narrow windows and large fonts stack the image and copy. Heroes fit their image boundaries; decorative tiles keep their fill policy.
+- Street retains its camera edges and background margin, using a wider image-only source region below the design's baked back button. The title follows the image in normal layout instead of overlapping the camera.
+- Settings keeps Shooting/Experience/App on the main page, with privacy and help ahead of About/More. Default camera, remember-last-camera, licenses and reset live on a secondary More settings page. Toolbar and system Back return to the main settings page first; closing the overlay still applies the existing host callback.
+- Style switching fades the previous preview out for 100 ms, draws a 200 ms transition between the old and new frame boundaries, and fades the new preview in for 150 ms after its first presented frame. The overlay animates drawn bounds, so the TextureView receives only its final geometry change. Disabled system animations skip motion; pause/error/lens changes cancel pending UI callbacks and restore the selected style's final viewport.
+
+The follow-up leaves camera requests, captured parameter snapshots, encoding/EXIF, storage, settings persistence, store authorization and engine sources unchanged. Build and scoped UI evidence are in `reports/ui_polish_0_17_6_20261010/`; the earlier 0.17.0 screenshots above remain historical evidence.

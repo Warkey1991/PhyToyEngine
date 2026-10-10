@@ -19,6 +19,9 @@
     <string name="design_settings_help">帮助与提示</string>
     <string name="design_settings_help_hint">了解相机选项</string>
     <string name="design_settings_more">更多设置</string>
+    <string name="design_settings_more_hint">默认相机、许可证与重置</string>
+    <string name="design_settings_camera_preferences">相机偏好</string>
+    <string name="design_settings_app_preferences">应用偏好</string>
     <string name="design_settings_default_camera">默认相机</string>
     <string name="design_settings_default_hint">首次启动时使用的相机</string>
     <string name="design_settings_remember_camera">记住上次相机</string>

@@ -24,4 +24,8 @@
     <item name="style_plastic" type="id" />
     <item name="style_street" type="id" />
     <item name="style_fisheye" type="id" />
+    <item name="preview_style_transition" type="id" />
+    <item name="camera_capture_viewport" type="id" />
+    <item name="purchase_hero_artwork" type="id" />
+    <item name="purchase_hero_copy" type="id" />
 </resources>

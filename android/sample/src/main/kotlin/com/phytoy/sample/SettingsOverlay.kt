@@ -44,6 +44,8 @@ internal class SettingsOverlay(
     private val back = topBar.backButton
     private val hiddenAccessibility = linkedMapOf<View, Int>()
     private var previousFocus: View? = null
+    private var moreShowing = false
+    private var mainScrollY = 0
     private var choiceDialog: AlertDialog? = null
     private var settings = store.load()
     private var purchaseResult: CharSequence? = null
@@ -96,7 +98,7 @@ internal class SettingsOverlay(
             text = activity.getString(R.string.settings_title)
         }
         topBar.subtitleView.visibility = GONE
-        topBar.setOnBackClickListener { dismiss() }
+        topBar.setOnBackClickListener { handleBack() }
         topBar.addView(ImageView(activity).apply {
             id = R.id.design_settings_help_header
             setImageDrawable(SettingsIconDrawable(activity, SettingsRowIcon.HELP, 20, false))
@@ -138,6 +140,8 @@ internal class SettingsOverlay(
     fun show() {
         if (isShowing()) return
         settings = store.load()
+        moreShowing = false
+        mainScrollY = 0
         rebuild()
         previousFocus = activity.currentFocus
         (parent as? ViewGroup)?.let { group ->
@@ -172,6 +176,29 @@ internal class SettingsOverlay(
         return true
     }
 
+    /** Both the toolbar and system Back pop the secondary page first. */
+    fun handleBack(): Boolean {
+        if (!isShowing()) return false
+        if (!moreShowing) return dismiss()
+        moreShowing = false
+        rebuild()
+        scroll.post {
+            body.findViewById<View>(R.id.settings_more)?.requestFocus()
+            scroll.scrollTo(0, mainScrollY)
+        }
+        announceForAccessibility(activity.getString(R.string.settings_title))
+        return true
+    }
+
+    private fun showMore() {
+        mainScrollY = scroll.scrollY
+        moreShowing = true
+        rebuild()
+        scroll.post { scroll.scrollTo(0, 0) }
+        back.requestFocus()
+        announceForAccessibility(activity.getString(R.string.design_settings_more))
+    }
+
     private fun change(updated: SettingsSnapshot, refresh: Boolean = false) {
         settings = updated
         store.update(updated)
@@ -184,6 +211,24 @@ internal class SettingsOverlay(
         activeGroup = null
         defaultStyleControl = null
         defaultStyleValue = null
+        body.id = if (moreShowing) R.id.settings_more_page else R.id.settings_main_page
+        topBar.titleView.setText(if (moreShowing) R.string.design_settings_more else R.string.settings_title)
+        if (Build.VERSION.SDK_INT >= 28) accessibilityPaneTitle = topBar.titleView.text
+
+        if (moreShowing) {
+            section(R.string.design_settings_camera_preferences)
+            choice(R.id.settings_default_style, R.string.design_settings_default_camera, styleLabel(settings.defaultStyle),
+                R.string.design_settings_default_hint, SettingsRowIcon.CAMERA) { chooseDefaultStyle() }
+            toggle(R.id.settings_remember_style, R.string.design_settings_remember_camera, R.string.design_settings_remember_hint,
+                settings.rememberLastStyle, SettingsRowIcon.HISTORY) { change(settings.copy(rememberLastStyle = it)) }
+            section(R.string.design_settings_app_preferences)
+            action(R.id.settings_licenses, R.string.settings_licenses, R.string.design_settings_licenses_hint, SettingsRowIcon.LICENSE) {
+                ProductInfo.showLicenses(activity)
+            }
+            action(R.id.settings_reset, R.string.settings_reset, R.string.design_settings_reset_hint,
+                SettingsRowIcon.RESET) { confirmReset() }
+            return
+        }
 
         section(R.string.settings_section_shooting)
         choice(R.id.settings_quality, R.string.design_settings_save_resolution, qualityLabel(),
@@ -208,8 +253,8 @@ internal class SettingsOverlay(
         activeGroup?.addView(purchaseNotice, LinearLayout.LayoutParams(
             LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
         ).apply { setMargins(dp(6), 0, dp(6), dp(6)) })
-        action(R.id.settings_about, R.string.settings_about, R.string.design_settings_about_hint, SettingsRowIcon.INFO) {
-            ProductInfo.showAbout(activity)
+        action(R.id.settings_privacy, R.string.settings_privacy, R.string.design_settings_privacy_hint, SettingsRowIcon.PRIVACY) {
+            ProductInfo.showPrivacy(activity)
         }
         if (SupportInfo.hasEmail) {
             action(R.id.settings_support, R.string.design_settings_help_feedback,
@@ -219,21 +264,11 @@ internal class SettingsOverlay(
                 R.string.design_settings_help_hint, SettingsRowIcon.HELP) { showSettingsHelp() }
         }
 
-        // Preserve real options beyond the reference's three primary groups without
-        // inventing location, gallery-storage branches or rotation settings.
-        section(R.string.design_settings_more)
-        choice(R.id.settings_default_style, R.string.design_settings_default_camera, styleLabel(settings.defaultStyle),
-            R.string.design_settings_default_hint, SettingsRowIcon.CAMERA) { chooseDefaultStyle() }
-        toggle(R.id.settings_remember_style, R.string.design_settings_remember_camera, R.string.design_settings_remember_hint,
-            settings.rememberLastStyle, SettingsRowIcon.HISTORY) { change(settings.copy(rememberLastStyle = it)) }
-        action(R.id.settings_privacy, R.string.settings_privacy, R.string.design_settings_privacy_hint, SettingsRowIcon.PRIVACY) {
-            ProductInfo.showPrivacy(activity)
+        action(R.id.settings_about, R.string.settings_about, R.string.design_settings_about_hint, SettingsRowIcon.INFO) {
+            ProductInfo.showAbout(activity)
         }
-        action(R.id.settings_licenses, R.string.settings_licenses, R.string.design_settings_licenses_hint, SettingsRowIcon.LICENSE) {
-            ProductInfo.showLicenses(activity)
-        }
-        action(R.id.settings_reset, R.string.settings_reset, R.string.design_settings_reset_hint,
-            SettingsRowIcon.RESET) { confirmReset() }
+        action(R.id.settings_more, R.string.design_settings_more, R.string.design_settings_more_hint,
+            SettingsRowIcon.MORE) { showMore() }
         body.addView(label(R.string.settings_local_only, 10.5f, MUTED).apply {
             setPadding(dp(6), dp(14), dp(6), 0)
         })

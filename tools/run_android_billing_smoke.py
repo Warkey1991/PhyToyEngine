@@ -426,6 +426,7 @@ def main() -> int:
         smoke.phase = "settings locked default and restore"
         smoke.tap(smoke.wait("open_settings"))
         smoke.settle(("settings_back",), CAMERA_HIDDEN)
+        smoke.tap(smoke.scroll_to("settings_more"))
         default = smoke.scroll_to("settings_default_style")
         default_before = default.get("text", "")
         smoke.report["default_style_before"] = default_before
@@ -441,6 +442,7 @@ def main() -> int:
         smoke.snapshot("settings-after-purchase-back")
         assert smoke.scroll_to("settings_default_style").get("text", "") == default_before, "Locked default changed settings"
         smoke.snapshot("settings-default-unchanged")
+        smoke.tap(smoke.wait("settings_back"))
         restore = smoke.scroll_to("settings_restore_purchases")
         smoke.target("settings_restore_purchases", restore, record="settings/restore")
         smoke.tap(restore)
@@ -476,7 +478,9 @@ def main() -> int:
 
         smoke.phase = "persisted default verification"
         smoke.tap(smoke.wait("open_settings"))
+        smoke.tap(smoke.scroll_to("settings_more"))
         assert smoke.scroll_to("settings_default_style").get("text", "") == default_before, "Locked default was persisted after restart"
+        smoke.tap(smoke.wait("settings_back"))
         smoke.tap(smoke.wait("settings_back"))
         smoke.camera()
         smoke.check("locked settings default remains unchanged after process restart")

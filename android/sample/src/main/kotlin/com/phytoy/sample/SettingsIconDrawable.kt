@@ -11,7 +11,7 @@ import android.graphics.Shader
 import android.graphics.drawable.Drawable
 
 internal enum class SettingsRowIcon {
-    CAMERA, HISTORY, PHOTO, GRID, SOUND, HAPTICS, REVIEW, PURCHASES, INFO, PRIVACY, LICENSE, HELP, RESET, CHEVRON,
+    CAMERA, HISTORY, PHOTO, GRID, SOUND, HAPTICS, REVIEW, PURCHASES, INFO, PRIVACY, LICENSE, HELP, RESET, MORE, CHEVRON,
 }
 
 /** Small vector-style settings icons. No text or bitmap assets are baked into the controls. */
@@ -126,6 +126,12 @@ internal class SettingsIconDrawable(
             SettingsRowIcon.RESET -> {
                 canvas.drawArc(14f, 14f, 35f, 35f, -150f, 300f, false, stroke)
                 path(canvas, 13f, 13f, 13f, 21f, 21f, 21f)
+            }
+            SettingsRowIcon.MORE -> {
+                for (y in listOf(16f, 24f, 32f)) canvas.drawLine(12f, y, 36f, y, stroke)
+                canvas.drawCircle(20f, 16f, 3f, stroke)
+                canvas.drawCircle(29f, 24f, 3f, stroke)
+                canvas.drawCircle(20f, 32f, 3f, stroke)
             }
             SettingsRowIcon.CHEVRON -> Unit
         }

@@ -2,6 +2,9 @@
 <resources>
     <item name="design_settings_help_header" type="id" />
     <item name="design_settings_help" type="id" />
+    <item name="settings_more" type="id" />
+    <item name="settings_more_page" type="id" />
+    <item name="settings_main_page" type="id" />
     <string name="design_settings_help_description">Settings help</string>
     <string name="design_settings_save_resolution">Save resolution</string>
     <string name="design_settings_resolution_hint">Photo save resolution</string>
@@ -21,6 +24,9 @@
     <string name="design_settings_help">Help &amp; Tips</string>
     <string name="design_settings_help_hint">Camera options explained</string>
     <string name="design_settings_more">More settings</string>
+    <string name="design_settings_more_hint">Default camera, licenses and reset</string>
+    <string name="design_settings_camera_preferences">Camera preferences</string>
+    <string name="design_settings_app_preferences">App preferences</string>
     <string name="design_settings_default_camera">Default camera</string>
     <string name="design_settings_default_hint">Default on first launch</string>
     <string name="design_settings_remember_camera">Remember last camera</string>

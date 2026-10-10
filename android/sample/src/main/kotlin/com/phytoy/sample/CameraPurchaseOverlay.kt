@@ -133,11 +133,13 @@ internal class CameraPurchaseOverlay(
         scroll.addView(body, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         content.addView(scroll, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
         hero.apply { background = ToviTheme.card(activity, 20, 0xFF09090A.toInt()); clipToOutline = true }
+        cameraArt.id = R.id.purchase_hero_artwork
         cameraArt.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         hero.addView(cameraArt)
         heroShade.importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         hero.addView(heroShade, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         heroCopy.orientation = LinearLayout.VERTICAL
+        heroCopy.id = R.id.purchase_hero_copy
         name.apply {
             typeface = Typeface.create("sans-serif-condensed", Typeface.BOLD)
             if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true
@@ -297,27 +299,33 @@ internal class CameraPurchaseOverlay(
         hero.background = if (street) GradientDrawable().apply { setColor(ToviTheme.SURFACE) }
             else ToviTheme.card(activity, 20, 0xFF09090A.toInt())
         val stackedHero = largeFont || bodyWidth < dp(300)
-        val artHeight = dp(if (street) 280 else 182)
-        hero.minimumHeight = if (stackedHero) 0 else dp(if (street) 356 else 172)
+        val artHeight = if (street) (bodyWidth * .76f).toInt().coerceIn(dp(180), dp(320)) else dp(182)
+        val contentWidth = (bodyWidth - dp(40)).coerceAtLeast(0)
+        val copyWidth = (contentWidth * .54f).toInt()
+        val artWidth = contentWidth - copyWidth
+        hero.minimumHeight = if (stackedHero || street) 0 else dp(172)
         cameraArt.layoutParams = when {
             stackedHero || street -> LayoutParams(LayoutParams.MATCH_PARENT, artHeight, Gravity.TOP)
-            else -> LayoutParams((bodyWidth * .58f).toInt(), LayoutParams.MATCH_PARENT, Gravity.END)
+            // An explicit height avoids FrameLayout's single MATCH_PARENT
+            // child measuring to zero inside the scrolling WRAP_CONTENT hero.
+            else -> LayoutParams(artWidth, artHeight, Gravity.END or Gravity.CENTER_VERTICAL)
+                .apply { marginEnd = dp(12) }
         }
         heroCopy.layoutParams = when {
             stackedHero -> LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.TOP)
                 .apply { setMargins(dp(16), artHeight + dp(12), dp(16), dp(16)) }
-            street -> LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM)
-                .apply { setMargins(dp(16), dp(12), dp(16), dp(16)) }
-            else -> LayoutParams((bodyWidth * .57f).toInt(), LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL)
+            street -> LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.TOP)
+                .apply { setMargins(dp(16), artHeight + dp(4), dp(16), dp(16)) }
+            else -> LayoutParams(copyWidth, LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL)
                 .apply { setMargins(dp(16), dp(16), dp(8), dp(16)) }
         }
         heroCopy.gravity = if (street) Gravity.CENTER_HORIZONTAL else Gravity.START
         name.gravity = if (street) Gravity.CENTER else Gravity.START
         features.gravity = if (street) Gravity.CENTER else Gravity.START
         name.textSize = if (street && !largeFont) 36f else 30f
-        heroShade.background = if (street || stackedHero) GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+        heroShade.visibility = if (street) VISIBLE else GONE
+        heroShade.background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
             intArrayOf(0x0009090A, 0x0009090A, 0xEF09090A.toInt()))
-            else GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, intArrayOf(0xF509090A.toInt(), 0x6509090A, 0x0009090A))
         streetPhotos.forEachIndexed { index, image ->
             val samplesWidth = bodyWidth - dp(if (street) 24 else 0)
             image.layoutParams = LinearLayout.LayoutParams(0, maxOf(dp(104), (samplesWidth - dp(16)) / 3 * 13 / 10), 1f)

@@ -40,8 +40,11 @@ internal class CameraArtworkView(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val image = bitmap ?: return
-        // The artwork fills its native card. Actual captured photos use ZoomablePhotoView's fit policy.
-        val scale = maxOf(width.toFloat() / image.width, height.toFloat() / image.height)
+        // Heroes preserve the complete camera and its background margin. Tiles
+        // and decorative samples still fill their cards; real photos are separate.
+        val scale = if (key.mode == "hero") {
+            minOf(width.toFloat() / image.width, height.toFloat() / image.height)
+        } else maxOf(width.toFloat() / image.width, height.toFloat() / image.height)
         val w = image.width * scale
         val h = image.height * scale
         bounds.set((width - w) / 2f, (height - h) / 2f, (width + w) / 2f, (height + h) / 2f)
@@ -112,7 +115,9 @@ internal object CameraArtworkCache {
         key.style == CameraStyle.PLASTIC_82 -> R.drawable.design_plastic_reference to Rect(488, 230, 930, 600)
         key.style == CameraStyle.STREET_84 && key.mode == "card" ->
             R.drawable.design_plastic_reference to Rect(795, 1138, 935, 1162)
-        key.style == CameraStyle.STREET_84 -> R.drawable.design_street_reference to Rect(90, 170, 853, 702)
+        // Start below the reference's baked back button, retaining both camera
+        // edges, strap and surrounding scene instead of a tight subject crop.
+        key.style == CameraStyle.STREET_84 -> R.drawable.design_street_reference to Rect(0, 145, 941, 720)
         key.mode == "hero" && key.style != CameraStyle.PLASTIC_82 && key.style != CameraStyle.STREET_84 ->
             when (key.style) {
                 CameraStyle.HARINEZUMI_2PP -> R.drawable.camera_art_dh_color

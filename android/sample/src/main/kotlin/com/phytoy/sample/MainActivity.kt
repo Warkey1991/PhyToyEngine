@@ -68,6 +68,7 @@ private class CameraPreviewTextureView(context: Context) : TextureView(context) 
 class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private lateinit var preview: TextureView
     private lateinit var previewViewport: CaptureViewport
+    private lateinit var previewStyleTransition: PreviewStyleTransition
     private lateinit var chrome: CameraChrome
     private lateinit var review: PhotoReviewOverlay
     private lateinit var photoStore: PhotoStore
@@ -320,7 +321,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun dismissCurrentPage(): Boolean {
         if (::purchasePage.isInitialized && purchasePage.dismiss()) return true
         if (::review.isInitialized && review.dismiss()) return true
-        if (::settingsPage.isInitialized && settingsPage.dismiss()) return true
+        if (::settingsPage.isInitialized && settingsPage.handleBack()) return true
         if (::chrome.isInitialized && chrome.dismissAdjustment()) return true
         return ::gallery.isInitialized && gallery.dismiss()
     }
@@ -363,6 +364,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     private fun createContentView() {
         val root = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
         previewViewport = CaptureViewport(this)
+        previewViewport.id = R.id.camera_capture_viewport
         previewViewport.setCaptureAspect(captureAspect())
         previewViewport.setGridEnabled(cameraSettings.gridEnabled)
         preview = CameraPreviewTextureView(this).apply { isOpaque = true }
@@ -400,6 +402,10 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 Gravity.CENTER,
             ),
         )
+        previewStyleTransition = PreviewStyleTransition(this, previewViewport)
+        previewArea.addView(previewStyleTransition, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,
+        ))
         root.addView(
             previewArea,
             FrameLayout.LayoutParams(
@@ -2212,7 +2218,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun switchStyle(style: CameraStyle) {
-        if (captureInProgress || cameraOpening || review.isShowing()) return
+        if (captureInProgress || cameraOpening || previewStyleTransition.isRunning || review.isShowing()) return
         if (!billing.isUnlocked(style)) {
             applyCameraStyle(style, previewOnly = true)
             return
@@ -2231,16 +2237,20 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                 .edit().putString(SELECTED_STYLE_PREFERENCE, style.name).apply()
         }
         if (style == selectedStyle) return
+        val previousAspect = captureAspect()
         selectedStyle = style
-        previewViewport.setCaptureAspect(captureAspect(style))
         chrome.setStyle(style)
         cameraReady = false
-        closeCamera()
+        chrome.setReady(false)
         chrome.showMessage(getString(R.string.status_switching_style, style.name(this)))
-        if (preview.isAvailable &&
-            checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-        ) {
-            openCamera()
+        previewStyleTransition.begin(previousAspect, captureAspect(style)) {
+            previewViewport.setCaptureAspect(captureAspect(style))
+            closeCamera(keepStyleTransition = true)
+            if (activityResumed && preview.isAvailable &&
+                checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+            ) {
+                openCamera()
+            } else previewStyleTransition.cancel()
         }
     }
 
@@ -2369,6 +2379,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
                                 selectedStyle.name(this@MainActivity),
                                 checkNotNull(stillSize).width, checkNotNull(stillSize).height), true)
                         }
+                        previewStyleTransition.onFrameReady()
                         chrome.setReady(true)
                         maybeShowFirstUseHint()
                     }
@@ -2388,7 +2399,14 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         releaseTexture: SurfaceTexture? = null,
         retiringThread: HandlerThread? = null,
         retiringHandler: Handler? = null,
+        keepStyleTransition: Boolean = false,
     ) {
+        if (!keepStyleTransition && ::previewStyleTransition.isInitialized) {
+            previewStyleTransition.cancel()
+            // A pause can interrupt the 100 ms fade before its commit. Resume
+            // still needs the newly selected style's final, unanimated viewport.
+            previewViewport.setCaptureAspect(captureAspect())
+        }
         val resources = cameraResources
         resources?.engineOwner?.cancel()
         val orphanSurface = if (resources == null) previewSurface else null
@@ -2507,7 +2525,15 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
         return false
     }
 
-    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
+        // No per-frame work after the transition. Metrics remain a fallback if
+        // the native surface presents before the TextureView callback is drawn.
+        if (!previewStyleTransition.isAwaitingFrame || !cameraReady || cameraOpening || !activityResumed ||
+            cameraResources?.style != selectedStyle
+        ) return
+        val snapshot = runCatching { engineSession?.snapshot() }.getOrNull() ?: return
+        if (snapshot.presentedFrames > 0L && snapshot.errorFrames == 0L) previewStyleTransition.onFrameReady()
+    }
 
     private fun maybeShowFirstUseHint() {
         if (firstUseHintShown || captureInProgress || reviewVisible || !cameraReady) return
