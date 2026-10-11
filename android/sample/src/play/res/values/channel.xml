@@ -1,8 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="billing_store_name">Google Play</string>
-  <string name="billing_account_name">Google Play account</string>
-  <string name="settings_local_only">Camera preferences stay on this device. Purchases and restoration use Google Play.</string>
-  <string name="purchase_scope">Each camera is sold separately. Restore in Google Play with the Google Play account used to buy it. Purchases from another store do not transfer automatically.</string>
-  <string name="settings_restore_purchases_hint">Restore camera purchases for your current Google Play account in Google Play.</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_account_name">Google Play account</string>
+    <string name="settings_local_only">Camera preferences stay on this device. Purchases and restoration use Google Play.</string>
+    <string name="purchase_scope">Buy a single camera or the All Cameras Lifetime pack, which includes future cameras. Restore in Google Play with the Google Play account used to buy it. Purchases from another store do not transfer automatically.</string>
+    <string name="settings_restore_purchases_hint">Restore camera purchases for your current Google Play account in Google Play.</string>
+    <string name="billing_cancelled">Purchase cancelled. Your existing camera unlocks are unchanged.</string>
+    <string name="billing_access_removed">A purchase is no longer active. Other valid camera purchases remain available.</string>
+    <string name="billing_pending">Payment is pending. Your selected purchase will unlock after Google Play confirms payment.</string>
+    <string name="billing_unavailable">Couldn’t load the selected purchase from Google Play. Try another option or check your connection and retry.</string>
 </resources>

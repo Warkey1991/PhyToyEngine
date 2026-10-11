@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <item name="purchase_page" type="id" />
     <item name="purchase_back" type="id" />
@@ -47,4 +47,18 @@
     <string name="billing_verification_failed">Couldn’t confirm this purchase. Try restoring purchases. If it persists, contact the app publisher.</string>
     <string name="billing_error">Google Play couldn’t complete the request. Please try again.</string>
     <string name="billing_access_removed">A camera unlock is no longer active. Your free cameras remain available.</string>
+    <string name="purchase_all_title">All Cameras · Lifetime</string>
+    <string name="purchase_all_benefit">One purchase unlocks every current camera and all cameras added in future updates. No subscription.</string>
+    <string name="purchase_single_title">Only %1$s</string>
+    <string name="purchase_single_benefit">Permanently unlock this camera only. Other cameras are sold separately.</string>
+    <string name="purchase_all_owned">All cameras unlocked · Lifetime</string>
+    <string name="purchase_buy_all">Buy all cameras · %1$s</string>
+    <string name="purchase_buy_single">Unlock %1$s · %2$s</string>
+    <string name="purchase_selected_price">%1$s · %2$s</string>
+    <string name="purchase_upgrade_no_credit">Previously purchased single cameras are not deducted from the full price of the lifetime pack.</string>
+    <string name="billing_all_success">All cameras permanently unlocked, including cameras added in future updates. Ready to shoot.</string>
+    <string name="billing_all_restored">All Cameras Lifetime purchase restored. Current and future cameras are unlocked.</string>
+    <item name="purchase_plan_all" type="id" />
+    <item name="purchase_plan_single" type="id" />
+    <item name="settings_all_cameras" type="id" />
 </resources>

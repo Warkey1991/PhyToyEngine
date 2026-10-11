@@ -1,6 +1,8 @@
 # Android 0.17 build and release
 
-Version **0.17.0 / 18**, API 26+, arm64-v8a, Vulkan 1.1, compile/target SDK 37. Use JDK 21, platform android-37.0, build-tools 36.0.0, NDK 28.2.13676358, CMake 3.22.1, Gradle 9.5.0, AGP 9.3.1. Configure ANDROID_SDK_ROOT or ignored android/local.properties. Samsung IAP is declared as `com.samsung.developer:iap:6.5.2`; dependency repositories are Google and Maven Central in android/settings.gradle.kts.
+Version **0.17.8 / 26**, API 26+, arm64-v8a, Vulkan 1.1, compile/target SDK 37. Use JDK 21, platform android-37.0, build-tools 36.0.0, NDK 28.2.13676358, CMake 3.22.1, Gradle 9.5.0, AGP 9.3.1. Configure ANDROID_SDK_ROOT or ignored android/local.properties. Samsung IAP is declared as `com.samsung.developer:iap:6.5.2`; dependency repositories are Google and Maven Central in android/settings.gradle.kts.
+
+The app namespace and Kotlin source package are `com.team.phytoy.camera`, with launcher Activity `com.team.phytoy.camera.MainActivity`. Store application IDs remain the permanent channel IDs below. The SDK package and native JNI bindings remain `com.phytoy.engine`.
 
 ## Unsigned candidates
 
@@ -33,17 +35,30 @@ Properties override environment variables. Published IDs remain permanent; updat
 | --- | --- | --- |
 | phytoyApplicationId | PHYTOY_APPLICATION_ID | com.ycolor.team.phytoy.camera.android.gpapp |
 | phytoyGalaxyApplicationId | PHYTOY_GALAXY_APPLICATION_ID | com.ycolor.team.phytoy.camera.android.galaxyapp |
-| phytoyVersionCode | PHYTOY_VERSION_CODE | 18 |
-| phytoyVersionName | PHYTOY_VERSION_NAME | 0.17.0 |
+| phytoyVersionCode | PHYTOY_VERSION_CODE | 26 |
+| phytoyVersionName | PHYTOY_VERSION_NAME | 0.17.8 |
 | phytoyPlayBillingPublicKey | PHYTOY_PLAY_BILLING_PUBLIC_KEY | empty |
 | phytoyGalaxyBillingConfigured | PHYTOY_GALAXY_BILLING_CONFIGURED | false |
 | phytoyPublisherName | PHYTOY_PUBLISHER_NAME | empty |
 | phytoySupportEmail | PHYTOY_SUPPORT_EMAIL | empty |
 | phytoyPrivacyPolicyUrl | PHYTOY_PRIVACY_POLICY_URL | empty |
 
-The Play licensing key is public X509/base64 RSA data, not a private key. Configure the four Play products and four Samsung permanent Item products before enabling sales. The publisher gate checks identity/email/HTTPS syntax; independently verify public hosting and policy accuracy.
+The Play licensing key is public X509/base64 RSA data, not a private key. Configure the five Play products and five Samsung permanent Item products before enabling sales. The publisher gate checks identity/email/HTTPS syntax; independently verify public hosting and policy accuracy.
 
 ## Production signing
+
+The local packaging entry point is `tools/package_android_release.py`. It loads the ignored `android/keystore.properties` as literal data and supplies the four existing signing environment variables to Gradle. Keep the private file at mode 0600. `android/keystore.properties.example` contains placeholders only; never add credentials to the example, Gradle source or this document. All four externally supplied signing environment variables override the local file as a complete set; partial environment configuration fails.
+
+```sh
+python3 tools/package_android_release.py --check-signing
+python3 tools/package_android_release.py --channel galaxy
+python3 tools/package_android_release.py --channel play
+python3 tools/package_android_release.py --channel both
+```
+
+The signing check verifies the keystore password, alias, private-key password and certificate without modifying the JKS. On macOS the script selects JDK 21 when JAVA_HOME is unset. Passwords are passed through the child environment, never shell sourcing or command-line arguments; visible tool output is redacted. Gradle runs without configuration cache. Builds use Release, enforce signing, run the channel's lint checks, and audit both APK and AAB against the JKS certificate using the existing release checker. Audit reports are written under ignored `release-artifacts/`.
+
+These default commands produce signed candidates. Add `--store-ready` to enforce the existing billing and publisher configuration gates and the static store packaging audit. Those gates do not certify real purchases, privacy hosting or marketplace acceptance. Use `--offline` when dependencies are already cached, and `--version-code N --version-name VERSION` when producing an updated release. No command uploads or installs an app.
 
 Set all four secrets in a secure environment: PHYTOY_KEYSTORE, PHYTOY_STORE_PASSWORD, PHYTOY_KEY_ALIAS, PHYTOY_KEY_PASSWORD. Partial credentials fail. Do not pass passwords on command lines, enable shell tracing or commit credentials.
 

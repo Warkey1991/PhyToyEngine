@@ -1,0 +1,6 @@
+product_id,english_name,usd_base_price,galaxy_type,play_purchase_option,entitlement
+camera_digital_01,DIGITAL 01 Camera Unlock,5.99,Item,unlock BUY,Only DIGITAL 01 permanent
+camera_plastic_82,PLASTIC 82 Camera Unlock,5.99,Item,unlock BUY,Only PLASTIC 82 permanent
+camera_street_84,STREET 84 Camera Unlock,5.99,Item,unlock BUY,Only STREET 84 permanent
+camera_fisheye_05,FISHEYE 05 Camera Unlock,5.99,Item,unlock BUY,Only FISHEYE 05 permanent
+camera_all_lifetime,All Cameras Lifetime Pass,19.99,Item,unlock BUY,All current and future cameras permanent

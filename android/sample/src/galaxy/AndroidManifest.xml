@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="com.samsung.android.iap.permission.BILLING" />
-    <application><meta-data android:name="phytoy.store_channel" android:value="galaxy" /></application>
+    <application>
+        <meta-data
+            android:name="phytoy.store_channel"
+            android:value="galaxy" />
+    </application>
 </manifest>

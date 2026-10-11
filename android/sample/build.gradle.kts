@@ -16,10 +16,10 @@ val galaxyApplicationId = providers.gradleProperty("phytoyGalaxyApplicationId")
     .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyapp")
 val releaseVersionCode = providers.gradleProperty("phytoyVersionCode")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_CODE"))
-    .getOrElse("24").toInt()
+    .getOrElse("26").toInt()
 val releaseVersionName = providers.gradleProperty("phytoyVersionName")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_NAME"))
-    .getOrElse("0.17.6")
+    .getOrElse("0.17.8")
 require(listOf(playApplicationId, galaxyApplicationId).all {
     it.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+"))
 }) {
@@ -61,7 +61,8 @@ require(!providers.gradleProperty("phytoyRequirePublisherConfigured").getOrElse(
 fun quoted(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"")
     .replace("\n", "\\n").replace("\r", "\\r") + "\""
 
-// Secrets come only from the build environment, never a checked-in properties file.
+// Secrets come from the build environment; the local packaging script may load
+// android/keystore.properties, which is ignored and must never be checked in.
 // Missing credentials intentionally produce unsigned APK/AAB candidates.
 val signingVariables = listOf("PHYTOY_KEYSTORE", "PHYTOY_STORE_PASSWORD", "PHYTOY_KEY_ALIAS", "PHYTOY_KEY_PASSWORD")
 val signingValues = signingVariables.associateWith { providers.environmentVariable(it).orNull }
@@ -74,13 +75,14 @@ require(!providers.gradleProperty("phytoyRequireSignedRelease").getOrElse("false
 }
 
 android {
-    namespace = "com.phytoy.sample"
+    namespace = "com.team.phytoy.camera"
     compileSdk = 37
 
     defaultConfig {
         applicationId = playApplicationId
         minSdk = 26
         targetSdk = 37
+        testInstrumentationRunner = "com.team.phytoy.camera.PurchaseUiInstrumentation"
         versionCode = releaseVersionCode
         versionName = releaseVersionName
         buildConfigField("String", "PUBLISHER_NAME", quoted(publisherName))
@@ -102,7 +104,7 @@ android {
             dimension = "store"
             applicationId = galaxyApplicationId
             buildConfigField("String", "STORE_CHANNEL", "\"galaxy\"")
-            // Enable only after the four permanent Item products are configured in Seller Portal.
+            // Enable only after the five permanent Item products are configured in Seller Portal.
             buildConfigField("boolean", "GALAXY_BILLING_CONFIGURED", galaxyBillingConfigured.toString())
         }
     }

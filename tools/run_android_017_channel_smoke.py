@@ -20,7 +20,7 @@ def main():
     parser.add_argument("--adb", default="adb")
     parser.add_argument("--serial", required=True)
     parser.add_argument("--package", required=True)
-    parser.add_argument("--activity", default="com.phytoy.sample.MainActivity")
+    parser.add_argument("--activity", default="com.team.phytoy.camera.MainActivity")
     parser.add_argument("--channel", choices=("play", "galaxy"), required=True)
     parser.add_argument("--expected-apk-sha256", required=True)
     parser.add_argument("--large-font-actions", action="store_true", help="Also verify fixed actions at 200%% font scale, then restore it")

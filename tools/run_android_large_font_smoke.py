@@ -27,8 +27,8 @@ def main() -> int:
                         help="Allow changing and restoring font scale on the physical device selected by --serial")
     parser.add_argument("--expected-apk-sha256",
                         help="Require the installed base APK to match this SHA-256 before changing font scale")
-    parser.add_argument("--package", default="com.phytoy.sample")
-    parser.add_argument("--activity", default="com.phytoy.sample.MainActivity")
+    parser.add_argument("--package", default="com.ycolor.team.phytoy.camera.android.gpapp")
+    parser.add_argument("--activity", default="com.team.phytoy.camera.MainActivity")
     parser.add_argument("--output", type=Path, default=Path("reports/large_font_smoke"))
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+", args.package):

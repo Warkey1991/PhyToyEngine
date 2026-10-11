@@ -204,7 +204,7 @@ def main():
     parser.add_argument("--adb", default="adb")
     parser.add_argument("--serial", required=True)
     parser.add_argument("--package", default="com.ycolor.team.phytoy.camera.android.gpapp")
-    parser.add_argument("--activity", default="com.phytoy.sample.MainActivity")
+    parser.add_argument("--activity", default="com.team.phytoy.camera.MainActivity")
     parser.add_argument("--channel", choices=("play", "galaxy"), default="play")
     parser.add_argument("--expected-apk-sha256", required=True)
     parser.add_argument("--output", type=Path, default=Path("reports/release_candidate_0_17/ui-smoke"))

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="purchase_title">相机风格</string>
     <string name="purchase_back">返回</string>
@@ -38,4 +38,15 @@
     <string name="billing_verification_failed">无法确认此笔购买，请尝试恢复购买。若仍未解决，请联系应用发布者。</string>
     <string name="billing_error">Google Play 未能完成此次操作，请重试。</string>
     <string name="billing_access_removed">一款相机的解锁权限已失效。你仍可使用免费相机。</string>
+    <string name="purchase_all_title">全相机永久包</string>
+    <string name="purchase_all_benefit">一次购买，永久解锁当前全部相机及未来更新新增的相机。无订阅。</string>
+    <string name="purchase_single_title">仅解锁 %1$s</string>
+    <string name="purchase_single_benefit">永久解锁这一款相机，其他相机需另行购买。</string>
+    <string name="purchase_all_owned">已永久解锁全部相机</string>
+    <string name="purchase_buy_all">购买全相机包 · %1$s</string>
+    <string name="purchase_buy_single">解锁 %1$s · %2$s</string>
+    <string name="purchase_selected_price">%1$s · %2$s</string>
+    <string name="purchase_upgrade_no_credit">已购买的相机单品金额，不抵扣全相机永久包的完整价格。</string>
+    <string name="billing_all_success">已永久解锁全部相机，包括未来更新新增的相机。可以开始拍摄了。</string>
+    <string name="billing_all_restored">已恢复全相机永久包，当前及未来新增相机均已解锁。</string>
 </resources>

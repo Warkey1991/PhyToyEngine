@@ -1,17 +1,35 @@
-# Galaxy Store camera unlocks
+# Galaxy Store camera purchases
 
-Package: com.ycolor.team.phytoy.camera.android.galaxyapp. Samsung IAP 6.5.2 is isolated to the Galaxy edition. Purchases in the Play edition do not transfer.
+Package: `com.ycolor.team.phytoy.camera.android.galaxyapp`. Version 0.17.8 / 26, Samsung IAP 6.5.2. Purchases in the Play edition do not transfer.
 
-Create four permanent **Item** products in Seller Portal matching [StyleProducts.kt](../android/sample/src/main/kotlin/com/phytoy/sample/StyleProducts.kt) exactly: `camera_digital_01`, `camera_plastic_82`, `camera_street_84`, `camera_fisheye_05`. DH 2++ color and mono are free. Requested pricing is USD 9.99 each; Seller Portal controls actual regional prices and activation. Samsung's old non-consumable creation type has been retired; use permanent Item plus acknowledgement.
+The implementation supports five permanent **Item** products. DH 2++ color and mono remain free.
 
-Set phytoyGalaxyBillingConfigured=true only after configuring all four products for the final package. Missing configuration keeps purchase/paid capture disabled while free live trials work. The release uses production IAP; test receipts cannot unlock a production camera.
+| Product ID | US base price | Entitlement |
+| --- | ---: | --- |
+| `camera_digital_01` | $5.99 | DIGITAL 01 only |
+| `camera_plastic_82` | $5.99 | PLASTIC 82 only |
+| `camera_street_84` | $5.99 | STREET 84 only |
+| `camera_fisheye_05` | $5.99 | FISHEYE 05 only |
+| `camera_all_lifetime` | $19.99 | All current and future cameras in this app |
 
-The client queries product/owned data, verifies purchase IDs with Samsung's fixed HTTPS receipt endpoint, checks package/product/payment/order/permanent type/status/mode, rejects consumed/test receipts, acknowledges and rechecks before granting. Android Keystore protects local offline entitlements. Successful owned queries revoke missing purchases; transient failures preserve verified cache. No independently operated verification server is deployed.
+Seller Portal controls regional prices and activation. The application uses exact localized store prices and does not substitute a dollar amount. Samsung retired creation of the old non-consumable product type; register permanent Item purchases and acknowledge them, never consume them.
 
-## Real store tests
+Set `phytoyGalaxyBillingConfigured=true` after configuring the five IDs for the final package. The local ignored Gradle configuration currently enables it. Production receipts only can grant access. User confirmed the five products and test account are configured on October 11, 2026; their actual IDs/prices still require a device query.
 
-On Samsung hardware with Galaxy Store and the final package/certificate, verify all four localized products/prices, success/acknowledgement, cancellation/pending/failure, network loss before/after payment, retries/duplicate callbacks, same-account reinstall/clear-data restoration, another-account behavior, offline cache, refund/revocation and trial capture gates. Check sign-in/unsupported-device errors, 200% font and TalkBack. Automated unit/emulator tests exclude real checkout; do not charge without an explicitly authorized test payment.
+`GalaxyBillingSession` serializes store operations through the production SDK adapter. Every response is consumed once. Network requests have bounded timeouts; the payment sheet has no arbitrary 60-second timeout. If the app returns to the foreground without a payment result, a delayed owned query recovers the transaction. Delayed callbacks cannot grant stale receipts. Verification and durable cache writes run on a serial worker, away from the camera thread.
 
-Galaxy requires commercial seller status for free and paid apps. Supply the privacy URL/contact and register the applicable Android Developer Verification package/signing identity. Samsung's September 2026 notice describes submission and regional enforcement requirements. Source code does not complete these account-side steps.
+Receipts are verified via Samsung’s fixed HTTPS endpoint: package, item, payment, order, permanent Item type, status, production mode and non-consumed status. Acknowledgement is confirmed by rechecking the receipt before durable caching and granting access. Receipt service system failures or incomplete responses preserve existing verified cache; explicit cancellation, missing orders or invalid receipts do not grant access. Android Keystore authenticates the offline cache. Successful owned queries revoke absent purchases. No independently operated publisher verification backend is deployed.
 
-[Samsung IAP programming guide](https://developer.samsung.com/iap/programming-guide.html), [seller preparation](https://developer.samsung.com/galaxy-store/prepare.html), [FAQ](https://developer.samsung.com/galaxy-store/faq.html), [ADV notice](https://seller.samsungapps.com/notice/getNoticeDetail.as?csNoticeID=0000011990).
+Lifetime ownership is saved as `camera_all_lifetime`, not a list of today's styles. New cameras use the same centralized entitlement policy automatically. Four individual purchases do not become lifetime ownership. Refunding lifetime preserves valid singles; refunding a single leaves an active lifetime usable. Existing single prices are not credited against the lifetime price, and the upgrade screen discloses this.
+
+## Verification and real-store acceptance
+
+The JVM transaction fixture covers purchases, restore, offline access, refund combinations, future camera access, cancellation, delayed/duplicate callbacks, acknowledgement/cache failure, network recovery and shutdown. The Android UI fixture runs only on a dedicated emulator, uses isolated snapshots, checks actual native layouts and never opens checkout. These tests are not evidence of a real store order.
+
+Complete [the device acceptance record](IAP_DEVICE_ACCEPTANCE.md) using the signed Galaxy candidate, matching package/certificate, current Galaxy Store and configured account. Do not mark real payment, reinstall restore or refund passed without an actual store order and observed result. The user will perform real-device acceptance separately; only client implementation and automated checks were requested for completion.
+
+For production-mode **Closed Beta** testing, registered license testers are not charged. Production mode outside Closed Beta can charge even a license tester. Confirm both the distribution track and the final sheet before proceeding. TEST-mode receipts are deliberately rejected by this production candidate.
+
+Supply the publisher/privacy/contact configuration and complete applicable Samsung account and signing registration requirements before publishing. These are separate from source implementation and static packaging checks.
+
+Sources: [programming guide](https://developer.samsung.com/iap/programming-guide.html), [operation modes](https://developer.samsung.com/iap/test-guide/iap-operation-modes.html), [receipt API and errors](https://developer.samsung.com/iap/programming-guide/samsung-iap-server-api.html).

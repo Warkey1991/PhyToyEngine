@@ -4,14 +4,14 @@ set -eu
 ADB_BIN=${ADB_BIN:-adb}
 REPORT_DIR=${REPORT_DIR:-reports/android_camera_controls_smoke}
 SKIP_BUILD=${SKIP_BUILD:-0}
-PACKAGE=com.phytoy.sample
-ACTIVITY="$PACKAGE/.MainActivity"
-APK=android/sample/build/outputs/apk/benchmark/sample-benchmark.apk
+PACKAGE=${PACKAGE:-com.ycolor.team.phytoy.camera.android.gpapp}
+ACTIVITY=${ACTIVITY:-$PACKAGE/com.team.phytoy.camera.MainActivity}
+APK=${APK:-android/sample/build/outputs/apk/play/benchmark/sample-play-benchmark.apk}
 DEVICE_UI=/sdcard/phytoy_controls_ui.xml
 
 mkdir -p "$REPORT_DIR"
 if [ "$SKIP_BUILD" != 1 ]; then
-    android/gradlew -p android :sample:assembleBenchmark --offline
+    android/gradlew -p android ${BUILD_TASK:-:sample:assemblePlayBenchmark} --offline
 fi
 
 "$ADB_BIN" install -r "$APK"

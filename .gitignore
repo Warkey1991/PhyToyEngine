@@ -36,7 +36,7 @@
 .idea/
 .vscode/
 
-# Signing credentials are supplied outside the checkout.
+# Signing keys and private local signing configuration must never be committed.
 *.jks
 *.keystore
 /android/keystore.properties
