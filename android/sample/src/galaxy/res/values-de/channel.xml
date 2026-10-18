@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">Ein Kauf ist nicht mehr aktiv. Andere gültige Kamerakäufe bleiben verfügbar.</string>
+    <string name="billing_account_name">Samsung-Konto</string>
+    <string name="billing_cancelled">Kauf abgebrochen. Bereits freigeschaltete Kameras bleiben unverändert.</string>
+    <string name="billing_error">Galaxy Store konnte die Anfrage nicht abschließen. Erneut versuchen.</string>
+    <string name="billing_loading">Verbindung mit Galaxy Store…</string>
+    <string name="billing_pending">Zahlung ausstehend. Nach Bestätigung durch Galaxy Store wird dein Kauf freigeschaltet.</string>
+    <string name="billing_restore_empty">Keine Kamerakäufe für dieses Samsung-Konto gefunden.</string>
+    <string name="billing_restore_failed">Käufe konnten nicht wiederhergestellt werden. Samsung-Konto und Verbindung prüfen und erneut versuchen.</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_unavailable">Gewähltes Produkt konnte nicht von Galaxy Store geladen werden. Andere Option wählen oder Verbindung prüfen und erneut versuchen.</string>
+    <string name="purchase_payment_provider">Zahlungen werden von Galaxy Store abgewickelt. Landeswährung und Endpreis stehen im Zahlungsfenster.</string>
+    <string name="purchase_scope">Kaufe einzelne Kameras oder das dauerhafte Paket mit allen aktuellen und zukünftigen Kameras. Käufe in Galaxy Store mit demselben Samsung-Konto wiederherstellen. Käufe aus anderen Stores werden nicht automatisch übertragen.</string>
+    <string name="settings_local_only">Kameraeinstellungen bleiben auf diesem Gerät. Käufe und Wiederherstellung erfolgen über Galaxy Store.</string>
+    <string name="settings_restore_purchases_hint">Kamerakäufe in Galaxy Store für das aktuelle Samsung-Konto wiederherstellen.</string>
+</resources>

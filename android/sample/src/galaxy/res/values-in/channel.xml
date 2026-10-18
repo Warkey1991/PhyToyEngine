@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">Pembelian tidak lagi aktif. Pembelian kamera lain yang valid tetap tersedia.</string>
+    <string name="billing_account_name">akun Samsung</string>
+    <string name="billing_cancelled">Pembelian dibatalkan. Kamera yang sudah terbuka tidak berubah.</string>
+    <string name="billing_error">Galaxy Store tidak dapat menyelesaikan permintaan. Coba lagi.</string>
+    <string name="billing_loading">Menghubungkan ke Galaxy Store…</string>
+    <string name="billing_pending">Pembayaran tertunda. Pembelian pilihan Anda terbuka setelah Galaxy Store mengonfirmasi pembayaran.</string>
+    <string name="billing_restore_empty">Tidak ada pembelian kamera untuk akun Samsung ini.</string>
+    <string name="billing_restore_failed">Tidak dapat memulihkan pembelian. Periksa akun Samsung dan koneksi, lalu coba lagi.</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_unavailable">Tidak dapat memuat pembelian yang dipilih dari Galaxy Store. Coba opsi lain atau periksa koneksi dan coba lagi.</string>
+    <string name="purchase_payment_provider">Pembayaran ditangani oleh Galaxy Store. Mata uang lokal dan harga akhir muncul di layar pembayaran.</string>
+    <string name="purchase_scope">Beli kamera satuan atau paket Semua Kamera Seumur Hidup yang mencakup kamera mendatang. Pulihkan di Galaxy Store dengan akun Samsung yang digunakan saat membeli. Pembelian toko lain tidak berpindah otomatis.</string>
+    <string name="settings_local_only">Preferensi kamera tetap di perangkat ini. Pembelian dan pemulihan menggunakan Galaxy Store.</string>
+    <string name="settings_restore_purchases_hint">Pulihkan kamera yang dibeli dengan akun Samsung saat ini di Galaxy Store.</string>
+</resources>

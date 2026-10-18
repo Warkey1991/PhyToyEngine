@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">Un achat n’est plus actif. Les autres achats valides restent disponibles.</string>
+    <string name="billing_account_name">compte Google Play</string>
+    <string name="billing_cancelled">Achat annulé. Vos appareils déjà débloqués restent inchangés.</string>
+    <string name="billing_pending">Paiement en attente. L’achat choisi sera débloqué après confirmation par Google Play.</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_unavailable">Impossible de charger l’achat choisi depuis Google Play. Essayez une autre option ou vérifiez la connexion et réessayez.</string>
+    <string name="purchase_scope">Achetez un appareil ou le pass à vie incluant les futurs appareils. Restaurez dans Google Play avec le même compte Google Play. Les achats d’autres boutiques ne sont pas transférés automatiquement.</string>
+    <string name="settings_local_only">Les préférences restent sur cet appareil. Les achats et leur restauration utilisent Google Play.</string>
+    <string name="settings_restore_purchases_hint">Restaurez vos achats photo dans Google Play avec le compte Google Play actuel.</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">การซื้อหนึ่งรายการไม่ทำงานแล้ว การซื้อกล้องอื่นที่ยังใช้ได้ยังคงอยู่</string>
+    <string name="billing_account_name">บัญชี Samsung</string>
+    <string name="billing_cancelled">ยกเลิกการซื้อแล้ว กล้องที่ปลดล็อกไว้ก่อนหน้านี้ไม่เปลี่ยนแปลง</string>
+    <string name="billing_error">Galaxy Store ดำเนินการตามคำขอไม่ได้ โปรดลองอีกครั้ง</string>
+    <string name="billing_loading">กำลังเชื่อมต่อ Galaxy Store…</string>
+    <string name="billing_pending">รอชำระเงิน สินค้าที่เลือกจะปลดล็อกเมื่อ Galaxy Store ยืนยันการชำระเงิน</string>
+    <string name="billing_restore_empty">ไม่พบการซื้อกล้องสำหรับ บัญชี Samsung นี้</string>
+    <string name="billing_restore_failed">คืนค่าการซื้อไม่ได้ ตรวจสอบ บัญชี Samsung และการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_unavailable">โหลดสินค้าที่เลือกจาก Galaxy Store ไม่ได้ ลองตัวเลือกอื่นหรือตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="purchase_payment_provider">Galaxy Store เป็นผู้จัดการการชำระเงิน โดยจะแสดงสกุลเงินท้องถิ่นและราคาสุดท้ายในหน้าชำระเงิน</string>
+    <string name="purchase_scope">ซื้อกล้องแยกหรือแพ็กกล้องทั้งหมดตลอดชีพที่รวมกล้องในอนาคต คืนค่าการซื้อใน Galaxy Store ด้วย บัญชี Samsung เดิม การซื้อจากร้านค้าอื่นจะไม่โอนมาอัตโนมัติ</string>
+    <string name="settings_local_only">การตั้งค่ากล้องอยู่ในอุปกรณ์นี้ การซื้อและคืนค่าการซื้อใช้ Galaxy Store</string>
+    <string name="settings_restore_purchases_hint">คืนค่ากล้องที่ซื้อด้วย บัญชี Samsung ปัจจุบันใน Galaxy Store</string>
+</resources>

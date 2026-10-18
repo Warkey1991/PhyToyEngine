@@ -12,4 +12,6 @@
     <string name="camera_first_use_hint">轻点取景画面对焦，上下滑动调节亮度。点击 EV 或倍率可精确调节。</string>
     <string name="camera_first_use_done">知道了</string>
     <string name="camera_saved_short">照片已保存</string>
+    <string name="camera_adjust_exposure_readout">EV %1$+.1f</string>
+    <string name="camera_adjust_zoom_readout">%1$.1f×</string>
 </resources>

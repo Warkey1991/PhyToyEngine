@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">एक खरीदारी अब सक्रिय नहीं है। अन्य मान्य खरीदारी उपलब्ध रहेगी।</string>
+    <string name="billing_account_name">Samsung खाता</string>
+    <string name="billing_cancelled">खरीदारी रद्द हुई। पहले अनलॉक किए गए कैमरे नहीं बदले हैं।</string>
+    <string name="billing_error">Galaxy Store अनुरोध पूरा नहीं कर सका। फिर कोशिश करें।</string>
+    <string name="billing_loading">Galaxy Store से कनेक्ट हो रहा है…</string>
+    <string name="billing_pending">भुगतान लंबित है। Galaxy Store की पुष्टि के बाद चुनी गई खरीदारी अनलॉक होगी।</string>
+    <string name="billing_restore_empty">Samsung खाता: कैमरे की कोई खरीदारी नहीं मिली।</string>
+    <string name="billing_restore_failed">खरीदारी बहाल नहीं हुई। Samsung खाता और कनेक्शन जाँचकर फिर कोशिश करें।</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_unavailable">Galaxy Store से चुनी गई खरीदारी लोड नहीं हुई। दूसरा विकल्प चुनें या कनेक्शन जाँचकर फिर कोशिश करें।</string>
+    <string name="purchase_payment_provider">भुगतान Galaxy Store संभालता है। भुगतान स्क्रीन पर स्थानीय मुद्रा और अंतिम कीमत दिखती है।</string>
+    <string name="purchase_scope">अलग कैमरा या भविष्य के कैमरों सहित सभी कैमरों का आजीवन पैक खरीदें। Galaxy Store में खरीदारी बहाल करने के लिए खरीदारी वाला Samsung खाता इस्तेमाल करें। अन्य स्टोर की खरीदारी अपने-आप नहीं आती।</string>
+    <string name="settings_local_only">कैमरे की प्राथमिकताएँ इस डिवाइस पर रहती हैं। खरीदारी और बहाली के लिए Galaxy Store इस्तेमाल होता है।</string>
+    <string name="settings_restore_purchases_hint">Galaxy Store में कैमरा खरीदारी बहाल करने के लिए मौजूदा Samsung खाता इस्तेमाल करें।</string>
+</resources>

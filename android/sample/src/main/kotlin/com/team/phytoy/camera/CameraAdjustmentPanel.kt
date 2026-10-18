@@ -17,7 +17,6 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.ScrollView
 import android.widget.TextView
-import java.util.Locale
 import kotlin.math.exp
 import kotlin.math.ln
 import kotlin.math.roundToInt
@@ -112,7 +111,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         actionButtons.clear()
         actionColumns = 0
         val update = { value: Int ->
-            title.text = String.format(Locale.getDefault(), "EV %+.1f", value * step)
+            title.text = context.getString(R.string.camera_adjust_exposure_readout, value * step)
             slider.contentDescription = title.text
         }
         onValue = null
@@ -144,7 +143,7 @@ internal class CameraAdjustmentPanel(context: Context) : FrameLayout(context) {
         fun fromProgress(progress: Int): Float = (minimum * exp(span * progress / 1000f)).coerceIn(minimum, maximum)
         fun toProgress(value: Float): Int = (ln(value.coerceIn(minimum, maximum) / minimum) / span * 1000f).roundToInt()
         val update = { value: Float ->
-            title.text = String.format(Locale.getDefault(), "%.1f×", value)
+            title.text = context.getString(R.string.camera_adjust_zoom_readout, value)
             slider.contentDescription = title.text
         }
         onValue = null

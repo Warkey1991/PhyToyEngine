@@ -47,6 +47,40 @@ The Play licensing key is public X509/base64 RSA data, not a private key. Config
 
 ## Production signing
 
+### Kotlin DSL channel packaging
+
+The applied script [android/package.gradle.kts](../android/package.gradle.kts) adds channel packaging tasks to the existing Gradle wrapper. No standalone Kotlin installation is needed. From the repository root:
+
+```sh
+# Signed candidates: Play, Galaxy, or both channels.
+android/gradlew -p android --no-configuration-cache packagePlay
+android/gradlew -p android --no-configuration-cache packageGalaxy
+android/gradlew -p android --no-configuration-cache packageAll
+
+# Specify the next unused version code; retain or update the version name.
+android/gradlew -p android --no-configuration-cache packageAll \
+  -PphytoyVersionCode=30 -PphytoyVersionName=0.17.8
+
+# Enforce this project's billing and publisher configuration before packaging.
+android/gradlew -p android --no-configuration-cache packagePlay \
+  -PphytoyVersionCode=30 -PpackageStoreReady=true
+
+# Check the existing shared signing key without building.
+android/gradlew -p android --no-configuration-cache checkReleaseSigning
+```
+
+Use the full task names. Add `--offline` for cached dependencies and `--no-daemon` for a single-use Gradle process. The tasks read the existing ignored `android/keystore.properties`, or a complete set of the four signing environment variables below. They validate the private key before the app's release build and use the same key for both channels. Passwords are literal data, never command-line arguments, task inputs or published files. Configuration cache is rejected for these tasks to keep local signing inputs out of its serialized state. Normal IDE/debug builds do not read the local signing file.
+
+Each task builds Release APK/AAB, runs channel lint, reuses the existing Python signature/16 KB packaging checker, then archives APK, AAB, `mapping.txt`, `native-debug-symbols.zip`, the audit JSON and `SHA256SUMS.txt` into `release-artifacts/packages/<play|galaxy>/<versionName>-<versionCode>-<candidate|store-checked>/`. Re-running the same version/mode replaces that directory's corresponding files. `-PpackageOutputDir=/absolute/output/path` changes the archive root; `-PpackagePython=/absolute/path/to/python3` selects Python 3.10+ for the existing helpers. The build stays in one Gradle invocation, without recursively starting another Gradle build.
+
+`packageStoreReady=true` checks only the existing local configuration and artifact gates. It does not verify Play/Seller Portal products, perform payments, publish policies, upload a package or establish store approval. In particular, the current Play client still needs its RSA billing public key to enable purchases. A missing key blocks strict Play packaging while Galaxy packaging checks its own configuration independently.
+
+The isolated Gradle integration tests use a disposable keystore and fixture build (no Android SDK or marketplace access): `PHYTOY_RUN_GRADLE_PACKAGING_TESTS=1 python3 -m unittest discover -s tools/tests -p test_gradle_packaging.py`. They check single/both channel selection, checksums, custom output paths, audit failure, signing environment precedence, literal passwords, permissions, pre-build key validation, configuration-cache rejection and normal help without signing configuration.
+
+Signing policy confirmed by the user on October 17, 2026: Google Play and Galaxy Store release builds use the same existing keystore and key alias. The shared release signing configuration already applies to both channels. The validated local key and the audited 0.17.8 / 26 Play and Galaxy APK/AAB candidates have certificate SHA-256 `27b5195d4a2faf157fa6f4656768f0dcba706effad0c0a0fbebd4e073aa7a1f2`.
+
+To retain the same certificate on APKs delivered by Google Play, supply this existing app signing key when configuring Play App Signing. Signing the uploaded AAB with this key alone does not establish the delivered APK's certificate. Verify the app signing certificate in Play Console against the fingerprint above. See [Android app signing](https://developer.android.com/studio/publish/app-signing). The Play billing licensing public key is separate from this signing certificate and must still be configured for purchases.
+
 The local packaging entry point is `tools/package_android_release.py`. It loads the ignored `android/keystore.properties` as literal data and supplies the four existing signing environment variables to Gradle. Keep the private file at mode 0600. `android/keystore.properties.example` contains placeholders only; never add credentials to the example, Gradle source or this document. All four externally supplied signing environment variables override the local file as a complete set; partial environment configuration fails.
 
 ```sh

@@ -18,7 +18,7 @@ See the look as you shoot. Tap to focus, slide to adjust exposure and pinch to z
 
 Browse your photos, move between shots, share a selected picture through Android's share chooser or confirm its deletion. JPEG photos are saved to Pictures/PhyToy with capture and style metadata. Image processing happens on your device; the app does not automatically upload your photos. If you choose to share, the app you select receives access to that picture and may handle it under its own terms. Photos remain in the system gallery after uninstalling ToviCam unless you delete them separately.
 
-DH 2++ color and monochrome are free. The other four cameras are sold separately as one-time unlocks. Try their live previews before unlocking photography. The local currency and final price are shown by Galaxy Store at checkout.
+DH 2++ color and monochrome are free. The other four cameras can be unlocked individually through one-time purchases. The optional All Cameras Lifetime Pass unlocks all current and future camera styles in ToviCam with a single purchase. No subscription is required. Previous individual camera purchases are not deducted from the pass price. Try their live previews before unlocking photography. The local currency and final price are shown by Galaxy Store at checkout.
 
 Purchasing and restoring require Galaxy Store, a Samsung account and a network connection. After reinstalling or changing devices, restore through Galaxy Store with the Samsung account used for the original purchase. Confirmed unlocks are cached for offline shooting. Google Play purchases do not automatically unlock this Galaxy Store version, and Galaxy Store purchases do not automatically transfer to Google Play. ToviCam has no separate app account.
 
@@ -36,7 +36,7 @@ ToviCam 为日常拍摄带来六种相机风格：鲜明日光色彩、深邃黑
 
 在照片列表中浏览作品，前后切换照片，通过 Android 分享面板分享选中的图片，或确认删除。JPEG 照片保存在 Pictures/PhyToy，包含拍摄参数与风格元数据。图像处理在手机上完成，应用不会自动上传照片。主动分享后，你选择的应用会获得该图片的读取权限，并可能按其自身条款处理或上传。卸载 ToviCam 不会删除系统相册中的照片，需另行删除。
 
-DH 2++ 彩色与黑白免费，其余四款相机分别一次性购买。可先试用实时预览，再解锁拍摄。Galaxy Store 付款界面会显示当地货币与最终价格。
+DH 2++ 彩色与黑白免费，其余四款相机可分别一次性购买，也可购买全相机永久包，一次解锁 ToviCam 当前及未来新增的全部相机，无需订阅。已购买的相机单品金额不抵扣全相机永久包价格。可先试用实时预览，再解锁拍摄。Galaxy Store 付款界面会显示当地货币与最终价格。
 
 购买与恢复需要 Galaxy Store、Samsung 账号及网络连接。重新安装或更换设备后，请使用原来购买时的 Samsung 账号，在 Galaxy Store 恢复购买。确认的解锁会缓存在本机，供离线拍摄。Google Play 购买不会自动解锁 Galaxy Store 版本，Galaxy Store 购买也不会自动转移到 Google Play。ToviCam 没有独立应用账号。
 
@@ -56,7 +56,7 @@ DH 2++ 彩色与黑白免费，其余四款相机分别一次性购买。可先�
 | Public HTTPS privacy-policy URL | **TO FILL**; verify its content and availability without login |
 | Countries / supported devices / age rating | **TO FILL** in Seller Portal after compatibility and content review |
 | Category | Photography — proposal; select an available matching Seller Portal category |
-| Four permanent Item registrations | `camera_digital_01`, `camera_plastic_82`, `camera_street_84`, `camera_fisheye_05`; registration and account ownership are **not verified** |
+| Five permanent Item registrations | `camera_digital_01`, `camera_plastic_82`, `camera_street_84`, `camera_fisheye_05`, `camera_all_lifetime`; English titles and descriptions: [IAP_PRODUCT_REFERENCE.csv](IAP_PRODUCT_REFERENCE.csv). Registration was reported configured by the user; device verification remains pending per [GALAXY_BILLING.md](GALAXY_BILLING.md). |
 | Prices / currencies / taxes | **TO FILL** in Seller Portal; no Galaxy price is represented as configured here |
 | Icon and screenshots | **TO PREPARE / VERIFY** from the final Galaxy release and owned or authorized scenes; this document creates no screenshots |
 | Billing acceptance | **NOT COMPLETE**; verify purchase, acknowledgement, restore, cancellation, refunds/revocation and reinstall using the configured store account and final signed package |

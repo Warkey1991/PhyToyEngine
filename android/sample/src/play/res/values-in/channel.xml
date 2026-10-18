@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">Pembelian tidak lagi aktif. Pembelian kamera lain yang valid tetap tersedia.</string>
+    <string name="billing_account_name">akun Google Play</string>
+    <string name="billing_cancelled">Pembelian dibatalkan. Kamera yang sudah terbuka tidak berubah.</string>
+    <string name="billing_pending">Pembayaran tertunda. Pembelian pilihan Anda terbuka setelah Google Play mengonfirmasi pembayaran.</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_unavailable">Tidak dapat memuat pembelian yang dipilih dari Google Play. Coba opsi lain atau periksa koneksi dan coba lagi.</string>
+    <string name="purchase_scope">Beli kamera satuan atau paket Semua Kamera Seumur Hidup yang mencakup kamera mendatang. Pulihkan di Google Play dengan akun Google Play yang digunakan saat membeli. Pembelian toko lain tidak berpindah otomatis.</string>
+    <string name="settings_local_only">Preferensi kamera tetap di perangkat ini. Pembelian dan pemulihan menggunakan Google Play.</string>
+    <string name="settings_restore_purchases_hint">Pulihkan kamera yang dibeli dengan akun Google Play saat ini di Google Play.</string>
+</resources>

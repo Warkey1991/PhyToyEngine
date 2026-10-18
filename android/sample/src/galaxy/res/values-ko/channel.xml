@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">구매 권한이 더 이상 유효하지 않습니다. 다른 유효한 구매는 계속 사용할 수 있습니다.</string>
+    <string name="billing_account_name">Samsung 계정</string>
+    <string name="billing_cancelled">구매가 취소되었습니다. 기존에 구매한 카메라는 그대로 사용할 수 있습니다.</string>
+    <string name="billing_error">Galaxy Store에서 요청을 완료하지 못했습니다. 다시 시도해 주세요.</string>
+    <string name="billing_loading">Galaxy Store에 연결 중…</string>
+    <string name="billing_pending">결제 대기 중입니다. Galaxy Store에서 결제를 확인하면 선택한 상품의 잠금이 해제됩니다.</string>
+    <string name="billing_restore_empty">이 Samsung 계정에서 구매한 카메라가 없습니다.</string>
+    <string name="billing_restore_failed">구매를 복원하지 못했습니다. Samsung 계정과 연결을 확인한 후 다시 시도해 주세요.</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_unavailable">Galaxy Store에서 선택한 상품을 불러오지 못했습니다. 다른 옵션을 선택하거나 연결을 확인한 후 다시 시도해 주세요.</string>
+    <string name="purchase_payment_provider">결제는 Galaxy Store에서 처리하며 결제 화면에 현지 통화와 최종 가격이 표시됩니다.</string>
+    <string name="purchase_scope">카메라 개별 상품 또는 향후 추가될 카메라를 포함하는 모든 카메라 영구 이용 패키지를 구매할 수 있습니다. 구매할 때 사용한 Samsung 계정(으)로 Galaxy Store에서 복원하세요. 다른 스토어의 구매는 자동 이전되지 않습니다.</string>
+    <string name="settings_local_only">카메라 설정은 이 기기에 저장됩니다. 구매 및 복원에는 Galaxy Store를 사용합니다.</string>
+    <string name="settings_restore_purchases_hint">현재 Samsung 계정으로 구매한 카메라를 Galaxy Store에서 복원합니다.</string>
+</resources>

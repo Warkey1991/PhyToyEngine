@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">एक खरीदारी अब सक्रिय नहीं है। अन्य मान्य खरीदारी उपलब्ध रहेगी।</string>
+    <string name="billing_account_name">Google Play खाता</string>
+    <string name="billing_cancelled">खरीदारी रद्द हुई। पहले अनलॉक किए गए कैमरे नहीं बदले हैं।</string>
+    <string name="billing_pending">भुगतान लंबित है। Google Play की पुष्टि के बाद चुनी गई खरीदारी अनलॉक होगी।</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_unavailable">Google Play से चुनी गई खरीदारी लोड नहीं हुई। दूसरा विकल्प चुनें या कनेक्शन जाँचकर फिर कोशिश करें।</string>
+    <string name="purchase_scope">अलग कैमरा या भविष्य के कैमरों सहित सभी कैमरों का आजीवन पैक खरीदें। Google Play में खरीदारी बहाल करने के लिए खरीदारी वाला Google Play खाता इस्तेमाल करें। अन्य स्टोर की खरीदारी अपने-आप नहीं आती।</string>
+    <string name="settings_local_only">कैमरे की प्राथमिकताएँ इस डिवाइस पर रहती हैं। खरीदारी और बहाली के लिए Google Play इस्तेमाल होता है।</string>
+    <string name="settings_restore_purchases_hint">Google Play में कैमरा खरीदारी बहाल करने के लिए मौजूदा Google Play खाता इस्तेमाल करें।</string>
+</resources>

@@ -45,7 +45,10 @@ require(playBillingPublicKey.isBlank() || billingKeyConfigured) {
 val galaxyBillingConfigured = providers.gradleProperty("phytoyGalaxyBillingConfigured")
     .orElse(providers.environmentVariable("PHYTOY_GALAXY_BILLING_CONFIGURED"))
     .getOrElse("false").toBoolean()
-val requireBilling = providers.gradleProperty("phytoyRequireBillingConfigured").getOrElse("false").toBoolean()
+val packagingRequested = rootProject.extra.properties["phytoyPackagingRequested"] == true
+val packagingStoreReady = rootProject.extra.properties["phytoyPackagingStoreReady"] == true
+val requireBilling = packagingStoreReady ||
+    providers.gradleProperty("phytoyRequireBillingConfigured").getOrElse("false").toBoolean()
 fun publicValue(property: String, environment: String) = providers.gradleProperty(property)
     .orElse(providers.environmentVariable(environment)).getOrElse("").trim()
 val publisherName = publicValue("phytoyPublisherName", "PHYTOY_PUBLISHER_NAME")
@@ -56,7 +59,7 @@ val publisherConfigured = publisherName.isNotBlank() &&
         val uri = URI(privacyPolicyUrl)
         uri.scheme == "https" && !uri.host.isNullOrBlank() && uri.userInfo == null
     }.getOrDefault(false)
-require(!providers.gradleProperty("phytoyRequirePublisherConfigured").getOrElse("false").toBoolean() ||
+require(!(packagingStoreReady || providers.gradleProperty("phytoyRequirePublisherConfigured").getOrElse("false").toBoolean()) ||
     publisherConfigured) { "A publisher name, valid support email and public HTTPS privacy policy URL are required" }
 fun quoted(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"")
     .replace("\n", "\\n").replace("\r", "\\r") + "\""
@@ -65,12 +68,14 @@ fun quoted(value: String): String = "\"" + value.replace("\\", "\\\\").replace("
 // android/keystore.properties, which is ignored and must never be checked in.
 // Missing credentials intentionally produce unsigned APK/AAB candidates.
 val signingVariables = listOf("PHYTOY_KEYSTORE", "PHYTOY_STORE_PASSWORD", "PHYTOY_KEY_ALIAS", "PHYTOY_KEY_PASSWORD")
-val signingValues = signingVariables.associateWith { providers.environmentVariable(it).orNull }
+@Suppress("UNCHECKED_CAST")
+val packageSigning = rootProject.extra.properties["phytoyPackageSigning"] as? Map<String, String> ?: emptyMap()
+val signingValues = signingVariables.associateWith { packageSigning[it] ?: providers.environmentVariable(it).orNull }
 val hasSigning = signingValues.values.all { !it.isNullOrBlank() }
 require(signingValues.values.all { it.isNullOrBlank() } || hasSigning) {
     "Release signing requires all four PHYTOY_KEYSTORE / STORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD variables"
 }
-require(!providers.gradleProperty("phytoyRequireSignedRelease").getOrElse("false").toBoolean() || hasSigning) {
+require(!(packagingRequested || providers.gradleProperty("phytoyRequireSignedRelease").getOrElse("false").toBoolean()) || hasSigning) {
     "A signed release was requested, but release signing credentials are absent"
 }
 

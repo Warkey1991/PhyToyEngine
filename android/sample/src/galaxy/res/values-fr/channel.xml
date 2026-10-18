@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">Un achat n’est plus actif. Les autres achats valides restent disponibles.</string>
+    <string name="billing_account_name">compte Samsung</string>
+    <string name="billing_cancelled">Achat annulé. Vos appareils déjà débloqués restent inchangés.</string>
+    <string name="billing_error">Galaxy Store n’a pas pu terminer la demande. Réessayez.</string>
+    <string name="billing_loading">Connexion à Galaxy Store…</string>
+    <string name="billing_pending">Paiement en attente. L’achat choisi sera débloqué après confirmation par Galaxy Store.</string>
+    <string name="billing_restore_empty">Aucun achat photo trouvé pour ce compte Samsung.</string>
+    <string name="billing_restore_failed">Impossible de restaurer les achats. Vérifiez le compte Samsung et la connexion, puis réessayez.</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_unavailable">Impossible de charger l’achat choisi depuis Galaxy Store. Essayez une autre option ou vérifiez la connexion et réessayez.</string>
+    <string name="purchase_payment_provider">Le paiement est géré par Galaxy Store. La devise locale et le prix final s’affichent lors du paiement.</string>
+    <string name="purchase_scope">Achetez un appareil ou le pass à vie incluant les futurs appareils. Restaurez dans Galaxy Store avec le même compte Samsung. Les achats d’autres boutiques ne sont pas transférés automatiquement.</string>
+    <string name="settings_local_only">Les préférences restent sur cet appareil. Les achats et leur restauration utilisent Galaxy Store.</string>
+    <string name="settings_restore_purchases_hint">Restaurez vos achats photo dans Galaxy Store avec le compte Samsung actuel.</string>
+</resources>

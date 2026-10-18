@@ -4,6 +4,8 @@ Package: `com.ycolor.team.phytoy.camera.android.galaxyapp`. Version 0.17.8 / 26,
 
 The implementation supports five permanent **Item** products. DH 2++ color and mono remain free.
 
+Seller Portal English titles and descriptions are maintained in [IAP_PRODUCT_REFERENCE.csv](IAP_PRODUCT_REFERENCE.csv), in the `english_name` and `english_description` columns. Use the exact `product_id` for the product number. These copy fields fit the screenshot's 130-character title and 1,000-character description limits.
+
 | Product ID | US base price | Entitlement |
 | --- | ---: | --- |
 | `camera_digital_01` | $5.99 | DIGITAL 01 only |

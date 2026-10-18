@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">Uma compra já não está ativa. As restantes compras válidas continuam disponíveis.</string>
+    <string name="billing_account_name">conta Google Play</string>
+    <string name="billing_cancelled">Compra cancelada. As câmaras já desbloqueadas mantêm-se.</string>
+    <string name="billing_pending">Pagamento pendente. A compra será desbloqueada após confirmação do Google Play.</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_unavailable">Não foi possível carregar a compra escolhida do Google Play. Tente outra opção ou verifique a ligação e tente novamente.</string>
+    <string name="purchase_scope">Compre uma câmara ou o pacote vitalício com todas as câmaras atuais e futuras. Restaure no Google Play com a mesma conta Google Play. As compras de outras lojas não são transferidas automaticamente.</string>
+    <string name="settings_local_only">As preferências ficam neste dispositivo. As compras e o restauro usam o Google Play.</string>
+    <string name="settings_restore_purchases_hint">Restaure as câmaras da conta Google Play atual no Google Play.</string>
+</resources>

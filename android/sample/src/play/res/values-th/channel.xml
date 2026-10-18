@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">การซื้อหนึ่งรายการไม่ทำงานแล้ว การซื้อกล้องอื่นที่ยังใช้ได้ยังคงอยู่</string>
+    <string name="billing_account_name">บัญชี Google Play</string>
+    <string name="billing_cancelled">ยกเลิกการซื้อแล้ว กล้องที่ปลดล็อกไว้ก่อนหน้านี้ไม่เปลี่ยนแปลง</string>
+    <string name="billing_pending">รอชำระเงิน สินค้าที่เลือกจะปลดล็อกเมื่อ Google Play ยืนยันการชำระเงิน</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_unavailable">โหลดสินค้าที่เลือกจาก Google Play ไม่ได้ ลองตัวเลือกอื่นหรือตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</string>
+    <string name="purchase_scope">ซื้อกล้องแยกหรือแพ็กกล้องทั้งหมดตลอดชีพที่รวมกล้องในอนาคต คืนค่าการซื้อใน Google Play ด้วย บัญชี Google Play เดิม การซื้อจากร้านค้าอื่นจะไม่โอนมาอัตโนมัติ</string>
+    <string name="settings_local_only">การตั้งค่ากล้องอยู่ในอุปกรณ์นี้ การซื้อและคืนค่าการซื้อใช้ Google Play</string>
+    <string name="settings_restore_purchases_hint">คืนค่ากล้องที่ซื้อด้วย บัญชี Google Play ปัจจุบันใน Google Play</string>
+</resources>

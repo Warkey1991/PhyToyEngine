@@ -432,7 +432,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             addStatistic(R.drawable.design_photo_ratio, ratio(information.width, information.height),
                 context.getString(R.string.review_metadata_ratio, ratio(information.width, information.height)))
             val pixels = information.width.toLong() * information.height / 1_000_000.0
-            addStatistic(R.drawable.design_photo_pixels, String.format(Locale.getDefault(), "%.1fMP", pixels),
+            addStatistic(R.drawable.design_photo_pixels, context.getString(R.string.review_megapixels, pixels),
                 context.getString(R.string.review_megapixels, pixels))
         }
         information.aperture?.let { addStatistic(R.drawable.design_photo_aperture, context.getString(R.string.design_review_aperture, it),
@@ -455,7 +455,7 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
             setImageResource(icon); importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         }, LinearLayout.LayoutParams(dp(18), dp(18)).apply { bottomMargin = dp(5) })
         else column.addView(TextView(context).apply {
-            this.text = "ISO"; textSize = 8f; setTextColor(ToviTheme.TEXT); gravity = Gravity.CENTER
+            this.text = context.getString(R.string.review_iso_label); textSize = 8f; setTextColor(ToviTheme.TEXT); gravity = Gravity.CENTER
             background = shape(Color.TRANSPARENT, 3, ToviTheme.TEXT)
             importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         }, LinearLayout.LayoutParams(dp(22), dp(18)).apply { bottomMargin = dp(5) })
@@ -532,7 +532,8 @@ internal class PhotoReviewOverlay(context: Context) : FrameLayout(context) {
         information.iso?.let { lines += context.getString(R.string.design_review_iso, it) }
         information.aperture?.let { lines += context.getString(R.string.design_review_aperture, it) }
         information.exposure?.let {
-            val seconds = if (it < 1.0) "1/" + (1.0 / it).roundToInt() + " s" else String.format(Locale.getDefault(), "%.3f s", it)
+            val seconds = if (it < 1.0) context.getString(R.string.review_exposure_fraction, (1.0 / it).roundToInt())
+                else context.getString(R.string.review_exposure_seconds, it)
             lines += context.getString(R.string.design_review_exposure, seconds)
         }
         information.focal?.let { lines += context.getString(R.string.design_review_focal, it) }

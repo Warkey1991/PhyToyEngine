@@ -17,4 +17,6 @@
     <string name="camera_first_use_hint">Tap the viewfinder to focus. Swipe up or down to adjust brightness. Tap EV or zoom for precise controls.</string>
     <string name="camera_first_use_done">Got it</string>
     <string name="camera_saved_short">Photo saved</string>
+    <string name="camera_adjust_exposure_readout">EV %1$+.1f</string>
+    <string name="camera_adjust_zoom_readout">%1$.1f×</string>
 </resources>

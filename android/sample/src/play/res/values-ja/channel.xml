@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="billing_access_removed">購入権利が無効になりました。他の有効な購入は引き続き使えます。</string>
+    <string name="billing_account_name">Google Play アカウント</string>
+    <string name="billing_cancelled">購入をキャンセルしました。購入済みのカメラは引き続き使えます。</string>
+    <string name="billing_pending">お支払い待ちです。Google Play で決済が確認されると、選択した商品が解除されます。</string>
+    <string name="billing_store_name">Google Play</string>
+    <string name="billing_unavailable">Google Play から選択した商品を読み込めませんでした。他の商品を選ぶか、接続を確認して再試行してください。</string>
+    <string name="purchase_scope">単品カメラ、または今後追加されるカメラを含むすべてのカメラの永久利用パックを購入できます。購入時と同じ Google Play アカウント で Google Play から復元してください。他のストアの購入は自動的に引き継がれません。</string>
+    <string name="settings_local_only">カメラ設定はこの端末に保存されます。購入と復元には Google Play を使用します。</string>
+    <string name="settings_restore_purchases_hint">現在の Google Play アカウント のカメラ購入を Google Play で復元します。</string>
+</resources>
