@@ -189,11 +189,11 @@ internal class PhotoStore(private val context: Context) {
                 )
                 setAttribute(
                     ExifInterface.TAG_SOFTWARE,
-                    "ToviCam / ${metadata.styleCode} ${metadata.styleVersion}",
+                    "${BuildConfig.PHOTO_SOFTWARE_NAME} / ${metadata.styleCode} ${metadata.styleVersion}",
                 )
                 setAttribute(
                     ExifInterface.TAG_IMAGE_DESCRIPTION,
-                    "ToviCam ${metadata.styleCode} ${metadata.styleVersion}",
+                    "${BuildConfig.PHOTO_SOFTWARE_NAME} ${metadata.styleCode} ${metadata.styleVersion}",
                 )
                 setAttribute(
                     ExifInterface.TAG_USER_COMMENT,

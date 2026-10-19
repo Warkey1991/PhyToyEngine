@@ -24,6 +24,7 @@ ANDROID_NS = "http://schemas.android.com/apk/res/android"
 REQUIRED_LIBRARIES = {"libphytoy_core.so", "libphytoy_android.so", "libc++_shared.so"}
 BILLING_PERMISSIONS = {"play": "com.android.vending.BILLING",
                        "galaxy": "com.samsung.android.iap.permission.BILLING"}
+STORE_CHANNELS = {*BILLING_PERMISSIONS, "galaxyFull"}
 
 
 class ReleaseError(ValueError):
@@ -269,8 +270,14 @@ def audit_channel(metadata: dict, expected_channel: str | None, store_ready: boo
     if expected_channel:
         require(channel == expected_channel, "Artifact store channel does not match --channel")
     if channel or store_ready:
-        require(channel in BILLING_PERMISSIONS, "Store channel metadata is missing or unsupported")
+        require(channel in STORE_CHANNELS, "Store channel metadata is missing or unsupported")
         permissions = set(metadata.get("permissions", []))
+        if channel == "galaxyFull":
+            require(not set(BILLING_PERMISSIONS.values()) & permissions,
+                    "Full edition must not request any billing permission")
+            require("android.permission.INTERNET" not in permissions,
+                    "Full edition must not request network access")
+            return channel
         require(BILLING_PERMISSIONS[channel] in permissions, "Expected store billing permission is missing")
         require(not (set(BILLING_PERMISSIONS.values()) - {BILLING_PERMISSIONS[channel]}) & permissions,
                 "Artifact mixes billing permissions from different stores")
@@ -344,6 +351,15 @@ def audit(args: argparse.Namespace) -> dict:
                 f"APK and AAB native library differs: {name}")
     metadata = apk["manifest"]
     channel = audit_channel(metadata, getattr(args, "channel", None), args.store_ready)
+    if channel == "galaxyFull":
+        for artifact in (args.apk, args.aab):
+            with zipfile.ZipFile(artifact) as archive:
+                for name in archive.namelist():
+                    if name.endswith(".dex"):
+                        dex = archive.read(name)
+                        require(all(marker not in dex for marker in (
+                            b"Lcom/android/billingclient/", b"Lcom/samsung/android/sdk/iap/",
+                        )), "Full edition contains a payment SDK")
     require(metadata["target_sdk"] >= args.minimum_target_sdk, "Target SDK is below the current release policy")
     require(metadata["min_sdk"] == 26, "Unexpected minimum SDK")
     require(metadata["version_code"] > 0 and metadata["version_name"], "Invalid release version")
@@ -404,7 +420,7 @@ def main() -> int:
     parser.add_argument("--sdk", type=Path)
     parser.add_argument("--allow-unsigned", action="store_true")
     parser.add_argument("--store-ready", action="store_true")
-    parser.add_argument("--channel", choices=sorted(BILLING_PERMISSIONS), help="Verify the built artifact's store channel and billing permission")
+    parser.add_argument("--channel", choices=sorted(STORE_CHANNELS), help="Verify the built artifact's store channel and billing permissions")
     parser.add_argument("--expected-application-id")
     parser.add_argument("--expected-cert-sha256")
     parser.add_argument("--minimum-target-sdk", type=int, default=36)

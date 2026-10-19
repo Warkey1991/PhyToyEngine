@@ -609,6 +609,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun openPurchase(style: CameraStyle) {
+        if (!BuildConfig.HAS_IN_APP_PURCHASES) return
         if (captureInProgress || isDestroyed || review.isShowing()) return
         Log.i(LOG_TAG, "Camera purchase page opened style=${style.name}")
         billingMessage = null
@@ -618,6 +619,7 @@ class MainActivity : Activity(), TextureView.SurfaceTextureListener {
     }
 
     private fun restorePurchases() {
+        if (!BuildConfig.HAS_IN_APP_PURCHASES) return
         billingMessage = null
         billing.restorePurchases()
     }

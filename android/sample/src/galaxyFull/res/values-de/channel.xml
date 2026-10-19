@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Pomi Camera</string>
+    <string name="product_wordmark" tools:ignore="Typos">Pomi Camera</string>
+    <string name="camera_header_description">Pomi Camera. Aktueller Stil: %1$s</string>
+    <string name="product_info_title" tools:ignore="Typos">Pomi Camera · %1$s</string>
+    <string name="permission_camera_body">Pomi Camera verwendet die Kamera für den Sucher und deine Aufnahmen. Bilder werden auf dem Gerät verarbeitet und unter Pictures/PhyToy gespeichert.</string>
+    <string name="settings_about">Über Pomi Camera</string>
+    <string name="product_info_body">Alle Kamerastile sind enthalten und sofort nutzbar. Keine In-App-Käufe, Abonnements oder Kaufwiederherstellung. Bilder werden auf deinem Gerät verarbeitet.\n\nZum Fokussieren auf den Sucher tippen. Für die Belichtung vertikal wischen und zum Zoomen zwei Finger verwenden. Fotos werden unter Pictures/PhyToy gespeichert; über das Vorschaubild öffnest du die Fotoliste. In den Einstellungen wählst du Bildqualität, Bildraster, Aufnahmefeedback und die Kontrolle nach jeder Aufnahme.\n\nVorschau und Fotos verwenden dieselbe Bildverarbeitung. Auflösung, Sensorverarbeitung und zufälliges Rauschen können leicht abweichen. Bei Wärme passt sich die Vorschaugeschwindigkeit für einen stabilen Betrieb an.\n\nDie Kamerastile sind eigenständige Interpretationen, keine zertifizierten Nachbildungen und nicht von Kameraherstellern bestätigt.\n\nEngine und App: MIT-Lizenz. Keine Beispielfotos von Websites Dritter enthalten.</string>
+    <string name="privacy_channel_body">Aktualisiert: 19. Oktober 2026\n\nDer Kamerazugriff dient dem Sucher und deinen Aufnahmen. Bilder werden auf deinem Gerät verarbeitet. Standort-, Mikrofon- und Netzwerkzugriff werden nicht angefordert.\n\nFotos werden in Pictures/PhyToy mit Aufnahmezeit, Belichtung und Stil gespeichert, ohne hinzugefügte Standortdaten. Lösche sie in der App oder Systemgalerie. Eine Deinstallation löscht keine Fotos. Beim Teilen erhält nur die gewählte App das ausgewählte Foto; es gelten deren Datenschutzregeln.\n\nEinstellungen, Berechtigungsstatus und Fotoindex bleiben im privaten lokalen Speicher. Das Löschen der App-Daten entfernt diese Einträge. Diese Ausgabe enthält keine In-App-Käufe, Zahlungs-SDKs, eigenen Konten, Werbung, automatischen Uploads oder Anbieteranalysen. Kaufbelege werden weder gespeichert noch gesendet.\n\nVertrieb: %1$s. In der App ist keine Anmeldung mit einem %2$s erforderlich. Kamerazugriff kann in den Android-Einstellungen widerrufen werden. Supportnachrichten werden nur auf deinen Wunsch über deine E-Mail-App gesendet.</string>
+    <string name="settings_local_only">Alle Kamerastile sind enthalten und sofort nutzbar. Keine In-App-Käufe, Abonnements oder Kaufwiederherstellung. Bilder werden auf deinem Gerät verarbeitet.</string>
+    <string name="support_hint">Support kontaktieren</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_account_name">Samsung-Konto</string>
+</resources>

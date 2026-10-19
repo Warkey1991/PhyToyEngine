@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Pomi Camera</string>
+    <string name="product_wordmark" tools:ignore="Typos">Pomi Camera</string>
+    <string name="camera_header_description">Pomi Camera。当前风格：%1$s</string>
+    <string name="product_info_title" tools:ignore="Typos">Pomi Camera · %1$s</string>
+    <string name="permission_camera_body">Pomi Camera 使用相机提供取景画面，拍摄你主动选择的照片。图像处理在本机完成，照片保存在 Pictures/PhyToy。</string>
+    <string name="settings_about">关于 Pomi Camera</string>
+    <string name="product_info_body">全部相机风格均已包含，可直接拍摄。没有内购、订阅或恢复购买。图像处理在本机完成。\n\n轻点取景框对焦，上下滑动调节曝光，双指缩放。照片保存在 Pictures/PhyToy，可轻点缩略图打开照片列表。相机设置可调整照片质量、构图网格、拍照反馈与拍后回看。\n\n预览和照片使用同一成像引擎；由于分辨率、手机相机处理和随机噪声不同，细节可能略有差异。手机温度较高时，预览会自动调整帧率。\n\n所有相机风格均为独立诠释，并非经过认证的真机复刻，也未获得任何相机厂商背书。\n\n引擎与应用采用 MIT 许可证。应用不包含第三方网站的样片。</string>
+    <string name="privacy_channel_body">更新日期：2026 年 10 月 19 日\n\n相机权限仅用于取景和你主动拍摄的照片，图像在本机处理。不请求定位、麦克风或网络权限。\n\n照片保存在 Pictures/PhyToy，元数据包括拍摄时间、曝光及风格，不添加位置信息。可在应用或系统相册中删除，卸载不会删除已保存照片。分享仅向你选择的应用提供选中的图片，对方依其自身政策处理。\n\n设置、权限状态和照片索引保存在本机私有空间，清除应用数据会移除这些本地记录。本版本没有内购、支付 SDK、独立账号、广告、自动上传或开发者统计服务，不保存或发送购买凭据。\n\n分发平台：%1$s。应用内无需登录%2$s。可在 Android 应用设置中撤销相机权限。仅在你主动选择联系时，通过邮件应用发送支持邮件。</string>
+    <string name="settings_local_only">全部相机风格均已包含，可直接拍摄。没有内购、订阅或恢复购买。图像处理在本机完成。</string>
+    <string name="support_hint">联系支持</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_account_name">Samsung 账号</string>
+</resources>

@@ -252,20 +252,22 @@ internal class SettingsOverlay(
             settings.reviewAfterCapture, SettingsRowIcon.REVIEW) { change(settings.copy(reviewAfterCapture = it)) }
 
         section(R.string.settings_section_information)
-        val allTitle = if (isAllCamerasUnlocked()) R.string.purchase_all_owned else R.string.purchase_all_title
-        val allRow = actionRow(R.id.settings_all_cameras, allTitle,
-            R.string.purchase_all_benefit, SettingsRowIcon.PURCHASES, null) { onAllCamerasSelected() }.first as LinearLayout
-        allCamerasControl = allRow
-        allCamerasTitle = (allRow.getChildAt(1) as LinearLayout).getChildAt(0) as TextView
-        addControl(allRow)
-        action(R.id.settings_restore_purchases, R.string.settings_restore_purchases,
-            R.string.design_settings_restore_hint, SettingsRowIcon.PURCHASES) { onRestorePurchases() }
-        (purchaseNotice.parent as? ViewGroup)?.removeView(purchaseNotice)
-        purchaseNotice.text = purchaseResult ?: ""
-        purchaseNotice.visibility = if (purchaseResult.isNullOrBlank()) GONE else VISIBLE
-        activeGroup?.addView(purchaseNotice, LinearLayout.LayoutParams(
-            LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
-        ).apply { setMargins(dp(6), 0, dp(6), dp(6)) })
+        if (BuildConfig.HAS_IN_APP_PURCHASES) {
+            val allTitle = if (isAllCamerasUnlocked()) R.string.purchase_all_owned else R.string.purchase_all_title
+            val allRow = actionRow(R.id.settings_all_cameras, allTitle,
+                R.string.purchase_all_benefit, SettingsRowIcon.PURCHASES, null) { onAllCamerasSelected() }.first as LinearLayout
+            allCamerasControl = allRow
+            allCamerasTitle = (allRow.getChildAt(1) as LinearLayout).getChildAt(0) as TextView
+            addControl(allRow)
+            action(R.id.settings_restore_purchases, R.string.settings_restore_purchases,
+                R.string.design_settings_restore_hint, SettingsRowIcon.PURCHASES) { onRestorePurchases() }
+            (purchaseNotice.parent as? ViewGroup)?.removeView(purchaseNotice)
+            purchaseNotice.text = purchaseResult ?: ""
+            purchaseNotice.visibility = if (purchaseResult.isNullOrBlank()) GONE else VISIBLE
+            activeGroup?.addView(purchaseNotice, LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
+            ).apply { setMargins(dp(6), 0, dp(6), dp(6)) })
+        }
         action(R.id.settings_privacy, R.string.settings_privacy, R.string.design_settings_privacy_hint, SettingsRowIcon.PRIVACY) {
             ProductInfo.showPrivacy(activity)
         }

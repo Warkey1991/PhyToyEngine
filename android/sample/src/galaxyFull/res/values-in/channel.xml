@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Pomi Camera</string>
+    <string name="product_wordmark" tools:ignore="Typos">Pomi Camera</string>
+    <string name="camera_header_description">Pomi Camera. Gaya saat ini: %1$s</string>
+    <string name="product_info_title" tools:ignore="Typos">Pomi Camera · %1$s</string>
+    <string name="permission_camera_body">Pomi Camera menggunakan kamera untuk jendela bidik dan foto yang Anda ambil. Gambar diproses di perangkat. Foto disimpan di Pictures/PhyToy.</string>
+    <string name="settings_about">Tentang Pomi Camera</string>
+    <string name="product_info_body">Semua gaya kamera sudah termasuk dan siap digunakan. Tanpa pembelian dalam aplikasi, langganan, atau pemulihan pembelian. Gambar diproses di perangkat Anda.\n\nKetuk jendela bidik untuk fokus, usap vertikal untuk menyesuaikan pencahayaan, dan cubit untuk zoom. Foto disimpan di Pictures/PhyToy dan dapat dilihat dengan mengetuk gambar mini. Setelan memungkinkan Anda memilih kualitas, kisi komposisi, umpan balik pengambilan, dan tinjauan setiap foto.\n\nPratinjau dan foto memakai mesin pengolahan yang sama. Resolusi, pemrosesan sensor, dan derau acak dapat sedikit berbeda. Saat perangkat hangat, kecepatan pratinjau menyesuaikan agar tetap stabil.\n\nGaya kamera merupakan interpretasi mandiri, bukan reproduksi bersertifikat atau produk yang didukung produsen kamera.\n\nMesin dan aplikasi: Lisensi MIT. Tidak menyertakan foto contoh dari situs pihak ketiga.</string>
+    <string name="privacy_channel_body">Diperbarui: 19 Oktober 2026\n\nKamera digunakan untuk jendela bidik dan foto yang Anda ambil. Gambar diproses di perangkat. Aplikasi tidak meminta akses lokasi, mikrofon, atau jaringan.\n\nFoto disimpan di Pictures/PhyToy dengan waktu, pencahayaan, dan gaya, tanpa menambahkan lokasi. Hapus di aplikasi atau galeri sistem. Menghapus aplikasi tidak menghapus foto. Berbagi hanya mengirim foto pilihan ke aplikasi yang Anda tentukan, sesuai kebijakan aplikasi tersebut.\n\nSetelan, status izin, dan indeks foto tetap di penyimpanan lokal privat. Menghapus data aplikasi menghapus catatan ini. Edisi ini tidak memiliki pembelian dalam aplikasi, SDK pembayaran, akun mandiri, iklan, unggahan otomatis, atau analitik penerbit. Tidak ada tanda terima pembelian yang disimpan atau dikirim.\n\nDistribusi: %1$s. Tidak perlu masuk dengan %2$s di dalam aplikasi. Izin kamera dapat dicabut di Setelan Android. Pesan dukungan hanya dikirim melalui aplikasi email saat Anda memilihnya.</string>
+    <string name="settings_local_only">Semua gaya kamera sudah termasuk dan siap digunakan. Tanpa pembelian dalam aplikasi, langganan, atau pemulihan pembelian. Gambar diproses di perangkat Anda.</string>
+    <string name="support_hint">Hubungi dukungan</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_account_name">akun Samsung</string>
+</resources>

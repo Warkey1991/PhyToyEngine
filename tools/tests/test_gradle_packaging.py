@@ -56,7 +56,7 @@ class GradlePackagingTest(unittest.TestCase):
         script_path = json.dumps(str(ROOT / "android/package.gradle.kts"))
         (self.android / "build.gradle.kts").write_text(f"apply(from = {script_path})\n")
         (self.android / "sample/build.gradle.kts").write_text('''
-for (channel in listOf("play", "galaxy")) {
+for (channel in listOf("play", "galaxy", "galaxyFull")) {
     val flavor = channel.replaceFirstChar(Char::uppercaseChar)
     val prepare = tasks.register("pre${flavor}ReleaseBuild") {
         doLast { rootDir.resolve("$channel-built").writeText("built") }
@@ -129,6 +129,14 @@ out.write_text(json.dumps(result))
         self.assertEqual(result.returncode, 0, result.stdout[-6000:])
         self.assertTrue((output / "play/fixture-7-candidate").is_dir())
         self.assertFalse((self.android / "galaxy-built").exists())
+
+    def test_full_edition_packages_independently(self):
+        result = self.run_gradle("packageGalaxyFull", "-PpackageStoreReady=true")
+        self.assertEqual(result.returncode, 0, result.stdout[-6000:])
+        folder = self.root / "release-artifacts/packages/galaxyFull/fixture-7-store-checked"
+        self.assertTrue((folder / "PomiCamera-galaxyFull-fixture-7.apk").is_file())
+        self.assertFalse((self.android / "galaxy-built").exists())
+        self.assertFalse((self.android / "play-built").exists())
 
     def test_audit_failure_does_not_archive(self):
         result = self.run_gradle("packagePlay", env={"PKG_FIXTURE_AUDIT_FAIL": "1"})

@@ -29,6 +29,21 @@ def formats(text):
 
 
 class AndroidLocalizationTest(unittest.TestCase):
+    def test_full_edition_overrides_brand_and_privacy_in_every_locale(self):
+        base = resources(ROOT / "main/res/values")
+        full = resources(ROOT / "galaxyFull/res/values")
+        for folder in ["values", "values-zh-rCN", *LOCALES.values()]:
+            localized = resources(ROOT / "galaxyFull/res" / folder)
+            self.assertEqual(set(localized), set(full), folder)
+            merged = base | resources(ROOT / "main/res" / folder) | localized
+            for key in ["app_name", "product_wordmark", "camera_header_description",
+                        "product_info_title", "permission_camera_body", "settings_about",
+                        "privacy_channel_body", "product_info_body", "settings_local_only"]:
+                text = merged["string", key].text or ""
+                self.assertNotIn("Tovi", text, (folder, key))
+                self.assertEqual(formats(text), formats(base["string", key].text or ""), (folder, key))
+            self.assertEqual(merged["string", "app_name"].text, "Pomi Camera")
+
     def test_declared_locales_and_complete_resource_coverage(self):
         config = ROOT / "main/res/xml/locales_config.xml"
         declared = {node.attrib["{http://schemas.android.com/apk/res/android}name"]

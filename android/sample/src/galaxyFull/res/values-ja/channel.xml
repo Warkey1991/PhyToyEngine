@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Pomi Camera</string>
+    <string name="product_wordmark" tools:ignore="Typos">Pomi Camera</string>
+    <string name="camera_header_description">Pomi Camera。現在のスタイル：%1$s</string>
+    <string name="product_info_title" tools:ignore="Typos">Pomi Camera · %1$s</string>
+    <string name="permission_camera_body">Pomi Camera は、プレビューとご自身で撮影する写真にカメラを使用します。画像処理は端末内で行い、写真は Pictures/PhyToy に保存されます。</string>
+    <string name="settings_about">Pomi Camera について</string>
+    <string name="product_info_body">すべてのカメラスタイルですぐに撮影できます。アプリ内購入、サブスクリプション、購入の復元はありません。画像は端末内で処理します。\n\nファインダーをタップしてピントを合わせ、上下にスワイプして露出を調整し、ピンチでズームします。写真は Pictures/PhyToy に保存され、サムネイルをタップして写真一覧で確認できます。設定では画質、構図グリッド、撮影時のフィードバック、撮影後の確認を選べます。\n\nプレビューと写真は同じ画像処理エンジンを使用します。解像度、センサー処理、ランダムノイズにより細部が少し異なる場合があります。端末が熱くなると、安定動作のためプレビュー速度を調整します。\n\n各スタイルは独自の解釈であり、実機の認定された再現ではなく、カメラメーカーの公認も受けていません。\n\nエンジンとアプリ：MIT ライセンス。他のウェブサイトのサンプル写真は含まれていません。</string>
+    <string name="privacy_channel_body">更新日：2026 年 10 月 19 日\n\nカメラはプレビューと自分で撮影する写真にのみ使用し、画像は端末内で処理します。位置情報、マイク、ネットワークへのアクセスは要求しません。\n\n写真は Pictures/PhyToy に保存し、撮影日時、露出、スタイルを記録しますが、位置情報は追加しません。アプリや端末のギャラリーで削除できます。アンインストールしても写真は残ります。共有では選択した写真のみを指定したアプリに渡し、そのアプリのポリシーが適用されます。\n\n設定、権限の状態、写真一覧は端末内に保存され、アプリのデータ消去で削除されます。アプリ内購入、決済 SDK、独自アカウント、広告、自動アップロード、提供元の分析はありません。購入レシートは保存・送信しません。\n\n配信：%1$s。アプリ内で %2$s へのログインは不要です。Android の設定でカメラ権限を取り消せます。お問い合わせは自分で選んだ場合のみメールアプリから送信されます。</string>
+    <string name="settings_local_only">すべてのカメラスタイルですぐに撮影できます。アプリ内購入、サブスクリプション、購入の復元はありません。画像は端末内で処理します。</string>
+    <string name="support_hint">サポートに連絡</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_account_name">Samsung アカウント</string>
+</resources>

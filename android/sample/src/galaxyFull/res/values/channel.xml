@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Pomi Camera</string>
+    <string name="product_wordmark" tools:ignore="Typos">Pomi Camera</string>
+    <string name="camera_header_description">Pomi Camera. Current style: %1$s</string>
+    <string name="product_info_title" tools:ignore="Typos">Pomi Camera · %1$s</string>
+    <string name="permission_camera_body">Pomi Camera uses your camera for the viewfinder and the photos you choose to take. Image processing stays on your device. Photos are saved to Pictures/PhyToy.</string>
+    <string name="settings_about">About Pomi Camera</string>
+    <string name="product_info_body">All camera styles are included and ready to shoot. No in-app purchases, subscriptions or purchase restoration. Image processing stays on your device.\n\nTap the viewfinder to focus. Slide vertically to adjust exposure and pinch to zoom. Photos are saved to Pictures/PhyToy and can be viewed in the photo list by tapping the thumbnail. Camera settings let you choose photo quality, a composition grid, capture feedback and whether to review each shot.\n\nPreview and photos use the same imaging engine. Their resolution, sensor processing and random noise can differ slightly. In warm conditions, preview speed adapts to keep the camera stable.\n\nCamera styles are independent interpretations. They are not certified reproductions or endorsed by any camera manufacturer.\n\nEngine and application: MIT License. No sample photographs from third-party websites are included.</string>
+    <string name="privacy_channel_body">Updated: October 19, 2026\n\nCamera access is used for the viewfinder and photos you choose to take. Images are processed on your device. The app does not request location, microphone or network access.\n\nPhotos are saved to Pictures/PhyToy with capture time, exposure and style metadata, without added location. Delete them in the app or system gallery; uninstalling does not delete saved photos. Sharing passes only the selected photo to your chosen app, which handles it under its own policy.\n\nPreferences, permission state and the photo index stay in private local storage. Clearing app storage removes this local data. This edition has no in-app purchases, payment SDK, app account, advertisements, automatic uploads or publisher analytics. No purchase receipts are stored or sent.\n\nDistribution: %1$s. No %2$s sign-in is required inside the app. Revoke camera access in Android app settings. Support messages are sent only when you choose to use your email app.</string>
+    <string name="settings_local_only">All camera styles are included and ready to shoot. No in-app purchases, subscriptions or purchase restoration. Image processing stays on your device.</string>
+    <string name="support_hint">Contact support</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_account_name">Samsung account</string>
+</resources>

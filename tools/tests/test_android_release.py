@@ -34,6 +34,13 @@ def elf(alignment=16384, relro_end=16384, load_flags=5, stack_flags=6):
 
 
 class ReleaseGateTest(unittest.TestCase):
+    def test_full_edition_rejects_billing_and_network_permissions(self):
+        metadata = {"store_channel": "galaxyFull", "permissions": ["android.permission.CAMERA"]}
+        self.assertEqual(release.audit_channel(metadata, "galaxyFull", True), "galaxyFull")
+        for forbidden in [*release.BILLING_PERMISSIONS.values(), "android.permission.INTERNET"]:
+            with self.subTest(permission=forbidden), self.assertRaises(release.ReleaseError):
+                release.audit_channel(metadata | {"permissions": [forbidden]}, "galaxyFull", True)
+
     def test_channel_rejects_cross_store_permission(self):
         metadata = {"store_channel": "galaxy", "permissions": list(release.BILLING_PERMISSIONS.values())}
         with self.assertRaisesRegex(release.ReleaseError, "mixes"):

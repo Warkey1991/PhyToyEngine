@@ -1,5 +1,29 @@
 # Google Play camera unlocks
 
+## Play Console configuration (2026-10-18)
+
+Select the Google Play app with application ID `com.ycolor.team.phytoy.camera.android.gpapp`, then open **Monetize with Play > Products > One-time products**. Create the products below; product IDs must exactly match the app code. These are permanent non-consumable unlocks, not subscriptions.
+
+For every product, create a purchase option with the exact ID **`unlock`**, select **Buy**, disable multi-quantity, set the applicable content/service classification and tax settings accurately, configure supported regions and regional prices, and **activate** the purchase option. This app selects the `unlock` option without an offer ID, rental or pre-order; keep a standard Buy option available. Draft/inactive options are not returned by Play Billing.
+
+Copy-ready English product metadata (each description is under 200 characters):
+
+| Product ID | Name | Description | US target price |
+| --- | --- | --- | --- |
+| `camera_digital_01` | DIGITAL 01 Camera Unlock | Permanently unlock photo capture with DIGITAL 01 in Tovi Camera. Warm highlights, cool shadows and subtle lens character. One-time purchase. Includes this camera style only. | USD 5.99 |
+| `camera_plastic_82` | PLASTIC 82 Camera Unlock | Permanently unlock photo capture with PLASTIC 82 in Tovi Camera. Square photos with soft edges and plastic-camera character. One-time purchase. Includes this camera style only. | USD 5.99 |
+| `camera_street_84` | STREET 84 Camera Unlock | Permanently unlock photo capture with STREET 84 in Tovi Camera. Punchy street colors, a 2:3 frame and dark corners. One-time purchase. Includes this camera style only. | USD 5.99 |
+| `camera_fisheye_05` | FISHEYE 05 Camera Unlock | Permanently unlock photo capture with FISHEYE 05 in Tovi Camera. Square photos with fisheye distortion and circular light falloff. One-time purchase. Includes this camera style only. | USD 5.99 |
+| `camera_all_lifetime` | All Cameras Lifetime Pass | Permanently unlock all current and future camera styles in Tovi Camera. One-time purchase. No subscription. Previous individual camera purchases are not deducted from the pass price. | USD 19.99 |
+
+DH 2++ color and monochrome are free; do not create paid products for them. Restore uses the same Google Play account. The shared `IAP_PRODUCT_REFERENCE.csv` currently contains Galaxy-specific Samsung-account descriptions; use the Play metadata above for this channel.
+
+After saving, use an internal test release and license tester accounts to verify purchase, cancellation, pending payment and restore. Being an internal tester alone does not make purchases free; use license-testing payment methods. Console product setup does not enable billing in a build missing this project's receipt-verification key. During this local check, no key was present in the project/user Gradle properties or the billing-key environment variable; add `phytoyPlayBillingPublicKey` before rebuilding the billing-enabled candidate.
+
+References: [one-time product configuration](https://support.google.com/googleplay/android-developer/answer/16430488?hl=en), [license testing](https://developer.android.com/google/play/billing/test).
+
+## Client integration and release checks
+
 The first two camera styles (DH 2++ color and monochrome) are free. Four individual styles are **non-consumable, one-time purchases** at a requested US base price of **USD 5.99 each**. A fifth product is the **USD 19.99 All Cameras Lifetime Pass**, including current and future cameras in this app. None are subscriptions or rentals. Configure prices and tax treatment in Play Console; the app uses Google's localized `formattedPrice` and never substitutes a hard-coded dollar price.
 
 | Camera | Permanent product ID | Purchase option | US target price |

@@ -9,12 +9,12 @@ import org.gradle.api.configuration.BuildFeatures
 
 abstract class PackagingBuildFeatures @Inject constructor(val features: BuildFeatures)
 
-// Run through the existing wrapper: ./gradlew packagePlay|packageGalaxy|packageAll.
+// Run through the existing wrapper: ./gradlew packagePlay|packageGalaxy|packageGalaxyFull|packageAll.
 // Keep builds in this Gradle invocation; never launch a nested Gradle build.
 val repository = rootDir.parentFile
 val packageTasks = setOf(
-    "packagePlay", "packageGalaxy", "packageAll", "checkReleaseSigning",
-    "auditPlayPackage", "auditGalaxyPackage",
+    "packagePlay", "packageGalaxy", "packageGalaxyFull", "packageAll", "checkReleaseSigning",
+    "auditPlayPackage", "auditGalaxyPackage", "auditGalaxyFullPackage",
 )
 val packagingRequested = gradle.startParameter.taskNames.any { it.substringAfterLast(':') in packageTasks }
 val storeReady = providers.gradleProperty("packageStoreReady").getOrElse("false").let {
@@ -113,7 +113,7 @@ fun fileHash(file: java.io.File): String {
     return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
-val auditTasks = listOf("play", "galaxy").map { channel ->
+val auditTasks = listOf("play", "galaxy", "galaxyFull").associateWith { channel ->
     val flavor = channel.replaceFirstChar(Char::uppercaseChar)
     val apk = rootDir.resolve("sample/build/outputs/apk/$channel/release/sample-$channel-release.apk")
     val aab = rootDir.resolve("sample/build/outputs/bundle/${channel}Release/sample-$channel-release.aab")
@@ -121,9 +121,12 @@ val auditTasks = listOf("play", "galaxy").map { channel ->
     val appId = if (channel == "play") {
         providers.gradleProperty("phytoyApplicationId").orElse(providers.environmentVariable("PHYTOY_APPLICATION_ID"))
             .getOrElse("com.ycolor.team.phytoy.camera.android.gpapp")
-    } else {
+    } else if (channel == "galaxy") {
         providers.gradleProperty("phytoyGalaxyApplicationId").orElse(providers.environmentVariable("PHYTOY_GALAXY_APPLICATION_ID"))
             .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyapp")
+    } else {
+        providers.gradleProperty("phytoyGalaxyFullApplicationId").orElse(providers.environmentVariable("PHYTOY_GALAXY_FULL_APPLICATION_ID"))
+            .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyfull")
     }
     val audit = tasks.register<Exec>("audit${flavor}Package") {
         group = "distribution"
@@ -161,9 +164,10 @@ val auditTasks = listOf("play", "galaxy").map { channel ->
                 ?: repository.resolve("release-artifacts/packages")
             val output = outputRoot.resolve("$channel/$version-$code-$mode")
             check(output.mkdirs() || output.isDirectory) { "Cannot create package output directory" }
+            val artifactBrand = if (channel == "galaxyFull") "PomiCamera" else "ToviCam"
             val copies = linkedMapOf(
-                apk to "ToviCam-$channel-$version-$code.apk",
-                aab to "ToviCam-$channel-$version-$code.aab",
+                apk to "$artifactBrand-$channel-$version-$code.apk",
+                aab to "$artifactBrand-$channel-$version-$code.aab",
                 report to "packaging-audit.json",
                 rootDir.resolve("sample/build/outputs/mapping/${channel}Release/mapping.txt") to "mapping.txt",
                 rootDir.resolve("sample/build/outputs/native-debug-symbols/${channel}Release/native-debug-symbols.zip") to "native-debug-symbols.zip",
@@ -176,7 +180,7 @@ val auditTasks = listOf("play", "galaxy").map { channel ->
                 "${fileHash(output.resolve(name))}  $name\n"
             })
             logger.lifecycle("$channel: signed APK/AAB audit passed. Output: $output")
-            if (!storeReady) logger.lifecycle("Candidate build; use -PpackageStoreReady=true to enforce billing and publisher configuration.")
+            if (!storeReady) logger.lifecycle("Candidate build; use -PpackageStoreReady=true to enforce applicable channel and publisher configuration.")
         }
     }
     tasks.register("package$flavor") {
@@ -190,13 +194,13 @@ val auditTasks = listOf("play", "galaxy").map { channel ->
 tasks.register("packageAll") {
     group = "distribution"
     description = "Build, sign, check and archive Google Play and Galaxy Store releases."
-    dependsOn(auditTasks)
+    dependsOn(auditTasks.getValue("play"), auditTasks.getValue("galaxy"))
 }
 
 if (packagingRequested) {
     subprojects {
         if (path == ":sample") tasks.matching {
-            it.name in setOf("prePlayReleaseBuild", "preGalaxyReleaseBuild")
+            it.name in setOf("prePlayReleaseBuild", "preGalaxyReleaseBuild", "preGalaxyFullReleaseBuild")
         }.configureEach { dependsOn(checkSigning) }
     }
 }

@@ -57,6 +57,10 @@ android/gradlew -p android --no-configuration-cache packagePlay
 android/gradlew -p android --no-configuration-cache packageGalaxy
 android/gradlew -p android --no-configuration-cache packageAll
 
+# Separate Samsung edition: all cameras included, no in-app purchases.
+android/gradlew -p android --no-configuration-cache packageGalaxyFull \
+  -PphytoyVersionCode=3 -PpackageStoreReady=true
+
 # Specify the next unused version code; retain or update the version name.
 android/gradlew -p android --no-configuration-cache packageAll \
   -PphytoyVersionCode=30 -PphytoyVersionName=0.17.8
@@ -71,7 +75,9 @@ android/gradlew -p android --no-configuration-cache checkReleaseSigning
 
 Use the full task names. Add `--offline` for cached dependencies and `--no-daemon` for a single-use Gradle process. The tasks read the existing ignored `android/keystore.properties`, or a complete set of the four signing environment variables below. They validate the private key before the app's release build and use the same key for both channels. Passwords are literal data, never command-line arguments, task inputs or published files. Configuration cache is rejected for these tasks to keep local signing inputs out of its serialized state. Normal IDE/debug builds do not read the local signing file.
 
-Each task builds Release APK/AAB, runs channel lint, reuses the existing Python signature/16 KB packaging checker, then archives APK, AAB, `mapping.txt`, `native-debug-symbols.zip`, the audit JSON and `SHA256SUMS.txt` into `release-artifacts/packages/<play|galaxy>/<versionName>-<versionCode>-<candidate|store-checked>/`. Re-running the same version/mode replaces that directory's corresponding files. `-PpackageOutputDir=/absolute/output/path` changes the archive root; `-PpackagePython=/absolute/path/to/python3` selects Python 3.10+ for the existing helpers. The build stays in one Gradle invocation, without recursively starting another Gradle build.
+Each task builds Release APK/AAB, runs channel lint, reuses the existing Python signature/16 KB packaging checker, then archives APK, AAB, `mapping.txt`, `native-debug-symbols.zip`, the audit JSON and `SHA256SUMS.txt` into `release-artifacts/packages/<play|galaxy|galaxyFull>/<versionName>-<versionCode>-<candidate|store-checked>/`. Re-running the same version/mode replaces that directory's corresponding files. `-PpackageOutputDir=/absolute/output/path` changes the archive root; `-PpackagePython=/absolute/path/to/python3` selects Python 3.10+ for the existing helpers. The build stays in one Gradle invocation, without recursively starting another Gradle build.
+
+`packageGalaxyFull` uses the new `com.ycolor.team.phytoy.camera.android.galaxyfull` application ID and the same release signing key. It bundles all style access, excludes both payment SDKs and billing/network permissions, and does not require billing configuration. `packageAll` retains its existing Play + Galaxy IAP behavior; invoke `packageGalaxyFull` explicitly for the new edition. See [GALAXY_FULL.md](GALAXY_FULL.md) for branding and Seller Portal details. The standalone Python packaging entry point below remains for the original IAP editions; use the Gradle task for Galaxy Full.
 
 `packageStoreReady=true` checks only the existing local configuration and artifact gates. It does not verify Play/Seller Portal products, perform payments, publish policies, upload a package or establish store approval. In particular, the current Play client still needs its RSA billing public key to enable purchases. A missing key blocks strict Play packaging while Galaxy packaging checks its own configuration independently.
 

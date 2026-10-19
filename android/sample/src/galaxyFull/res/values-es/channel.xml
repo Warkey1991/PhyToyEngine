@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">Pomi Camera</string>
+    <string name="product_wordmark" tools:ignore="Typos">Pomi Camera</string>
+    <string name="camera_header_description">Pomi Camera. Estilo actual: %1$s</string>
+    <string name="product_info_title" tools:ignore="Typos">Pomi Camera · %1$s</string>
+    <string name="permission_camera_body">Pomi Camera usa la cámara para el visor y las fotos que decides hacer. Las imágenes se procesan en el dispositivo y las fotos se guardan en Pictures/PhyToy.</string>
+    <string name="settings_about">Acerca de Pomi Camera</string>
+    <string name="product_info_body">Todos los estilos de cámara están incluidos y listos para usar. Sin compras integradas, suscripciones ni restauración de compras. Las imágenes se procesan en tu dispositivo.\n\nToca el visor para enfocar, desliza verticalmente para ajustar la exposición y pellizca para hacer zoom. Las fotos se guardan en Pictures/PhyToy y puedes verlas tocando la miniatura. Los ajustes permiten elegir calidad, cuadrícula, respuesta de captura y revisión tras cada foto.\n\nLa vista previa y las fotos usan el mismo motor. La resolución, el procesamiento del sensor y el ruido aleatorio pueden diferir ligeramente. Con calor, la velocidad de vista previa se adapta para mantener la estabilidad.\n\nLos estilos son interpretaciones independientes, no reproducciones certificadas ni productos respaldados por fabricantes.\n\nMotor y aplicación: licencia MIT. No se incluyen fotos de ejemplo de sitios web de terceros.</string>
+    <string name="privacy_channel_body">Actualizado: 19 de octubre de 2026\n\nLa cámara se usa para el visor y las fotos que tomas. Las imágenes se procesan en el dispositivo. No se solicita acceso a la ubicación, al micrófono ni a la red.\n\nLas fotos se guardan en Pictures/PhyToy con hora, exposición y estilo, sin añadir ubicación. Puedes borrarlas en la aplicación o la galería del sistema. Desinstalar no elimina las fotos. Al compartir, solo se entrega la foto elegida a la aplicación seleccionada, que aplica su propia política.\n\nLos ajustes, permisos e índice de fotos permanecen en el almacenamiento local privado. Borrar los datos de la aplicación elimina estos registros. Esta edición no incluye compras integradas, SDK de pago, cuenta independiente, anuncios, subidas automáticas ni analítica del editor. No guarda ni envía recibos de compra.\n\nDistribución: %1$s. No necesitas iniciar sesión con una %2$s dentro de la aplicación. Puedes revocar la cámara en los ajustes de Android. Los mensajes de soporte solo se envían con tu aplicación de correo cuando tú lo decides.</string>
+    <string name="settings_local_only">Todos los estilos de cámara están incluidos y listos para usar. Sin compras integradas, suscripciones ni restauración de compras. Las imágenes se procesan en tu dispositivo.</string>
+    <string name="support_hint">Contactar con soporte</string>
+    <string name="billing_store_name">Galaxy Store</string>
+    <string name="billing_account_name">cuenta de Samsung</string>
+</resources>

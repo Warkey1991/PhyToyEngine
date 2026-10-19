@@ -24,7 +24,7 @@ internal object SupportInfo {
     fun email(activity: Activity) {
         if (!hasEmail) return
         // appendQueryParameter clears an opaque mailto recipient in Uri.Builder.
-        val subject = "ToviCam ${BuildConfig.VERSION_NAME} · ${BuildConfig.STORE_CHANNEL}"
+        val subject = "${activity.getString(R.string.app_name)} ${BuildConfig.VERSION_NAME} · ${BuildConfig.STORE_CHANNEL}"
         val uri = Uri.parse("mailto:${Uri.encode(BuildConfig.SUPPORT_EMAIL)}?subject=${Uri.encode(subject)}")
         try {
             activity.startActivity(Intent(Intent.ACTION_SENDTO, uri))

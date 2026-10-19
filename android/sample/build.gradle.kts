@@ -14,16 +14,22 @@ val playApplicationId = providers.gradleProperty("phytoyApplicationId")
 val galaxyApplicationId = providers.gradleProperty("phytoyGalaxyApplicationId")
     .orElse(providers.environmentVariable("PHYTOY_GALAXY_APPLICATION_ID"))
     .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyapp")
+val galaxyFullApplicationId = providers.gradleProperty("phytoyGalaxyFullApplicationId")
+    .orElse(providers.environmentVariable("PHYTOY_GALAXY_FULL_APPLICATION_ID"))
+    .getOrElse("com.ycolor.team.phytoy.camera.android.galaxyfull")
 val releaseVersionCode = providers.gradleProperty("phytoyVersionCode")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_CODE"))
     .getOrElse("26").toInt()
 val releaseVersionName = providers.gradleProperty("phytoyVersionName")
     .orElse(providers.environmentVariable("PHYTOY_VERSION_NAME"))
     .getOrElse("0.17.8")
-require(listOf(playApplicationId, galaxyApplicationId).all {
+require(listOf(playApplicationId, galaxyApplicationId, galaxyFullApplicationId).all {
     it.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+"))
 }) {
     "phytoyApplicationId must be a valid permanent Android application ID"
+}
+require(setOf(playApplicationId, galaxyApplicationId, galaxyFullApplicationId).size == 3) {
+    "Each store edition requires a distinct permanent application ID"
 }
 require(releaseVersionCode in 1..2100000000) { "phytoyVersionCode must be a positive Play-compatible integer" }
 require(releaseVersionName.isNotBlank()) { "phytoyVersionName must not be blank" }
@@ -54,13 +60,16 @@ fun publicValue(property: String, environment: String) = providers.gradlePropert
 val publisherName = publicValue("phytoyPublisherName", "PHYTOY_PUBLISHER_NAME")
 val supportEmail = publicValue("phytoySupportEmail", "PHYTOY_SUPPORT_EMAIL")
 val privacyPolicyUrl = publicValue("phytoyPrivacyPolicyUrl", "PHYTOY_PRIVACY_POLICY_URL")
-val publisherConfigured = publisherName.isNotBlank() &&
-    supportEmail.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+")) && runCatching {
-        val uri = URI(privacyPolicyUrl)
+val galaxyFullPublisherName = publicValue("phytoyGalaxyFullPublisherName", "PHYTOY_GALAXY_FULL_PUBLISHER_NAME")
+val galaxyFullSupportEmail = publicValue("phytoyGalaxyFullSupportEmail", "PHYTOY_GALAXY_FULL_SUPPORT_EMAIL")
+val galaxyFullPrivacyPolicyUrl = publicValue("phytoyGalaxyFullPrivacyPolicyUrl", "PHYTOY_GALAXY_FULL_PRIVACY_POLICY_URL")
+fun publisherConfigured(name: String, email: String, policyUrl: String): Boolean = name.isNotBlank() &&
+    email.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+")) && runCatching {
+        val uri = URI(policyUrl)
         uri.scheme == "https" && !uri.host.isNullOrBlank() && uri.userInfo == null
     }.getOrDefault(false)
-require(!(packagingStoreReady || providers.gradleProperty("phytoyRequirePublisherConfigured").getOrElse("false").toBoolean()) ||
-    publisherConfigured) { "A publisher name, valid support email and public HTTPS privacy policy URL are required" }
+val requirePublisher = packagingStoreReady ||
+    providers.gradleProperty("phytoyRequirePublisherConfigured").getOrElse("false").toBoolean()
 fun quoted(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"")
     .replace("\n", "\\n").replace("\r", "\\r") + "\""
 
@@ -93,6 +102,8 @@ android {
         buildConfigField("String", "PUBLISHER_NAME", quoted(publisherName))
         buildConfigField("String", "SUPPORT_EMAIL", quoted(supportEmail))
         buildConfigField("String", "PRIVACY_POLICY_URL", quoted(privacyPolicyUrl))
+        buildConfigField("boolean", "HAS_IN_APP_PURCHASES", "true")
+        buildConfigField("String", "PHOTO_SOFTWARE_NAME", "\"ToviCam\"")
     }
 
     buildFeatures { buildConfig = true }
@@ -111,6 +122,16 @@ android {
             buildConfigField("String", "STORE_CHANNEL", "\"galaxy\"")
             // Enable only after the five permanent Item products are configured in Seller Portal.
             buildConfigField("boolean", "GALAXY_BILLING_CONFIGURED", galaxyBillingConfigured.toString())
+        }
+        create("galaxyFull") {
+            dimension = "store"
+            applicationId = galaxyFullApplicationId
+            buildConfigField("String", "STORE_CHANNEL", "\"galaxyFull\"")
+            buildConfigField("boolean", "HAS_IN_APP_PURCHASES", "false")
+            buildConfigField("String", "PHOTO_SOFTWARE_NAME", "\"Pomi Camera\"")
+            buildConfigField("String", "PUBLISHER_NAME", quoted(galaxyFullPublisherName))
+            buildConfigField("String", "SUPPORT_EMAIL", quoted(galaxyFullSupportEmail))
+            buildConfigField("String", "PRIVACY_POLICY_URL", quoted(galaxyFullPrivacyPolicyUrl))
         }
     }
 
@@ -167,9 +188,15 @@ dependencies {
 
 // Require only the configuration for the channel actually being built.
 tasks.configureEach {
-    if (name.matches(Regex("pre(Play|Galaxy)(Release|Benchmark)Build"))) doFirst {
-        if (requireBilling) require(if (name.contains("Play")) billingKeyConfigured else galaxyBillingConfigured) {
+    if (name.matches(Regex("pre(Play|Galaxy|GalaxyFull)(Release|Benchmark)Build"))) doFirst {
+        val fullEdition = name.contains("GalaxyFull")
+        if (requireBilling && !fullEdition) require(if (name.contains("Play")) billingKeyConfigured else galaxyBillingConfigured) {
             "Billing configuration for this store channel is absent"
+        }
+        if (requirePublisher) require(if (fullEdition) {
+            publisherConfigured(galaxyFullPublisherName, galaxyFullSupportEmail, galaxyFullPrivacyPolicyUrl)
+        } else publisherConfigured(publisherName, supportEmail, privacyPolicyUrl)) {
+            "A publisher name, valid support email and public HTTPS privacy policy URL are required for this channel"
         }
     }
 }

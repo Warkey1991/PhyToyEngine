@@ -1,0 +1,7 @@
+Pomi Camera — Galaxy Store Full Edition
+
+All camera styles are included in this edition. No in-app purchases, payment SDK,
+purchase receipts, purchase restoration or app account are used.
+
+The Samsung In-App Purchase SDK and Google Play Billing Library are not included.
+The imaging engine and other third-party notices are listed separately.
